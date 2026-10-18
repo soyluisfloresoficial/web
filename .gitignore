@@ -5,6 +5,9 @@ dist/
 # con tools/, pesa 2 MB y no aporta nada al repositorio.
 mirror/
 lh-base/
+# Imagenes originales descargadas de produccion, 5 MB. Material de partida,
+# no fuente del sitio: las que usa la web estan en src/assets.
+assets-raw/
 .env
 .env.production
 .DS_Store
