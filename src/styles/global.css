@@ -366,6 +366,146 @@ a {
   transform-origin: left center;
 }
 
+/* ---------------------------------------------------------------------------
+   Acordeón de preguntas
+
+   Se anima grid-template-rows de 0fr a 1fr, nunca `height`: no hace falta
+   conocer la altura y no provoca reflow en cada fotograma. Sin JavaScript,
+   <details> sigue abriendo y cerrando como siempre.
+   --------------------------------------------------------------------------- */
+
+.faq-item > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.faq-item > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Indicador propio: un signo + que gira a × al abrir. */
+.faq-item > summary::after {
+  content: "";
+  flex-shrink: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: currentColor;
+  clip-path: polygon(
+    43% 0, 57% 0, 57% 43%, 100% 43%, 100% 57%, 57% 57%,
+    57% 100%, 43% 100%, 43% 57%, 0 57%, 0 43%, 43% 43%
+  );
+  transition: transform var(--dur-micro) var(--ease);
+}
+
+.faq-item[open] > summary::after {
+  transform: rotate(135deg);
+}
+
+.faq-item .faq-cuerpo {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.faq-item .faq-cuerpo > * {
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .faq-item .faq-cuerpo {
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.32s var(--ease);
+  }
+  .faq-item[open] .faq-cuerpo {
+    grid-template-rows: 1fr;
+  }
+  /* El contenido se recorta mientras la fila crece. */
+  .faq-item .faq-cuerpo > * {
+    overflow: hidden;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Barra de progreso de lectura
+
+   CSS scroll-driven: sin JavaScript y sin escuchar scroll. Donde no haya
+   soporte (hoy Firefox), la barra simplemente no se muestra: es un adorno
+   informativo, no contenido.
+   --------------------------------------------------------------------------- */
+
+.progreso-lectura {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progreso-lectura {
+      display: block;
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline: 0;
+      height: 2px;
+      z-index: 60;
+      background: var(--grad-cta);
+      transform-origin: left center;
+      transform: scaleX(0);
+      /* Longhand a propósito: el atajo `animation:` fija la duración en 0s, y
+         con una línea de tiempo de scroll hace falta `auto` para que recorra
+         todo el documento. Con el atajo la barra se queda en scaleX(0). */
+      animation-name: avance-lectura;
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@keyframes avance-lectura {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Botón primario: brillo que cruza al pasar por encima
+
+   Solo pseudo-elemento y transform. Sin efecto magnético: seguir el puntero
+   exige escuchar pointermove para mover el botón 6 px, y eso no se paga.
+   --------------------------------------------------------------------------- */
+
+.cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgb(255 255 255 / 0.22) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cta::before {
+    transition: transform 0.6s var(--ease);
+  }
+  .cta:hover::before,
+  .cta:focus-visible::before {
+    transform: translateX(100%);
+  }
+}
+
 /* Tarjetas: elevación y borde de acento. Sin seguimiento del puntero, que
    obliga a escuchar mousemove y no compensa su coste. En táctil no hay hover,
    así que el estado normal ya es el correcto. */

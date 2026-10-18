@@ -72,6 +72,10 @@ const schema = [
   modifiedTime={modificado}
   schema={schema}
 >
+  {/* Indicador de progreso. Decorativo: no aporta información que no esté
+      ya en la barra de desplazamiento del navegador. */}
+  <div class="progreso-lectura" aria-hidden="true"></div>
+
   <main>
     <nav class="migas container-lf" aria-label="Migas de pan">
       <ol>

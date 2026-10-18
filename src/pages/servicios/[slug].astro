@@ -160,7 +160,7 @@ const schema = [
           d.faq.map((p) => (
             <details class="card faq-item mt-3">
               <summary>{p.pregunta}</summary>
-              <p class="card-text">{p.respuesta}</p>
+              <div class="faq-cuerpo"><p class="card-text">{p.respuesta}</p></div>
             </details>
           ))
         }

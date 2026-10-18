@@ -314,7 +314,7 @@ const schema = [
               {g.preguntas.map((p) => (
                 <details class="card faq-item mt-3">
                   <summary>{p.pregunta}</summary>
-                  <p class="card-text">{p.respuesta}</p>
+                  <div class="faq-cuerpo"><p class="card-text">{p.respuesta}</p></div>
                 </details>
               ))}
             </div>
@@ -344,6 +344,45 @@ const schema = [
     font-size: clamp(2.375rem, 1.6rem + 3.3vw, 3.75rem);
     letter-spacing: -0.03em;
     padding-bottom: 0.04em;
+  }
+
+  /* Secuencia de entrada del hero, por debajo de 1,2 s en total.
+
+     El H1 NO se desvanece: solo se desplaza. Si animara su opacidad desde 0,
+     el navegador no lo contaría como pintado y retrasaría el LCP, que en esta
+     página es precisamente el titular o la imagen. Las demás piezas sí pueden
+     aparecer, porque no son el elemento más grande. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .hero .eyebrow,
+    :global(.js) .hero .lead,
+    :global(.js) .hero .cta,
+    :global(.js) .hero .nota {
+      animation: entrada-hero 0.6s var(--ease) both;
+    }
+
+    :global(.js) .hero h1 {
+      animation: desplaza-hero 0.6s var(--ease) both;
+      animation-delay: 0.1s;
+    }
+
+    :global(.js) .hero .eyebrow { animation-delay: 0s; }
+    :global(.js) .hero .lead { animation-delay: 0.26s; }
+    :global(.js) .hero .cta { animation-delay: 0.4s; }
+    :global(.js) .hero .nota { animation-delay: 0.52s; }
+  }
+
+  @keyframes entrada-hero {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  /* Solo transform: la opacidad se queda en 1 para no tocar el LCP. */
+  @keyframes desplaza-hero {
+    from {
+      transform: translateY(14px);
+    }
   }
 
   .hero-line-2 {
