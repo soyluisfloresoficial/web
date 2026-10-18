@@ -1,0 +1,118 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Base from "../layouts/Base.astro";
+import { SITIO } from "../data/servicios";
+
+export async function getStaticPaths() {
+  const paginas = await getCollection("legal");
+  return paginas.map((p) => ({ params: { slug: p.id }, props: { pagina: p } }));
+}
+
+interface Props {
+  pagina: CollectionEntry<"legal">;
+}
+
+const { pagina } = Astro.props;
+const { Content } = await render(pagina);
+const url = `${SITIO.url}/${pagina.id}`;
+
+const schema = [
+  {
+    "@type": "WebPage",
+    "@id": `${url}#page`,
+    url,
+    name: pagina.data.title,
+    description: pagina.data.description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es-ES",
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: pagina.data.title, item: url },
+    ],
+  },
+];
+---
+
+<Base title={pagina.data.metaTitle} description={pagina.data.description} schema={schema}>
+  <main>
+    <nav class="migas container-lf" aria-label="Migas de pan">
+      <ol>
+        <li><a href="/">Inicio</a></li>
+        <li aria-current="page">{pagina.data.title}</li>
+      </ol>
+    </nav>
+
+    <article class="container-lf legal">
+      <h1>{pagina.data.title}</h1>
+      <div class="prosa">
+        <Content />
+      </div>
+    </article>
+  </main>
+</Base>
+
+<style>
+  .migas {
+    padding-block: 1rem;
+    font-size: var(--step--1);
+  }
+  .migas ol {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--color-muted);
+  }
+  .migas li + li::before {
+    content: "/";
+    margin-inline-end: 0.5rem;
+    color: var(--color-line);
+  }
+  .migas a {
+    color: var(--color-soft);
+  }
+
+  .legal {
+    max-width: 72ch;
+    padding-block: var(--space-2) var(--space-6);
+  }
+
+  .prosa {
+    margin-top: var(--space-4);
+    color: var(--color-soft);
+  }
+  .prosa :global(h2) {
+    color: var(--color-ink);
+    font-size: var(--step-2);
+    margin-top: var(--space-4);
+    margin-bottom: 0.5rem;
+  }
+  .prosa :global(h3) {
+    color: var(--color-ink);
+    font-size: var(--step-1);
+    margin-top: var(--space-3);
+    margin-bottom: 0.5rem;
+  }
+  .prosa :global(p) {
+    margin-bottom: 1rem;
+  }
+  .prosa :global(ul),
+  .prosa :global(ol) {
+    margin: 0 0 1rem 1.25rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .prosa :global(a) {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prosa :global(strong) {
+    color: var(--color-ink);
+  }
+</style>

@@ -89,6 +89,10 @@ export const SITIO = {
   nombre: "Luis Flores",
   nombreCompleto: "Luis Carlos Flores",
   email: "hola@soyluisflores.es",
+  calendly: "https://calendly.com/soyluisfloresoficial/nueva-reunion",
+  // [COMPLETAR: número real de WhatsApp. En producción el enlace es
+  // https://wa.me/34XXXXXXXXX, un marcador sin sustituir, así que aquí no se
+  // pone ningún enlace de WhatsApp hasta tener el número.]
   localidad: "Manresa",
   region: "Cataluña",
   pais: "ES",

@@ -1,0 +1,448 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITIO } from "../data/servicios";
+
+const url = `${SITIO.url}/roi`;
+
+const title = "Calculadora ROI de IA y automatización | Luis Flores";
+const description =
+  "Calcula una estimación de horas ahorradas, ingresos adicionales y recuperación de la inversión al aplicar IA, automatización y funnels en tu negocio.";
+
+const campos = [
+  { name: "leads", label: "Leads al mes", pista: "Contactos interesados que recibes al mes", ph: "80", step: "1", max: "" },
+  { name: "ticket", label: "Ticket medio (€)", pista: "Ingreso medio por cliente", ph: "600", step: "10", max: "" },
+  { name: "conversion", label: "Conversión actual (%)", pista: "De leads a clientes, hoy", ph: "20", step: "1", max: "100" },
+  { name: "hours", label: "Horas/semana en tareas manuales", pista: "Seguimiento, copiar datos, responder…", ph: "10", step: "1", max: "" },
+  { name: "cost", label: "Coste por hora (€)", pista: "Lo que cuesta esa hora (tuya o de tu equipo)", ph: "25", step: "1", max: "" },
+  { name: "lost", label: "Leads perdidos por no responder a tiempo (%)", pista: "Estimación", ph: "25", step: "1", max: "100" },
+  { name: "investment", label: "Inversión estimada (€)", pista: "Lo que estás dispuesto a invertir", ph: "3000", step: "100", max: "" },
+];
+
+const escenarios = [
+  { valor: "conservador", etiqueta: "Conservador" },
+  { valor: "realista", etiqueta: "Realista" },
+  { valor: "optimista", etiqueta: "Optimista" },
+];
+
+const schema = [
+  {
+    "@type": "WebPage",
+    "@id": `${url}#page`,
+    url,
+    name: "Calculadora ROI",
+    description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es-ES",
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Calculadora ROI", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <nav class="migas container-lf" aria-label="Migas de pan">
+      <ol>
+        <li><a href="/">Inicio</a></li>
+        <li aria-current="page">Calculadora ROI</li>
+      </ol>
+    </nav>
+
+    <section class="section pt-0">
+      <div class="container-lf max-w-[62ch]">
+        <p class="eyebrow">Calculadora ROI</p>
+        <h1 class="mt-3">¿Cuánto podrías ganar y ahorrar automatizando?</h1>
+        <p class="lead mt-5">
+          Pon tus números y verás una estimación de horas ahorradas, ingresos
+          adicionales y en cuánto tiempo recuperarías la inversión. Es orientativa y
+          se basa en hipótesis que puedes ver más abajo: tú decides la inversión, y
+          no hay precios por defecto.
+        </p>
+      </div>
+    </section>
+
+    <section class="section pt-0">
+      <div class="container-lf grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+        <form class="card p-6" data-roi-form novalidate>
+          <h2 class="card-title">Tus números</h2>
+
+          <div class="campos mt-5">
+            {
+              campos.map((c) => (
+                <div class="campo">
+                  <label for={`roi-${c.name}`}>{c.label}</label>
+                  <input
+                    id={`roi-${c.name}`}
+                    type="number"
+                    name={c.name}
+                    inputmode="decimal"
+                    min="0"
+                    max={c.max || undefined}
+                    step={c.step}
+                    placeholder={c.ph}
+                    aria-describedby={`pista-${c.name}`}
+                  />
+                  <p class="pista" id={`pista-${c.name}`}>
+                    {c.pista}
+                  </p>
+                </div>
+              ))
+            }
+          </div>
+
+          <fieldset class="escenarios mt-5">
+            <legend>Escenario</legend>
+            <p class="pista">
+              Cuánta de esa carga manual se llega a automatizar. Son hipótesis, no
+              datos de mercado.
+            </p>
+            <div class="opciones mt-3">
+              {
+                escenarios.map((e, i) => (
+                  <label class="opcion">
+                    <input
+                      type="radio"
+                      name="scenario"
+                      value={e.valor}
+                      checked={i === 0}
+                    />
+                    <span>{e.etiqueta}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <button class="cta mt-6" type="submit">Calcular estimación</button>
+        </form>
+
+        <div class="resultado card p-6" aria-live="polite">
+          <h2 class="card-title">Tu estimación</h2>
+
+          <p class="pista mt-3" data-roi-vacio>
+            Rellena tus números y pulsa «Calcular estimación».
+          </p>
+
+          <dl class="salidas mt-4" data-roi-salida hidden>
+            <div>
+              <dt>Horas liberadas al mes</dt>
+              <dd data-roi="horas">—</dd>
+            </div>
+            <div>
+              <dt>Ahorro en coste al mes</dt>
+              <dd data-roi="ahorro">—</dd>
+            </div>
+            <div>
+              <dt>Ingresos adicionales al mes</dt>
+              <dd data-roi="ingresos">—</dd>
+            </div>
+            <div>
+              <dt>Beneficio estimado al mes</dt>
+              <dd data-roi="total">—</dd>
+            </div>
+            <div>
+              <dt>Recuperación de la inversión</dt>
+              <dd data-roi="recuperacion">—</dd>
+            </div>
+            <div>
+              <dt>ROI a 12 meses</dt>
+              <dd data-roi="roi">—</dd>
+            </div>
+          </dl>
+
+          <p class="pista mt-5">
+            Estimación orientativa calculada solo con los datos que tú introduces y
+            con las hipótesis de abajo. No es una promesa de resultados.
+          </p>
+
+          <a class="card-link mt-4 inline-block" href="/contacto">
+            Pasar de la estimación a un plan <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="hipotesis-titulo">
+      <div class="container-lf card p-6 max-w-[72ch]">
+        <h2 id="hipotesis-titulo" class="card-title">Las hipótesis, a la vista</h2>
+        <p class="card-text mt-3">
+          Una calculadora que no enseña su fórmula no sirve de nada. Esta es
+          exactamente la que se aplica:
+        </p>
+        <ul class="lista mt-4">
+          <li>
+            <strong>Horas liberadas:</strong> tus horas semanales de tareas manuales
+            × 4,33 semanas × el porcentaje del escenario (conservador 30%, realista
+            50%, optimista 70%).
+          </li>
+          <li>
+            <strong>Ahorro en coste:</strong> esas horas liberadas × tu coste por hora.
+          </li>
+          <li>
+            <strong>Ingresos adicionales:</strong> se asume que recuperas la mitad de
+            los leads que hoy pierdes por no responder a tiempo, y que convierten a
+            tu tasa actual. Esos clientes × tu ticket medio.
+          </li>
+          <li>
+            <strong>Recuperación:</strong> tu inversión ÷ el beneficio mensual estimado.
+          </li>
+          <li>
+            <strong>ROI a 12 meses:</strong> (beneficio mensual × 12 − inversión) ÷
+            inversión.
+          </li>
+        </ul>
+        <p class="card-text mt-4">
+          Los porcentajes de los escenarios son supuestos de trabajo, no medias del
+          sector. Tu resultado real depende de tu operativa.
+        </p>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-roi-form]");
+  const salida = document.querySelector<HTMLElement>("[data-roi-salida]");
+  const vacio = document.querySelector<HTMLElement>("[data-roi-vacio]");
+
+  // Porcentaje de la carga manual que se asume automatizada en cada escenario.
+  const FACTOR: Record<string, number> = {
+    conservador: 0.3,
+    realista: 0.5,
+    optimista: 0.7,
+  };
+
+  const SEMANAS_MES = 4.33;
+
+  const eur = new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  });
+  const num = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 });
+
+  function leer(nombre: string): number {
+    const el = form?.elements.namedItem(nombre) as HTMLInputElement | null;
+    const v = Number.parseFloat(el?.value ?? "");
+    return Number.isFinite(v) && v >= 0 ? v : 0;
+  }
+
+  function escribir(clave: string, texto: string) {
+    const el = document.querySelector(`[data-roi="${clave}"]`);
+    if (el) el.textContent = texto;
+  }
+
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const leads = leer("leads");
+    const ticket = leer("ticket");
+    const conversion = Math.min(leer("conversion"), 100) / 100;
+    const horasSemana = leer("hours");
+    const costeHora = leer("cost");
+    const perdidos = Math.min(leer("lost"), 100) / 100;
+    const inversion = leer("investment");
+
+    const escenario =
+      (form.elements.namedItem("scenario") as RadioNodeList | null)?.value ??
+      "conservador";
+    const factor = FACTOR[escenario] ?? 0.3;
+
+    const horasMes = horasSemana * SEMANAS_MES * factor;
+    const ahorro = horasMes * costeHora;
+
+    // Se asume recuperar la mitad de los leads que hoy se pierden.
+    const leadsRecuperados = leads * perdidos * 0.5;
+    const ingresos = leadsRecuperados * conversion * ticket;
+
+    const total = ahorro + ingresos;
+
+    escribir("horas", `${num.format(horasMes)} h`);
+    escribir("ahorro", eur.format(ahorro));
+    escribir("ingresos", eur.format(ingresos));
+    escribir("total", eur.format(total));
+
+    if (inversion > 0 && total > 0) {
+      const meses = inversion / total;
+      escribir(
+        "recuperacion",
+        meses < 1 ? "menos de 1 mes" : `${num.format(meses)} meses`,
+      );
+      const roi = ((total * 12 - inversion) / inversion) * 100;
+      escribir("roi", `${num.format(roi)} %`);
+    } else {
+      escribir("recuperacion", "—");
+      escribir("roi", "—");
+    }
+
+    if (vacio) vacio.hidden = true;
+    if (salida) salida.hidden = false;
+  });
+</script>
+
+<style>
+  .migas {
+    padding-block: 1rem;
+    font-size: var(--step--1);
+  }
+  .migas ol {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--color-muted);
+  }
+  .migas li + li::before {
+    content: "/";
+    margin-inline-end: 0.5rem;
+    color: var(--color-line);
+  }
+  .migas a {
+    color: var(--color-soft);
+  }
+
+  .lead {
+    color: var(--color-soft);
+    font-size: var(--step-1);
+  }
+  .card-title {
+    font-size: var(--step-2);
+  }
+  .card-text {
+    color: var(--color-soft);
+  }
+  .card-link {
+    color: var(--color-electric-soft);
+    font-weight: 700;
+  }
+  .pista {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+
+  .campos {
+    display: grid;
+    gap: 1rem;
+  }
+  .campo label {
+    display: block;
+    font-weight: 700;
+    color: var(--color-ink);
+    font-size: var(--step-0);
+    margin-bottom: 0.375rem;
+  }
+  .campo input {
+    width: 100%;
+    border: 1px solid var(--color-line);
+    background: var(--color-navy-2);
+    color: var(--color-ink);
+    border-radius: 12px;
+    padding: 0.625rem 0.75rem;
+    font: inherit;
+  }
+  .campo input:focus {
+    border-color: var(--color-electric);
+    outline: none;
+  }
+  .campo .pista {
+    margin-top: 0.25rem;
+  }
+
+  .escenarios {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .escenarios legend {
+    font-weight: 700;
+    color: var(--color-ink);
+    font-size: var(--step-0);
+  }
+  .opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .opcion {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    color: var(--color-soft);
+  }
+  .opcion:has(input:checked) {
+    border-color: var(--color-electric);
+    color: var(--color-ink);
+  }
+
+  .cta {
+    background: var(--grad-cta);
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 700;
+    font-family: inherit;
+    font-size: var(--step-0);
+    cursor: pointer;
+    box-shadow: var(--shadow-cta);
+  }
+
+  .salidas {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .salidas > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--color-divider);
+    padding-bottom: 0.5rem;
+  }
+  .salidas dt {
+    color: var(--color-soft);
+    font-size: var(--step-0);
+  }
+  .salidas dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+
+  .lista {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: var(--color-soft);
+  }
+  .lista li {
+    padding-inline-start: 1.5rem;
+    position: relative;
+  }
+  .lista li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.55em;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-electric);
+  }
+  .lista strong {
+    color: var(--color-ink);
+  }
+</style>

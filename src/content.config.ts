@@ -6,6 +6,8 @@ const blog = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      /** Title de la etiqueta <title>, calibrado a 50-60 caracteres. */
+      metaTitle: z.string(),
       description: z.string(),
       datePublished: z.coerce.date(),
       /** Si falta, se usa datePublished. Alimenta el <lastmod> del sitemap. */
@@ -17,4 +19,17 @@ const blog = defineCollection({
     }),
 });
 
-export const collections = { blog };
+/**
+ * Páginas legales. El texto es el de producción y NO debe reescribirse:
+ * cualquier cambio de fondo lo tiene que revisar un profesional.
+ */
+const legal = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/legal" }),
+  schema: z.object({
+    title: z.string(),
+    metaTitle: z.string(),
+    description: z.string(),
+  }),
+});
+
+export const collections = { blog, legal };

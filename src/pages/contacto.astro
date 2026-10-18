@@ -1,0 +1,293 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITIO } from "../data/servicios";
+
+const url = `${SITIO.url}/contacto`;
+
+const title = "Contacto: agenda una llamada sobre IA | Luis Flores";
+const description =
+  "Agenda una llamada gratuita de 30 minutos o escríbeme a hola@soyluisflores.es. Te ayudo a decidir qué automatizar primero en tu negocio con IA.";
+
+const pasos = [
+  {
+    n: "1",
+    titulo: "Me cuentas tu caso",
+    texto: "Cómo funciona tu negocio y dónde pierdes tiempo u oportunidades.",
+  },
+  {
+    n: "2",
+    titulo: "Detectamos qué automatizar",
+    texto: "Vemos juntos qué tiene más impacto y por dónde conviene empezar.",
+  },
+  {
+    n: "3",
+    titulo: "Sales con un plan",
+    texto: "Te digo qué haría primero y qué esperar. Decidas o no trabajar conmigo.",
+  },
+];
+
+const encaja = [
+  "Tienes un negocio o pyme en marcha y ya recibes clientes o consultas.",
+  "Pierdes tiempo en tareas repetitivas o se te escapan leads por no responder a tiempo.",
+  "Quieres decisiones basadas en datos, no en promesas.",
+];
+
+const todaviaNo = [
+  "Buscas resultados garantizados de la noche a la mañana.",
+  "Aún no tienes una oferta clara ni forma de atraer contactos.",
+  "Quieres «la última herramienta de moda» sin un objetivo detrás.",
+];
+
+const canales = [
+  { nombre: "Email", valor: SITIO.email, href: `mailto:${SITIO.email}` },
+  { nombre: "Instagram", valor: "@soyluisflores_", href: "https://www.instagram.com/soyluisflores_/" },
+  { nombre: "LinkedIn", valor: "Luis Carlos Flores", href: "https://www.linkedin.com/in/soyluisflores/" },
+  { nombre: "TikTok", valor: "@soyluisfloresoficial", href: "https://www.tiktok.com/@soyluisfloresoficial" },
+];
+
+const schema = [
+  {
+    "@type": "ContactPage",
+    "@id": `${url}#page`,
+    url,
+    name: "Contacto",
+    description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es-ES",
+    mainEntity: { "@id": `${SITIO.url}/#person` },
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Contacto", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <nav class="migas container-lf" aria-label="Migas de pan">
+      <ol>
+        <li><a href="/">Inicio</a></li>
+        <li aria-current="page">Contacto</li>
+      </ol>
+    </nav>
+
+    <section class="section pt-0">
+      <div class="container-lf max-w-[62ch]">
+        <p class="eyebrow">Contacto</p>
+        <h1 class="mt-3">Hablemos de tu negocio</h1>
+        <p class="lead mt-5">
+          La forma más rápida es una llamada de 30 minutos. Me cuentas cómo funciona
+          tu negocio y te digo qué automatizar primero. Gratis y sin compromiso.
+        </p>
+        <a
+          class="cta mt-8 inline-flex items-center gap-2"
+          href={SITIO.calendly}
+          rel="noopener"
+        >
+          Reservar diagnóstico <span aria-hidden="true">→</span>
+        </a>
+        <p class="nota mt-4">
+          ¿Prefieres escribir? <a href={`mailto:${SITIO.email}`}>{SITIO.email}</a>.
+          Respondo los emails en 24-48 h laborables.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pasos-titulo">
+      <div class="container-lf">
+        <h2 id="pasos-titulo" class="h-pequeno">Qué pasa en la llamada</h2>
+        <ol class="grid-3 mt-6">
+          {
+            pasos.map((p) => (
+              <li class="card p-6">
+                <p class="paso-numero">{p.n}</p>
+                <h3 class="card-title mt-1">{p.titulo}</h3>
+                <p class="card-text mt-2">{p.texto}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="encaje-titulo">
+      <div class="container-lf">
+        <h2 id="encaje-titulo" class="h-pequeno">Para quién es esta llamada</h2>
+        <div class="grid gap-6 mt-6 md:grid-cols-2">
+          <div class="card p-6">
+            <h3 class="card-title">Tiene sentido si…</h3>
+            <ul class="lista mt-4">
+              {encaja.map((e) => <li>{e}</li>)}
+            </ul>
+          </div>
+          <div class="card p-6">
+            <h3 class="card-title">Quizá todavía no si…</h3>
+            <ul class="lista lista--no mt-4">
+              {todaviaNo.map((e) => <li>{e}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="roi-titulo">
+      <div class="container-lf card p-6">
+        <p class="eyebrow">Calculadora gratuita</p>
+        <h2 id="roi-titulo" class="mt-3">¿Cuánto te cuesta no automatizar?</h2>
+        <p class="card-text mt-3 max-w-[62ch]">
+          Pon tus números y te calculo una estimación de lo que cuestan al mes y al
+          año las tareas repetitivas. Orientativo y basado en hipótesis visibles.
+        </p>
+        <a class="card-link mt-4 inline-block" href="/roi">
+          Abrir la calculadora <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="canales-titulo">
+      <div class="container-lf">
+        <h2 id="canales-titulo" class="h-pequeno">Otras vías</h2>
+        <p class="card-text mt-3 max-w-[62ch]">
+          Si prefieres no usar la calculadora, escríbeme por el canal que te resulte
+          más cómodo y te respondo lo antes posible.
+        </p>
+        <ul class="grid-2 mt-6">
+          {
+            canales.map((c) => (
+              <li class="card p-5">
+                <p class="canal-nombre">{c.nombre}</p>
+                <a class="card-link mt-1 inline-block" href={c.href} rel="noopener">
+                  {c.valor}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .migas {
+    padding-block: 1rem;
+    font-size: var(--step--1);
+  }
+  .migas ol {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--color-muted);
+  }
+  .migas li + li::before {
+    content: "/";
+    margin-inline-end: 0.5rem;
+    color: var(--color-line);
+  }
+  .migas a {
+    color: var(--color-soft);
+  }
+
+  .lead {
+    color: var(--color-soft);
+    font-size: var(--step-1);
+  }
+  .nota {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+  .nota a {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .h-pequeno {
+    font-size: var(--step-3);
+  }
+  .card-title {
+    font-size: var(--step-2);
+  }
+  .card-text {
+    color: var(--color-soft);
+  }
+  .card-link {
+    color: var(--color-electric-soft);
+    font-weight: 700;
+  }
+  .canal-nombre {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  .paso-numero {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 800;
+    color: var(--color-electric-soft);
+  }
+
+  .grid-2,
+  .grid-3 {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .lista {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: var(--color-soft);
+  }
+  .lista li {
+    padding-inline-start: 1.5rem;
+    position: relative;
+  }
+  .lista li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.55em;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-teal);
+  }
+  .lista--no li::before {
+    background: var(--color-muted);
+  }
+
+  .cta {
+    background: var(--grad-cta);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-cta);
+  }
+
+  @media (width >= 640px) {
+    .grid-2,
+    .grid-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (width >= 1024px) {
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

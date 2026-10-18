@@ -1,0 +1,352 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import { SITIO, proyectos } from "../data/servicios";
+import retratoImg from "../assets/luis-flores-retrato.jpg";
+
+const url = `${SITIO.url}/sobre-mi`;
+
+const title = "Sobre mí: Luis Carlos Flores, IA aplicada | Luis Flores";
+const description =
+  "Soy Luis Carlos Flores, de Manresa. Llevo cerca de tres años aplicando IA y automatización a negocios reales, empezando por el mío. Te cuento cómo trabajo.";
+
+const compromisos = [
+  {
+    titulo: "Te hablo claro",
+    texto:
+      "Nada de tecnicismos. Te explico cada cosa con ejemplos de tu propio negocio, para que entiendas qué hace y por qué.",
+  },
+  {
+    titulo: "Primero lo pruebo yo",
+    texto: "Lo que te propongo ya ha pasado por mi negocio. Si no me fío yo, no te lo ofrezco.",
+  },
+  {
+    titulo: "Te enseño los números",
+    texto: "Sin promesas mágicas. Medimos antes y después, y ajustamos lo que no rinde.",
+  },
+  {
+    titulo: "Tu tiempo es el objetivo",
+    texto:
+      "Automatizo para que dejes de depender de jornadas interminables, no para añadirte complejidad.",
+  },
+];
+
+const formacion = [
+  { titulo: "Desarrollo web", detalle: "HTML5 y CSS3 · 210 horas" },
+  { titulo: "IA generativa aplicada", detalle: "150 horas" },
+  { titulo: "Creación de agentes de IA", detalle: "Formación especializada" },
+];
+
+const metricas = [
+  { cifra: "73%", texto: "de los leads respondidos al instante" },
+  { cifra: "12 h", texto: "por semana liberadas" },
+  { cifra: "40%", texto: "menos no-shows en negocios con citas" },
+];
+
+const schema = [
+  {
+    "@type": "ProfilePage",
+    "@id": `${url}#page`,
+    url,
+    name: title,
+    description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es-ES",
+    mainEntity: { "@id": `${SITIO.url}/#person` },
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Sobre mí", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <nav class="migas container-lf" aria-label="Migas de pan">
+      <ol>
+        <li><a href="/">Inicio</a></li>
+        <li aria-current="page">Sobre mí</li>
+      </ol>
+    </nav>
+
+    <section class="section pt-0">
+      <div class="container-lf grid gap-10 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+        <Image
+          src={retratoImg}
+          alt="Retrato de Luis Carlos Flores"
+          widths={[320, 640, 1023]}
+          sizes="(min-width: 1024px) 34vw, 80vw"
+          loading="eager"
+          fetchpriority="high"
+          class="rounded-2xl"
+        />
+        <div>
+          <p class="eyebrow">Sobre mí</p>
+          <h1 class="mt-3">Soy Luis Carlos Flores y pongo la IA a trabajar para tu negocio</h1>
+          <p class="lead mt-5">
+            Soy de Manresa, en Cataluña, y llevo cerca de tres años metido de lleno
+            en la inteligencia artificial. No vengo del mundo corporativo ni te voy
+            a hablar con palabras raras: sé lo que es llevar un negocio y que el día
+            no te llegue para todo, porque lo he vivido.
+          </p>
+          <a class="cta mt-8 inline-flex items-center gap-2" href="/contacto">
+            Reservar diagnóstico <span aria-hidden="true">→</span>
+          </a>
+          <p class="nota mt-4">Manresa · trabajo con España y LATAM</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="historia-titulo">
+      <div class="container-lf max-w-[72ch]">
+        <p class="eyebrow">Mi historia</p>
+        <h2 id="historia-titulo" class="mt-3">De apagar fuegos a montar sistemas</h2>
+        <p class="texto mt-5">
+          Empecé trabajando por mi cuenta. Y me pasaba lo que a casi todo el que
+          emprende solo: se me iba el día respondiendo mensajes, haciendo
+          seguimientos y repitiendo las mismas tareas una y otra vez. Cosas
+          necesarias, sí, pero que no hacían crecer el negocio.
+        </p>
+        <p class="texto mt-4">
+          Un día decidí darle la vuelta: apliqué IA y automatización a mi propio
+          negocio antes de ofrecérselo a nadie. Me devolvió horas cada semana y me
+          dejó espacio para lo que de verdad importaba. Ese cambio me llevó de
+          trabajar solo a montar y dirigir mi propia agencia.
+        </p>
+        <p class="texto mt-4">
+          Hoy hago exactamente eso por otros negocios: implemento agentes de IA,
+          automatizaciones, funnels y webs. Nada de lo que te propongo es teoría; lo
+          he probado antes en mi propia operativa.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="compromisos-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">Cómo trabajo contigo</p>
+        <h2 id="compromisos-titulo" class="mt-3">A qué me comprometo</h2>
+        <p class="lead mt-4 max-w-[62ch]">
+          Sin letra pequeña. Esto es lo que puedes esperar de mí desde la primera
+          llamada.
+        </p>
+        <ul class="grid-2 mt-8">
+          {
+            compromisos.map((c) => (
+              <li class="card p-6">
+                <h3 class="card-title">{c.titulo}</h3>
+                <p class="card-text mt-3">{c.texto}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    {/*
+      Las cifras conservan el asterisco, pero ahora lleva a algún sitio: la
+      sección "Cómo se midió" de abajo. En el sitio anterior el asterisco no
+      era un enlace y no explicaba nada.
+      [COMPLETAR: un caso con periodo, método y fuente de cada cifra.]
+    */}
+    <section class="section" aria-labelledby="metricas-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">Lo que ya he medido</p>
+        <h2 id="metricas-titulo" class="mt-3">Números de mis propias implementaciones</h2>
+        <ul class="grid-3 mt-8">
+          {
+            metricas.map((m) => (
+              <li class="card p-6">
+                <p class="cifra">
+                  {m.cifra}
+                  <a href="#como-mido" class="asterisco" aria-label="Cómo se midió">
+                    *
+                  </a>
+                </p>
+                <p class="card-text mt-2">{m.texto}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="card p-6 mt-6" id="como-mido">
+          <h3 class="card-title">Cómo se midió</h3>
+          <p class="card-text mt-3">
+            Son métricas de implementaciones propias con negocios reales. Lo que mido
+            en cada una: rapidez de respuesta a los leads, horas liberadas a la
+            semana y asistencia a las citas agendadas. La medición se hace antes y
+            después de implementar, sobre las herramientas del propio negocio.
+          </p>
+          <p class="card-text mt-3">
+            No son datos de mercado ni promesas de resultado: tu caso depende de tu
+            sector, tu volumen y tu punto de partida.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="formacion-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">En qué me he formado</p>
+        <h2 id="formacion-titulo" class="mt-3">Formación</h2>
+        <ul class="grid-3 mt-8">
+          {
+            formacion.map((f) => (
+              <li class="card p-6">
+                <h3 class="card-title">{f.titulo}</h3>
+                <p class="card-text mt-2">{f.detalle}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="proyectos-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">Mis proyectos</p>
+        <h2 id="proyectos-titulo" class="mt-3">Lo que llevo además de esto</h2>
+        <ul class="grid-2 mt-8">
+          {
+            proyectos.map((p) => (
+              <li class="card p-6">
+                <h3 class="card-title">{p.nombre}</h3>
+                {p.descripcion && <p class="card-text mt-2">{p.descripcion}</p>}
+                <a class="card-link mt-3 inline-block" href={p.url} rel="noopener">
+                  Visitar <span aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="cta-titulo">
+      <div class="container-lf card cta-final">
+        <h2 id="cta-titulo">¿Hablamos de tu negocio?</h2>
+        <p class="lead mt-3 max-w-[52ch]">
+          Cuéntame cómo trabajas hoy y te digo qué automatizaría primero. Sin coste
+          y sin venta a presión.
+        </p>
+        <a class="cta mt-6 inline-flex items-center gap-2" href="/contacto">
+          Reservar diagnóstico <span aria-hidden="true">→</span>
+        </a>
+        <p class="nota mt-4">
+          ¿Prefieres escribir? <a href={`mailto:${SITIO.email}`}>{SITIO.email}</a>
+        </p>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .migas {
+    padding-block: 1rem;
+    font-size: var(--step--1);
+  }
+  .migas ol {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--color-muted);
+  }
+  .migas li + li::before {
+    content: "/";
+    margin-inline-end: 0.5rem;
+    color: var(--color-line);
+  }
+  .migas a {
+    color: var(--color-soft);
+  }
+
+  .lead {
+    color: var(--color-soft);
+    font-size: var(--step-1);
+  }
+  .texto {
+    color: var(--color-soft);
+    font-size: var(--step-1);
+  }
+  .nota {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+  .nota a {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .card-title {
+    font-size: var(--step-2);
+  }
+  .card-text {
+    color: var(--color-soft);
+  }
+  .card-link {
+    color: var(--color-electric-soft);
+    font-weight: 700;
+  }
+
+  .cifra {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    font-weight: 800;
+    color: var(--color-ink);
+    line-height: 1;
+  }
+  .asterisco {
+    color: var(--color-electric-soft);
+    font-size: var(--step-1);
+    vertical-align: super;
+    text-decoration: none;
+  }
+  .asterisco:hover {
+    text-decoration: underline;
+  }
+
+  .grid-2,
+  .grid-3 {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cta {
+    background: var(--grad-cta);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-cta);
+  }
+
+  .cta-final {
+    padding: var(--space-6) var(--space-4);
+    text-align: center;
+    display: grid;
+    justify-items: center;
+  }
+
+  @media (width >= 640px) {
+    .grid-2,
+    .grid-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (width >= 1024px) {
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
