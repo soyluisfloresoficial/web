@@ -177,6 +177,14 @@ const grafo = {
     </script>
   </head>
 
+  <body>
+    <Header />
+    <div id="contenido">
+      <slot />
+    </div>
+    <Footer />
+  </body>
+
   <script>
     // Aparición al entrar en vista. Una sola vez por elemento, y el observador
     // se desconecta al terminar. Si IntersectionObserver no existe, se marcan
@@ -220,12 +228,4 @@ const grafo = {
     // volver a enganchar el observador en cada navegación.
     document.addEventListener("astro:page-load", activarReveals);
   </script>
-
-  <body>
-    <Header />
-    <div id="contenido">
-      <slot />
-    </div>
-    <Footer />
-  </body>
 </html>
