@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import { SITIO } from "../data/servicios";
 import JsonLd from "../components/JsonLd.astro";
 import Header from "../components/Header.astro";
@@ -160,12 +161,65 @@ const grafo = {
 
     <JsonLd data={grafo} />
 
+    {/*
+      Transiciones entre páginas. Seguras aquí porque no hay nada de terceros
+      que se rompa al reemplazar el documento: Calendly es un enlace saliente,
+      no un widget incrustado; no hay banner de cookies; y Google Tag Manager
+      no tiene ID configurado, así que no carga.
+      Si algún día se incrusta un widget, hay que revisar esto.
+    */}
+    <ClientRouter />
+
     {/* Marca que hay JavaScript ANTES de pintar: sin esta clase, las reglas
         de aparición no se aplican y el contenido se ve igual. */}
     <script is:inline>
       document.documentElement.classList.add("js");
     </script>
   </head>
+
+  <script>
+    // Aparición al entrar en vista. Una sola vez por elemento, y el observador
+    // se desconecta al terminar. Si IntersectionObserver no existe, se marcan
+    // todos como visibles: nunca se queda nada oculto.
+    function activarReveals() {
+      const elementos = document.querySelectorAll<HTMLElement>(".reveal, .subrayado");
+      if (!elementos.length) return;
+
+      if (!("IntersectionObserver" in window)) {
+        elementos.forEach((el) => el.classList.add("is-visible"));
+        return;
+      }
+
+      // Escalonado: el índice dentro del grupo de hermanos, máximo 5.
+      const grupos = new Map<Element, number>();
+      elementos.forEach((el) => {
+        if (!el.classList.contains("reveal")) return;
+        const padre = el.parentElement;
+        if (!padre) return;
+        const n = grupos.get(padre) ?? 0;
+        if (n > 0 && n <= 5) el.dataset.i = String(n);
+        grupos.set(padre, n + 1);
+      });
+
+      const observador = new IntersectionObserver(
+        (entradas) => {
+          for (const entrada of entradas) {
+            if (!entrada.isIntersecting) continue;
+            entrada.target.classList.add("is-visible");
+            observador.unobserve(entrada.target);
+          }
+        },
+        { rootMargin: "0px 0px -10% 0px", threshold: 0.1 },
+      );
+
+      elementos.forEach((el) => observador.observe(el));
+    }
+
+    activarReveals();
+    // Las transiciones de vista reemplazan el documento, así que hay que
+    // volver a enganchar el observador en cada navegación.
+    document.addEventListener("astro:page-load", activarReveals);
+  </script>
 
   <body>
     <Header />

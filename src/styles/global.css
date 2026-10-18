@@ -272,21 +272,114 @@ a {
   }
 }
 
-/* Aparición al hacer scroll.
-   PARCHE P2: arranca en 0.55 y no en 0, para que al bajar deprisa no queden
-   zonas en blanco. La clase `js` la añade el layout antes de pintar, de modo
-   que sin JavaScript el contenido se ve igual. */
+/* ---------------------------------------------------------------------------
+   Sistema de movimiento
+
+   Un solo lenguaje en todo el sitio: lento, suave y con intención. Solo se
+   animan `transform` y `opacity`, nunca medidas que provoquen reflow.
+
+   El contenido SIEMPRE está en el HTML y es legible sin JavaScript: los
+   estados iniciales cuelgan de `.js`, una clase que el layout añade antes de
+   pintar. Si el script falla o el usuario no tiene JS, no se aplica nada y
+   todo se ve.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-entrada: 0.7s;
+  --dur-micro: 0.24s;
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  /* Aparición al entrar en vista. Arranca en 0.55 y no en 0: al bajar deprisa
+     nunca queda una zona en blanco esperando al observador. */
   .js .reveal {
     opacity: 0.55;
-    transform: translateY(8px);
+    transform: translateY(20px);
     transition:
-      opacity 0.35s,
-      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+      opacity var(--dur-entrada) var(--ease),
+      transform var(--dur-entrada) var(--ease);
   }
+
   .js .reveal.is-visible {
     opacity: 1;
     transform: none;
+  }
+
+  /* Escalonado entre hermanos. Seis como máximo: a partir de ahí la espera
+     se nota más que el efecto. */
+  .js .reveal[data-i="1"] { transition-delay: 70ms; }
+  .js .reveal[data-i="2"] { transition-delay: 140ms; }
+  .js .reveal[data-i="3"] { transition-delay: 210ms; }
+  .js .reveal[data-i="4"] { transition-delay: 280ms; }
+  .js .reveal[data-i="5"] { transition-delay: 350ms; }
+
+  /* Filete que se dibuja bajo los H2 al entrar en vista. */
+  .js .subrayado::after {
+    transform: scaleX(0);
+    transition: transform 0.8s var(--ease) 0.1s;
+  }
+  .js .subrayado.is-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Filete de los H2. Visible siempre; lo que se anima es su escala. */
+.subrayado {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.subrayado::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 2px;
+  background: var(--grad-cta);
+  transform-origin: left center;
+  border-radius: 2px;
+}
+
+/* Subrayado de enlaces de texto, dibujado de izquierda a derecha. */
+.enlace-animado {
+  position: relative;
+  text-decoration: none;
+}
+
+.enlace-animado::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--dur-micro) var(--ease);
+}
+
+.enlace-animado:hover::after,
+.enlace-animado:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* Tarjetas: elevación y borde de acento. Sin seguimiento del puntero, que
+   obliga a escuchar mousemove y no compensa su coste. En táctil no hay hover,
+   así que el estado normal ya es el correcto. */
+@media (hover: hover) and (pointer: fine) {
+  .card-interactiva {
+    transition:
+      transform var(--dur-micro) var(--ease),
+      border-color var(--dur-micro) var(--ease);
+  }
+
+  .card-interactiva:hover,
+  .card-interactiva:focus-within {
+    transform: translateY(-4px);
+    border-color: var(--svc, var(--color-electric));
   }
 }
 

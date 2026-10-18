@@ -91,7 +91,7 @@ const schema = [
     <section class="section" aria-labelledby="problema-titulo">
       <div class="container-lf">
         <p class="eyebrow">El problema</p>
-        <h2 id="problema-titulo" class="mt-3">Si llevas tú el negocio, esto te suena</h2>
+        <h2 id="problema-titulo" class="subrayado mt-3">Si llevas tú el negocio, esto te suena</h2>
         <p class="lead mt-4 max-w-[62ch]">
           No es falta de ganas: es que el día no da para todo. Estas son las tres
           fugas que más veo antes de automatizar nada.
@@ -100,7 +100,7 @@ const schema = [
         <ul class="grid-3 mt-8">
           {
             fugas.map((f) => (
-              <li class="card p-6">
+              <li class="card reveal p-6">
                 <h3 class="card-title">{f.titulo}</h3>
                 <p class="card-text mt-3">{f.texto}</p>
               </li>
@@ -164,7 +164,7 @@ const schema = [
     <section class="section" aria-labelledby="servicios-titulo">
       <div class="container-lf">
         <p class="eyebrow">Servicios</p>
-        <h2 id="servicios-titulo" class="mt-3 max-w-[20ch]">
+        <h2 id="servicios-titulo" class="subrayado mt-3 max-w-[20ch]">
           Todo lo que necesitas para automatizar tu negocio
         </h2>
 
@@ -175,7 +175,10 @@ const schema = [
             servicios.map((s) => {
               const img = imagenDe(s.imagen);
               return (
-                <li class="card overflow-hidden" style={`--svc: var(${s.color})`}>
+                <li
+                  class="card card-interactiva reveal overflow-hidden"
+                  style={`--svc: var(${s.color})`}
+                >
                   {img && (
                     <Image
                       src={img}
@@ -205,7 +208,7 @@ const schema = [
     <section class="section" aria-labelledby="estandares-titulo">
       <div class="container-lf">
         <p class="eyebrow">Estándares de trabajo</p>
-        <h2 id="estandares-titulo" class="mt-3 max-w-[24ch]">
+        <h2 id="estandares-titulo" class="subrayado mt-3 max-w-[24ch]">
           Lo que tiene cada proyecto, sea cual sea su tamaño
         </h2>
         <p class="lead mt-4 max-w-[62ch]">
@@ -216,7 +219,7 @@ const schema = [
         <ul class="grid-3 mt-8">
           {
             estandares.map((e) => (
-              <li class="card p-6">
+              <li class="card reveal p-6">
                 <h3 class="card-title">{e.titulo}</h3>
                 <p class="card-text mt-3">{e.texto}</p>
               </li>
@@ -230,7 +233,7 @@ const schema = [
     <section class="section" aria-labelledby="metodo-titulo">
       <div class="container-lf">
         <p class="eyebrow">Método</p>
-        <h2 id="metodo-titulo" class="mt-3">Cómo trabajo</h2>
+        <h2 id="metodo-titulo" class="subrayado mt-3">Cómo trabajo</h2>
         <p class="lead mt-4 max-w-[62ch]">
           Tres pasos, sin sorpresas. Siempre sabes qué estoy haciendo y por qué.
         </p>
@@ -240,7 +243,7 @@ const schema = [
             proceso.map((p) => {
               const img = imagenDe(p.imagen);
               return (
-                <li class="card overflow-hidden">
+                <li class="card reveal overflow-hidden">
                   {img && (
                     <Image
                       src={img}
@@ -283,7 +286,7 @@ const schema = [
         />
         <div>
           <p class="eyebrow">Sobre mí</p>
-          <h2 id="sobremi-titulo" class="mt-3">Implemento, no vendo humo</h2>
+          <h2 id="sobremi-titulo" class="subrayado mt-3">Implemento, no vendo humo</h2>
           <p class="lead mt-4">
             Soy Luis Carlos Flores, de Manresa. Llevo alrededor de tres años
             trabajando con IA. Empecé como freelance y pasé a dirigir una agencia
@@ -437,9 +440,10 @@ const schema = [
 
   @media (prefers-reduced-motion: no-preference) {
     .marquee-track {
-      animation: desplazar 38s linear infinite;
+      animation: desplazar 40s linear infinite;
     }
-    .marquee:hover .marquee-track {
+    .marquee:hover .marquee-track,
+    .marquee:focus-within .marquee-track {
       animation-play-state: paused;
     }
   }
