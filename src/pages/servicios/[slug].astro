@@ -1,0 +1,336 @@
+---
+import { Image } from "astro:assets";
+import Base from "../../layouts/Base.astro";
+import { servicios, SITIO } from "../../data/servicios";
+import { detalles, metas } from "../../data/servicios-detalle";
+import { proceso } from "../../data/home";
+
+export function getStaticPaths() {
+  return servicios.map((s) => ({ params: { slug: s.slug }, props: { servicio: s } }));
+}
+
+const { servicio } = Astro.props;
+const d = detalles[servicio.slug];
+const meta = metas[servicio.slug];
+
+const imagenes = import.meta.glob<{ default: ImageMetadata }>(
+  "../../assets/*.{jpg,webp}",
+  { eager: true },
+);
+function imagenDe(nombre: string) {
+  const clave = Object.keys(imagenes).find((k) => k.includes(`/${nombre}.`));
+  return clave ? imagenes[clave].default : undefined;
+}
+
+const img = imagenDe(servicio.imagen);
+const url = `${SITIO.url}/servicios/${servicio.slug}`;
+
+// Los otros cinco servicios, para el enlazado cruzado del final.
+const otros = servicios.filter((s) => s.slug !== servicio.slug);
+
+const schema = [
+  {
+    "@type": "Service",
+    "@id": `${url}#service`,
+    name: servicio.nombre,
+    description: servicio.definicion,
+    url,
+    provider: { "@id": `${SITIO.url}/#organization` },
+    areaServed: ["España", "Latinoamérica"],
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Servicios", item: `${SITIO.url}/servicios` },
+      { "@type": "ListItem", position: 3, name: servicio.nombre, item: url },
+    ],
+  },
+  {
+    // FAQPage con exactamente las preguntas visibles en la página.
+    // Google ya no da rich result para esto en sitios como este; se mantiene
+    // porque los buscadores de IA sí lo leen.
+    "@type": "FAQPage",
+    "@id": `${url}#faq`,
+    mainEntity: d.faq.map((p) => ({
+      "@type": "Question",
+      name: p.pregunta,
+      acceptedAnswer: { "@type": "Answer", text: p.respuesta },
+    })),
+  },
+];
+---
+
+<Base title={meta.title} description={meta.description} schema={schema}>
+  <main style={`--svc: var(${servicio.color})`}>
+    {/* ----------------------------------------------------------- Migas */}
+    <nav class="migas container-lf" aria-label="Migas de pan">
+      <ol>
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/servicios">Servicios</a></li>
+        <li aria-current="page">{servicio.nombre}</li>
+      </ol>
+    </nav>
+
+    {/* ------------------------------------------------------------ Hero */}
+    <section class="section pt-0">
+      <div class="container-lf grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-center">
+        <div>
+          <p class="definicion">{servicio.definicion}</p>
+          <h1 class="mt-4">{d.h1}</h1>
+          <p class="lead mt-5 max-w-[52ch]">{d.intro}</p>
+          <a class="cta mt-8 inline-flex items-center gap-2" href="/contacto">
+            Reservar diagnóstico <span aria-hidden="true">→</span>
+          </a>
+          <p class="nota mt-4">
+            Primero probado en mi negocio · documentación incluida
+          </p>
+        </div>
+
+        {
+          img && (
+            <Image
+              src={img}
+              alt={servicio.imagenAlt}
+              widths={[420, 640, 860]}
+              sizes="(min-width: 1024px) 38vw, 100vw"
+              loading="eager"
+              fetchpriority="high"
+              class="rounded-2xl"
+            />
+          )
+        }
+      </div>
+    </section>
+
+    {/* -------------------------------------------------------- Resultado */}
+    <section class="section" aria-labelledby="resultado-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">Qué consigues</p>
+        <h2 id="resultado-titulo" class="mt-3">El resultado para tu negocio</h2>
+        <ul class="grid-3 mt-8">
+          {d.resultado.map((r) => <li class="card p-6"><p>{r}</p></li>)}
+        </ul>
+      </div>
+    </section>
+
+    {/* ------------------------------------------- Para quién / Qué incluye */}
+    <section class="section">
+      <div class="container-lf grid gap-10 lg:grid-cols-2">
+        <div>
+          <h2 class="h-pequeno" id="para-quien">Para quién es</h2>
+          <ul class="lista-marcas mt-4" aria-labelledby="para-quien">
+            {d.paraQuien.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h2 class="h-pequeno" id="que-incluye">Qué incluye</h2>
+          <ul class="lista-marcas mt-4" aria-labelledby="que-incluye">
+            {d.queIncluye.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {/* ----------------------------------------------------- Cómo funciona */}
+    <section class="section" aria-labelledby="como-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">Método</p>
+        <h2 id="como-titulo" class="mt-3">Cómo funciona</h2>
+        <ol class="grid-3 mt-8">
+          {
+            proceso.map((p) => (
+              <li class="card p-6">
+                <p class="paso-numero">{p.numero}</p>
+                <h3 class="card-title mt-1">{p.titulo}</h3>
+                <p class="card-text mt-3">{p.texto}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    {/* ------------------------------------------------------------- FAQ */}
+    <section class="section" aria-labelledby="faq-titulo">
+      <div class="container-lf">
+        <h2 id="faq-titulo">Preguntas frecuentes: {servicio.nombre}</h2>
+        {
+          d.faq.map((p) => (
+            <details class="card faq-item mt-3">
+              <summary>{p.pregunta}</summary>
+              <p class="card-text">{p.respuesta}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    {/* ------------------------------------------------------- CTA + otros */}
+    <section class="section" aria-labelledby="cta-titulo">
+      <div class="container-lf card cta-final">
+        <h2 id="cta-titulo">¿Encaja este servicio en tu negocio?</h2>
+        <p class="lead mt-3 max-w-[52ch]">
+          Te digo en 30 minutos si encaja y por dónde empezar. Sin compromiso.
+        </p>
+        <a class="cta mt-6 inline-flex items-center gap-2" href="/contacto">
+          Reservar diagnóstico <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="otros-titulo">
+      <div class="container-lf">
+        <h2 id="otros-titulo" class="h-pequeno">Otros servicios</h2>
+        <ul class="grid-3 mt-6">
+          {
+            otros.map((s) => (
+              <li class="card p-5" style={`--svc: var(${s.color})`}>
+                <h3 class="card-title">{s.nombre}</h3>
+                <p class="card-text mt-2">{s.resumen}</p>
+                <a class="card-link mt-3 inline-block" href={`/servicios/${s.slug}`}>
+                  Ver servicio <span aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .migas {
+    padding-block: 1rem;
+    font-size: var(--step--1);
+  }
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--color-muted);
+  }
+  .migas li + li::before {
+    content: "/";
+    margin-inline-end: 0.5rem;
+    color: var(--color-line);
+  }
+  .migas a {
+    color: var(--color-soft);
+  }
+
+  .definicion {
+    color: var(--svc, var(--color-electric-soft));
+    font-size: var(--step-1);
+    font-weight: 500;
+    max-width: 56ch;
+  }
+
+  .lead {
+    color: var(--color-soft);
+    font-size: var(--step-1);
+  }
+
+  .nota {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+
+  .cta {
+    background: var(--grad-cta);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-cta);
+  }
+
+  .h-pequeno {
+    font-size: var(--step-3);
+  }
+  .card-title {
+    font-size: var(--step-2);
+  }
+  .card-text {
+    color: var(--color-soft);
+  }
+  .card-link {
+    color: var(--svc, var(--color-electric-soft));
+    font-weight: 700;
+  }
+
+  .grid-3 {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .lista-marcas {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: var(--color-soft);
+  }
+  .lista-marcas li {
+    padding-inline-start: 1.5rem;
+    position: relative;
+  }
+  .lista-marcas li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.55em;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--svc, var(--color-electric));
+  }
+
+  .paso-numero {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 800;
+    color: var(--svc, var(--color-electric-soft));
+  }
+
+  .faq-item {
+    padding: 1rem 1.25rem;
+  }
+  .faq-item summary {
+    font-family: var(--font-display);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: var(--step-1);
+  }
+  .faq-item[open] summary {
+    margin-bottom: 0.75rem;
+  }
+
+  .cta-final {
+    padding: var(--space-6) var(--space-4);
+    text-align: center;
+    display: grid;
+    justify-items: center;
+  }
+
+  @media (width >= 640px) {
+    .grid-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (width >= 1024px) {
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
