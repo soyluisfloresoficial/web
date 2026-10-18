@@ -1,12 +1,17 @@
-@import "tailwindcss";
-
 /* ---------------------------------------------------------------------------
    Sistema de diseño de soyluisflores.es
    Tokens extraídos del CSS de producción (18/10/2026). No cambiar los valores
    sin motivo: definen la identidad visual del sitio.
+
+   Sin Tailwind a propósito: @tailwindcss/vite 4.3.3 es incompatible con el
+   Vite basado en rolldown que traen Astro 6 y 7. En Astro 6 el build falla con
+   "Missing field tsconfigPaths"; en Astro 7 falla en silencio y el CSS se
+   compila pero no se enlaza nunca desde el HTML, de modo que la web se
+   publicaba sin estilos. Las utilidades que se usaban estan mas abajo,
+   escritas a mano.
    --------------------------------------------------------------------------- */
 
-@theme {
+:root {
   /* Tipografía */
   --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Manrope", "Manrope Fallback", ui-sans-serif, system-ui, sans-serif;
@@ -165,6 +170,55 @@
    Base
    --------------------------------------------------------------------------- */
 
+/* Reinicio mínimo. Antes lo aportaba el preflight de Tailwind. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd,
+ol,
+ul {
+  margin: 0;
+}
+
+ul[class],
+ol[class] {
+  list-style: none;
+  padding: 0;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 1rem);
@@ -281,4 +335,74 @@ a {
 .lead {
   color: var(--color-soft);
   font-size: var(--step-1);
+}
+
+/* ---------------------------------------------------------------------------
+   Capa de utilidades
+   Exactamente las que usa el marcado, escritas a mano al retirar Tailwind.
+   Si se añade una clase nueva en una plantilla, hay que definirla aquí.
+   --------------------------------------------------------------------------- */
+
+/* Margen superior, escala de 0,25rem */
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-5 { margin-top: 1.25rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+.mt-10 { margin-top: 2.5rem; }
+.mt-12 { margin-top: 3rem; }
+
+/* Relleno */
+.p-5 { padding: 1.25rem; }
+.p-6 { padding: 1.5rem; }
+.pt-0 { padding-top: 0; }
+
+/* Disposición */
+.grid { display: grid; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.inline-flex { display: inline-flex; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+
+.gap-2 { gap: 0.5rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-8 { gap: 2rem; }
+.gap-10 { gap: 2.5rem; }
+
+/* Medidas */
+.w-full { width: 100%; }
+.overflow-hidden { overflow: hidden; }
+.object-cover { object-fit: cover; }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+
+.aspect-\[16\/9\] { aspect-ratio: 16 / 9; }
+.aspect-\[3\/2\] { aspect-ratio: 3 / 2; }
+
+/* Ancho máximo de lectura, en caracteres */
+.max-w-\[20ch\] { max-width: 20ch; }
+.max-w-\[22ch\] { max-width: 22ch; }
+.max-w-\[24ch\] { max-width: 24ch; }
+.max-w-\[48ch\] { max-width: 48ch; }
+.max-w-\[52ch\] { max-width: 52ch; }
+.max-w-\[56ch\] { max-width: 56ch; }
+.max-w-\[62ch\] { max-width: 62ch; }
+.max-w-\[72ch\] { max-width: 72ch; }
+
+/* Rejillas por punto de ruptura */
+@media (width >= 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (width >= 1024px) {
+  .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lg\:grid-cols-\[1\.1fr_1fr\] { grid-template-columns: 1.1fr 1fr; }
+  .lg\:grid-cols-\[1\.15fr_1fr\] { grid-template-columns: 1.15fr 1fr; }
+  .lg\:grid-cols-\[1fr_1\.15fr\] { grid-template-columns: 1fr 1.15fr; }
+  .lg\:grid-cols-\[1fr_1\.2fr\] { grid-template-columns: 1fr 1.2fr; }
+  .lg\:items-center { align-items: center; }
+  .lg\:items-start { align-items: start; }
+  .lg\:hidden { display: none; }
 }

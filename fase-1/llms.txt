@@ -1,0 +1,58 @@
+# Luis Carlos Flores
+
+> Luis Carlos Flores (marca: Luis Flores) implementa IA aplicada a negocios reales para pymes y emprendedores de España y Latinoamérica: agentes de IA de voz y chat, automatización de procesos, funnels de conversión, webs con IA, tráfico de pago y consultoría de IA. Con base en Manresa (Cataluña, España).
+
+- Enfoque: diagnóstico, implementación con documentación incluida, y medición y mejora continua.
+- Herramientas habituales: Make, n8n, Zapier, GoHighLevel, ManyChat, ActiveCampaign, Airtable, Stripe.
+- Primera llamada: 30 minutos, gratuita.
+- Contacto: hola@soyluisflores.es
+- Lema: "Menos tareas repetitivas. Más tiempo para ti."
+
+## Páginas principales
+
+- [Inicio](https://soyluisflores.es/): presentación, servicios, método y preguntas frecuentes.
+- [Servicios](https://soyluisflores.es/servicios): índice de los seis servicios.
+- [Sobre mí](https://soyluisflores.es/sobre-mi): biografía, valores y formación de Luis Carlos Flores.
+- [Calculadora ROI](https://soyluisflores.es/roi): estimación orientativa (basada en hipótesis) de horas ahorradas, ingresos adicionales y recuperación de la inversión. No muestra precios.
+- [Blog](https://soyluisflores.es/blog): guías prácticas sobre IA aplicada, automatización y funnels.
+- [Contacto](https://soyluisflores.es/contacto): llamada gratuita, email y redes sociales.
+
+## Datos clave
+
+- Precios: no se publican en la web. La propuesta se hace por escrito tras una llamada, según el caso.
+- Interacción con IA: se avisa en la web dónde se habla con un asistente de IA.
+
+## Servicios
+
+- [Agentes de IA](https://soyluisflores.es/servicios/agentes-ia): Un agente de IA es un sistema que atiende a tus clientes por voz o chat y gestiona citas de forma automática.
+- [Funnels de conversión](https://soyluisflores.es/servicios/funnels-conversion): Un funnel de conversión es el recorrido ordenado que lleva a un desconocido a convertirse en cliente, con cada paso medido.
+- [Automatización de procesos](https://soyluisflores.es/servicios/automatizacion): La automatización de procesos consiste en que tus herramientas se pasen datos y ejecuten tareas repetitivas sin intervención manual.
+- [Webs con IA](https://soyluisflores.es/servicios/webs-ia): Una web con IA es un sitio rápido y orientado a un objetivo que puede incluir un asistente que responde y capta contactos.
+- [Tráfico de pago](https://soyluisflores.es/servicios/trafico-de-pago): El tráfico de pago es la publicidad en plataformas como Meta y Google para llevar a tu oferta a personas con interés real.
+- [Consultoría IA](https://soyluisflores.es/servicios/consultoria-ia): La consultoría de IA es un diagnóstico de tu negocio que termina en una hoja de ruta priorizada para adoptar inteligencia artificial.
+
+## Proyectos propios
+
+- [Smilbot](https://smilbot.com): recepcionista de IA para clínicas dentales, disponible 24/7.
+- [Nova Funnels](https://novafunnels.es)
+
+## Blog
+
+- [Agentes de IA que no inventan información: cómo se consigue](https://soyluisflores.es/blog/agentes-ia-sin-inventar): cómo se configura un agente para que responda solo con información validada.
+- [Qué automatizar primero en tu negocio: un criterio sencillo](https://soyluisflores.es/blog/que-automatizar-primero): criterio práctico basado en frecuencia, reglas claras e impacto en el cliente.
+- [Cómo conectar tus herramientas sin que se rompa nada](https://soyluisflores.es/blog/conectar-herramientas-sin-romper): integraciones con control de errores y duplicados.
+- [Funnels de conversión: captar y nutrir sin parecer spam](https://soyluisflores.es/blog/funnels-sin-spam): captación y seguimiento aportando valor en cada mensaje.
+- [Qué medir en tu negocio para decidir con datos, no a ojo](https://soyluisflores.es/blog/que-medir-en-cada-etapa): las pocas métricas que importan en cada etapa.
+- [Empezar con IA en tu negocio sin perder tiempo ni dinero](https://soyluisflores.es/blog/empezar-con-ia-sin-perder-tiempo): por dónde empezar para obtener impacto sin gastar de más.
+
+## Perfiles
+
+- [Instagram](https://www.instagram.com/soyluisflores_/)
+- [LinkedIn](https://www.linkedin.com/in/soyluisflores/)
+- [TikTok](https://www.tiktok.com/@soyluisfloresoficial)
+
+## Legal
+
+- [Aviso legal](https://soyluisflores.es/aviso-legal)
+- [Política de privacidad](https://soyluisflores.es/politica-de-privacidad)
+- [Política de cookies](https://soyluisflores.es/politica-de-cookies)

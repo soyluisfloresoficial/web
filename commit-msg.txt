@@ -1,0 +1,28 @@
+Arregla que la web se publicaba sin estilos, y quita Tailwind
+
+El build generaba el CSS en dist/_astro pero el HTML no lo enlazaba: las 22
+paginas salian sin un solo <link rel="stylesheet"> ni <style>. En desarrollo
+se veia bien, asi que no daba la cara. El build no emitia ningun error.
+
+Causa real: la carpeta donde se construia estaba redirigida por MSIX. Vite
+veia dos rutas absolutas distintas para el mismo fichero (AppData\Roaming\...
+y AppData\Local\Packages\<app>\LocalCache\Roaming\...), se rompia la identidad
+de modulos y el CSS quedaba compilado pero huerfano. Construyendo desde una
+ruta normal, las 22 paginas enlazan su CSS.
+
+Antes de dar con esto descarte dos hipotesis equivocadas, y lo dejo escrito
+para que nadie las repita: no era inlineStylesheets, y no era la version de
+Astro (6.4.8 y 7.4.0 fallan igual dentro de la ruta redirigida).
+
+Se retira Tailwind. En el camino aparecio que @tailwindcss/vite 4.3.3 revienta
+con el Vite de rolldown de Astro 6 ("Missing field tsconfigPaths"), y el
+proyecto solo usaba 45 utilidades. Ahora estan escritas a mano en global.css,
+junto con un reinicio minimo que antes aportaba el preflight. El marcado no
+cambia. Menos dependencias y una fuente de fragilidad menos.
+
+README con la advertencia de la ruta, porque es un fallo silencioso y caro de
+diagnosticar.
+
+Verificado: 0 de 22 paginas sin CSS.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>

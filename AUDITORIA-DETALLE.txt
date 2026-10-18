@@ -1,0 +1,61 @@
+﻿===== A. Imagenes OG distintas =====
+  https://soyluisflores.es/og-default.png  -> usada en 21 paginas
+  TOTAL distintas: 1
+
+===== B. Metricas en texto visible (sin CSS ni JS) =====
+  home: 73\s*% x3 | 40\s*% x2 | 12\s*h(oras)? x2
+  servicios: 73\s*% x1 | 40\s*% x1 | 12\s*h(oras)? x1
+  sobre-mi: 73\s*% x2 | 40\s*% x2 | 12\s*h(oras)? x2
+
+===== C. Contexto de las cifras en la home =====
+  [73%] ...tización y agentes de IA Reservar diagnóstico Llamada de 30 min gratuita y sin compromiso 73% de leads respondidos al instante · 12&nbsp;h/semana liberadas · 40% menos no-shows — medido en implementac...
+  [73%] ...te · 12&nbsp;h/semana liberadas · 40% menos no-shows — medido en implementaciones propias 73% * Leads respondidos al instante Respuesta a leads 24/7 Agentes de IA que trabajan por ti *Métricas validad...
+  [73%] ...o en cada implementación: rapidez de respuesta, horas liberadas y asistencia a las citas. 73% * de los leads respondidos al instante 12 h * por semana liberadas 40% * menos no-shows en negocios con ci...
+  [40%] ...uita y sin compromiso 73% de leads respondidos al instante · 12&nbsp;h/semana liberadas · 40% menos no-shows — medido en implementaciones propias 73% * Leads respondidos al instante Respuesta a leads...
+  [40%] ...encia a las citas. 73% * de los leads respondidos al instante 12 h * por semana liberadas 40% * menos no-shows en negocios con citas *Métricas validadas en implementaciones propias con negocios reales...
+  [12 h] ...diagnóstico IA aplicada · España y LATAM Automatiza tu negocio con IA y deja de trabajar 12 horas al día. IA · automatización · funnels Implemento agentes de IA, automatizaciones y funnels de convers...
+  [12 h] ...sta, horas liberadas y asistencia a las citas. 73% * de los leads respondidos al instante 12 h * por semana liberadas 40% * menos no-shows en negocios con citas *Métricas validadas en implementaciones...
+
+===== D. Imagenes sin atributo alt =====
+  blog (7):
+     /_astro/consultoria-ia.B8TozMtE_JU2oT.webp
+     /_astro/trafico-de-pago.BQ8o04K4_Zz2UNi.webp
+     /_astro/automatizacion.C3uT4XB7_Z20nvwh.webp
+     /_astro/funnels-conversion.BLDhGSSN_oVqET.webp
+     /_astro/agentes-ia.pcODhEFz_14OpDb.webp
+     /_astro/blog-que-automatizar-primero.BI9Hhhcz_ZNUEu8.webp
+     /_astro/fondo-red.CH5vRhe1_c89w0.webp
+  contacto (1):
+     /_astro/fondo-red.CH5vRhe1_c89w0.webp
+  home (7):
+     /_astro/webs-ia.biXSsFDg_1JMKnQ.webp
+     /_astro/agentes-ia.pcODhEFz_14OpDb.webp
+     /_astro/proceso-diagnostico.DZVrVO_y_2aI4yH.jpg
+     /_astro/proceso-implementacion.Dq40-_JT_Z1PeFd.jpg
+     /_astro/proceso-medicion.CnpQxJRX_Z1Ja2sE.jpg
+     /_astro/escritorio-trabajo.BMHQkn_T_2qnY9N.jpg
+     /_astro/fondo-red.CH5vRhe1_c89w0.webp
+  roi (1):
+     /_astro/fondo-red.CH5vRhe1_c89w0.webp
+  servicios (5):
+     /_astro/agentes-ia.pcODhEFz_14OpDb.webp
+     /_astro/webs-ia.biXSsFDg_1JMKnQ.webp
+     /_astro/trafico-de-pago.BQ8o04K4_Zz2UNi.webp
+     /_astro/consultoria-ia.B8TozMtE_JU2oT.webp
+     /_astro/fondo-red.CH5vRhe1_c89w0.webp
+  sobre-mi (1):
+     /_astro/fondo-red.CH5vRhe1_c89w0.webp
+
+===== E. H1 de la home: espaciado entre spans =====
+  MARCADO: <h1 id="hero-title" class="hero-title mt-4" data-astro-cid-i3irphx7><span class="hero-line-1 block" data-astro-cid-i3irphx7>Automatiza tu negocio con IA</span><span class="hero-line-grad block" data-astro-cid-i3irphx7><span class="gradient-text shimmer" data-astro-cid-i3irphx7>y deja de trabajar</span></span><span class="hero-line-grad block" data-astro-cid-i3irphx7><span class="gradient-text shimmer" data-astro-cid-i3irphx7>12 horas al día.</span></span></h1>
+  TEXTO EXTRAIDO: Automatiza tu negocio con IA y deja de trabajar 12 horas al día.
+
+===== F. Marquee: aria-hidden en la copia duplicada =====
+  home: 1 elementos con 'marquee' en el tag
+     <div class="tools-marquee" data-astro-cid-kf4xd2di>
+  servicios: 0 elementos con 'marquee' en el tag
+  blog: 0 elementos con 'marquee' en el tag
+
+===== G. GTM =====
+  IDs GTM encontrados: 0
+  Test contra cadena vacia presente: True

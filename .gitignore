@@ -1,6 +1,10 @@
 node_modules/
 dist/
 .astro/
+# Copia del sitio en produccion usada para la reconstruccion. Es regenerable
+# con tools/, pesa 2 MB y no aporta nada al repositorio.
+mirror/
+lh-base/
 .env
 .env.production
 .DS_Store
