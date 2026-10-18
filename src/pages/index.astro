@@ -102,9 +102,9 @@ const description =
                     />
                   )}
                   <div class="p-5">
-                    <h3 class="text-[color:var(--step-2)]">{s.nombre}</h3>
-                    <p class="mt-2 text-[var(--color-soft)]">{s.resumen}</p>
-                    <a class="mt-4 inline-block" href={`/servicios/${s.slug}`}>
+                    <h3 class="card-title">{s.nombre}</h3>
+                    <p class="card-text mt-2">{s.resumen}</p>
+                    <a class="card-link mt-4 inline-block" href={`/servicios/${s.slug}`}>
                       Más información <span aria-hidden="true">→</span>
                     </a>
                   </div>
@@ -138,6 +138,20 @@ const description =
     padding: 0.875rem 1.5rem;
     font-weight: 700;
     box-shadow: var(--shadow-cta);
+  }
+
+  .card-title {
+    font-size: var(--step-2);
+  }
+
+  .card-text {
+    color: var(--color-soft);
+  }
+
+  /* El color propio del servicio, que la tarjeta recibe en --svc. */
+  .card-link {
+    color: var(--svc, var(--color-electric-soft));
+    font-weight: 700;
   }
 
   .services-grid {
