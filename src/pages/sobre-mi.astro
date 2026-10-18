@@ -83,7 +83,7 @@ const schema = [
           sizes="(min-width: 1024px) 34vw, 80vw"
           loading="eager"
           fetchpriority="high"
-          class="rounded-2xl"
+          class="foto-retrato rounded-2xl"
         />
         <div>
           <p class="eyebrow">Sobre mí</p>
@@ -264,6 +264,17 @@ const schema = [
   }
   .migas a {
     color: var(--color-soft);
+  }
+
+  /* El retrato original es 2:3. Aquí es la imagen principal, así que se le
+     da más presencia que en la home, pero con encuadre fijo para que no
+     estire la columna. */
+  .foto-retrato {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center 18%;
+    max-height: 32rem;
   }
 
   .lead {

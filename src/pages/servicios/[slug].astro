@@ -97,7 +97,7 @@ const schema = [
               sizes="(min-width: 1024px) 38vw, 100vw"
               loading="eager"
               fetchpriority="high"
-              class="rounded-2xl"
+              class="foto-servicio rounded-2xl"
             />
           )
         }
@@ -222,6 +222,16 @@ const schema = [
   }
   .migas a {
     color: var(--color-soft);
+  }
+
+  /* Las seis imágenes de servicio vienen con proporciones distintas (3:2,
+     16:9, 1.57:1). Se recortan todas a 4:3 para que las seis páginas tengan
+     el mismo encuadre y no se vean desniveladas entre sí. */
+  .foto-servicio {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    max-height: 26rem;
   }
 
   .definicion {

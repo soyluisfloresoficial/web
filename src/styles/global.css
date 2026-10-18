@@ -204,6 +204,16 @@ svg,
 video {
   display: block;
   max-width: 100%;
+  /* `height: auto` es imprescindible, no cosmético.
+
+     Astro escribe los atributos width y height en cada <img> para reservar
+     espacio y evitar saltos de maquetación. Si el CSS fija el ancho (por
+     ejemplo width:100%) y NO libera la altura, el navegador usa la del
+     atributo y la imagen se estira: una tarjeta con aspect-ratio 16/9
+     acababa midiendo 312x683 y el retrato, 1537 px de alto.
+
+     Lo aportaba el preflight de Tailwind; al retirarlo hay que ponerlo aquí. */
+  height: auto;
 }
 
 input,

@@ -82,7 +82,7 @@ const schema = [
           sizes="(min-width: 1024px) 35vw, (min-width: 768px) 62vw, 100vw"
           loading="eager"
           fetchpriority="high"
-          class="rounded-2xl"
+          class="foto-hero rounded-2xl"
         />
       </div>
     </section>
@@ -251,7 +251,7 @@ const schema = [
                       widths={[320, 640]}
                       sizes="(min-width: 1024px) 30vw, 100vw"
                       loading="lazy"
-                      class="aspect-[3/2] w-full object-cover"
+                      class="aspect-[16/9] w-full object-cover"
                     />
                   )}
                   <div class="p-6">
@@ -282,7 +282,7 @@ const schema = [
           widths={[320, 640]}
           sizes="(min-width: 1024px) 30vw, 70vw"
           loading="lazy"
-          class="rounded-2xl"
+          class="foto-retrato rounded-2xl"
         />
         <div>
           <p class="eyebrow">Sobre mí</p>
@@ -396,6 +396,34 @@ const schema = [
     font-size: var(--step--1);
   }
 
+  /* La foto original es vertical (3:4). Sin encuadre dominaba el hero y
+     empujaba el texto hacia arriba. Se recorta a 4:5 y se limita la altura
+     para que nunca sea más alta que la columna de texto. */
+  .foto-hero {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center 22%;
+    max-height: 32rem;
+  }
+
+  @media (width >= 1024px) {
+    .foto-hero {
+      max-height: 34rem;
+    }
+  }
+
+  /* El retrato es 2:3, aún más vertical. Mismo criterio.
+     Sin max-height: si se limita la altura, el ancho sigue mandando y la
+     proporción real deja de ser la declarada (se quedaba en 1.04 en vez de
+     0.8). La proporción sola ya controla el tamaño. */
+  .foto-retrato {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center 18%;
+  }
+
   .cta {
     background: var(--grad-cta);
     color: #fff;
@@ -431,6 +459,9 @@ const schema = [
     list-style: none;
     padding: 0;
     margin: 0;
+    /* Todas las filas con la misma altura: si no, una tarjeta con el texto
+       más largo levanta su fila y el conjunto se ve desnivelado. */
+    grid-auto-rows: 1fr;
   }
 
   .publico-titulo {
