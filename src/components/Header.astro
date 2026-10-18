@@ -1,0 +1,247 @@
+---
+const enlaces = [
+  { href: "/", texto: "Inicio" },
+  { href: "/servicios", texto: "Servicios" },
+  { href: "/sobre-mi", texto: "Sobre mí" },
+  { href: "/blog", texto: "Blog" },
+  { href: "/contacto", texto: "Contacto" },
+];
+
+// trailingSlash: "never", así que la ruta actual nunca lleva barra final.
+const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
+---
+
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera" id="top">
+  <div class="container-lf cabecera-inner">
+    <a class="marca" href="/" aria-label="Luis Flores, inicio">
+      <img
+        src="/logo/monograma-80.webp"
+        alt=""
+        width="40"
+        height="40"
+        class="marca-mono"
+      />
+      <img
+        src="/logo/nombre-360.webp"
+        alt="Luis Flores"
+        width="180"
+        height="24"
+        class="marca-nombre"
+      />
+    </a>
+
+    <nav class="nav-escritorio" aria-label="Principal">
+      <ul>
+        {
+          enlaces.map((e) => (
+            <li>
+              <a href={e.href} aria-current={actual === e.href ? "page" : undefined}>
+                {e.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="cta-cabecera" href="/contacto">Reservar diagnóstico</a>
+
+    <button
+      class="menu-boton"
+      type="button"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      aria-controls="menu-movil"
+      data-menu-boton
+    >
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <nav class="menu-movil" id="menu-movil" aria-label="Principal" hidden data-menu>
+    <ul class="container-lf">
+      {
+        enlaces.map((e) => (
+          <li>
+            <a href={e.href} aria-current={actual === e.href ? "page" : undefined}>
+              {e.texto}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a class="cta-cabecera cta-movil" href="/contacto">
+          Reservar diagnóstico
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const boton = document.querySelector<HTMLButtonElement>("[data-menu-boton]");
+  const menu = document.querySelector<HTMLElement>("[data-menu]");
+
+  if (boton && menu) {
+    const alternar = (abrir: boolean) => {
+      boton.setAttribute("aria-expanded", String(abrir));
+      boton.setAttribute("aria-label", abrir ? "Cerrar menú" : "Abrir menú");
+      menu.hidden = !abrir;
+    };
+
+    boton.addEventListener("click", () => {
+      alternar(boton.getAttribute("aria-expanded") !== "true");
+    });
+
+    // Escape cierra y devuelve el foco al botón, como espera un lector de pantalla.
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && boton.getAttribute("aria-expanded") === "true") {
+        alternar(false);
+        boton.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    padding: 0.75rem 1rem;
+    border-radius: 0 0 8px 0;
+  }
+  .skip:focus {
+    left: 0;
+  }
+
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #07112aeb;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .cabecera-inner {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-shrink: 0;
+  }
+  .marca-mono {
+    width: 2rem;
+    height: 2rem;
+  }
+  .marca-nombre {
+    height: 1.25rem;
+    width: auto;
+  }
+
+  .nav-escritorio {
+    margin-inline-start: auto;
+    display: none;
+  }
+  .nav-escritorio ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-escritorio a {
+    font-size: var(--step-0);
+    color: var(--color-soft);
+    transition: color var(--dur-base) ease;
+  }
+  .nav-escritorio a:hover,
+  .nav-escritorio a[aria-current="page"] {
+    color: var(--color-ink);
+  }
+
+  .cta-cabecera {
+    background: var(--grad-cta);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.625rem 1.125rem;
+    font-size: var(--step-0);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: var(--shadow-cta);
+    display: none;
+  }
+
+  .menu-boton {
+    margin-inline-start: auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    display: grid;
+    place-content: center;
+    gap: 5px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .menu-boton span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--color-ink);
+  }
+
+  .menu-movil {
+    border-top: 1px solid var(--color-line);
+    background: var(--color-navy-2);
+    padding-block: 1rem;
+  }
+  .menu-movil ul {
+    list-style: none;
+    margin: 0;
+    padding-inline: var(--gutter);
+    display: grid;
+    gap: 0.25rem;
+  }
+  .menu-movil a {
+    display: block;
+    padding: 0.75rem 0;
+    font-size: var(--step-1);
+    color: var(--color-soft);
+  }
+  .menu-movil a[aria-current="page"] {
+    color: var(--color-ink);
+  }
+  .cta-movil {
+    display: inline-block;
+    margin-top: 0.75rem;
+    text-align: center;
+  }
+
+  @media (width >= 1024px) {
+    .nav-escritorio,
+    .cta-cabecera {
+      display: block;
+    }
+    .nav-escritorio {
+      margin-inline-start: auto;
+    }
+    .menu-boton,
+    .menu-movil {
+      display: none;
+    }
+  }
+</style>

@@ -1,6 +1,8 @@
 ---
 import { SITIO } from "../data/servicios";
 import JsonLd from "../components/JsonLd.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -166,6 +168,10 @@ const grafo = {
   </head>
 
   <body>
-    <slot />
+    <Header />
+    <div id="contenido">
+      <slot />
+    </div>
+    <Footer />
   </body>
 </html>
