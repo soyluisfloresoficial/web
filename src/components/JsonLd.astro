@@ -1,0 +1,14 @@
+---
+/**
+ * Inserta datos estructurados. Escapa "<" para que un valor del frontmatter no
+ * pueda cerrar la etiqueta <script> e inyectar marcado.
+ */
+interface Props {
+  data: unknown;
+}
+
+const { data } = Astro.props;
+const json = JSON.stringify(data).replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" set:html={json} is:inline />

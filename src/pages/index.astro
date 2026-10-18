@@ -1,0 +1,162 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import { servicios, SITIO } from "../data/servicios";
+import heroImg from "../assets/luis-flores-monitores.jpg";
+
+// Las imágenes de los servicios se resuelven por nombre desde src/assets.
+const imagenes = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/*.{jpg,webp}",
+  { eager: true },
+);
+
+function imagenDe(nombre: string) {
+  const clave = Object.keys(imagenes).find((k) => k.includes(`/${nombre}.`));
+  return clave ? imagenes[clave].default : undefined;
+}
+
+const title = "Consultor de IA y automatización para pymes | Luis Flores";
+const description =
+  "IA · automatización · funnels para emprendedores de España y LATAM. Implemento agentes de IA y sistemas de captación. Agenda tu llamada gratuita de 30 min.";
+---
+
+<Base
+  title={title}
+  description={description}
+  schema={[
+    {
+      "@type": "ProfessionalService",
+      "@id": `${SITIO.url}/#servicio`,
+      name: SITIO.nombre,
+      url: `${SITIO.url}/`,
+      image: `${SITIO.url}/og-default.png`,
+      description:
+        "Agentes de IA, automatización y funnels de conversión para pymes y emprendedores.",
+      areaServed: ["España", "Latinoamérica"],
+      founder: { "@id": `${SITIO.url}/#person` },
+    },
+  ]}
+>
+  <main>
+    <section class="section">
+      <div class="container-lf grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+        <div>
+          <p class="eyebrow">IA aplicada · España y LATAM</p>
+
+          {/* PARCHE P1-A: el degradado va al beneficio, no al problema.
+              Antes resaltaba "12 horas al día", que es la carga. */}
+          <h1 class="mt-4">
+            <span class="hero-line-grad block">
+              <span class="gradient-text">Automatiza tu negocio con IA</span>
+            </span>
+            <span class="hero-line-2 block">y deja de trabajar</span>
+            <span class="hero-line-2 block">12 horas al día.</span>
+          </h1>
+
+          <p class="lead mt-6 max-w-[48ch]">
+            Implemento agentes de IA, automatizaciones y funnels de conversión para
+            emprendedores digitales. En una llamada de 30 minutos te digo qué
+            automatizar primero.
+          </p>
+
+          <a class="cta mt-8 inline-flex items-center gap-2" href="/contacto">
+            Reservar diagnóstico <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <Image
+          src={heroImg}
+          alt="Luis Carlos Flores en su puesto de trabajo, frente a dos monitores con paneles de automatización"
+          widths={[420, 640, 860, 1086]}
+          sizes="(min-width: 1024px) 35vw, (min-width: 768px) 62vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="rounded-2xl"
+        />
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="servicios-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">Servicios</p>
+        <h2 id="servicios-titulo" class="mt-3 max-w-[20ch]">
+          Todo lo que necesitas para automatizar tu negocio
+        </h2>
+
+        {/* PARCHE P1-C: los SEIS servicios, desde un único array.
+            La home anterior enseñaba cuatro. */}
+        <ul class="services-grid mt-8">
+          {
+            servicios.map((s) => {
+              const img = imagenDe(s.imagen);
+              return (
+                <li class="card overflow-hidden" style={`--svc: var(${s.color})`}>
+                  {img && (
+                    <Image
+                      src={img}
+                      alt={s.imagenAlt}
+                      widths={[320, 640]}
+                      sizes="(min-width: 1024px) 30vw, 100vw"
+                      loading="lazy"
+                      class="aspect-[16/9] w-full object-cover"
+                    />
+                  )}
+                  <div class="p-5">
+                    <h3 class="text-[color:var(--step-2)]">{s.nombre}</h3>
+                    <p class="mt-2 text-[var(--color-soft)]">{s.resumen}</p>
+                    <a class="mt-4 inline-block" href={`/servicios/${s.slug}`}>
+                      Más información <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .hero-line-grad {
+    font-size: clamp(2.375rem, 1.6rem + 3.3vw, 3.75rem);
+    letter-spacing: -0.03em;
+    padding-bottom: 0.04em;
+  }
+
+  .hero-line-2 {
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
+    letter-spacing: -0.03em;
+    color: var(--color-soft);
+  }
+
+  .cta {
+    background: var(--grad-cta);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-cta);
+  }
+
+  .services-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (width >= 640px) {
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (width >= 1024px) {
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

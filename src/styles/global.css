@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Sistema de diseño de soyluisflores.es
+   Tokens extraídos del CSS de producción (18/10/2026). No cambiar los valores
+   sin motivo: definen la identidad visual del sitio.
+   --------------------------------------------------------------------------- */
+
+@theme {
+  /* Tipografía */
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", "Manrope Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Color */
+  --color-navy: #07090d;
+  --color-navy-2: #0a0e1a;
+  --color-electric: #007bff;
+  --color-electric-soft: #66b2ff;
+  --color-violet: #8b5cf6;
+  --color-teal: #2dd4bf;
+  --color-whatsapp: #25d366;
+  --color-ink: #f8fafc;
+  --color-soft: #a7b0c0;
+  --color-muted: #778398;
+  --color-surface: #101522;
+  --color-glass: #101522b8;
+  --color-line: #263248;
+  --color-divider: #ffffff14;
+
+  /* Radios */
+  --radius-card: 8px;
+  --radius-float: 12px;
+  --radius-2xl: 1rem;
+
+  /* Sombras */
+  --shadow-1: 0 1px 2px #04091642, 0 10px 24px -16px #04091661;
+  --shadow-2: 0 2px 6px #0409164d, 0 20px 44px -22px #0409167a;
+  --shadow-3: 0 10px 24px #0206106b, 0 36px 72px -28px #02061094;
+  --shadow-float: var(--shadow-1);
+  --shadow-cta: var(--shadow-1);
+}
+
+:root {
+  /* Degradados de marca */
+  --grad-brand: linear-gradient(110deg, #007bff 0%, #6366f1 50%, #8b5cf6 100%);
+  --grad-text: linear-gradient(110deg, #0a84ff 0%, #6366f1 50%, #8b5cf6 100%);
+  --grad-cta: linear-gradient(110deg, #007bff 0%, #6366f1 55%, #8b5cf6 100%);
+  --grad-icon: linear-gradient(135deg, #007bff, #8b5cf6);
+
+  /* Un color por servicio */
+  --svc-agentes-ia: #22d3ee;
+  --svc-automatizacion: #a78bff;
+  --svc-funnels-conversion: #fb7185;
+  --svc-webs-ia: #34d399;
+  --svc-trafico-de-pago: #38bdf8;
+  --svc-consultoria-ia: #c4b5fd;
+
+  --accent: var(--color-electric);
+
+  /* Escala tipográfica fluida */
+  --step--1: clamp(0.75rem, 0.73rem + 0.09vw, 0.8125rem);
+  --step-0: clamp(0.9375rem, 0.91rem + 0.12vw, 1rem);
+  --step-1: clamp(1rem, 0.94rem + 0.24vw, 1.125rem);
+  --step-2: clamp(1.25rem, 1.15rem + 0.42vw, 1.5rem);
+  --step-3: clamp(1.625rem, 1.47rem + 0.66vw, 1.875rem);
+  --step-4: clamp(2.125rem, 1.78rem + 1.5vw, 3.25rem);
+
+  /* Espaciado */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-section: clamp(2.75rem, 2rem + 2.4vw, 4.25rem);
+
+  /* Duraciones */
+  --dur-fast: 0.15s;
+  --dur-base: 0.2s;
+  --dur-slow: 0.25s;
+
+  /* Medidas de layout: cambian por breakpoint */
+  --gutter: 1.25rem;
+  --header-h: 4rem;
+}
+
+@media (width >= 768px) {
+  :root {
+    --gutter: 2rem;
+    --header-h: 5.375rem;
+  }
+}
+
+@media (width >= 1280px) {
+  :root {
+    --gutter: 5.5rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Fuentes locales
+   --------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/manrope-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/manrope-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/manrope-latin-800-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+
+/* Métricas de respaldo para evitar saltos de maquetación al cargar la fuente */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+  size-adjust: 107.12%;
+}
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial");
+  ascent-override: 102%;
+  descent-override: 29%;
+  line-gap-override: 0%;
+  size-adjust: 104%;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+
+body {
+  background: var(--color-navy);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-electric);
+  outline-offset: 3px;
+}
+
+/* Texto en degradado.
+   PARCHE P2: `color: transparent` puede quedar invisible en alto contraste,
+   así que se restaura un color sólido con forced-colors. */
+.gradient-text {
+  background: var(--grad-text);
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@media (forced-colors: active) {
+  .gradient-text {
+    background: none;
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+  }
+}
+
+/* Aparición al hacer scroll.
+   PARCHE P2: arranca en 0.55 y no en 0, para que al bajar deprisa no queden
+   zonas en blanco. La clase `js` la añade el layout antes de pintar, de modo
+   que sin JavaScript el contenido se ve igual. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0.55;
+    transform: translateY(8px);
+    transition:
+      opacity 0.35s,
+      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  :before,
+  :after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Utilidades propias
+   --------------------------------------------------------------------------- */
+
+.container-lf {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--space-section);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-1);
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-electric-soft);
+}
+
+.lead {
+  color: var(--color-soft);
+  font-size: var(--step-1);
+}

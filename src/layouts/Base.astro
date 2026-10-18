@@ -1,0 +1,171 @@
+---
+import { SITIO } from "../data/servicios";
+import JsonLd from "../components/JsonLd.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Ruta absoluta de la imagen OG de esta página. Si falta, la de por defecto. */
+  ogImage?: string;
+  ogImageAlt?: string;
+  /** "website" o "article". */
+  ogType?: "website" | "article";
+  /** Solo en artículos. */
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** Nodos de schema propios de la página, que se suman al grafo base. */
+  schema?: unknown[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogImage = "/og-default.png",
+  ogImageAlt = "Luis Flores · IA aplicada a negocios reales",
+  ogType = "website",
+  publishedTime,
+  modifiedTime,
+  schema = [],
+  noindex = false,
+} = Astro.props;
+
+// trailingSlash: "never". La raíz es la excepción y conserva su barra.
+const ruta = Astro.url.pathname.replace(/\/+$/, "");
+const canonical = `${SITIO.url}${ruta === "" ? "/" : ruta}`;
+const ogImageAbs = new URL(ogImage, SITIO.url).href;
+
+const grafoBase = [
+  {
+    "@type": "Person",
+    "@id": `${SITIO.url}/#person`,
+    name: SITIO.nombreCompleto,
+    alternateName: SITIO.nombre,
+    url: `${SITIO.url}/`,
+    email: `mailto:${SITIO.email}`,
+    jobTitle: "Implementador de IA y automatización para negocios",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: SITIO.localidad,
+      addressRegion: SITIO.region,
+      addressCountry: SITIO.pais,
+    },
+    knowsAbout: [
+      "Inteligencia artificial aplicada a negocios",
+      "Agentes de IA",
+      "Automatización de procesos",
+      "Funnels de conversión",
+      "Desarrollo web",
+    ],
+    sameAs: SITIO.perfiles,
+    worksFor: { "@id": `${SITIO.url}/#organization` },
+  },
+  {
+    "@type": "Organization",
+    "@id": `${SITIO.url}/#organization`,
+    name: SITIO.nombre,
+    url: `${SITIO.url}/`,
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITIO.url}/logo/nombre-360.webp`,
+    },
+    email: `mailto:${SITIO.email}`,
+    founder: { "@id": `${SITIO.url}/#person` },
+    areaServed: ["ES", "Latinoamérica"],
+    sameAs: SITIO.perfiles,
+  },
+  {
+    "@type": "WebSite",
+    "@id": `${SITIO.url}/#website`,
+    url: `${SITIO.url}/`,
+    name: SITIO.nombre,
+    inLanguage: "es-ES",
+    publisher: { "@id": `${SITIO.url}/#person` },
+  },
+];
+
+const grafo = {
+  "@context": "https://schema.org",
+  "@graph": [...grafoBase, ...schema],
+};
+---
+
+<!doctype html>
+<html lang="es-ES">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07112A" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link
+      rel="preload"
+      href="/fonts/manrope-latin-800-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/inter-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="es" href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={canonical} />
+
+    <meta
+      name="robots"
+      content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}
+    />
+
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITIO.nombre} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+
+    {
+      ogType === "article" && publishedTime && (
+        <meta property="article:published_time" content={publishedTime.toISOString()} />
+      )
+    }
+    {
+      ogType === "article" && modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime.toISOString()} />
+      )
+    }
+    {ogType === "article" && <meta property="article:author" content={SITIO.nombreCompleto} />}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbs} />
+
+    <JsonLd data={grafo} />
+
+    {/* Marca que hay JavaScript ANTES de pintar: sin esta clase, las reglas
+        de aparición no se aplican y el contenido se ve igual. */}
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
