@@ -97,6 +97,10 @@ export const SITIO = {
   region: "Cataluña",
   pais: "ES",
   lema: "Menos tareas repetitivas. Más tiempo para ti.",
+  /** Definición extraíble: la frase que debe poder citar un buscador de IA
+   *  cuando le preguntan qué hace Luis Flores. Va en el JSON-LD de Person. */
+  descripcion:
+    "Luis Carlos Flores implementa agentes de IA, automatizaciones y funnels de conversión para pymes y emprendedores de España y Latinoamérica, desde Manresa.",
   perfiles: [
     "https://www.linkedin.com/in/soyluisflores/",
     "https://www.instagram.com/soyluisflores_/",
@@ -105,6 +109,15 @@ export const SITIO = {
     "https://smilbot.com",
   ],
 } as const;
+
+/**
+ * Área servida, igual en todos los nodos de schema. Antes se mezclaban un
+ * código ISO ("ES") y texto libre ("Latinoamérica") en el mismo array.
+ */
+export const AREA_SERVIDA = [
+  { "@type": "Country", name: "España" },
+  { "@type": "Place", name: "Latinoamérica" },
+];
 
 /**
  * Proyectos propios. [COMPLETAR: frase factual de Nova Funnels; hoy

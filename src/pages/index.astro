@@ -1,7 +1,8 @@
 ---
 import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import { servicios, SITIO } from "../data/servicios";
+import { servicios, SITIO, AREA_SERVIDA } from "../data/servicios";
 import { fugas, publicos, herramientas, estandares, proceso, faq, faqPlana } from "../data/home";
 import heroImg from "../assets/luis-flores-monitores.jpg";
 import retratoImg from "../assets/luis-flores-retrato.jpg";
@@ -18,9 +19,40 @@ function imagenDe(nombre: string) {
 
 const title = "Consultor de IA y automatización para pymes | Luis Flores";
 const description =
-  "IA · automatización · funnels para emprendedores de España y LATAM. Implemento agentes de IA y sistemas de captación. Agenda tu llamada gratuita de 30 min.";
+  "IA, automatización y funnels para pymes de España y LATAM. Implemento agentes de IA y sistemas de captación. Reserva un diagnóstico gratuito de 30 min.";
+
+// Los tres artículos más recientes, para enlazarlos desde la home.
+const ultimos = (await getCollection("blog"))
+  .sort((a, b) => b.data.datePublished.getTime() - a.data.datePublished.getTime())
+  .slice(0, 3);
+const fechaCorta = (d: Date) =>
+  d.toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
 
 const schema = [
+  {
+    // Nodo de la propia página: une el FAQ y la lista de servicios con el
+    // sitio y con la persona. Sin dateModified a propósito: no hay una fecha
+    // de cambio real que poner, y una inventada es ruido.
+    "@type": "WebPage",
+    "@id": `${SITIO.url}/#webpage`,
+    url: `${SITIO.url}/`,
+    name: title,
+    description,
+    inLanguage: "es-ES",
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    about: { "@id": `${SITIO.url}/#person` },
+  },
+  {
+    "@type": "ItemList",
+    "@id": `${SITIO.url}/#servicios`,
+    name: "Servicios",
+    itemListElement: servicios.map((s, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: s.nombre,
+      url: `${SITIO.url}/servicios/${s.slug}`,
+    })),
+  },
   {
     "@type": "ProfessionalService",
     "@id": `${SITIO.url}/#servicio`,
@@ -29,12 +61,13 @@ const schema = [
     image: `${SITIO.url}/og-default.png`,
     description:
       "Agentes de IA, automatización y funnels de conversión para pymes y emprendedores.",
-    areaServed: ["España", "Latinoamérica"],
+    areaServed: AREA_SERVIDA,
     founder: { "@id": `${SITIO.url}/#person` },
   },
   {
     "@type": "FAQPage",
     "@id": `${SITIO.url}/#faq`,
+    isPartOf: { "@id": `${SITIO.url}/#webpage` },
     mainEntity: faqPlana.map((p) => ({
       "@type": "Question",
       name: p.pregunta,
@@ -64,8 +97,8 @@ const schema = [
 
           <p class="lead mt-6 max-w-[48ch]">
             Implemento agentes de IA, automatizaciones y funnels de conversión para
-            emprendedores digitales. En una llamada de 30 minutos te digo qué
-            automatizar primero.
+            pymes y emprendedores de España y Latinoamérica. En una llamada de 30
+            minutos te digo qué automatizar primero.
           </p>
 
           <a class="cta mt-8 inline-flex items-center gap-2" href="/contacto">
@@ -302,6 +335,36 @@ const schema = [
       </div>
     </section>
 
+    {/* ------------------------------------------------------------------ Blog */}
+    {/* Los tres artículos más recientes. Enlaces internos a contenido actual
+        desde la página con más autoridad del sitio. */}
+    <section class="section" aria-labelledby="blog-titulo">
+      <div class="container-lf">
+        <p class="eyebrow">Del blog</p>
+        <h2 id="blog-titulo" class="subrayado mt-3">Lo último que he escrito</h2>
+        <ul class="grid-3 mt-8">
+          {
+            ultimos.map((p) => (
+              <li class="card p-6">
+                <p class="meta">
+                  <time datetime={p.data.datePublished.toISOString().slice(0, 10)}>
+                    {fechaCorta(p.data.datePublished)}
+                  </time>
+                </p>
+                <h3 class="card-title mt-2">
+                  <a href={`/blog/${p.id}`}>{p.data.title}</a>
+                </h3>
+                <p class="card-text mt-2">{p.data.description}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="card-link mt-6 inline-block" href="/blog">
+          Ver todos los artículos <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
     {/* ------------------------------------------------------------------- FAQ */}
     <section class="section" aria-labelledby="faq-titulo">
       <div class="container-lf">
@@ -445,6 +508,10 @@ const schema = [
     color: var(--color-soft);
   }
 
+  .meta {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
   .card-link {
     color: var(--svc, var(--color-electric-soft));
     font-weight: 700;

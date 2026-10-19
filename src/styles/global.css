@@ -37,6 +37,11 @@
   --color-glass: #101522b8;
   --color-line: #263248;
   --color-divider: #ffffff14;
+  /* Cabecera fija. Mismo negro que --color-navy con transparencia. Antes era
+     #07112a, un azul marino que quedó de la paleta anterior y hacía que la
+     cabecera se viera como una franja azul sobre la página. */
+  --color-navy-glass: rgb(7 9 13 / 0.92);
+  --color-navy-glass-blur: rgb(7 9 13 / 0.77);
 
   /* Radios */
   --radius-card: 8px;
@@ -112,13 +117,6 @@
    Fuentes locales
    --------------------------------------------------------------------------- */
 
-@font-face {
-  font-family: "Manrope";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/manrope-latin-400-normal.woff2") format("woff2");
-}
 @font-face {
   font-family: "Manrope";
   font-style: normal;

@@ -1,6 +1,8 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import { SITIO } from "../data/servicios";
+import { getImage } from "astro:assets";
+import { SITIO, AREA_SERVIDA } from "../data/servicios";
+import retratoImg from "../assets/luis-flores-retrato.jpg";
 import JsonLd from "../components/JsonLd.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -39,12 +41,18 @@ const ruta = Astro.url.pathname.replace(/\/+$/, "");
 const canonical = `${SITIO.url}${ruta === "" ? "/" : ruta}`;
 const ogImageAbs = new URL(ogImage, SITIO.url).href;
 
+// Retrato para Person.image. Sale del mismo original que /sobre-mi.
+const retrato = await getImage({ src: retratoImg, width: 640, format: "jpg" });
+const retratoAbs = new URL(retrato.src, SITIO.url).href;
+
 const grafoBase = [
   {
     "@type": "Person",
     "@id": `${SITIO.url}/#person`,
     name: SITIO.nombreCompleto,
     alternateName: SITIO.nombre,
+    description: SITIO.descripcion,
+    image: retratoAbs,
     url: `${SITIO.url}/`,
     email: `mailto:${SITIO.email}`,
     jobTitle: "Implementador de IA y automatización para negocios",
@@ -69,13 +77,19 @@ const grafoBase = [
     "@id": `${SITIO.url}/#organization`,
     name: SITIO.nombre,
     url: `${SITIO.url}/`,
+    description:
+      "Implementación de agentes de IA, automatizaciones y funnels de conversión para pymes y emprendedores de España y Latinoamérica.",
+    // Google pide un logo de al menos 112 × 112 px. El logotipo con el nombre
+    // es apaisado y no llega en altura; el monograma de 180 × 180 sí.
     logo: {
       "@type": "ImageObject",
-      url: `${SITIO.url}/logo/nombre-360.webp`,
+      url: `${SITIO.url}/apple-touch-icon.png`,
+      width: 180,
+      height: 180,
     },
     email: `mailto:${SITIO.email}`,
     founder: { "@id": `${SITIO.url}/#person` },
-    areaServed: ["ES", "Latinoamérica"],
+    areaServed: AREA_SERVIDA,
     sameAs: SITIO.perfiles,
   },
   {
@@ -99,7 +113,7 @@ const grafo = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07112A" />
+    <meta name="theme-color" content="#07090d" />
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

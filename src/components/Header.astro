@@ -125,7 +125,7 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
     position: sticky;
     top: 0;
     z-index: 50;
-    background: #07112aeb;
+    background: var(--color-navy-glass);
     border-bottom: 1px solid var(--color-line);
   }
 
@@ -134,7 +134,7 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
      fallback. */
   @supports (backdrop-filter: blur(12px)) {
     .cabecera {
-      background: #07112ac4;
+      background: var(--color-navy-glass-blur);
       backdrop-filter: blur(12px);
     }
   }

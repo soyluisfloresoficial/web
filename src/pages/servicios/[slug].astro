@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
-import { servicios, SITIO } from "../../data/servicios";
+import { servicios, SITIO, AREA_SERVIDA } from "../../data/servicios";
 import { detalles, metas } from "../../data/servicios-detalle";
 import { proceso } from "../../data/home";
 
@@ -36,7 +36,7 @@ const schema = [
     description: servicio.definicion,
     url,
     provider: { "@id": `${SITIO.url}/#organization` },
-    areaServed: ["España", "Latinoamérica"],
+    areaServed: AREA_SERVIDA,
   },
   {
     "@type": "BreadcrumbList",
