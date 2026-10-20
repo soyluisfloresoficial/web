@@ -1,0 +1,14 @@
+{
+  // Configuración del Worker que sirve la web (Cloudflare Workers Builds).
+  // El nombre TIENE que coincidir con el del Worker en Cloudflare: «web».
+  "name": "web",
+  "compatibility_date": "2026-10-20",
+  "assets": {
+    "directory": "./dist",
+    // La web usa URL sin barra final (/servicios), igual que el canonical y
+    // el sitemap. Por defecto, Cloudflare redirigía /servicios a /servicios/.
+    "html_handling": "drop-trailing-slash",
+    // Las URL que no existen devuelven la página 404 de la web, con código 404.
+    "not_found_handling": "404-page"
+  }
+}

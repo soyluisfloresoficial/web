@@ -11,3 +11,6 @@ assets-raw/
 .env
 .env.production
 .DS_Store
+
+# Caché local de Wrangler
+.wrangler/
