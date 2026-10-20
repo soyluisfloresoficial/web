@@ -73,3 +73,23 @@ Principios: solo se animan `transform`, `translate`, `scale` y `opacity`. Todo r
 | Barra de progreso | Artículos del blog | Línea de tiempo de scroll |
 
 **Qué no se hace, a propósito:** animaciones infinitas de adorno (auroras, brillos, puntos que laten), efectos que siguen al puntero ni capas fijas a pantalla completa. Pesan en móviles de gama media y empeoran el INP. La única animación continua es la marquesina de herramientas, que se para con movimiento reducido.
+
+## Capa premium (20/10/2026)
+
+Al final de `global.css`. Piezas reutilizables:
+
+| Clase | Qué es |
+|---|---|
+| `.cabecera-seccion` | Cabecera de sección: antetítulo y H2 a la izquierda; entradilla o enlace a la derecha (desde 1024 px) |
+| `.banda` | Sección con fondo `navy-2` y filetes arriba y abajo. Se alterna con las normales |
+| `.seccion-corta` | Sección con el 60 % del espaciado normal |
+| `.num-indice` | Índice 01, 02… en el color del acento, con un filete que se alarga al pasar el ratón por la tarjeta |
+| `.tarjeta` / `.tarjeta-cuerpo` | Margen interior de las tarjetas. El `.card-link` va siempre al pie |
+| `.tarjeta-articulo` + `.enlace-tarjeta` | Tarjeta entera pulsable con un solo enlace accesible |
+| `.media` | Tratamiento común de fotos: saturación igualada, velo inferior y toque del color del servicio |
+| `.cta` / `.boton-secundario` / `.botones` | Botón principal, secundario con borde (3,12:1) y grupo de botones. En móvil ocupan todo el ancho |
+| `.fondo-reticula` | Retícula fina, quieta y desvanecida hacia los bordes. Va dentro de un contenedor con `position: relative` |
+
+Espaciado entre secciones: de 72 a 120 px. Contenedor: 1240 px.
+
+Micro movimiento añadido: filete del antetítulo que se dibuja al entrar en pantalla, respuesta al pulsar los botones (`scale: 0.97`), botón principal que sube 2 px, entrada encadenada del hero (botones, garantías, foto y etiqueta) y realce del borde de las herramientas.

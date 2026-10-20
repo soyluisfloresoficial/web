@@ -36,5 +36,5 @@ Algunos proveedores, como Google, pueden tratar datos fuera del Espacio Económi
 
 ## 6. Contacto
 
-Si tienes dudas sobre esta política, escribe a [[email&#160;protected]](/cdn-cgi/l/email-protection#8ae2e5e6ebcaf9e5f3e6ffe3f9ece6e5f8eff9a4eff9).
+Si tienes dudas sobre esta política, escribe a [hola@soyluisflores.es](mailto:hola@soyluisflores.es).
 

@@ -899,3 +899,318 @@ main :where(p, li, dd, td, blockquote) > a:not([class]):hover {
   .lg\:items-start { align-items: start; }
   .lg\:hidden { display: none; }
 }
+
+
+/* ===========================================================================
+   Capa premium (20/10/2026)
+
+   Más aire, una sola cabecera de sección, tarjetas con relieve, un único
+   tratamiento de imagen y botones con respuesta. Va al final para mandar
+   sobre las reglas anteriores sin tener que tocarlas una a una.
+   =========================================================================== */
+
+:root {
+  /* Separación entre secciones: de 72 a 120 px. Antes iba de 44 a 68 px y
+     las secciones se pegaban unas a otras. */
+  --space-section: clamp(4.5rem, 3rem + 5vw, 7.5rem);
+  --radius-tarjeta: 1.25rem;
+  --sombra-boton: 0 10px 30px -12px rgb(99 102 241 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.22);
+  --sombra-boton-hover: 0 18px 44px -14px rgb(99 102 241 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.28);
+}
+
+.container-lf {
+  max-width: 1240px;
+}
+
+.seccion-corta {
+  padding-block: calc(var(--space-section) * 0.6);
+}
+
+/* Bandas alternas: un fondo apenas más claro con filetes arriba y abajo.
+   Separan los bloques sin necesidad de cajas. */
+.banda {
+  position: relative;
+  background: var(--color-navy-2);
+  border-block: 1px solid var(--color-divider);
+}
+
+/* -------------------------------------------------- Cabecera de sección */
+.cabecera-seccion {
+  display: grid;
+  gap: 1.25rem 4rem;
+}
+.cabecera-seccion h2 {
+  max-width: 20ch;
+}
+@media (width >= 1024px) {
+  .cabecera-seccion {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: end;
+  }
+  .cabecera-seccion > .lead,
+  .cabecera-seccion > .cabecera-enlace {
+    justify-self: end;
+    margin-bottom: 0.6rem;
+  }
+}
+
+/* Antetítulo con un filete delante, en el color del acento. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.eyebrow::before {
+  content: "";
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.75;
+  transform-origin: left center;
+  flex-shrink: 0;
+}
+
+/* Número de índice: 01, 02, 03... con un filete detrás. */
+.num-indice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-display);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--acento-texto);
+}
+.num-indice::after {
+  content: "";
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease);
+}
+.card:hover .num-indice::after {
+  transform: scaleX(1.6);
+}
+
+/* -------------------------------------------------------------- Tarjetas */
+.card {
+  border-radius: var(--radius-tarjeta);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.04), rgb(255 255 255 / 0) 38%),
+    var(--color-surface);
+  /* Brillo de 1 px en el borde superior: da relieve sin sombras pesadas. */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.05),
+    var(--shadow-1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card-interactiva:hover,
+  .card-interactiva:focus-within,
+  main .card:has(a):hover,
+  main .card:has(a:focus-visible) {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 0 0 1px color-mix(in srgb, var(--svc, var(--acento)) 25%, transparent),
+      var(--shadow-2);
+  }
+}
+
+.tarjeta {
+  padding: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+}
+.tarjeta-cuerpo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+}
+/* El enlace de la tarjeta, siempre al pie: así quedan alineados en fila. */
+.tarjeta-cuerpo > .card-link,
+.tarjeta-articulo > .card-link {
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+/* Tarjeta entera pulsable con un solo enlace accesible. */
+.tarjeta-articulo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.enlace-tarjeta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.enlace-tarjeta:focus-visible {
+  outline: none;
+}
+.tarjeta-articulo:has(.enlace-tarjeta:focus-visible) {
+  outline: 3px solid var(--color-electric);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------- Imagen */
+/* Un solo tratamiento para todas las fotos de tarjeta: saturación igualada,
+   velo hacia el fondo de la tarjeta y un toque del color del servicio. Las
+   fotos de banco tenían tonos muy distintos entre sí. */
+.media {
+  position: relative;
+  overflow: hidden;
+}
+.media img {
+  filter: saturate(0.82) contrast(1.04);
+}
+.media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 45%, rgb(16 21 34 / 0.85)),
+    linear-gradient(135deg, color-mix(in srgb, var(--svc, var(--acento)) 18%, transparent), transparent 60%);
+}
+
+/* -------------------------------------------------------------- Botones */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.875rem 1.625rem;
+  border-radius: 999px;
+  background: var(--grad-cta);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: var(--sombra-boton);
+  transition:
+    box-shadow var(--dur-micro) var(--ease),
+    translate var(--dur-micro) var(--ease),
+    scale 0.12s var(--ease);
+}
+.cta:hover {
+  box-shadow: var(--sombra-boton-hover);
+}
+.boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  transition:
+    border-color var(--dur-micro) var(--ease),
+    background-color var(--dur-micro) var(--ease),
+    scale 0.12s var(--ease);
+}
+.boton-secundario:hover {
+  border-color: rgb(255 255 255 / 0.6);
+  background: rgb(255 255 255 / 0.05);
+}
+.boton-secundario:focus-visible,
+.cta:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) {
+    .cta:hover {
+      translate: 0 -2px;
+    }
+  }
+  /* Respuesta al pulsar. */
+  .cta:active,
+  .boton-secundario:active,
+  .cta-cabecera:active {
+    scale: 0.97;
+  }
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem;
+}
+.botones-centro {
+  justify-content: center;
+}
+
+/* ------------------------------------------------------- Fondo retícula */
+/* Retícula fina, quieta y desvanecida hacia los bordes. Da profundidad sin
+   animaciones continuas ni capas fijas a pantalla completa. */
+.fondo-reticula {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(102 178 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(102 178 255 / 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(60% 70% at 50% 35%, #000 15%, transparent 75%);
+}
+
+/* ---------------------------------------------------------- Movimiento */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* El filete del antetítulo se dibuja al entrar en pantalla. */
+    main .eyebrow::before {
+      animation-name: dibuja-filete;
+      animation-duration: auto;
+      animation-timing-function: var(--ease);
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 20% entry 90%;
+    }
+  }
+}
+@keyframes dibuja-filete {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Cajas de cierre de las páginas interiores. Llevan .card en el mismo
+   elemento que .container-lf, así que el fondo ocupaba también el margen
+   lateral y la caja salía más ancha que el resto de la página. */
+.container-lf.card {
+  width: calc(100% - 2 * var(--gutter));
+  max-width: calc(1240px - 2 * var(--gutter));
+  padding-inline: clamp(1.5rem, 1rem + 3vw, 4rem);
+  padding-block: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+html {
+  color-scheme: dark;
+}
+
+/* Tarjetas de listado de las páginas interiores: el enlace siempre al pie,
+   para que queden alineados en la misma fila. */
+main li.card:has(> .card-link) {
+  display: flex;
+  flex-direction: column;
+}
+main li.card > .card-link {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+/* En móvil, los botones de un grupo ocupan todo el ancho: se pulsan mejor y
+   no quedan dos anchos distintos uno encima del otro. */
+@media (width < 640px) {
+  .botones > .cta,
+  .botones > .boton-secundario {
+    flex: 1 1 100%;
+  }
+}

@@ -88,14 +88,15 @@ const schema = [
 <Base title={title} description={description} schema={schema}>
   <main>
     {/* ------------------------------------------------------------------ Hero */}
-    <section class="section hero">
-      <div class="container-lf grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-        <div>
+    <section class="section hero" aria-labelledby="hero-titulo">
+      <div class="fondo-reticula" aria-hidden="true"></div>
+      <div class="container-lf hero-rejilla">
+        <div class="hero-texto">
           <p class="eyebrow">IA aplicada · España y LATAM</p>
 
           {/* PARCHE P1-A: el degradado va al beneficio, no al problema.
               Antes resaltaba "12 horas al día", que es la carga. */}
-          <h1 class="mt-4">
+          <h1 id="hero-titulo" class="mt-5">
             <span class="hero-line-grad block">
               <span class="gradient-text">Automatiza tu negocio con IA</span>
             </span>
@@ -103,65 +104,90 @@ const schema = [
             <span class="hero-line-2 block">12 horas al día.</span>
           </h1>
 
-          <p class="lead mt-6 max-w-[48ch]">
+          <p class="lead hero-lead mt-6">
             Implemento agentes de IA, automatizaciones y funnels de conversión para
             pymes y emprendedores de España y Latinoamérica. En una llamada de 30
             minutos te digo qué automatizar primero.
           </p>
 
-          <a class="cta mt-8 inline-flex items-center gap-2" href="/contacto">
-            Reservar diagnóstico <span aria-hidden="true">→</span>
-          </a>
+          <div class="botones mt-8">
+            <a class="cta" href="/contacto">
+              Reservar diagnóstico <span aria-hidden="true">→</span>
+            </a>
+            <a class="boton-secundario" href="/servicios">Ver servicios</a>
+          </div>
 
-          <p class="nota mt-4">Llamada de 30 min, gratuita y sin compromiso.</p>
+          {/* Garantías: solo lo que ya promete el resto de la web. */}
+          <ul class="garantias mt-8" aria-label="Lo que incluye">
+            <li>Llamada de 30 min gratuita</li>
+            <li>Documentación incluida</li>
+            <li>España y Latinoamérica</li>
+          </ul>
         </div>
 
-        <Image
-          src={heroImg}
-          alt="Luis Carlos Flores en su puesto de trabajo, frente a dos monitores con paneles de automatización"
-          widths={[420, 640, 860, 1086]}
-          sizes="(min-width: 1024px) 35vw, (min-width: 768px) 62vw, 100vw"
-          loading="eager"
-          fetchpriority="high"
-          class="foto-hero rounded-2xl"
-        />
+        <figure class="hero-foto">
+          <Image
+            src={heroImg}
+            alt="Luis Carlos Flores en su puesto de trabajo, frente a dos monitores con paneles de automatización"
+            widths={[420, 640, 860, 1086]}
+            sizes="(min-width: 1024px) 40vw, (min-width: 768px) 62vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+            class="foto-hero"
+          />
+          <figcaption class="hero-chip">
+            <span class="hero-chip-nombre">Luis Carlos Flores</span>
+            <span class="hero-chip-oficio">Implementador de IA · Manresa</span>
+          </figcaption>
+        </figure>
       </div>
     </section>
 
     {/* -------------------------------------------------------------- Problema */}
-    <section class="section" aria-labelledby="problema-titulo" data-acento="coral">
+    <section class="section banda" aria-labelledby="problema-titulo" data-acento="coral">
       <div class="container-lf">
-        <p class="eyebrow">El problema</p>
-        <h2 id="problema-titulo" class="subrayado mt-3">Si llevas tú el negocio, esto te suena</h2>
-        <p class="lead mt-4 max-w-[62ch]">
-          No es falta de ganas: es que el día no da para todo. Estas son las tres
-          fugas que más veo antes de automatizar nada.
-        </p>
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">El problema</p>
+            <h2 id="problema-titulo" class="subrayado mt-4">Si llevas tú el negocio, esto te suena</h2>
+          </div>
+          <p class="lead">
+            No es falta de ganas: es que el día no da para todo. Estas son las tres
+            fugas que más veo antes de automatizar nada.
+          </p>
+        </div>
 
-        <ul class="grid-3 mt-8">
+        <ol class="grid-3 mt-12">
           {
-            fugas.map((f) => (
-              <li class="card reveal p-6">
-                <h3 class="card-title">{f.titulo}</h3>
+            fugas.map((f, i) => (
+              <li class="card tarjeta reveal">
+                <span class="num-indice" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <h3 class="card-title mt-5">{f.titulo}</h3>
                 <p class="card-text mt-3">{f.texto}</p>
               </li>
             ))
           }
-        </ul>
+        </ol>
       </div>
     </section>
 
     {/* --------------------------------------------------------------- Público */}
     <section class="section" aria-labelledby="publico-titulo" data-acento="cian">
       <div class="container-lf">
-        <h2 id="publico-titulo" class="h-pequeno">Trabajo con negocios que quieren crecer</h2>
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Para quién</p>
+            <h2 id="publico-titulo" class="subrayado mt-4">Trabajo con negocios que quieren crecer</h2>
+          </div>
+        </div>
 
-        <ul class="grid-4 mt-6">
+        <ul class="perfiles mt-12">
           {
-            publicos.map((p) => (
-              <li>
-                <h3 class="publico-titulo">{p.titulo}</h3>
-                <p class="card-text mt-1">{p.texto}</p>
+            publicos.map((p, i) => (
+              <li class="perfil">
+                <span class="num-indice" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <h3 class="publico-titulo mt-4">{p.titulo}</h3>
+                <p class="card-text mt-2">{p.texto}</p>
               </li>
             ))
           }
@@ -170,17 +196,17 @@ const schema = [
     </section>
 
     {/* ----------------------------------------------------------- Herramientas */}
-    <section class="section" aria-labelledby="herramientas-titulo">
-      <div class="container-lf">
+    <section class="section seccion-corta" aria-labelledby="herramientas-titulo">
+      <div class="container-lf herramientas-cabecera">
         <h2 id="herramientas-titulo" class="h-pequeno">
           Trabajo con las herramientas que ya usas
         </h2>
-        <p class="card-text mt-3">
+        <p class="card-text">
           Si tu negocio usa otras, reviso primero si se pueden integrar.
         </p>
       </div>
 
-      <div class="marquee mt-6">
+      <div class="marquee mt-8">
         <ul class="marquee-track">
           {herramientas.map((h) => <li class="herramienta">{h}</li>)}
         </ul>
@@ -202,38 +228,51 @@ const schema = [
     </section>
 
     {/* ------------------------------------------------------------- Servicios */}
-    <section class="section" aria-labelledby="servicios-titulo">
+    <section class="section banda" aria-labelledby="servicios-titulo">
       <div class="container-lf">
-        <p class="eyebrow">Servicios</p>
-        <h2 id="servicios-titulo" class="subrayado mt-3 max-w-[20ch]">
-          Todo lo que necesitas para automatizar tu negocio
-        </h2>
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Servicios</p>
+            <h2 id="servicios-titulo" class="subrayado mt-4">
+              Todo lo que necesitas para automatizar tu negocio
+            </h2>
+          </div>
+          <p class="lead">
+            Desde un agente de IA hasta un sistema completo de captación y
+            automatización. Lo implemento y lo dejo documentado.
+          </p>
+        </div>
 
         {/* PARCHE P1-C: los SEIS servicios, desde un único array.
             La home anterior enseñaba cuatro. */}
-        <ul class="services-grid mt-8">
+        <ul class="services-grid mt-12">
           {
-            servicios.map((s) => {
+            servicios.map((s, i) => {
               const img = imagenDe(s.imagen);
               return (
                 <li
-                  class="card card-interactiva reveal overflow-hidden"
+                  class="card card-interactiva tarjeta-servicio reveal overflow-hidden"
                   style={`--svc: var(${s.color})`}
                 >
                   {img && (
-                    <Image
-                      src={img}
-                      alt={s.imagenAlt}
-                      widths={[320, 640]}
-                      sizes="(min-width: 1024px) 30vw, 100vw"
-                      loading="lazy"
-                      class="aspect-[16/9] w-full object-cover"
-                    />
+                    <div class="media">
+                      <Image
+                        src={img}
+                        alt={s.imagenAlt}
+                        widths={[320, 640]}
+                        sizes="(min-width: 1024px) 30vw, 100vw"
+                        loading="lazy"
+                        class="aspect-[16/9] w-full object-cover"
+                      />
+                    </div>
                   )}
-                  <div class="p-5">
-                    <h3 class="card-title">{s.nombre}</h3>
+                  <div class="tarjeta-cuerpo">
+                    <span class="num-indice num-servicio" aria-hidden="true">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h3 class="card-title mt-3">{s.nombre}</h3>
                     <p class="card-text mt-2">{s.resumen}</p>
-                    <a class="card-link mt-4 inline-block" href={`/servicios/${s.slug}`}>
+                    <a class="card-link" href={`/servicios/${s.slug}`}>
                       Más información <span aria-hidden="true">→</span>
                     </a>
                   </div>
@@ -243,12 +282,12 @@ const schema = [
           }
         </ul>
 
-        <div class="caja-cta mt-8 reveal">
+        <div class="caja-cta mt-10 reveal">
           <p>
             <strong>¿No sabes por cuál empezar?</strong> En 30 minutos reviso tu caso
             y te digo qué automatizar primero.
           </p>
-          <a class="cta inline-flex items-center gap-2" href="/contacto">
+          <a class="cta" href="/contacto">
             Reservar diagnóstico <span aria-hidden="true">→</span>
           </a>
         </div>
@@ -258,32 +297,32 @@ const schema = [
     <Showcase />
 
     {/* -------------------------------------------------------------- Métricas */}
-    <section class="section" aria-labelledby="metricas-titulo" data-acento="turquesa">
+    <section class="section banda" aria-labelledby="metricas-titulo" data-acento="turquesa">
       <div class="container-lf">
-        <div class="cabecera-doble">
+        <div class="cabecera-seccion">
           <div>
             <p class="eyebrow">Métricas propias</p>
-            <h2 id="metricas-titulo" class="subrayado mt-3">Resultados medidos, no promesas</h2>
+            <h2 id="metricas-titulo" class="subrayado mt-4">Resultados medidos, no promesas</h2>
           </div>
-          <p class="card-text">
+          <p class="lead">
             Lo que mido en cada implementación: rapidez de respuesta, horas
             liberadas y asistencia a las citas.
           </p>
         </div>
-        <ul class="grid-3 mt-8">
+        <ul class="metricas mt-12">
           {
             metricas.map((m) => (
-              <li class="card reveal p-6">
+              <li class="metrica reveal">
                 <p class="cifra">
                   <span class="gradient-text">{m.cifra}</span>
                   <a href="/sobre-mi#como-mido" class="asterisco" aria-label="Cómo se midió">*</a>
                 </p>
-                <p class="card-text mt-2">{m.texto}</p>
+                <p class="metrica-texto">{m.texto}</p>
               </li>
             ))
           }
         </ul>
-        <p class="nota mt-4">
+        <p class="nota mt-8">
           *Medido en implementaciones propias con negocios reales.{" "}
           <a href="/sobre-mi#como-mido">Cómo se midió</a>
         </p>
@@ -294,15 +333,16 @@ const schema = [
     <section class="section" aria-labelledby="roi-titulo" data-acento="ambar">
       <div class="container-lf">
         <div class="card roi reveal">
+          <div class="fondo-reticula" aria-hidden="true"></div>
           <div>
             <p class="eyebrow">Calculadora ROI</p>
-            <h2 id="roi-titulo" class="mt-3">Pon tus números y ve una estimación</h2>
+            <h2 id="roi-titulo" class="mt-4">Pon tus números y ve una estimación</h2>
             <p class="lead mt-4">
               Horas ahorradas al mes, ingresos adicionales y en cuánto tiempo
               recuperarías la inversión. Orientativo y basado en hipótesis: tú
               decides la inversión, sin precios por defecto.
             </p>
-            <a class="cta mt-6 inline-flex items-center gap-2" href="/roi">
+            <a class="cta mt-8" href="/roi">
               Abrir la calculadora <span aria-hidden="true">→</span>
             </a>
           </div>
@@ -324,23 +364,30 @@ const schema = [
     </section>
 
     {/* ------------------------------------------------------------ Estándares */}
-    <section class="section" aria-labelledby="estandares-titulo" data-acento="cian">
+    <section class="section banda" aria-labelledby="estandares-titulo" data-acento="cian">
       <div class="container-lf">
-        <p class="eyebrow">Estándares de trabajo</p>
-        <h2 id="estandares-titulo" class="subrayado mt-3 max-w-[24ch]">
-          Lo que tiene cada proyecto, sea cual sea su tamaño
-        </h2>
-        <p class="lead mt-4 max-w-[62ch]">
-          Trabajo con dueños de negocio que necesitan sistemas fiables, no
-          experimentos. Estas son las reglas que aplico siempre.
-        </p>
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Estándares de trabajo</p>
+            <h2 id="estandares-titulo" class="subrayado mt-4">
+              Lo que tiene cada proyecto, sea cual sea su tamaño
+            </h2>
+          </div>
+          <p class="lead">
+            Trabajo con dueños de negocio que necesitan sistemas fiables, no
+            experimentos. Estas son las reglas que aplico siempre.
+          </p>
+        </div>
 
-        <ul class="grid-3 mt-8">
+        <ul class="estandares mt-12">
           {
-            estandares.map((e) => (
-              <li class="card reveal p-6">
-                <h3 class="card-title">{e.titulo}</h3>
-                <p class="card-text mt-3">{e.texto}</p>
+            estandares.map((e, i) => (
+              <li class="estandar reveal">
+                <span class="num-indice" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3 class="card-title">{e.titulo}</h3>
+                  <p class="card-text mt-2">{e.texto}</p>
+                </div>
               </li>
             ))
           }
@@ -351,33 +398,39 @@ const schema = [
     {/* ---------------------------------------------------------------- Método */}
     <section class="section" aria-labelledby="metodo-titulo" data-acento="violeta">
       <div class="container-lf">
-        <p class="eyebrow">Método</p>
-        <h2 id="metodo-titulo" class="subrayado mt-3">Cómo trabajo</h2>
-        <p class="lead mt-4 max-w-[62ch]">
-          Tres pasos, sin sorpresas. Siempre sabes qué estoy haciendo y por qué.
-        </p>
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Método</p>
+            <h2 id="metodo-titulo" class="subrayado mt-4">Cómo trabajo</h2>
+          </div>
+          <p class="lead">
+            Tres pasos, sin sorpresas. Siempre sabes qué estoy haciendo y por qué.
+          </p>
+        </div>
 
-        <ol class="grid-3 mt-8 paso-lista">
+        <ol class="grid-3 mt-12 paso-lista">
           {
             proceso.map((p) => {
               const img = imagenDe(p.imagen);
               return (
                 <li class="card reveal overflow-hidden">
                   {img && (
-                    <Image
-                      src={img}
-                      alt={p.imagenAlt}
-                      widths={[320, 640]}
-                      sizes="(min-width: 1024px) 30vw, 100vw"
-                      loading="lazy"
-                      class="aspect-[16/9] w-full object-cover"
-                    />
+                    <div class="media">
+                      <Image
+                        src={img}
+                        alt={p.imagenAlt}
+                        widths={[320, 640]}
+                        sizes="(min-width: 1024px) 30vw, 100vw"
+                        loading="lazy"
+                        class="aspect-[16/9] w-full object-cover"
+                      />
+                    </div>
                   )}
-                  <div class="p-6">
+                  <div class="tarjeta-cuerpo">
                     <p class="paso-numero">{p.numero}</p>
-                    <h3 class="card-title mt-1">{p.titulo}</h3>
+                    <h3 class="card-title mt-2">{p.titulo}</h3>
                     <p class="card-text mt-3">{p.texto}</p>
-                    <dl class="paso-reparto mt-4">
+                    <dl class="paso-reparto mt-5">
                       <dt>Qué hago yo</dt>
                       <dd>{p.yo}</dd>
                       <dt>Qué haces tú</dt>
@@ -393,28 +446,39 @@ const schema = [
     </section>
 
     {/* -------------------------------------------------------------- Sobre mí */}
-    <section class="section" aria-labelledby="sobremi-titulo" data-acento="coral">
-      <div class="container-lf grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-        <Image
-          src={retratoImg}
-          alt="Retrato de Luis Carlos Flores"
-          widths={[320, 640]}
-          sizes="(min-width: 1024px) 30vw, 70vw"
-          loading="lazy"
-          class="foto-retrato rounded-2xl"
-        />
+    <section class="section banda" aria-labelledby="sobremi-titulo" data-acento="coral">
+      <div class="container-lf sobremi">
+        <figure class="retrato-marco reveal">
+          <Image
+            src={retratoImg}
+            alt="Retrato de Luis Carlos Flores"
+            widths={[320, 640]}
+            sizes="(min-width: 1024px) 34vw, 80vw"
+            loading="lazy"
+            class="foto-retrato"
+          />
+        </figure>
         <div>
           <p class="eyebrow">Sobre mí</p>
-          <h2 id="sobremi-titulo" class="subrayado mt-3">Implemento, no vendo humo</h2>
-          <p class="lead mt-4">
+          <h2 id="sobremi-titulo" class="subrayado mt-4">Implemento, no vendo humo</h2>
+          <p class="lead mt-6">
             Soy Luis Carlos Flores, de Manresa. Llevo alrededor de tres años
             trabajando con IA. Empecé como freelance y pasé a dirigir una agencia
             después de implementar IA y automatización en mi propio negocio. Lo que
             te propongo, primero lo he probado. Sin promesas mágicas: procesos
             claros, datos y mejora continua.
           </p>
-          <p class="card-text mt-4">{SITIO.lema}</p>
-          <a class="card-link mt-6 inline-block" href="/sobre-mi">
+
+          {/* Datos sueltos sacados del párrafo de arriba, para leer de un vistazo. */}
+          <ul class="datos mt-8" aria-label="En resumen">
+            <li><span>Base</span>Manresa, Cataluña</li>
+            <li><span>Con IA</span>Unos tres años</li>
+            <li><span>Lo que propongo</span>Primero probado en mi negocio</li>
+          </ul>
+
+          <blockquote class="lema mt-8">{SITIO.lema}</blockquote>
+
+          <a class="card-link mt-8 inline-block" href="/sobre-mi">
             Leer mi historia <span aria-hidden="true">→</span>
           </a>
         </div>
@@ -426,72 +490,93 @@ const schema = [
         desde la página con más autoridad del sitio. */}
     <section class="section" aria-labelledby="blog-titulo" data-acento="turquesa">
       <div class="container-lf">
-        <p class="eyebrow">Del blog</p>
-        <h2 id="blog-titulo" class="subrayado mt-3">Lo último que he escrito</h2>
-        <ul class="grid-3 mt-8">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Del blog</p>
+            <h2 id="blog-titulo" class="subrayado mt-4">Lo último que he escrito</h2>
+          </div>
+          <a class="card-link cabecera-enlace" href="/blog">
+            Ver todos los artículos <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <ul class="grid-3 mt-12">
           {
             ultimos.map((p) => (
-              <li class="card p-6">
+              <li class="card tarjeta tarjeta-articulo">
                 <p class="meta">
                   <time datetime={p.data.datePublished.toISOString().slice(0, 10)}>
                     {fechaCorta(p.data.datePublished)}
                   </time>
                 </p>
-                <h3 class="card-title mt-2">
-                  <a href={`/blog/${p.id}`}>{p.data.title}</a>
+                <h3 class="card-title mt-3">
+                  <a href={`/blog/${p.id}`} class="enlace-tarjeta">{p.data.title}</a>
                 </h3>
-                <p class="card-text mt-2">{p.data.description}</p>
+                <p class="card-text mt-3">{p.data.description}</p>
+                <span class="card-link" aria-hidden="true">
+                  Leer el artículo <span aria-hidden="true">→</span>
+                </span>
               </li>
             ))
           }
         </ul>
-        <a class="card-link mt-6 inline-block" href="/blog">
-          Ver todos los artículos <span aria-hidden="true">→</span>
-        </a>
       </div>
     </section>
 
     {/* ------------------------------------------------------------------- FAQ */}
-    <section class="section" aria-labelledby="faq-titulo">
-      <div class="container-lf">
-        <h2 id="faq-titulo">Preguntas frecuentes</h2>
-
-        {
-          faq.map((g) => (
-            <div class="faq-grupo">
-              <h3 class="eyebrow mt-8">{g.grupo}</h3>
-              {g.preguntas.map((p) => (
-                <details class="card faq-item mt-3">
-                  <summary>{p.pregunta}</summary>
-                  <div class="faq-cuerpo"><p class="card-text">{p.respuesta}</p></div>
-                </details>
-              ))}
-            </div>
-          ))
-        }
-
-        <div class="caja-cta mt-8">
-          <p>
-            ¿Tu duda no está aquí? <strong>Reserva un diagnóstico y la resolvemos.</strong>
+    <section class="section banda" aria-labelledby="faq-titulo">
+      <div class="container-lf faq-rejilla">
+        <div class="faq-lateral">
+          <p class="eyebrow">FAQ</p>
+          <h2 id="faq-titulo" class="subrayado mt-4">Preguntas frecuentes</h2>
+          <p class="lead mt-5">
+            Las dudas que más me plantean los dueños de negocio, por temas.
           </p>
-          <a class="cta inline-flex items-center gap-2" href="/contacto">
-            Reservar diagnóstico <span aria-hidden="true">→</span>
-          </a>
+          <div class="caja-cta caja-cta-vertical mt-8">
+            <p>
+              ¿Tu duda no está aquí? <strong>Reserva un diagnóstico y la resolvemos.</strong>
+            </p>
+            <a class="cta" href="/contacto">
+              Reservar diagnóstico <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          {
+            faq.map((g, gi) => (
+              <div class="faq-grupo">
+                <h3 class={`eyebrow${gi === 0 ? "" : " mt-10"}`}>{g.grupo}</h3>
+                {g.preguntas.map((p) => (
+                  <details class="card faq-item mt-3">
+                    <summary>{p.pregunta}</summary>
+                    <div class="faq-cuerpo"><p class="card-text">{p.respuesta}</p></div>
+                  </details>
+                ))}
+              </div>
+            ))
+          }
         </div>
       </div>
     </section>
 
     {/* ------------------------------------------------------------- CTA final */}
     <section class="section" aria-labelledby="cta-titulo" data-acento="violeta">
-      <div class="container-lf card cta-final">
-        <h2 id="cta-titulo">Hablemos de tu negocio</h2>
-        <p class="lead mt-3 max-w-[52ch]">
-          En 30 minutos reviso tu caso y te digo qué automatizaría primero. Sin
-          compromiso y sin tecnicismos.
-        </p>
-        <a class="cta mt-6 inline-flex items-center gap-2" href="/contacto">
-          Reservar diagnóstico <span aria-hidden="true">→</span>
-        </a>
+      <div class="container-lf">
+        <div class="cierre reveal">
+          <div class="fondo-reticula" aria-hidden="true"></div>
+          <p class="eyebrow">Siguiente paso</p>
+          <h2 id="cta-titulo" class="mt-5">Hablemos de tu negocio</h2>
+          <p class="lead mt-5">
+            En 30 minutos reviso tu caso y te digo qué automatizaría primero. Sin
+            compromiso y sin tecnicismos.
+          </p>
+          <div class="botones botones-centro mt-10">
+            <a class="cta" href="/contacto">
+              Reservar diagnóstico <span aria-hidden="true">→</span>
+            </a>
+            <a class="boton-secundario" href={`mailto:${SITIO.email}`}>Escribir a {SITIO.email}</a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -871,5 +956,421 @@ const schema = [
     .grid-4 {
       grid-template-columns: repeat(4, 1fr);
     }
+  }
+
+  /* =========================================================================
+     Home premium (20/10/2026)
+     ========================================================================= */
+
+  /* ------------------------------------------------------------------ Hero */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) clamp(4.5rem, 3rem + 5vw, 8rem);
+  }
+  /* Dos luces quietas: azul arriba a la derecha y violeta abajo. */
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+  }
+  .hero::before {
+    top: -18rem;
+    right: -12rem;
+    width: 46rem;
+    height: 46rem;
+    background: radial-gradient(closest-side, rgb(0 123 255 / 0.16), transparent);
+  }
+  .hero::after {
+    bottom: -20rem;
+    left: -14rem;
+    width: 42rem;
+    height: 42rem;
+    background: radial-gradient(closest-side, rgb(139 92 246 / 0.12), transparent);
+  }
+  .hero-rejilla {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 3.5rem;
+    align-items: center;
+  }
+  @media (width >= 1024px) {
+    .hero-rejilla {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 4.5rem;
+    }
+  }
+  .hero-lead {
+    max-width: 46ch;
+  }
+
+  .garantias {
+    list-style: none;
+    margin-block-start: 2rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.75rem;
+    color: var(--color-soft);
+    font-size: var(--step--1);
+  }
+  .garantias li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  /* Marca de verificación dibujada, no un carácter: los lectores de pantalla
+     no la anuncian. */
+  .garantias li::before {
+    content: "";
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232dd4bf' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4 8-9'/%3E%3C/svg%3E")
+        center / 0.75rem no-repeat,
+      rgb(45 212 191 / 0.14);
+  }
+
+  .hero-foto {
+    position: relative;
+    margin: 0;
+    max-width: 30rem;
+    justify-self: center;
+    width: 100%;
+  }
+  @media (width >= 1024px) {
+    .hero-foto {
+      justify-self: end;
+    }
+  }
+  /* Halo detrás de la foto. Desenfoque quieto: se pinta una vez. */
+  .hero-foto::before {
+    content: "";
+    position: absolute;
+    inset: 10% -8% -6% 10%;
+    z-index: 0;
+    border-radius: 2rem;
+    background: var(--grad-cta);
+    opacity: 0.32;
+    filter: blur(56px);
+  }
+  .foto-hero {
+    position: relative;
+    z-index: 1;
+    border-radius: 1.5rem;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    box-shadow: var(--shadow-3);
+  }
+  .hero-chip {
+    position: absolute;
+    z-index: 2;
+    left: 1rem;
+    bottom: 1rem;
+    display: grid;
+    gap: 0.125rem;
+    padding: 0.875rem 1.125rem;
+    border-radius: 1rem;
+    border: 1px solid var(--color-line);
+    background: rgb(10 14 26 / 0.86);
+    box-shadow: var(--shadow-2);
+  }
+  @supports (backdrop-filter: blur(10px)) {
+    .hero-chip {
+      background: rgb(10 14 26 / 0.7);
+      backdrop-filter: blur(10px);
+    }
+  }
+  @media (width >= 1024px) {
+    .hero-chip {
+      left: -1.75rem;
+      bottom: 2.25rem;
+    }
+  }
+  .hero-chip-nombre {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .hero-chip-oficio {
+    font-size: var(--step--1);
+    color: var(--color-soft);
+  }
+
+  /* Entrada del resto del hero, encadenada con la del titular. La foto solo
+     se desplaza: su opacidad no se toca para no retrasar el LCP. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .hero .botones,
+    :global(.js) .hero .garantias {
+      animation: entrada-hero 0.6s var(--ease) both;
+    }
+    :global(.js) .hero .botones { animation-delay: 0.4s; }
+    :global(.js) .hero .garantias { animation-delay: 0.52s; }
+    :global(.js) .hero-foto {
+      animation: desplaza-hero 0.9s var(--ease) both;
+      animation-delay: 0.05s;
+    }
+    :global(.js) .hero-chip {
+      animation: entrada-hero 0.6s var(--ease) both;
+      animation-delay: 0.7s;
+    }
+  }
+
+  /* ------------------------------------------------------------- Perfiles */
+  .perfiles {
+    list-style: none;
+    margin-inline: 0;
+    padding: 0;
+    display: grid;
+    gap: 2.5rem 2.5rem;
+  }
+  .perfil {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line);
+  }
+  @media (width >= 640px) {
+    .perfiles {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (width >= 1024px) {
+    .perfiles {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* -------------------------------------------------------- Herramientas */
+  .herramientas-cabecera {
+    display: grid;
+    gap: 0.75rem 3rem;
+  }
+  @media (width >= 1024px) {
+    .herramientas-cabecera {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+  }
+  .herramienta {
+    transition:
+      border-color var(--dur-micro) var(--ease),
+      color var(--dur-micro) var(--ease);
+  }
+  .herramienta:hover {
+    border-color: color-mix(in srgb, var(--acento) 60%, var(--color-line));
+    color: var(--color-ink);
+  }
+
+  /* ------------------------------------------------------------ Servicios */
+  .tarjeta-servicio {
+    display: flex;
+    flex-direction: column;
+  }
+  .tarjeta-servicio .num-indice {
+    color: var(--svc);
+  }
+
+  /* ------------------------------------------------------------- Métricas */
+  .metricas {
+    list-style: none;
+    margin-inline: 0;
+    padding: 0;
+    display: grid;
+  }
+  .metrica {
+    padding-block: 2rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .metrica:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  @media (width >= 768px) {
+    .metricas {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .metrica,
+    .metrica:first-child {
+      padding: 0.5rem 2.5rem;
+      border-top: 0;
+      border-left: 1px solid var(--color-line);
+    }
+    .metrica:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+  .metricas .cifra {
+    font-size: clamp(3.5rem, 2.4rem + 4.2vw, 5.75rem);
+    letter-spacing: -0.045em;
+  }
+  .metrica-texto {
+    margin-top: 0.75rem;
+    max-width: 24ch;
+    color: var(--color-soft);
+    font-size: var(--step-1);
+  }
+
+  /* ---------------------------------------------------------- Calculadora */
+  .roi {
+    position: relative;
+    overflow: hidden;
+  }
+  .roi > :not(.fondo-reticula) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ----------------------------------------------------------- Estándares */
+  .estandares {
+    list-style: none;
+    margin-inline: 0;
+    padding: 0;
+    display: grid;
+    column-gap: 3rem;
+  }
+  .estandar {
+    display: grid;
+    gap: 1rem;
+    padding-block: 2rem;
+    border-top: 1px solid var(--color-line);
+  }
+  @media (width >= 768px) {
+    .estandares {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (width >= 1024px) {
+    .estandares {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ------------------------------------------------------------- Sobre mí */
+  .sobremi {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (width >= 1024px) {
+    .sobremi {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 5rem;
+    }
+  }
+  .retrato-marco {
+    position: relative;
+    margin: 0;
+    max-width: 28rem;
+    width: 100%;
+    justify-self: center;
+  }
+  .retrato-marco::before {
+    content: "";
+    position: absolute;
+    inset: 8% 8% -6% -6%;
+    z-index: 0;
+    border-radius: 2rem;
+    background: linear-gradient(135deg, var(--acento-coral), var(--acento-violeta));
+    opacity: 0.22;
+    filter: blur(56px);
+  }
+  .retrato-marco :global(img) {
+    position: relative;
+    z-index: 1;
+    border-radius: 1.5rem;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    box-shadow: var(--shadow-3);
+  }
+  .datos {
+    list-style: none;
+    margin-inline: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-line);
+  }
+  .datos li {
+    display: grid;
+    grid-template-columns: minmax(0, 11.5rem) 1fr;
+    gap: 1rem;
+    padding-block: 0.875rem;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-ink);
+  }
+  .datos span {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 0.15em;
+  }
+  .lema {
+    margin-inline: 0;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--acento);
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  /* ----------------------------------------------------------------- Blog */
+  .tarjeta-articulo .card-title {
+    font-size: var(--step-1);
+  }
+
+  /* ------------------------------------------------------------------ FAQ */
+  .faq-rejilla {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (width >= 1024px) {
+    .faq-rejilla {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 5rem;
+      align-items: start;
+    }
+    .faq-lateral {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+  .caja-cta.caja-cta-vertical {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  /* --------------------------------------------------------------- Cierre */
+  .cierre {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    padding: clamp(3.5rem, 2rem + 5vw, 6.5rem) clamp(1.5rem, 1rem + 4vw, 5rem);
+    border-radius: 1.75rem;
+    border: 1px solid var(--color-line);
+    background:
+      radial-gradient(60% 80% at 50% 0%, rgb(139 92 246 / 0.22), transparent 70%),
+      radial-gradient(50% 60% at 50% 120%, rgb(0 123 255 / 0.18), transparent 70%),
+      var(--color-surface);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), var(--shadow-3);
+  }
+  .cierre > :not(.fondo-reticula) {
+    position: relative;
+    z-index: 1;
+  }
+  .cierre h2 {
+    font-size: var(--step-4);
+    max-width: 18ch;
+  }
+  .cierre .lead {
+    max-width: 52ch;
   }
 </style>

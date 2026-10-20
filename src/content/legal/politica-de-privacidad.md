@@ -11,7 +11,7 @@ Esta política explica cómo se tratan los datos personales que facilitas a trav
 
 - Responsable: Luis Carlos Flores
 - Localidad: Manresa (Barcelona), España
-- Correo electrónico de contacto: [[email&#160;protected]](/cdn-cgi/l/email-protection#fe9691929fbe8d9187928b978d9892918c9b8dd09b8d)
+- Correo electrónico de contacto: [hola@soyluisflores.es](mailto:hola@soyluisflores.es)
 
 ## 2. Qué datos tratamos
 
@@ -54,7 +54,7 @@ Puedes ejercer en cualquier momento los siguientes derechos:
 - Portabilidad de los datos.
 - Retirada del consentimiento, sin que afecte a la licitud del tratamiento previo.
 
-Para ejercerlos, escribe a [[email&#160;protected]](/cdn-cgi/l/email-protection#acc4c3c0cdecdfc3d5c0d9c5dfcac0c3dec9df82c9df) indicando el derecho que quieres ejercer. Si es necesario para verificar tu identidad, se te podrá pedir información adicional. Responderemos en el plazo máximo de un mes.
+Para ejercerlos, escribe a [hola@soyluisflores.es](mailto:hola@soyluisflores.es) indicando el derecho que quieres ejercer. Si es necesario para verificar tu identidad, se te podrá pedir información adicional. Responderemos en el plazo máximo de un mes.
 
 ## 7. Autoridad de control
 
