@@ -48,7 +48,8 @@ for (const archivo of paginas) {
 
   // Imágenes sin alt
   for (const img of sinScripts.matchAll(/<img\b[^>]*>/g))
-    if (!/\balt=/.test(img[0])) anota(pag, "imagen", `sin alt: ${img[0].slice(0, 80)}`);
+    // Astro minifica alt="" como `alt` a secas: también vale (imagen decorativa).
+    if (!/\balt(=|\s|>|\/)/.test(img[0])) anota(pag, "imagen", `sin alt: ${img[0].slice(0, 80)}`);
 
   // IDs duplicados
   const ids = [...sinScripts.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);

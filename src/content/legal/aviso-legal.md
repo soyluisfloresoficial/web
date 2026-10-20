@@ -11,7 +11,7 @@ En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios
 
 - Titular: Luis Carlos Flores
 - NIF/NIE: Z2428176W
-- Domicilio: Carrer Pujada Roja, 08243, Manresa, Barcelona, España
+- Domicilio: Manresa, Barcelona, España
 - Correo electrónico: [hola@soyluisflores.es](mailto:hola@soyluisflores.es)
 - Sitio web: https://soyluisflores.es
 

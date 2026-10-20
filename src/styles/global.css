@@ -553,22 +553,39 @@ main :where(p, li, dd, td, blockquote) > a:not([class]):hover {
   display: none;
 }
 
-/* Indicador propio: un signo + que gira a × al abrir. */
+/* Indicador: flecha dentro de un círculo que gira al abrir, como en
+   producción. La pregunta abierta se marca con el borde azul. */
 .faq-item > summary::after {
   content: "";
   flex-shrink: 0;
-  width: 0.875rem;
-  height: 0.875rem;
-  background: currentColor;
-  clip-path: polygon(
-    43% 0, 57% 0, 57% 43%, 100% 43%, 100% 57%, 57% 57%,
-    57% 100%, 43% 100%, 43% 57%, 0 57%, 0 43%, 43% 43%
-  );
-  transition: transform var(--dur-micro) var(--ease);
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2366b2ff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") center / 1rem no-repeat;
+  transition:
+    transform var(--dur-micro) var(--ease),
+    border-color var(--dur-micro) var(--ease);
 }
 
 .faq-item[open] > summary::after {
-  transform: rotate(135deg);
+  transform: rotate(180deg);
+  border-color: rgb(0 123 255 / 0.5);
+}
+
+.faq-item {
+  transition:
+    border-color var(--dur-micro) var(--ease),
+    background-color var(--dur-micro) var(--ease);
+}
+.faq-item[open] {
+  border-color: rgb(0 123 255 / 0.5);
+  background:
+    linear-gradient(rgb(0 123 255 / 0.05), rgb(0 123 255 / 0.05)),
+    var(--color-surface);
+}
+.faq-item > summary:hover::after {
+  border-color: rgb(0 123 255 / 0.5);
 }
 
 .faq-item .faq-cuerpo {

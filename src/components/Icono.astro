@@ -1,0 +1,58 @@
+---
+/**
+ * Iconos de trazo de 24 × 24, los mismos que usa el sitio en producción.
+ * Con `degradado`, el trazo va en azul → violeta (#lf-grad-stroke, definido
+ * una vez por página en Base.astro). Siempre decorativos: aria-hidden.
+ */
+interface Props {
+  nombre: keyof typeof trazos;
+  tamano?: number;
+  grosor?: number;
+  degradado?: boolean;
+  class?: string;
+}
+
+const trazos = {
+  calendario: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  calendarioOk: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4"/>',
+  flecha: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  globo: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.5 3.6 9s-1.2 6.5-3.6 9M12 3c-2.4 2.5-3.6 5.5-3.6 9s1.2 6.5 3.6 9"/>',
+  embudo: '<path d="M4 5h16l-6 7.5V19l-4-2v-4.5L4 5Z"/>',
+  chipIa: '<rect x="5" y="5" width="14" height="14" rx="2.5"/><path d="M9 2.5V5M15 2.5V5M9 19v2.5M15 19v2.5M2.5 9H5M2.5 15H5M19 9h2.5M19 15h2.5M8.4 15l1.9-6 1.9 6M9 13.2h2.6M15.4 9v6"/>',
+  escudo: '<path d="M12 3 4.5 6v5.5c0 4.5 3.2 8.2 7.5 9.5 4.3-1.3 7.5-5 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  tendencia: '<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  whatsapp: '<path d="M3.5 20.5 4.8 16.4A8.5 8.5 0 1 1 8 19.3l-4.5 1.2Z"/><path d="M9 8.6c.2 3.4 3 6.2 6.4 6.4l1.1-1.5-2-1.1-1 .9a4.3 4.3 0 0 1-2.3-2.3l.9-1-1.1-2L9 8.6Z"/>',
+  reloj: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>',
+  flujo: '<rect x="3" y="4" width="6" height="5" rx="1.5"/><rect x="15" y="15" width="6" height="5" rx="1.5"/><path d="M6 9v4a2 2 0 0 0 2 2h7"/>',
+  persona: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/>',
+  birrete: '<path d="M2.5 9.5 12 5l9.5 4.5L12 14 2.5 9.5Z"/><path d="M6.5 11.6V16c1.5 1.4 3.5 2.1 5.5 2.1s4-.7 5.5-2.1v-4.4M21.5 9.5V15"/>',
+  corazon: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20Z"/>',
+  edificio: '<rect x="4" y="3.5" width="11" height="17" rx="1.5"/><path d="M15 9.5h4a1 1 0 0 1 1 1v10M2.5 20.5h19M7.5 7.5h1M11 7.5h1M7.5 11h1M11 11h1M7.5 14.5h1M11 14.5h1"/>',
+  brujula: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/>',
+  robot: '<rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16h5"/>',
+  web: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
+  megafono: '<path d="M3.5 10.5v3a1 1 0 0 0 1 1H7l5.5 4.5v-14L7 9.5H4.5a1 1 0 0 0-1 1Z"/><path d="M16 9a4.5 4.5 0 0 1 0 6M18.8 6.2a8.5 8.5 0 0 1 0 11.6"/>',
+  email: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/>',
+  chat: '<path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z"/>',
+  chevron: '<path d="m6 9 6 6 6-6"/>',
+  ubicacion: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.5"/>',
+};
+
+const { nombre, tamano = 24, grosor = 1.75, degradado = false, class: clase } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 24 24"
+  width={tamano}
+  height={tamano}
+  fill="none"
+  stroke={degradado ? "url(#lf-grad-stroke)" : "currentColor"}
+  stroke-width={grosor}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+  class={clase}
+  set:html={trazos[nombre]}
+/>

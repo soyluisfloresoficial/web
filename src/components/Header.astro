@@ -23,13 +23,17 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
         height="40"
         class="marca-mono"
       />
-      <img
-        src="/logo/nombre-360.webp"
-        alt="Luis Flores"
-        width="180"
-        height="24"
-        class="marca-nombre"
-      />
+      <span class="marca-textos">
+        <img
+          src="/logo/nombre-360.webp"
+          alt="Luis Flores"
+          width="180"
+          height="24"
+          class="marca-nombre"
+        />
+        {/* Lema bajo el nombre, como en producción. Solo en pantallas anchas. */}
+        <img src="/logo/lema-360.webp" alt="" width="180" height="10" class="marca-lema" />
+      </span>
     </a>
 
     <nav class="nav-escritorio" aria-label="Principal">
@@ -188,6 +192,21 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
   .marca-nombre {
     height: 1.25rem;
     width: auto;
+  }
+  .marca-textos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .marca-lema {
+    display: none;
+    width: 100%;
+    height: auto;
+  }
+  @media (width >= 1100px) {
+    .marca-lema {
+      display: block;
+    }
   }
 
   .nav-escritorio {

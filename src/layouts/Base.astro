@@ -195,6 +195,16 @@ const grafo = {
   </head>
 
   <body>
+    {/* Degradado de los iconos de trazo (Icono.astro con degradado). Una sola
+        definición por página. */}
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+      <defs>
+        <linearGradient id="lf-grad-stroke" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22">
+          <stop offset="0" stop-color="#0a84ff" />
+          <stop offset="1" stop-color="#8b5cf6" />
+        </linearGradient>
+      </defs>
+    </svg>
     <Header />
     <div id="contenido">
       <slot />

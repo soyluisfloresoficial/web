@@ -17,6 +17,8 @@ export interface Servicio {
   color: string;
   /** Nombre del fichero en src/assets, sin extensión. */
   imagen: string;
+  /** Icono del distintivo de la tarjeta (nombre de Icono.astro). */
+  icono: "robot" | "embudo" | "flujo" | "web" | "megafono" | "brujula";
   /** Alt descriptivo y único. [VERIFICAR: que coincide con la imagen real.] */
   imagenAlt: string;
 }
@@ -30,6 +32,7 @@ export const servicios: Servicio[] = [
     resumen: "Atienden por chat y voz 24/7 y agendan citas por ti.",
     color: "--svc-agentes-ia",
     imagen: "agentes-ia",
+    icono: "robot",
     imagenAlt: "Agente de IA respondiendo a un cliente por chat",
   },
   {
@@ -40,6 +43,7 @@ export const servicios: Servicio[] = [
     resumen: "Landing, captación y seguimiento por email y WhatsApp.",
     color: "--svc-funnels-conversion",
     imagen: "funnels-conversion",
+    icono: "embudo",
     imagenAlt: "Embudo de conversión con las etapas medidas",
   },
   {
@@ -50,6 +54,7 @@ export const servicios: Servicio[] = [
     resumen: "Flujos con Make, n8n y Zapier, con control de errores.",
     color: "--svc-automatizacion",
     imagen: "automatizacion",
+    icono: "flujo",
     imagenAlt: "Flujo de automatización conectando varias herramientas",
   },
   {
@@ -60,6 +65,7 @@ export const servicios: Servicio[] = [
     resumen: "Rápidas, accesibles y con un objetivo claro por página.",
     color: "--svc-webs-ia",
     imagen: "webs-ia",
+    icono: "web",
     imagenAlt: "Web mobile-first con formulario de contacto",
   },
   {
@@ -70,6 +76,7 @@ export const servicios: Servicio[] = [
     resumen: "Meta Ads y Google Ads con medición correcta desde el día uno.",
     color: "--svc-trafico-de-pago",
     imagen: "trafico-de-pago",
+    icono: "megafono",
     imagenAlt: "Panel de campañas de Meta Ads y Google Ads",
   },
   {
@@ -80,6 +87,7 @@ export const servicios: Servicio[] = [
     resumen: "Diagnóstico y hoja de ruta priorizada para tu negocio.",
     color: "--svc-consultoria-ia",
     imagen: "consultoria-ia",
+    icono: "brujula",
     imagenAlt: "Hoja de ruta de adopción de IA priorizada",
   },
 ];
