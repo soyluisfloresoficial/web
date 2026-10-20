@@ -18,6 +18,22 @@ Autorización permanente (20/10/2026), para cualquier conversación: cuando haga
 
 Si el build o la auditoría fallan, **no subas nada** y explica qué ha pasado.
 
+## Dónde se guarda cada cosa
+
+| Qué | Dónde |
+|---|---|
+| Código de la web | GitHub: `soyluisfloresoficial/web`, rama **`main`** (es la que se publica) |
+| Copia de la rama de trabajo | `reconstruccion-oct-2026`: se sube **siempre igual que `main`** (mismo commit). No la borres sin permiso del titular |
+| Web publicada | Cloudflare, Worker `web` → `soyluisflores.es` y `www.soyluisflores.es`. Se reconstruye sola con cada subida a `main` |
+| Configuración de la publicación | `wrangler.jsonc` y `DESPLIEGUE.md` |
+| Variables de compilación (`PUBLIC_GTM_ID`) | Panel de Cloudflare → Worker `web` → Configuración → Compilación. **No** están en el repositorio |
+| Contenedor de Google Tag Manager | `gtm/` (ficheros de apoyo; el contenedor real está en tagmanager.google.com) |
+| Reglas de trabajo y preferencias | Este fichero y la memoria de Claude del proyecto |
+
+Después de cada cambio, comprueba que **`git status` está limpio** y que `main` y `reconstruccion-oct-2026` apuntan al mismo commit. Nada debe quedarse solo en el ordenador.
+
+Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pierden en la siguiente publicación: cualquier cambio del sitio se hace en el repositorio.
+
 ## Reglas de contenido
 
 - Español de España.
