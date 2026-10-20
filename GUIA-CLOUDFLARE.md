@@ -1,5 +1,7 @@
 # Guía para conectar la web a GitHub en Cloudflare
 
+> **21/10/2026:** Cloudflare creó un **Worker** llamado `web`, no un proyecto de Pages. Funciona igual y se actualiza solo. Las partes 1 y 2 ya están hechas. Para las partes 3 y 4, mira la nota de arriba de `DESPLIEGUE.md`, que tiene los nombres exactos de los botones del Worker.
+
 Tiempo: unos 20 minutos. Necesitas poder entrar en tu cuenta de **Cloudflare** y en tu cuenta de **GitHub**.
 
 Cuando termines, cada cambio que se suba a GitHub aparecerá solo en soyluisflores.es en uno o dos minutos.

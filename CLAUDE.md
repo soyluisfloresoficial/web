@@ -1,6 +1,6 @@
 # Instrucciones para trabajar en este repositorio
 
-Este repositorio es la web **soyluisflores.es** de Luis Carlos Flores. Cloudflare Pages está conectado a GitHub y **publica sola cada subida a la rama `main`**.
+Este repositorio es la web **soyluisflores.es** de Luis Carlos Flores. Cloudflare (Worker llamado `web`, con Workers Builds) está conectado a GitHub y **publica solo cada subida a la rama `main`**. La configuración está en `wrangler.jsonc`: el nombre `web` tiene que coincidir con el del Worker en Cloudflare, y `html_handling: drop-trailing-slash` mantiene las URL sin barra final.
 
 ## Idioma
 

@@ -1,5 +1,13 @@
 # Publicar soyluisflores.es y que se actualice sola
 
+> **Actualización 21/10/2026.** El proyecto real que se creó en Cloudflare es un **Worker** llamado `web` (Workers Builds), no un proyecto de Pages. Funciona igual: cada subida a `main` se publica sola. Lo que cambia respecto al texto de abajo:
+>
+> - Nombre del proyecto: `web`, con dirección de prueba `web.soyluisfloresoficial.workers.dev`.
+> - La configuración vive en `wrangler.jsonc` (assets en `./dist`, URL sin barra final y página 404).
+> - Para añadir el dominio: **Workers y Pages → web → Configuración → Dominios y rutas → Agregar → Dominio personalizado**.
+> - La variable `PUBLIC_GTM_ID` va en **Configuración → Compilación (Build) → Variables y secretos**. Si se pone como variable normal del Worker no llega a la compilación y el banner de cookies no aparece.
+> - Comprobado el 21/10/2026 en la dirección de prueba: `/servicios` responde 200, `/servicios/` redirige a `/servicios`, una página inexistente da 404, `robots.txt`, `llms.txt` y el sitemap responden 200 y el NIE solo sale en `/aviso-legal`.
+
 Hoy la web está en Cloudflare Pages como **Direct Upload**: se sube a mano y no está conectada a ningún repositorio. Cloudflare no permite convertir un proyecto Direct Upload en uno conectado a Git, así que el camino es **crear un proyecto nuevo conectado a GitHub y pasarle el dominio**. Desde ese momento, cada cambio que se suba a la rama `main` se publica solo en uno o dos minutos.
 
 ## Comprobado antes de publicar (20/10/2026)
