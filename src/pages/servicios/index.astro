@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
+import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import { servicios, SITIO } from "../../data/servicios";
 
 const imagenes = import.meta.glob<{ default: ImageMetadata }>(
@@ -8,6 +9,9 @@ const imagenes = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 function imagenDe(nombre: string) {
+  // Sin nombre no hay foto. Ojo: "../assets/" contiene "/." y, con el nombre
+  // vacío, la búsqueda de abajo devolvía la primera imagen que encontrara.
+  if (!nombre) return undefined;
   const clave = Object.keys(imagenes).find((k) => k.includes(`/${nombre}.`));
   return clave ? imagenes[clave].default : undefined;
 }
@@ -75,7 +79,7 @@ const schema = [
               const img = imagenDe(s.imagen);
               return (
                 <li class="card overflow-hidden" style={`--svc: var(${s.color})`}>
-                  {img && (
+                  {img ? (
                     <Image
                       src={img}
                       alt={s.imagenAlt}
@@ -84,6 +88,8 @@ const schema = [
                       loading="lazy"
                       class="aspect-[16/9] w-full object-cover"
                     />
+                  ) : (
+                    <IlustracionServicio slug={s.slug} color={s.color} alt={s.imagenAlt} />
                   )}
                   <div class="p-5">
                     <h2 class="card-title">{s.nombre}</h2>

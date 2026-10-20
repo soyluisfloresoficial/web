@@ -42,7 +42,7 @@ export const GET: APIRoute = async () => {
   lineas.push(
     `- [Inicio](${SITIO.url}/): presentación, servicios, método y preguntas frecuentes.`,
   );
-  lineas.push(`- [Servicios](${SITIO.url}/servicios): índice de los seis servicios.`);
+  lineas.push(`- [Servicios](${SITIO.url}/servicios): índice de los ${servicios.length} servicios.`);
   lineas.push(
     `- [Sobre mí](${SITIO.url}/sobre-mi): biografía, valores, formación y cómo se miden los resultados.`,
   );

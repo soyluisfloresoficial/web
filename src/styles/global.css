@@ -70,6 +70,11 @@
   --svc-webs-ia: #34d399;
   --svc-trafico-de-pago: #38bdf8;
   --svc-consultoria-ia: #c4b5fd;
+  /* Añadidos el 21/10/2026. Contraste como texto sobre surface: ámbar
+     10,92:1, naranja 8,3:1, turquesa 9,79:1. */
+  --svc-crm-seguimiento-leads: #fbbf24;
+  --svc-email-marketing: #fb923c;
+  --svc-paneles-de-metricas: #2dd4bf;
 
   --accent: var(--color-electric);
 

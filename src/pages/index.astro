@@ -24,6 +24,9 @@ const imagenes = import.meta.glob<{ default: ImageMetadata }>(
 );
 
 function imagenDe(nombre: string) {
+  // Sin nombre no hay foto. Ojo: "../assets/" contiene "/." y, con el nombre
+  // vacío, la búsqueda de abajo devolvía la primera imagen que encontrara.
+  if (!nombre) return undefined;
   const clave = Object.keys(imagenes).find((k) => k.includes(`/${nombre}.`));
   return clave ? imagenes[clave].default : undefined;
 }
@@ -339,7 +342,7 @@ const schema = [
           </div>
         </div>
 
-        {/* PARCHE P1-C: los SEIS servicios, desde un único array. */}
+        {/* PARCHE P1-C: todos los servicios, desde un único array. */}
         <ul class="services-grid mt-12">
           {
             servicios.map((s) => {

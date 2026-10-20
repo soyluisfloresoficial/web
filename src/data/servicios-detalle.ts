@@ -291,6 +291,147 @@ export const detalles: Record<string, DetalleServicio> = {
       },
     ],
   },
+  // ---------------------------------------------------------------------
+  // Servicios añadidos el 21/10/2026. Redactados a partir de lo que ya dice
+  // la web (herramientas, método, estándares). Lo que solo sabe el titular va
+  // marcado con [VERIFICAR]; la auditoría impide publicar con marcadores.
+
+  "crm-seguimiento-leads": {
+    h1: "CRM y seguimiento de leads para que ningún contacto se pierda",
+    intro:
+      "Los contactos llegan por la web, WhatsApp, Instagram o por teléfono, y acaban repartidos entre el correo, el móvil y una hoja de cálculo. Monto un CRM donde cada lead tiene su etapa, su historial y su siguiente paso, y los recordatorios salen solos.",
+    resultado: [
+      "Todos los contactos en un mismo sitio, con su historial completo.",
+      "Sabes en qué etapa está cada oportunidad y qué toca hacer después.",
+      "Los seguimientos se programan solos y ninguno depende de tu memoria.",
+    ],
+    paraQuien: [
+      "Negocios que reciben contactos por varios canales y los gestionan a mano.",
+      "Equipos comerciales pequeños que necesitan saber quién lleva cada cliente.",
+      "Negocios que ya tienen un CRM pero no lo usan porque está desordenado.",
+    ],
+    queIncluye: [
+      "CRM configurado con las etapas de tu proceso comercial, en GoHighLevel, ActiveCampaign o Airtable según tu caso.",
+      "Entrada automática de los contactos desde la web, los formularios y los mensajes.",
+      "Etiquetas y campos para segmentar por interés, origen o etapa.",
+      "Tareas y recordatorios automáticos para cada seguimiento.",
+      "Importación de tus contactos actuales, con limpieza de duplicados. [VERIFICAR: si la importación entra siempre en el servicio]",
+      "Documentación y explicación del funcionamiento para tu equipo.",
+    ],
+    faq: [
+      {
+        pregunta: "¿Qué CRM me recomiendas?",
+        respuesta:
+          "El que encaje con tu forma de trabajar y con lo que ya usas. Trabajo sobre todo con GoHighLevel, ActiveCampaign y Airtable. Si ya tienes otro, primero reviso si se puede aprovechar antes de proponerte cambiar nada.",
+      },
+      {
+        pregunta: "¿Puedo pasar al CRM los contactos que ya tengo?",
+        respuesta:
+          "Sí, siempre que se puedan exportar. Antes de importarlos se limpian los duplicados y se decide qué datos tiene sentido guardar.",
+      },
+      {
+        pregunta: "¿Mi equipo sabrá usarlo?",
+        respuesta:
+          "El CRM se monta con las etapas y los nombres que ya usáis en el día a día, no al revés. Al terminar queda documentado y te explico cómo funciona en lenguaje claro.",
+      },
+      {
+        pregunta: "¿Cómo quedan los datos y el RGPD?",
+        respuesta:
+          "Solo se guardan los datos necesarios y con una finalidad clara. Para el detalle legal de tu caso te recomiendo revisarlo con un profesional; yo me ocupo de la parte técnica.",
+      },
+    ],
+  },
+
+  "email-marketing": {
+    h1: "Email marketing y secuencias automáticas que acompañan hasta la venta",
+    intro:
+      "La mayoría de los contactos no compra el primer día. Una secuencia de email bien planteada les escribe en el momento justo, con información útil, y se adapta a lo que hace cada persona: si abre, si hace clic o si ya ha comprado.",
+    resultado: [
+      "Cada contacto nuevo recibe la bienvenida al momento, sin que tengas que escribirle.",
+      "Los contactos que se enfrían vuelven a saber de ti con algo útil.",
+      "Ves qué correos funcionan y cuáles no, con aperturas, clics y respuestas.",
+    ],
+    paraQuien: [
+      "Negocios que captan contactos pero no vuelven a escribirles.",
+      "Emprendedores que venden servicios o formación y necesitan nutrir antes de vender.",
+      "Negocios con una lista parada que quieren reactivarla, siempre con consentimiento.",
+    ],
+    queIncluye: [
+      "Secuencia de bienvenida para cada contacto nuevo.",
+      "Secuencias de seguimiento y de recuperación según lo que hace cada persona.",
+      "Segmentación por interés, origen o etapa, conectada con tu CRM.",
+      "Configuración en ActiveCampaign o en la herramienta que ya uses, si se puede integrar.",
+      "Estructura de cada secuencia y textos de los correos. [VERIFICAR: si redactas tú los textos o los aporta el cliente]",
+      "Medición de aperturas, clics y respuestas para ajustar lo que no rinde.",
+    ],
+    faq: [
+      {
+        pregunta: "¿Esto no acaba siendo spam?",
+        respuesta:
+          "No, si se hace bien. Solo se escribe a quien ha dado su consentimiento, cada correo aporta algo concreto y darse de baja está a un clic. El objetivo es que quieran seguir leyéndote.",
+      },
+      {
+        pregunta: "¿Puedo escribir a los contactos que ya tengo?",
+        respuesta:
+          "Solo a los que dieron su consentimiento para recibir comunicaciones. Antes de empezar revisamos de dónde viene cada lista, y los contactos sin consentimiento se quedan fuera.",
+      },
+      {
+        pregunta: "¿Cuántos correos tiene una secuencia?",
+        respuesta:
+          "Los que necesite su objetivo, no un número fijo. Se define en el diagnóstico y se ajusta después con los datos de aperturas, clics y respuestas.",
+      },
+      {
+        pregunta: "¿Se puede combinar con WhatsApp?",
+        respuesta:
+          "Sí, siempre que el contacto lo haya autorizado. Se decide qué mensajes van por cada canal para no repetir lo mismo en los dos.",
+      },
+    ],
+  },
+
+  "paneles-de-metricas": {
+    h1: "Paneles de métricas para ver tu negocio en una sola pantalla",
+    intro:
+      "Los números de tu negocio están repartidos entre el CRM, las campañas, los pagos y la web, y juntarlos a mano cada semana lleva horas. Conecto esas fuentes en un panel que se actualiza solo y enseña las pocas cifras que de verdad sirven para decidir.",
+    resultado: [
+      "Ves de un vistazo cuántas visitas, contactos, citas y clientes tienes en cada etapa.",
+      "Dejas de copiar datos a mano en hojas de cálculo.",
+      "Detectas en qué etapa se pierde la gente y mejoras esa primero.",
+    ],
+    paraQuien: [
+      "Negocios que deciden a ojo porque no tienen los datos a mano.",
+      "Equipos que pierden horas cada semana preparando informes.",
+      "Negocios que invierten en campañas y quieren saber qué les trae clientes.",
+    ],
+    queIncluye: [
+      "Diagnóstico de qué cifras importan en cada etapa de tu negocio.",
+      "Conexión con las herramientas que ya usas: CRM, Meta Ads, Google Ads, pagos con Stripe o tu web, siempre que tengan integración o API.",
+      "Un panel con pocas cifras, ordenadas por etapa, que se actualiza solo. [VERIFICAR: herramienta de paneles que usas habitualmente]",
+      "Documentación de qué mide cada cifra y de dónde sale.",
+    ],
+    faq: [
+      {
+        pregunta: "¿Qué datos puedo ver en el panel?",
+        respuesta:
+          "Los de las herramientas que ya usas: contactos y etapas del CRM, resultados de las campañas, pagos o visitas de la web. Antes de empezar revisamos qué tiene integración o API para confirmar qué es posible.",
+      },
+      {
+        pregunta: "¿Tengo que cambiar de herramientas?",
+        respuesta:
+          "No. El panel se alimenta de lo que ya usas. Solo te propondría cambiar algo si una herramienta no permite sacar sus datos.",
+      },
+      {
+        pregunta: "¿Cada cuánto se actualizan los datos?",
+        respuesta:
+          "Depende de cada fuente: algunas se sincronizan casi al momento y otras una vez al día. Te lo dejo por escrito antes de empezar, para que sepas qué esperar.",
+      },
+      {
+        pregunta: "¿Qué métricas debería mirar?",
+        respuesta:
+          "Pocas y por etapa: de las visitas a los contactos, de los contactos a las citas y de las citas a los clientes. Las concretas de tu negocio las definimos en el diagnóstico.",
+      },
+    ],
+  },
+
 };
 
 /** Title y meta description por servicio, 50-60 y 150-160 caracteres. */
@@ -328,5 +469,20 @@ export const metas: Record<string, { title: string; description: string }> = {
     title: "Consultoría de IA para pymes y emprendedores | Luis Flores",
     description:
       "Consultoría de IA para pymes y emprendedores: diagnóstico de tu negocio y hoja de ruta priorizada para adoptar la inteligencia artificial donde más rinde.",
+  },
+  "crm-seguimiento-leads": {
+    title: "CRM y seguimiento de leads para negocios | Luis Flores",
+    description:
+      "Monto tu CRM con GoHighLevel, ActiveCampaign o Airtable: cada contacto en su etapa, con su historial y recordatorios automáticos para que ningún lead se pierda.",
+  },
+  "email-marketing": {
+    title: "Email marketing y secuencias automáticas | Luis Flores",
+    description:
+      "Secuencias de email de bienvenida, seguimiento y recuperación que se envían solas, solo a contactos con consentimiento y medidas por clics y respuestas.",
+  },
+  "paneles-de-metricas": {
+    title: "Paneles de métricas e informes para negocios | Luis Flores",
+    description:
+      "Paneles que reúnen en una pantalla los datos de tu CRM, tus campañas y tus pagos, se actualizan solos y enseñan las cifras de cada etapa de tu negocio.",
   },
 };

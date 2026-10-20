@@ -3,7 +3,7 @@
  *
  * La home, el pie, /servicios y el llms.txt leen de aquí. En el sitio anterior
  * cada sitio tenía su propia lista y por eso la home y el pie enseñaban cuatro
- * de los seis. Con un solo array eso no puede volver a pasar.
+ * de los seis que había. Con un solo array eso no puede volver a pasar.
  */
 
 export interface Servicio {
@@ -15,10 +15,11 @@ export interface Servicio {
   resumen: string;
   /** Variable CSS con el color propio del servicio. */
   color: string;
-  /** Nombre del fichero en src/assets, sin extensión. */
+  /** Nombre del fichero en src/assets, sin extensión. Vacío si el servicio
+   *  usa una ilustración de src/data/ilustraciones.ts en vez de foto. */
   imagen: string;
   /** Icono del distintivo de la tarjeta (nombre de Icono.astro). */
-  icono: "robot" | "embudo" | "flujo" | "web" | "megafono" | "brujula";
+  icono: "robot" | "embudo" | "flujo" | "web" | "megafono" | "brujula" | "usuarios" | "email" | "grafica";
   /** Alt descriptivo y único. [VERIFICAR: que coincide con la imagen real.] */
   imagenAlt: string;
 }
@@ -56,6 +57,41 @@ export const servicios: Servicio[] = [
     imagen: "automatizacion",
     icono: "flujo",
     imagenAlt: "Flujo de automatización conectando varias herramientas",
+  },
+  // Tres servicios añadidos el 21/10/2026. Usan ilustración, no foto: no hay
+  // fotos propias de estos trabajos y no se ponen de banco que no correspondan.
+  {
+    slug: "crm-seguimiento-leads",
+    nombre: "CRM y seguimiento de leads",
+    definicion:
+      "Un CRM es el sistema donde se guarda cada contacto con su historial, su etapa y la siguiente acción, para que ningún lead se quede sin respuesta.",
+    resumen: "Cada contacto en su etapa y con su siguiente paso, sin hojas sueltas.",
+    color: "--svc-crm-seguimiento-leads",
+    imagen: "",
+    icono: "usuarios",
+    imagenAlt: "Ilustración de un CRM con los contactos organizados por etapas",
+  },
+  {
+    slug: "email-marketing",
+    nombre: "Email marketing y secuencias",
+    definicion:
+      "Una secuencia de email es una serie de correos que se envían solos, en orden y según lo que hace cada contacto, para acompañarle hasta la compra.",
+    resumen: "Bienvenida, seguimiento y recuperación de contactos, con su consentimiento.",
+    color: "--svc-email-marketing",
+    imagen: "",
+    icono: "email",
+    imagenAlt: "Ilustración de una secuencia de correos en una línea de tiempo",
+  },
+  {
+    slug: "paneles-de-metricas",
+    nombre: "Paneles de métricas e informes",
+    definicion:
+      "Un panel de métricas reúne en una sola pantalla los números de cada etapa del negocio, sacados de las herramientas que ya usas, para decidir con datos.",
+    resumen: "Las cifras de cada etapa en una sola pantalla, sin copiar a mano.",
+    color: "--svc-paneles-de-metricas",
+    imagen: "",
+    icono: "grafica",
+    imagenAlt: "Ilustración de un panel con indicadores y gráficas",
   },
   {
     slug: "webs-ia",

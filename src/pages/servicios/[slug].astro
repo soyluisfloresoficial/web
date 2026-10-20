@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
+import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import { servicios, SITIO, AREA_SERVIDA } from "../../data/servicios";
 import { detalles, metas } from "../../data/servicios-detalle";
 import { proceso } from "../../data/home";
@@ -18,6 +19,9 @@ const imagenes = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 function imagenDe(nombre: string) {
+  // Sin nombre no hay foto. Ojo: "../assets/" contiene "/." y, con el nombre
+  // vacío, la búsqueda de abajo devolvía la primera imagen que encontrara.
+  if (!nombre) return undefined;
   const clave = Object.keys(imagenes).find((k) => k.includes(`/${nombre}.`));
   return clave ? imagenes[clave].default : undefined;
 }
@@ -89,7 +93,7 @@ const schema = [
         </div>
 
         {
-          img && (
+          img ? (
             <Image
               src={img}
               alt={servicio.imagenAlt}
@@ -98,6 +102,13 @@ const schema = [
               loading="eager"
               fetchpriority="high"
               class="foto-servicio rounded-2xl"
+            />
+          ) : (
+            <IlustracionServicio
+              slug={servicio.slug}
+              color={servicio.color}
+              alt={servicio.imagenAlt}
+              variante="hero"
             />
           )
         }
@@ -225,8 +236,8 @@ const schema = [
     color: var(--color-soft);
   }
 
-  /* Las seis imágenes de servicio vienen con proporciones distintas (3:2,
-     16:9, 1.57:1). Se recortan todas a 4:3 para que las seis páginas tengan
+  /* Las fotos de servicio vienen con proporciones distintas (3:2, 16:9,
+     1.57:1). Se recortan todas a 4:3 para que todas las páginas tengan
      el mismo encuadre y no se vean desniveladas entre sí. */
   .foto-servicio {
     width: 100%;

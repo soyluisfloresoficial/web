@@ -1,0 +1,84 @@
+---
+/**
+ * Ilustración de línea de un servicio, para cuando no hay foto propia.
+ * La usan la página de cada servicio (variante «hero») y el índice
+ * /servicios (variante «tarjeta»). En la home las tarjetas pintan la misma
+ * ilustración con sus propios estilos.
+ *
+ * Los trazos se dibujan al entrar en pantalla: el contenedor lleva .reveal,
+ * así que el script de Base.astro le pone .is-visible. Sin JavaScript o con
+ * movimiento reducido, la ilustración se ve completa desde el principio.
+ */
+import { ilustraciones } from "../data/ilustraciones";
+
+interface Props {
+  slug: string;
+  /** Variable CSS con el color del servicio, por ejemplo "--svc-email-marketing". */
+  color: string;
+  /** Descripción para lectores de pantalla, la misma que tendría la foto. */
+  alt: string;
+  variante?: "hero" | "tarjeta";
+}
+
+const { slug, color, alt, variante = "tarjeta" } = Astro.props;
+const svg = ilustraciones[slug];
+---
+
+{
+  svg && (
+    <div
+      class={`ilustracion ilustracion-${variante} reveal`}
+      role="img"
+      aria-label={alt}
+      style={`--svc: var(${color})`}
+    >
+      <Fragment set:html={svg} />
+    </div>
+  )
+}
+
+<style>
+  .ilustracion {
+    position: relative;
+    overflow: hidden;
+    color: var(--svc);
+    background:
+      radial-gradient(70% 90% at 60% 30%, color-mix(in srgb, var(--svc) 22%, transparent), transparent 70%),
+      var(--color-surface);
+  }
+  .ilustracion-tarjeta {
+    aspect-ratio: 16 / 9;
+  }
+  .ilustracion-hero {
+    aspect-ratio: 4 / 3;
+    max-height: 26rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-2);
+  }
+  .ilustracion :global(.svc-illus) {
+    position: absolute;
+    inset: 8%;
+    width: 84%;
+    height: 84%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .ilustracion :global(.draw) {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.45, 0, 0.2, 1);
+      transition-delay: calc(var(--d, 0) * 90ms);
+    }
+    :global(.js) .ilustracion.is-visible :global(.draw) {
+      stroke-dashoffset: 0;
+    }
+    :global(.js) .ilustracion :global(.draw-fade) {
+      opacity: 0;
+      transition: opacity 0.6s 0.45s;
+    }
+    :global(.js) .ilustracion.is-visible :global(.draw-fade) {
+      opacity: 1;
+    }
+  }
+</style>
