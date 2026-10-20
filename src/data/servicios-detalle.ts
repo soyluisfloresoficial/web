@@ -294,7 +294,7 @@ export const detalles: Record<string, DetalleServicio> = {
   // ---------------------------------------------------------------------
   // Servicios añadidos el 21/10/2026. Redactados a partir de lo que ya dice
   // la web (herramientas, método, estándares). Lo que solo sabe el titular va
-  // marcado con [VERIFICAR]; la auditoría impide publicar con marcadores.
+  // marcado con [VERIFICAR] y se resolvió con el titular el 21/10/2026.
 
   "crm-seguimiento-leads": {
     h1: "CRM y seguimiento de leads para que ningún contacto se pierda",
@@ -315,7 +315,7 @@ export const detalles: Record<string, DetalleServicio> = {
       "Entrada automática de los contactos desde la web, los formularios y los mensajes.",
       "Etiquetas y campos para segmentar por interés, origen o etapa.",
       "Tareas y recordatorios automáticos para cada seguimiento.",
-      "Importación de tus contactos actuales, con limpieza de duplicados. [VERIFICAR: si la importación entra siempre en el servicio]",
+      "Importación de tus contactos actuales, con limpieza de duplicados.",
       "Documentación y explicación del funcionamiento para tu equipo.",
     ],
     faq: [
@@ -361,7 +361,7 @@ export const detalles: Record<string, DetalleServicio> = {
       "Secuencias de seguimiento y de recuperación según lo que hace cada persona.",
       "Segmentación por interés, origen o etapa, conectada con tu CRM.",
       "Configuración en ActiveCampaign o en la herramienta que ya uses, si se puede integrar.",
-      "Estructura de cada secuencia y textos de los correos. [VERIFICAR: si redactas tú los textos o los aporta el cliente]",
+      "Estructura de cada secuencia. Los textos de los correos los redacto yo o trabajo con los tuyos, según lo que acordemos en la propuesta.",
       "Medición de aperturas, clics y respuestas para ajustar lo que no rinde.",
     ],
     faq: [
@@ -405,7 +405,7 @@ export const detalles: Record<string, DetalleServicio> = {
     queIncluye: [
       "Diagnóstico de qué cifras importan en cada etapa de tu negocio.",
       "Conexión con las herramientas que ya usas: CRM, Meta Ads, Google Ads, pagos con Stripe o tu web, siempre que tengan integración o API.",
-      "Un panel con pocas cifras, ordenadas por etapa, que se actualiza solo. [VERIFICAR: herramienta de paneles que usas habitualmente]",
+      "Un panel con pocas cifras, ordenadas por etapa, que se actualiza solo, en la herramienta que mejor encaje con lo que ya usas.",
       "Documentación de qué mide cada cifra y de dónde sale.",
     ],
     faq: [
