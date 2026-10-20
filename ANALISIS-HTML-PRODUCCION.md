@@ -363,3 +363,37 @@ Aplicado el 19/10/2026 y verificado sobre el HTML generado (`dist/`, 22 páginas
 
 - **2** Desactivar *Email Address Obfuscation* en Cloudflare (Scrape Shield). Este repo pinta el correo como texto normal, pero Cloudflare lo volverá a ofuscar al servir la página si la opción sigue activa.
 - **Sin `dateModified` en la home.** Es deliberado, por el mismo criterio que el sitemap: no hay una fecha real de cambio de contenido que poner.
+
+---
+
+## Componentes traídos de producción (20/10/2026)
+
+Este repositorio pasa a ser la versión de referencia. Se han traído las piezas que solo tenía la versión en producción, con los arreglos del análisis ya aplicados. Todo verificado en el navegador, en escritorio y a 375 px.
+
+| Pieza | Dónde | Qué cambia respecto a producción |
+|---|---|---|
+| Banner de cookies + GTM con Consent Mode v2 | `src/components/CookieBanner.astro` | Solo aparece si `PUBLIC_GTM_ID` tiene un ID válido: sin GTM no hay nada para lo que pedir permiso (**3**). Misma clave `lf-consent-v1`, así que quien ya eligió no vuelve a ver el banner. Comprobado: con el ID de prueba, Rechazar y Guardar no cargan GTM y el consentimiento queda en `denied`; «Configurar cookies» del pie lo reabre con el panel |
+| «Un cliente escribe de noche» | `src/components/Showcase.astro` | Las barras del embudo se animan con `transform`, no con `width` (**13**). Sin «vosotros» en el texto de la web (**22**). Mantiene el aviso «Ejemplos ilustrativos, no capturas de clientes» |
+| Métricas 73 % · 12 h · 40 % | home, datos en `src/data/home.ts` | El asterisco lleva a `/sobre-mi#como-mido`; en producción no llevaba a ningún sitio. Salen una vez en la home, no tres |
+| Banda de la calculadora ROI | home | Barras decorativas con `transform` y marcadas `aria-hidden` |
+| Avisos «¿No sabes por cuál empezar?» y «¿Tu duda no está aquí?» | home | Igual que producción |
+| Chat de preguntas rápidas | `src/components/Chat.astro` | Responde en el navegador con la FAQ y los servicios: sin `/api/chat`, sin IA y lo dice (**4**). No guarda ni envía nada. Pinta con `textContent`, sin `innerHTML` (**28**). Campo a 16 px (**7**), panel en `dvh` (**8**), oculto sin JavaScript (**27**) y mientras el banner está abierto (**6**). Sin el punto falso de «en línea» |
+| Barra de reserva en móvil | `src/components/BarraMovil.astro` | No sale en `/contacto` |
+
+### Cambio de base: fuera `ClientRouter`
+
+`ClientRouter` navegaba sin recargar la página. Con GTM eso hacía que solo se contara la primera página vista, y además el menú móvil dejaba de responder después de la primera navegación, porque la cabecera se reemplazaba sin volver a ejecutar su script. La transición entre páginas la hace ahora el CSS (`@view-transition`) con recargas normales. Comprobado: menú móvil abierto en `/servicios` tras llegar desde la home.
+
+### Lo que no se ha traído, a propósito
+
+- **Auroras con `blur`, capa de ruido fija, brillo infinito del H1, tarjetas flotantes, puntos que laten y spotlight con el puntero.** Son las animaciones infinitas del hallazgo **13** y la lectura de `getBoundingClientRect` del **14**.
+- **`content-visibility` con 640 px fijos** (**15**).
+- **Los botones que van directos a Calendly.** Aquí todos llevan a `/contacto`, como el resto del repo. Si prefieres el salto directo, es cambiar el `href` en un sitio.
+- **`site.webmanifest`.** No es necesario para una web de este tipo.
+
+### Sigue pendiente
+
+- **[COMPLETAR]** `PUBLIC_GTM_ID` en Cloudflare Pages.
+- **[COMPLETAR]** Respaldo de las tres métricas.
+- **[VERIFICAR]** Que la política de cookies describa GTM tal como lo carga el banner. **Que lo revise un abogado**; no he tocado el texto legal.
+- **Desplegar esta rama.** Hasta entonces, soyluisflores.es sigue sirviendo la otra versión, con el NIF en el pie.

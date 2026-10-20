@@ -90,6 +90,11 @@ export const SITIO = {
   nombreCompleto: "Luis Carlos Flores",
   email: "hola@soyluisflores.es",
   calendly: "https://calendly.com/soyluisfloresoficial/nueva-reunion",
+  // ID de Google Tag Manager, desde la variable de entorno PUBLIC_GTM_ID
+  // (por ejemplo en Cloudflare Pages → Settings → Environment variables).
+  // [COMPLETAR: el ID real. Mientras esté vacío no se carga GTM ni se
+  // muestra el banner de cookies, porque no hay nada para lo que pedir permiso.]
+  gtm: (import.meta.env.PUBLIC_GTM_ID ?? "") as string,
   // [COMPLETAR: número real de WhatsApp. En producción el enlace es
   // https://wa.me/34XXXXXXXXX, un marcador sin sustituir, así que aquí no se
   // pone ningún enlace de WhatsApp hasta tener el número.]

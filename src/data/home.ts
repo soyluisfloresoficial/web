@@ -206,3 +206,14 @@ export const faq: GrupoFaq[] = [
 
 /** Las 12 preguntas en plano, para el FAQPage del schema. */
 export const faqPlana: Pregunta[] = faq.flatMap((g) => g.preguntas);
+
+/**
+ * Cifras de implementaciones propias. Salen en la home y en /sobre-mi, y el
+ * asterisco de las dos lleva a /sobre-mi#como-mido.
+ * [COMPLETAR: periodo, número de negocios y método de cada cifra.]
+ */
+export const metricas = [
+  { cifra: "73%", texto: "de los leads respondidos al instante" },
+  { cifra: "12 h", texto: "por semana liberadas" },
+  { cifra: "40%", texto: "menos no-shows en negocios con citas" },
+];

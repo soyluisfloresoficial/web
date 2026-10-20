@@ -1,0 +1,516 @@
+---
+/**
+ * Chat de preguntas rápidas.
+ *
+ * En producción, el chat llamaba a /api/chat. En un despliegue Direct Upload
+ * estático esa ruta no existe, así que todo el que lo probaba recibía «Ahora
+ * mismo no puedo responder», debajo de un punto verde de «en línea».
+ *
+ * Esta versión responde en el navegador con las preguntas frecuentes y los
+ * servicios de la propia web, sin servidor y sin IA, y lo dice. No envía ni
+ * guarda nada de lo que se escribe. Si algún día existe un agente de verdad
+ * detrás, se cambia `responder()` y el aviso del pie del panel.
+ *
+ * Sin JavaScript no sirve para nada, así que se pinta oculto y es el script
+ * quien lo muestra.
+ */
+import { faqPlana } from "../data/home";
+import { servicios, SITIO } from "../data/servicios";
+
+const documentos = [
+  ...faqPlana.map((p) => ({ titulo: p.pregunta, texto: p.respuesta })),
+  ...servicios.map((s) => ({
+    titulo: s.nombre,
+    texto: `${s.definicion} ${s.resumen}`,
+    enlace: `/servicios/${s.slug}`,
+  })),
+];
+
+const sugerencias = [
+  "¿Qué se puede automatizar en mi negocio?",
+  "¿Cómo es la primera llamada?",
+  "¿Qué herramientas usas?",
+];
+---
+
+<div class="chat" data-chat hidden>
+  <button
+    type="button"
+    class="chat-boton"
+    aria-expanded="false"
+    aria-controls="chat-panel"
+    data-chat-abrir
+  >
+    <span class="sr-only" data-chat-etiqueta>Abrir preguntas rápidas</span>
+    <svg class="icono-abrir" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z" />
+    </svg>
+    <svg class="icono-cerrar" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  </button>
+
+  <section
+    id="chat-panel"
+    class="chat-panel"
+    role="dialog"
+    aria-labelledby="chat-titulo"
+    hidden
+    data-chat-panel
+  >
+    <header class="chat-cabecera">
+      <div>
+        <p id="chat-titulo" class="chat-titulo">Preguntas rápidas</p>
+        <p class="chat-sub">Respuestas de las preguntas frecuentes de la web</p>
+      </div>
+      <button type="button" class="chat-cerrar" data-chat-cerrar>
+        <span class="sr-only">Cerrar</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="chat-registro" role="log" data-chat-registro>
+      <div class="mensaje mensaje-bot">
+        <p>
+          Hola. Te respondo con lo que hay en la web: servicios, cómo trabajo,
+          precio y plazos. Para tu caso concreto, lo mejor es el diagnóstico.
+        </p>
+      </div>
+      <div class="sugerencias" data-chat-sugerencias>
+        {
+          sugerencias.map((s) => (
+            <button type="button" class="sugerencia">
+              {s}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <form class="chat-form" data-chat-form>
+      <label for="chat-pregunta" class="sr-only">Escribe tu pregunta</label>
+      <input
+        id="chat-pregunta"
+        name="pregunta"
+        type="text"
+        maxlength="300"
+        autocomplete="off"
+        placeholder="Escribe tu pregunta…"
+        data-chat-input
+      />
+      <button type="submit" class="chat-enviar" disabled data-chat-enviar>
+        <span class="sr-only">Enviar</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </button>
+    </form>
+
+    <p class="chat-nota">
+      Respuestas automáticas, sin IA. No se guarda ni se envía lo que escribes.
+    </p>
+  </section>
+
+  <script
+    type="application/json"
+    data-chat-datos
+    set:html={JSON.stringify({ documentos, email: SITIO.email })}
+  />
+</div>
+
+<script>
+  type Documento = { titulo: string; texto: string; enlace?: string };
+
+  const raiz = document.querySelector<HTMLElement>("[data-chat]");
+  const datosEl = raiz?.querySelector("[data-chat-datos]");
+
+  if (raiz && datosEl) {
+    const { documentos, email } = JSON.parse(datosEl.textContent ?? "{}") as {
+      documentos: Documento[];
+      email: string;
+    };
+    const abrir = raiz.querySelector<HTMLButtonElement>("[data-chat-abrir]")!;
+    const etiqueta = raiz.querySelector<HTMLElement>("[data-chat-etiqueta]")!;
+    const panel = raiz.querySelector<HTMLElement>("[data-chat-panel]")!;
+    const cerrar = raiz.querySelector<HTMLButtonElement>("[data-chat-cerrar]")!;
+    const registro = raiz.querySelector<HTMLElement>("[data-chat-registro]")!;
+    const form = raiz.querySelector<HTMLFormElement>("[data-chat-form]")!;
+    const input = raiz.querySelector<HTMLInputElement>("[data-chat-input]")!;
+    const enviar = raiz.querySelector<HTMLButtonElement>("[data-chat-enviar]")!;
+
+    // ------------------------------------------------------------ Búsqueda
+    const VACIAS = new Set(
+      "a al algo como con cual cuales de del el en es esta este esto hay la las lo los me mi mis o para pero por puede puedo que se si sin su sus te tu tus un una uno y ya yo".split(
+        " ",
+      ),
+    );
+    const palabras = (t: string) =>
+      t
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9ñ\s]/g, " ")
+        .split(/\s+/)
+        .filter((p) => p.length > 1 && !VACIAS.has(p))
+        // Raíz tosca de seis letras: «automatizaciones», «automatizar» y
+        // «automatizo» se quedan en «automa»; «precios», en «precio».
+        .map((p) => (p.length > 6 ? p.slice(0, 6) : p));
+
+    const indice = documentos.map((d) => ({
+      d,
+      titulo: new Set(palabras(d.titulo)),
+      texto: new Set(palabras(d.texto)),
+    }));
+
+    // Formas habituales de preguntar lo mismo con otras palabras. Clave y
+    // valores ya en forma de raíz (seis letras como máximo).
+    const SINONIMOS: Record<string, string[]> = {
+      precio: ["cuesta", "cuanto"],
+      coste: ["cuesta", "cuanto"],
+      costar: ["cuesta"],
+      tarifa: ["cuesta"],
+      presup: ["cuesta", "propue"],
+      plazo: ["tarda", "proyec"],
+      tiempo: ["tarda"],
+      duraci: ["tarda"],
+      plazos: ["tarda", "proyec"],
+      contra: ["permanencia", "cuotas"],
+      privac: ["rgpd", "datos"],
+    };
+
+    const responder = (pregunta: string): Documento | null => {
+      const base = palabras(pregunta);
+      const q = [...new Set(base.flatMap((w) => [w, ...(SINONIMOS[w] ?? [])].map((x) => x.slice(0, 6))))];
+      if (!q.length) return null;
+      let mejor: Documento | null = null;
+      let puntos = 0;
+      for (const { d, titulo, texto } of indice) {
+        let p = 0;
+        for (const w of q) {
+          if (titulo.has(w)) p += 3;
+          else if (texto.has(w)) p += 1;
+        }
+        if (p > puntos) {
+          puntos = p;
+          mejor = d;
+        }
+      }
+      // Al menos una palabra del título, o dos del texto.
+      return puntos >= 2 ? mejor : null;
+    };
+
+    // ------------------------------------------------------------ Pintado
+    // Todo con textContent y createElement: nada de innerHTML, así que lo que
+    // escribe la persona nunca se interpreta como HTML.
+    const pintar = (de: "bot" | "usuario", partes: (string | HTMLElement)[]) => {
+      const caja = document.createElement("div");
+      caja.className = `mensaje mensaje-${de}`;
+      const p = document.createElement("p");
+      for (const parte of partes) p.append(parte);
+      caja.append(p);
+      registro.append(caja);
+      registro.scrollTop = registro.scrollHeight;
+    };
+
+    const enlace = (texto: string, href: string) => {
+      const a = document.createElement("a");
+      a.textContent = texto;
+      a.href = href;
+      return a;
+    };
+
+    const preguntar = (texto: string) => {
+      const t = texto.trim();
+      if (!t) return;
+      raiz.querySelector("[data-chat-sugerencias]")?.remove();
+      pintar("usuario", [t]);
+      const r = responder(t);
+      if (r) {
+        const partes: (string | HTMLElement)[] = [
+          r.enlace ? `${r.titulo}: ${r.texto} ` : `${r.texto} `,
+        ];
+        if (r.enlace) partes.push(enlace("Ver el servicio", r.enlace));
+        pintar("bot", partes);
+      } else {
+        pintar("bot", [
+          "Eso no lo tengo en las preguntas frecuentes. Lo mejor es que lo hablemos: ",
+          enlace("reserva un diagnóstico", "/contacto"),
+          " o escríbeme a ",
+          enlace(email, `mailto:${email}`),
+          ".",
+        ]);
+      }
+    };
+
+    // ------------------------------------------------------------ Apertura
+    const estado = (abierto: boolean) => {
+      raiz.toggleAttribute("data-abierto", abierto);
+      abrir.setAttribute("aria-expanded", String(abierto));
+      etiqueta.textContent = abierto ? "Cerrar preguntas rápidas" : "Abrir preguntas rápidas";
+      panel.hidden = !abierto;
+      if (abierto) requestAnimationFrame(() => input.focus());
+      else abrir.focus();
+    };
+
+    abrir.addEventListener("click", () => estado(panel.hidden));
+    cerrar.addEventListener("click", () => estado(false));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !panel.hidden) estado(false);
+    });
+
+    input.addEventListener("input", () => {
+      enviar.disabled = input.value.trim().length === 0;
+    });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      preguntar(input.value);
+      input.value = "";
+      enviar.disabled = true;
+      input.focus();
+    });
+    raiz.querySelectorAll<HTMLButtonElement>(".sugerencia").forEach((b) =>
+      b.addEventListener("click", () => preguntar(b.textContent ?? "")),
+    );
+
+    raiz.hidden = false;
+  }
+</script>
+
+<style>
+  .chat {
+    position: fixed;
+    right: 1rem;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    z-index: 60;
+  }
+  .chat[hidden] {
+    display: none;
+  }
+  /* En móvil va por encima de la barra de reserva. */
+  @media (width < 1024px) {
+    .chat {
+      bottom: calc(5.25rem + env(safe-area-inset-bottom));
+    }
+  }
+  /* Mientras el banner de cookies está abierto, el chat se aparta: en
+     producción el botón quedaba encima de los botones del banner. */
+  :global(body:has([data-cookie-banner]:not([hidden]))) .chat {
+    display: none;
+  }
+
+  svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .chat-boton {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    background: var(--grad-cta);
+    color: #fff;
+    box-shadow: var(--shadow-2);
+    cursor: pointer;
+  }
+  .chat-boton svg {
+    grid-area: 1 / 1;
+    transition:
+      opacity var(--dur-micro) var(--ease),
+      transform var(--dur-micro) var(--ease);
+  }
+  .icono-cerrar {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+  .chat[data-abierto] .icono-abrir {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+  .chat[data-abierto] .icono-cerrar {
+    opacity: 1;
+    transform: none;
+  }
+  .chat-boton:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .chat-panel {
+    position: absolute;
+    right: 0;
+    bottom: 4.25rem;
+    width: min(23rem, calc(100dvw - 2rem));
+    /* dvh y no vh: en iOS, 100vh es la altura con la barra del navegador
+       escondida y el panel se metía por debajo. */
+    height: min(32rem, calc(100dvh - 8rem));
+    display: flex;
+    flex-direction: column;
+    background: var(--color-navy-2);
+    border: 1px solid var(--color-line);
+    border-radius: 18px;
+    box-shadow: var(--shadow-3);
+    overflow: hidden;
+  }
+  .chat-panel[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-panel:not([hidden]) {
+      animation: chat-entra 0.22s var(--ease);
+    }
+  }
+  @keyframes chat-entra {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+  }
+
+  .chat-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .chat-titulo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .chat-sub {
+    font-size: 0.75rem;
+    color: var(--color-soft);
+  }
+  .chat-cerrar {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-soft);
+    cursor: pointer;
+  }
+  .chat-cerrar:hover {
+    background: rgb(255 255 255 / 0.08);
+    color: var(--color-ink);
+  }
+
+  .chat-registro {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  .chat-registro :global(.mensaje) {
+    max-width: 88%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 14px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .chat-registro :global(.mensaje-bot) {
+    align-self: flex-start;
+    border: 1px solid var(--color-line);
+    border-bottom-left-radius: 4px;
+    background: var(--color-surface);
+    color: var(--color-soft);
+  }
+  .chat-registro :global(.mensaje-usuario) {
+    align-self: flex-end;
+    border: 1px solid rgb(0 123 255 / 0.3);
+    border-bottom-right-radius: 4px;
+    background: rgb(0 123 255 / 0.16);
+    color: var(--color-ink);
+  }
+  .chat-registro :global(.mensaje a) {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .sugerencias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .sugerencia {
+    min-height: 2.75rem;
+    padding: 0.4rem 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.03);
+    color: var(--color-soft);
+    font: inherit;
+    font-size: 0.8125rem;
+    text-align: left;
+    cursor: pointer;
+  }
+  .sugerencia:hover {
+    border-color: rgb(0 123 255 / 0.5);
+    color: var(--color-ink);
+  }
+
+  .chat-form {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .chat-form input {
+    flex: 1;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    /* 16 px como mínimo: con menos, iOS Safari amplía la página al enfocar. */
+    font-size: 1rem;
+  }
+  .chat-form input::placeholder {
+    color: var(--color-muted);
+  }
+  .chat-form input:focus {
+    outline: none;
+    border-color: var(--color-electric);
+  }
+  .chat-enviar {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 12px;
+    background: var(--grad-cta);
+    color: #fff;
+    cursor: pointer;
+  }
+  .chat-enviar:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .chat-nota {
+    padding: 0 0.875rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--color-muted);
+  }
+</style>

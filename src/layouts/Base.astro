@@ -1,11 +1,13 @@
 ---
-import { ClientRouter } from "astro:transitions";
 import { getImage } from "astro:assets";
 import { SITIO, AREA_SERVIDA } from "../data/servicios";
 import retratoImg from "../assets/luis-flores-retrato.jpg";
 import JsonLd from "../components/JsonLd.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import CookieBanner from "../components/CookieBanner.astro";
+import Chat from "../components/Chat.astro";
+import BarraMovil from "../components/BarraMovil.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -176,13 +178,14 @@ const grafo = {
     <JsonLd data={grafo} />
 
     {/*
-      Transiciones entre páginas. Seguras aquí porque no hay nada de terceros
-      que se rompa al reemplazar el documento: Calendly es un enlace saliente,
-      no un widget incrustado; no hay banner de cookies; y Google Tag Manager
-      no tiene ID configurado, así que no carga.
-      Si algún día se incrusta un widget, hay que revisar esto.
+      Sin ClientRouter. Navegaba sin recargar la página, y eso rompía dos
+      cosas: GTM solo contaba la primera página vista (las demás no generan
+      una carga nueva), y los scripts que enganchan eventos al cargar, como el
+      menú móvil, dejaban de funcionar tras la primera navegación porque la
+      cabecera se reemplazaba sin volver a ejecutarlos.
+      El efecto de transición entre páginas lo hace ahora el CSS
+      (@view-transition en global.css) con recargas normales.
     */}
-    <ClientRouter />
 
     {/* Marca que hay JavaScript ANTES de pintar: sin esta clase, las reglas
         de aparición no se aplican y el contenido se ve igual. */}
@@ -197,6 +200,9 @@ const grafo = {
       <slot />
     </div>
     <Footer />
+    <BarraMovil />
+    <Chat />
+    <CookieBanner />
   </body>
 
   <script>
@@ -238,8 +244,5 @@ const grafo = {
     }
 
     activarReveals();
-    // Las transiciones de vista reemplazan el documento, así que hay que
-    // volver a enganchar el observador en cada navegación.
-    document.addEventListener("astro:page-load", activarReveals);
   </script>
 </html>

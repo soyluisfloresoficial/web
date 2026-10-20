@@ -1,0 +1,67 @@
+---
+/**
+ * Barra fija de reserva en móvil y tableta, como la de producción.
+ * No sale en /contacto, que ya es la página de reserva.
+ */
+const ruta = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const mostrar = ruta !== "/contacto";
+---
+
+{
+  mostrar && (
+    <div class="barra-movil" data-ubicacion="barra-movil">
+      <a class="cta boton" href="/contacto">
+        Reservar diagnóstico <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  )
+}
+
+<style>
+  .barra-movil {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 40;
+    padding: 0.625rem var(--gutter);
+    padding-bottom: calc(0.625rem + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--color-line);
+    background: var(--color-navy-glass);
+  }
+  @supports (backdrop-filter: blur(12px)) {
+    .barra-movil {
+      background: var(--color-navy-glass-blur);
+      backdrop-filter: blur(12px);
+    }
+  }
+  .boton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 2.875rem;
+    border-radius: 999px;
+    background: var(--grad-cta);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    box-shadow: var(--shadow-cta);
+  }
+  .boton:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+  /* Hueco al final de la página para que la barra no tape el pie. */
+  :global(body:has(.barra-movil)) {
+    padding-bottom: 4.75rem;
+  }
+  @media (width >= 1024px) {
+    .barra-movil {
+      display: none;
+    }
+    :global(body:has(.barra-movil)) {
+      padding-bottom: 0;
+    }
+  }
+</style>

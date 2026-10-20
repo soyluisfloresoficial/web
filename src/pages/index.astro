@@ -3,7 +3,8 @@ import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import { servicios, SITIO, AREA_SERVIDA } from "../data/servicios";
-import { fugas, publicos, herramientas, estandares, proceso, faq, faqPlana } from "../data/home";
+import { fugas, publicos, herramientas, estandares, proceso, faq, faqPlana, metricas } from "../data/home";
+import Showcase from "../components/Showcase.astro";
 import heroImg from "../assets/luis-flores-monitores.jpg";
 import retratoImg from "../assets/luis-flores-retrato.jpg";
 
@@ -25,6 +26,13 @@ const description =
 const ultimos = (await getCollection("blog"))
   .sort((a, b) => b.data.datePublished.getTime() - a.data.datePublished.getTime())
   .slice(0, 3);
+// Barras decorativas de la banda de la calculadora: proporciones de dibujo.
+const barrasRoi: [string, number][] = [
+  ["Horas/mes", 0.7],
+  ["Ingresos/mes", 0.55],
+  ["Recuperación", 0.38],
+  ["ROI 12 meses", 0.85],
+];
 const fechaCorta = (d: Date) =>
   d.toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
 
@@ -234,6 +242,84 @@ const schema = [
             })
           }
         </ul>
+
+        <div class="caja-cta mt-8 reveal">
+          <p>
+            <strong>¿No sabes por cuál empezar?</strong> En 30 minutos reviso tu caso
+            y te digo qué automatizar primero.
+          </p>
+          <a class="cta inline-flex items-center gap-2" href="/contacto">
+            Reservar diagnóstico <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <Showcase />
+
+    {/* -------------------------------------------------------------- Métricas */}
+    <section class="section" aria-labelledby="metricas-titulo">
+      <div class="container-lf">
+        <div class="cabecera-doble">
+          <div>
+            <p class="eyebrow">Métricas propias</p>
+            <h2 id="metricas-titulo" class="subrayado mt-3">Resultados medidos, no promesas</h2>
+          </div>
+          <p class="card-text">
+            Lo que mido en cada implementación: rapidez de respuesta, horas
+            liberadas y asistencia a las citas.
+          </p>
+        </div>
+        <ul class="grid-3 mt-8">
+          {
+            metricas.map((m) => (
+              <li class="card reveal p-6">
+                <p class="cifra">
+                  <span class="gradient-text">{m.cifra}</span>
+                  <a href="/sobre-mi#como-mido" class="asterisco" aria-label="Cómo se midió">*</a>
+                </p>
+                <p class="card-text mt-2">{m.texto}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="nota mt-4">
+          *Medido en implementaciones propias con negocios reales.{" "}
+          <a href="/sobre-mi#como-mido">Cómo se midió</a>
+        </p>
+      </div>
+    </section>
+
+    {/* ---------------------------------------------------------- Calculadora */}
+    <section class="section" aria-labelledby="roi-titulo">
+      <div class="container-lf">
+        <div class="card roi reveal">
+          <div>
+            <p class="eyebrow">Calculadora ROI</p>
+            <h2 id="roi-titulo" class="mt-3">Pon tus números y ve una estimación</h2>
+            <p class="lead mt-4">
+              Horas ahorradas al mes, ingresos adicionales y en cuánto tiempo
+              recuperarías la inversión. Orientativo y basado en hipótesis: tú
+              decides la inversión, sin precios por defecto.
+            </p>
+            <a class="cta mt-6 inline-flex items-center gap-2" href="/roi">
+              Abrir la calculadora <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          {/* Barras decorativas: no representan ningún dato. */}
+          <ul class="roi-barras" aria-hidden="true">
+            {
+              barrasRoi.map(([nombre, ancho], i) => (
+                <li>
+                  <span>{nombre}</span>
+                  <span class="roi-pista">
+                    <span class="roi-barra" style={`--ancho:${ancho};--i:${i}`} />
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -383,6 +469,15 @@ const schema = [
             </div>
           ))
         }
+
+        <div class="caja-cta mt-8">
+          <p>
+            ¿Tu duda no está aquí? <strong>Reserva un diagnóstico y la resolvemos.</strong>
+          </p>
+          <a class="cta inline-flex items-center gap-2" href="/contacto">
+            Reservar diagnóstico <span aria-hidden="true">→</span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -506,6 +601,124 @@ const schema = [
 
   .card-text {
     color: var(--color-soft);
+  }
+
+  /* Aviso para reservar dentro de una sección. */
+  .caja-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-2xl);
+    background: linear-gradient(90deg, rgb(0 123 255 / 0.08), rgb(139 92 246 / 0.08));
+    color: var(--color-soft);
+  }
+  .caja-cta strong {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+  @media (width >= 768px) {
+    .caja-cta {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .caja-cta .cta {
+      flex-shrink: 0;
+    }
+  }
+
+  .cabecera-doble {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (width >= 768px) {
+    .cabecera-doble {
+      grid-template-columns: 1fr minmax(0, 28rem);
+      align-items: end;
+    }
+  }
+
+  .cifra {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 2rem + 1.5vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .asterisco {
+    margin-inline-start: 0.1em;
+    font-size: 0.55em;
+    vertical-align: super;
+    color: var(--color-electric-soft);
+  }
+  .nota a {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .roi {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    background:
+      radial-gradient(45% 80% at 85% 20%, rgb(0 123 255 / 0.18), transparent 70%),
+      var(--color-surface);
+  }
+  @media (width >= 768px) {
+    .roi {
+      padding: 2.75rem 2.5rem;
+    }
+  }
+  @media (width >= 1024px) {
+    .roi {
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+  }
+  .roi-barras {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .roi-barras li {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    align-items: center;
+    gap: 0.875rem;
+    font-size: 0.75rem;
+    color: var(--color-soft);
+  }
+  .roi-pista {
+    height: 0.625rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.06);
+    overflow: hidden;
+  }
+  /* Solo transform: la barra mide el 100 % y se escala. */
+  .roi-barra {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--grad-cta);
+    transform-origin: left center;
+    transform: scaleX(var(--ancho));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .roi-barra {
+      transform: scaleX(0);
+      transition: transform 0.9s var(--ease);
+      transition-delay: calc(var(--i) * 0.12s + 0.2s);
+    }
+    :global(.js) .roi.is-visible .roi-barra {
+      transform: scaleX(var(--ancho));
+    }
   }
 
   .meta {

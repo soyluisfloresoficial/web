@@ -1,0 +1,301 @@
+---
+/**
+ * Banner de cookies y carga de Google Tag Manager con Consent Mode v2.
+ *
+ * Solo se pinta si hay un ID de GTM válido (variable PUBLIC_GTM_ID). Sin GTM
+ * la web no pone ninguna cookie que no sea técnica, así que pedir permiso
+ * sería pedirlo para nada. En producción, el banner pedía consentimiento
+ * para un GTM que no se cargaba nunca porque el ID estaba vacío.
+ *
+ * Mismo criterio que el banner de producción, que ya cumplía con la AEPD:
+ * Rechazar, Configurar y Aceptar con el mismo peso visual; nada se carga
+ * antes de elegir; la elección caduca a los 12 meses. Usa la misma clave de
+ * localStorage (lf-consent-v1), así que quien ya eligió no vuelve a ver el
+ * banner al cambiar de versión.
+ */
+import { SITIO } from "../data/servicios";
+
+const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
+---
+
+{
+  gtmValido && (
+    <section
+      class="cookies"
+      role="region"
+      aria-labelledby="cookies-titulo"
+      hidden
+      data-cookie-banner
+      data-gtm={SITIO.gtm}
+    >
+      <div class="cookies-caja">
+        <p id="cookies-titulo" class="cookies-titulo">Tu privacidad, tu decisión</p>
+        <p class="cookies-texto">
+          Uso cookies técnicas necesarias para que la web funcione. Con tu permiso,
+          también cookies de analítica y marketing para medir visitas y mejorar el
+          contenido. No se activan hasta que aceptes. Detalles en la{" "}
+          <a href="/politica-de-cookies">política de cookies</a>.
+        </p>
+
+        <form class="cookies-panel" hidden data-cookie-panel>
+          <fieldset>
+            <legend class="sr-only">Categorías de cookies</legend>
+            <label>
+              <input type="checkbox" checked disabled />
+              <span><strong>Necesarias.</strong> Guardan tu elección de cookies. Siempre activas.</span>
+            </label>
+            <label>
+              <input type="checkbox" name="analytics" data-cookie-analytics />
+              <span><strong>Analítica.</strong> Medición de visitas de forma agregada mediante Google Tag Manager.</span>
+            </label>
+            <label>
+              <input type="checkbox" name="marketing" data-cookie-marketing />
+              <span><strong>Marketing.</strong> Medición de campañas publicitarias.</span>
+            </label>
+          </fieldset>
+          <button type="submit" class="cookies-boton">Guardar selección</button>
+        </form>
+
+        <div class="cookies-acciones">
+          <button type="button" class="cookies-boton" data-cookie-reject>Rechazar</button>
+          <button type="button" class="cookies-boton" data-cookie-configure aria-expanded="false">
+            Configurar
+          </button>
+          <button type="button" class="cookies-boton" data-cookie-accept>Aceptar</button>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  type Consentimiento = { analytics: boolean; marketing: boolean; date: string };
+
+  const CLAVE = "lf-consent-v1";
+  const UN_ANIO = 365 * 24 * 60 * 60 * 1000;
+
+  const banner = document.querySelector<HTMLElement>("[data-cookie-banner]");
+
+  if (banner) {
+    const gtmId = banner.dataset.gtm ?? "";
+    const panel = banner.querySelector<HTMLFormElement>("[data-cookie-panel]");
+    const analitica = banner.querySelector<HTMLInputElement>("[data-cookie-analytics]");
+    const marketing = banner.querySelector<HTMLInputElement>("[data-cookie-marketing]");
+    const configurar = banner.querySelector<HTMLButtonElement>("[data-cookie-configure]");
+
+    const w = window as unknown as { dataLayer: unknown[] };
+    w.dataLayer = w.dataLayer || [];
+    // gtag espera el objeto `arguments`, no un array: es el formato de Google.
+    function gtag(..._args: unknown[]) {
+      // eslint-disable-next-line prefer-rest-params
+      w.dataLayer.push(arguments);
+    }
+
+    // Todo denegado hasta que la persona elija.
+    gtag("consent", "default", {
+      analytics_storage: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    });
+
+    const leer = (): Consentimiento | null => {
+      try {
+        const crudo = localStorage.getItem(CLAVE);
+        if (!crudo) return null;
+        const c = JSON.parse(crudo) as Consentimiento;
+        return Date.now() - new Date(c.date).getTime() > UN_ANIO ? null : c;
+      } catch {
+        return null;
+      }
+    };
+
+    let gtmCargado = false;
+    const cargarGtm = () => {
+      if (gtmCargado) return;
+      gtmCargado = true;
+      w.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`;
+      document.head.appendChild(s);
+    };
+
+    const aplicar = (c: Consentimiento) => {
+      gtag("consent", "update", {
+        analytics_storage: c.analytics ? "granted" : "denied",
+        ad_storage: c.marketing ? "granted" : "denied",
+        ad_user_data: c.marketing ? "granted" : "denied",
+        ad_personalization: c.marketing ? "granted" : "denied",
+      });
+      if (c.analytics || c.marketing) cargarGtm();
+    };
+
+    const guardar = (analytics: boolean, mkt: boolean) => {
+      const c = { analytics, marketing: mkt, date: new Date().toISOString() };
+      try {
+        localStorage.setItem(CLAVE, JSON.stringify(c));
+      } catch {
+        /* Navegación privada o almacenamiento bloqueado: se aplica igual. */
+      }
+      aplicar(c);
+      banner.hidden = true;
+    };
+
+    const mostrar = (conPanel = false) => {
+      const c = leer();
+      if (analitica) analitica.checked = c?.analytics ?? false;
+      if (marketing) marketing.checked = c?.marketing ?? false;
+      if (panel) panel.hidden = !conPanel;
+      configurar?.setAttribute("aria-expanded", String(conPanel));
+      banner.hidden = false;
+    };
+
+    const previo = leer();
+    if (previo) aplicar(previo);
+    else mostrar();
+
+    banner.querySelector("[data-cookie-accept]")?.addEventListener("click", () => guardar(true, true));
+    banner.querySelector("[data-cookie-reject]")?.addEventListener("click", () => guardar(false, false));
+    configurar?.addEventListener("click", () => {
+      if (!panel) return;
+      panel.hidden = !panel.hidden;
+      configurar.setAttribute("aria-expanded", String(!panel.hidden));
+      if (!panel.hidden) analitica?.focus();
+    });
+    panel?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      guardar(!!analitica?.checked, !!marketing?.checked);
+    });
+
+    // «Configurar cookies» del pie: vuelve a abrir el banner con el panel.
+    document.querySelectorAll("[data-cookie-settings]").forEach((b) =>
+      b.addEventListener("click", () => {
+        mostrar(true);
+        analitica?.focus();
+      }),
+    );
+
+    // Clics en los botones de reserva. El dataLayer solo llega a algún sitio
+    // si GTM se ha cargado, es decir, si la persona aceptó.
+    document.addEventListener("click", (e) => {
+      const cta = (e.target as Element | null)?.closest<HTMLAnchorElement>("a.cta, a.cta-cabecera");
+      if (!cta) return;
+      const seccion = cta.closest("section[aria-labelledby], header, footer, [data-ubicacion]");
+      w.dataLayer.push({
+        event: "cta_diagnostico_click",
+        cta_location:
+          (cta.closest("[data-ubicacion]") as HTMLElement | null)?.dataset.ubicacion ??
+          seccion?.getAttribute("aria-labelledby") ??
+          seccion?.tagName.toLowerCase() ??
+          "desconocida",
+        page_path: location.pathname,
+      });
+    });
+  }
+</script>
+
+<style>
+  .cookies {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 70;
+    padding: 0.75rem;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  }
+  .cookies[hidden] {
+    display: none;
+  }
+  .cookies-caja {
+    max-width: 48rem;
+    margin-inline: auto;
+    background: var(--color-navy-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-3);
+    padding: 1.25rem;
+  }
+  .cookies-titulo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+    color: var(--color-ink);
+  }
+  .cookies-texto {
+    margin-top: 0.5rem;
+    font-size: var(--step--1);
+    color: var(--color-soft);
+  }
+  .cookies-texto a {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .cookies-panel {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-divider);
+    display: grid;
+    gap: 0.75rem;
+  }
+  .cookies-panel[hidden] {
+    display: none;
+  }
+  .cookies-panel fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+  .cookies-panel label {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    min-height: 2.75rem;
+    font-size: var(--step--1);
+    color: var(--color-soft);
+  }
+  .cookies-panel input {
+    margin-top: 0.2rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--color-electric);
+    flex-shrink: 0;
+  }
+  .cookies-panel strong {
+    color: var(--color-ink);
+  }
+  .cookies-acciones {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+  /* Los tres botones con el mismo peso visual: rechazar no puede ser más
+     difícil que aceptar (AEPD, guía de cookies de 2023). */
+  .cookies-boton {
+    min-height: 2.75rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid rgb(255 255 255 / 0.6);
+    background: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-0);
+    cursor: pointer;
+    transition: border-color var(--dur-micro) var(--ease);
+  }
+  .cookies-boton:hover {
+    border-color: var(--color-electric);
+  }
+  @media (width >= 640px) {
+    .cookies-acciones {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .cookies-panel .cookies-boton {
+      justify-self: start;
+    }
+  }
+</style>

@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import { SITIO, proyectos } from "../data/servicios";
+import { metricas } from "../data/home";
 import retratoImg from "../assets/luis-flores-retrato.jpg";
 
 const url = `${SITIO.url}/sobre-mi`;
@@ -37,11 +38,6 @@ const formacion = [
   { titulo: "Creación de agentes de IA", detalle: "Formación especializada" },
 ];
 
-const metricas = [
-  { cifra: "73%", texto: "de los leads respondidos al instante" },
-  { cifra: "12 h", texto: "por semana liberadas" },
-  { cifra: "40%", texto: "menos no-shows en negocios con citas" },
-];
 
 const schema = [
   {

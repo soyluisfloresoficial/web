@@ -1,0 +1,533 @@
+---
+/**
+ * «Un cliente escribe de noche»: lo que hace un sistema montado, en cuatro
+ * pasos. Traído del sitio en producción.
+ *
+ * Las maquetas son ilustrativas y lo dicen en pantalla. Ni la conversación,
+ * ni la agenda, ni las barras del embudo son datos de un cliente.
+ */
+
+// Iconos de trazo, 24 × 24, los mismos que usa el sitio en producción.
+const icono = {
+  agente: "M4 8h16v11H4zM12 4v4M9 13h.01M15 13h.01M9.5 16h5",
+  whatsapp:
+    "M3.5 20.5 4.8 16.4A8.5 8.5 0 1 1 8 19.3l-4.5 1.2ZM9 8.6c.2 3.4 3 6.2 6.4 6.4l1.1-1.5-2-1.1-1 .9a4.3 4.3 0 0 1-2.3-2.3l.9-1-1.1-2L9 8.6Z",
+  calendario: "M3.5 5h17v15h-17zM3.5 10h17M8 3v4M16 3v4",
+  calendarioOk: "M3.5 5h17v15h-17zM3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4",
+  persona: "M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM4.5 20.5a7.5 7.5 0 0 1 15 0",
+  check: "m5 12.5 4.5 4.5L19 7.5",
+  email: "M3 5h18v14H3zM4 7l8 6 8-6",
+  chat: "M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z",
+  embudo: "M4 5h16l-6 7.5V19l-4-2v-4.5L4 5Z",
+};
+
+const conversacion = [
+  { de: "cliente", texto: "Hola, ¿tenéis hueco esta semana para una primera consulta?", hora: "22:14" },
+  { de: "agente", texto: "¡Hola! Sí. Tengo el jueves a las 10:00 o el viernes a las 17:30. ¿Cuál te va mejor?", hora: "22:14" },
+  { de: "cliente", texto: "El jueves a las 10, perfecto.", hora: "22:15" },
+  { de: "agente", texto: "Hecho: te he reservado el jueves a las 10:00. Te enviaré un recordatorio el día antes.", hora: "22:15" },
+];
+
+// Agenda de la semana: "o" ocupado, "n" la cita nueva, "" libre.
+const agenda = [
+  { dia: "L", huecos: ["", "o", "", ""] },
+  { dia: "M", huecos: ["o", "", "", ""] },
+  { dia: "X", huecos: ["", "", "o", ""] },
+  { dia: "J", huecos: ["", "", "n", ""] },
+  { dia: "V", huecos: ["", "o", "", ""] },
+];
+
+const registro = [
+  { icono: icono.persona, texto: "Contacto creado en el CRM", etiqueta: "CRM" },
+  { icono: icono.check, texto: "Etiqueta «Interesado» añadida", etiqueta: "CRM" },
+  { icono: icono.email, texto: "Email de bienvenida enviado", etiqueta: "Email" },
+  { icono: icono.calendario, texto: "Cita registrada en la agenda", etiqueta: "Agenda" },
+  { icono: icono.chat, texto: "Aviso al equipo por WhatsApp", etiqueta: "Equipo" },
+];
+
+// Proporciones de ejemplo para dibujar el embudo. No son datos.
+const etapas = [
+  { nombre: "Visitas", ancho: 1 },
+  { nombre: "Registros", ancho: 0.64 },
+  { nombre: "Citas", ancho: 0.38 },
+  { nombre: "Clientes", ancho: 0.22 },
+];
+---
+
+<section class="section showcase" aria-labelledby="showcase-titulo">
+  <div class="container-lf">
+    <div class="showcase-cabecera">
+      <div>
+        <p class="eyebrow">Por dentro</p>
+        <h2 id="showcase-titulo" class="subrayado mt-3">
+          Un cliente escribe de noche. Mira qué pasa.
+        </h2>
+        <p class="lead mt-4">
+          Son las 22:14 y llega un mensaje. A partir de ahí, el sistema hace el
+          trabajo solo, paso a paso, sin que tú ni nadie de tu equipo tenga que
+          tocar nada.
+        </p>
+      </div>
+      <p class="aviso">Ejemplos ilustrativos, no capturas de clientes.</p>
+    </div>
+
+    <ol class="bento mt-10">
+      {/* 1. El agente contesta por WhatsApp */}
+      <li class="card bento-card bento-chat reveal">
+        <div class="telefono" aria-hidden="true">
+          <div class="telefono-barra">
+            <span class="telefono-avatar">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.agente} /></svg>
+            </span>
+            <span>
+              <span class="telefono-nombre">Asistente de tu negocio</span>
+              <span class="telefono-estado">en línea</span>
+            </span>
+          </div>
+          <div class="telefono-cuerpo">
+            {
+              conversacion.map((m) => (
+                <p class={`burbuja burbuja-${m.de}`}>
+                  {m.texto}
+                  <span class="burbuja-hora">{m.hora}</span>
+                </p>
+              ))
+            }
+          </div>
+        </div>
+        <div class="bento-texto">
+          <p class="paso"><span class="paso-num">1</span>El agente contesta y cierra la cita</p>
+          <h3 class="bento-titulo">Responde al instante por WhatsApp</h3>
+          <p class="bento-desc">
+            Con la información que tú validas. Propone un hueco libre y deja la
+            cita reservada, a cualquier hora.
+          </p>
+        </div>
+      </li>
+
+      {/* 2. La agenda */}
+      <li class="card bento-card reveal">
+        <div class="maqueta" aria-hidden="true">
+          <p class="maqueta-cabecera">
+            <span>Agenda · esta semana</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.calendario} /></svg>
+          </p>
+          <div class="agenda">
+            {
+              agenda.map((d) => (
+                <div class="agenda-dia">
+                  <span class="agenda-letra">{d.dia}</span>
+                  {d.huecos.map((h) => (
+                    <span class={`hueco${h === "o" ? " ocupado" : h === "n" ? " nuevo" : ""}`} />
+                  ))}
+                </div>
+              ))
+            }
+          </div>
+          <p class="aviso-cita">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.calendarioOk} /></svg>
+            <span><b>Nueva cita</b> · jueves 10:00 · creada por el agente</span>
+          </p>
+        </div>
+        <div class="bento-texto">
+          <p class="paso"><span class="paso-num">2</span>La cita aparece en tu agenda</p>
+          <h3 class="bento-titulo">Tu agenda se actualiza sola</h3>
+          <p class="bento-desc">
+            La reserva queda registrada al momento y se envía un recordatorio
+            antes de la cita. Menos ausencias.
+          </p>
+        </div>
+      </li>
+
+      {/* 3. Registro de la automatización */}
+      <li class="card bento-card reveal">
+        <div class="maqueta" aria-hidden="true">
+          <p class="maqueta-cabecera">
+            <span>Automatización · nuevo lead</span>
+            <span class="activa">activa</span>
+          </p>
+          <ul class="registro">
+            {
+              registro.map((r) => (
+                <li>
+                  <span class="registro-icono">
+                    <svg viewBox="0 0 24 24" width="14" height="14"><path d={r.icono} /></svg>
+                  </span>
+                  <span class="registro-texto">{r.texto}</span>
+                  <span class="registro-etiqueta">{r.etiqueta}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="bento-texto">
+          <p class="paso"><span class="paso-num">3</span>El papeleo se hace solo</p>
+          <h3 class="bento-titulo">Todo lo demás, en automático</h3>
+          <p class="bento-desc">
+            Se crea el contacto, se etiqueta, se envía el email de bienvenida y tu
+            equipo recibe el aviso. Con control de errores por si algo falla.
+          </p>
+        </div>
+      </li>
+
+      {/* 4. Embudo medido */}
+      <li class="card bento-card bento-ancha reveal">
+        <div class="maqueta" aria-hidden="true">
+          <p class="maqueta-cabecera">
+            <span>Funnel · cada etapa medida</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.embudo} /></svg>
+          </p>
+          <ul class="etapas">
+            {
+              etapas.map((e, i) => (
+                <li>
+                  <span class="etapa-nombre">{e.nombre}</span>
+                  <span class="etapa-pista">
+                    <span class="etapa-barra" style={`--ancho:${e.ancho};--i:${i}`} />
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="bento-texto">
+          <p class="paso"><span class="paso-num">4</span>Y queda todo medido</p>
+          <h3 class="bento-titulo">Ves en qué punto se pierde la gente</h3>
+          <p class="bento-desc">
+            Cada etapa cuenta: de las visitas a los clientes. Así sabemos qué paso
+            falla y mejoramos ese primero, con datos.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .showcase-cabecera {
+    display: grid;
+    gap: 1rem;
+  }
+  .showcase-cabecera .lead {
+    max-width: 60ch;
+  }
+  .aviso {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+  @media (width >= 768px) {
+    .showcase-cabecera {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+    .aviso {
+      text-align: right;
+      max-width: 14rem;
+    }
+  }
+
+  /* ----------------------------------------------------------- Rejilla */
+  .bento {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  @media (width >= 768px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+    .bento-chat {
+      grid-row: span 2;
+    }
+    .bento-ancha {
+      grid-column: span 2;
+    }
+  }
+  @media (width >= 1100px) {
+    .bento {
+      grid-template-columns: 1.15fr 1fr 1fr;
+    }
+    .bento-ancha {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  .bento-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+  .bento-texto {
+    margin-top: auto;
+  }
+  .paso {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem;
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-electric-soft);
+  }
+  .paso-num {
+    display: inline-grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-electric);
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .bento-titulo {
+    font-size: var(--step-1);
+  }
+  .bento-desc {
+    margin-top: 0.375rem;
+    color: var(--color-soft);
+    font-size: var(--step-0);
+  }
+
+  svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  /* ----------------------------------------------------------- Teléfono */
+  .telefono {
+    width: 100%;
+    max-width: 21rem;
+    margin-inline: auto;
+    border: 1px solid var(--color-line);
+    border-radius: 22px;
+    background: var(--color-navy);
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+  }
+  .telefono-barra {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 0.875rem;
+    border-bottom: 1px solid var(--color-divider);
+    background: rgb(255 255 255 / 0.04);
+  }
+  .telefono-avatar {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--grad-cta);
+    color: #fff;
+  }
+  .telefono-nombre {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .telefono-estado {
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--color-whatsapp);
+  }
+  .telefono-cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 0.875rem 1.125rem;
+  }
+  .burbuja {
+    position: relative;
+    max-width: 85%;
+    padding: 0.5rem 0.75rem 1.125rem;
+    border-radius: 14px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+  .burbuja-cliente {
+    align-self: flex-start;
+    border-top-left-radius: 4px;
+    background: rgb(255 255 255 / 0.08);
+    color: var(--color-ink);
+  }
+  .burbuja-agente {
+    align-self: flex-end;
+    border-top-right-radius: 4px;
+    background: linear-gradient(135deg, #1f5fd6, #5b3fc4);
+    color: #fff;
+  }
+  .burbuja-hora {
+    position: absolute;
+    right: 0.625rem;
+    bottom: 0.3rem;
+    font-size: 0.625rem;
+    opacity: 0.75;
+  }
+
+  /* ----------------------------------------------------------- Maquetas */
+  .maqueta {
+    padding: 1rem;
+    border: 1px solid var(--color-divider);
+    border-radius: 12px;
+    background: var(--color-navy);
+  }
+  .maqueta-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .maqueta-cabecera svg {
+    color: var(--color-electric-soft);
+  }
+  .activa {
+    font-weight: 500;
+    color: var(--color-teal);
+  }
+
+  .agenda {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.375rem;
+    margin-top: 0.875rem;
+  }
+  .agenda-dia {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .agenda-letra {
+    text-align: center;
+    font-size: 0.6875rem;
+    color: var(--color-muted);
+  }
+  .hueco {
+    height: 1.125rem;
+    border-radius: 4px;
+    background: rgb(255 255 255 / 0.05);
+  }
+  .hueco.ocupado {
+    background: rgb(0 123 255 / 0.35);
+  }
+  .hueco.nuevo {
+    background: var(--grad-cta);
+  }
+  .aviso-cita {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.875rem;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid rgb(45 212 191 / 0.3);
+    border-radius: 8px;
+    background: rgb(45 212 191 / 0.08);
+    font-size: 0.75rem;
+    color: var(--color-soft);
+  }
+  .aviso-cita svg {
+    color: var(--color-teal);
+  }
+  .aviso-cita b {
+    color: var(--color-ink);
+  }
+
+  .registro {
+    list-style: none;
+    margin: 0.875rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.375rem;
+  }
+  .registro li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 0.035);
+    font-size: 0.75rem;
+    color: var(--color-soft);
+  }
+  .registro-icono {
+    display: grid;
+    place-items: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 6px;
+    background: rgb(0 123 255 / 0.18);
+    color: var(--color-electric-soft);
+    flex-shrink: 0;
+  }
+  .registro-texto {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .registro-etiqueta {
+    padding: 0.125rem 0.4rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.625rem;
+    color: var(--color-muted);
+  }
+
+  .etapas {
+    list-style: none;
+    margin: 0.875rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .etapas li {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.75rem;
+    color: var(--color-soft);
+  }
+  .etapa-pista {
+    height: 0.625rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.05);
+    overflow: hidden;
+  }
+  /* La barra mide siempre el 100 % de la pista y se escala: así la animación
+     es solo `transform`. En producción se animaba `width`, que recalcula la
+     maquetación en cada fotograma. */
+  .etapa-barra {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--grad-cta);
+    transform-origin: left center;
+    transform: scaleX(var(--ancho));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .etapa-barra {
+      transform: scaleX(0);
+      transition: transform 0.9s var(--ease);
+      transition-delay: calc(var(--i) * 0.12s + 0.2s);
+    }
+    :global(.js) .is-visible .etapa-barra {
+      transform: scaleX(var(--ancho));
+    }
+  }
+</style>

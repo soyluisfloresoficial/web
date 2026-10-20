@@ -7,14 +7,21 @@ Reconstruido en octubre de 2026 a partir del HTML de producción, porque el
 sitio estaba desplegado en Cloudflare Pages como **Direct Upload** y no existía
 código fuente en ningún sitio.
 
-> **Esta rama es una reconstrucción, no el código que está en producción.** El
-> sitio en soyluisflores.es corre otra base de código, que no está en este
-> repositorio: usa Tailwind v4.3.3 y tiene un chat con endpoint `/api/chat`,
-> banner de cookies y la sección «Un cliente escribe de noche». Aquí se
-> reproducen el contenido y la estructura con CSS propio y sin esos
-> componentes, así que no despliegues esta rama dando por hecho que es lo que
-> hay en el aire. El detalle está en
+> **Este repositorio es la versión de referencia de la web** (decisión del
+> 20/10/2026). El sitio que está ahora en soyluisflores.es salió de otra base
+> de código (Tailwind v4.3.3) cuyo código fuente no se conserva. Lo que solo
+> tenía aquella versión se ha traído aquí con los arreglos del análisis ya
+> aplicados: banner de cookies con GTM, la sección «Un cliente escribe de
+> noche», métricas, banda de la calculadora, chat de preguntas rápidas y
+> barra de reserva en móvil. Hasta que se despliegue esta rama, lo que hay en
+> el aire sigue siendo la otra versión. El detalle está en
 > [`ANALISIS-HTML-PRODUCCION.md`](ANALISIS-HTML-PRODUCCION.md).
+
+## Variables de entorno
+
+| Variable | Para qué | Si falta |
+|---|---|---|
+| `PUBLIC_GTM_ID` | ID de Google Tag Manager (`GTM-XXXXXXX`). En Cloudflare Pages: Settings → Environment variables | No se carga GTM, no se muestra el banner de cookies ni el botón «Configurar cookies» del pie |
 
 ## Stack
 
