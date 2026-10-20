@@ -129,7 +129,7 @@ const schema = [
     </section>
 
     {/* -------------------------------------------------------------- Problema */}
-    <section class="section" aria-labelledby="problema-titulo">
+    <section class="section" aria-labelledby="problema-titulo" data-acento="coral">
       <div class="container-lf">
         <p class="eyebrow">El problema</p>
         <h2 id="problema-titulo" class="subrayado mt-3">Si llevas tú el negocio, esto te suena</h2>
@@ -152,7 +152,7 @@ const schema = [
     </section>
 
     {/* --------------------------------------------------------------- Público */}
-    <section class="section" aria-labelledby="publico-titulo">
+    <section class="section" aria-labelledby="publico-titulo" data-acento="cian">
       <div class="container-lf">
         <h2 id="publico-titulo" class="h-pequeno">Trabajo con negocios que quieren crecer</h2>
 
@@ -258,7 +258,7 @@ const schema = [
     <Showcase />
 
     {/* -------------------------------------------------------------- Métricas */}
-    <section class="section" aria-labelledby="metricas-titulo">
+    <section class="section" aria-labelledby="metricas-titulo" data-acento="turquesa">
       <div class="container-lf">
         <div class="cabecera-doble">
           <div>
@@ -291,7 +291,7 @@ const schema = [
     </section>
 
     {/* ---------------------------------------------------------- Calculadora */}
-    <section class="section" aria-labelledby="roi-titulo">
+    <section class="section" aria-labelledby="roi-titulo" data-acento="ambar">
       <div class="container-lf">
         <div class="card roi reveal">
           <div>
@@ -324,7 +324,7 @@ const schema = [
     </section>
 
     {/* ------------------------------------------------------------ Estándares */}
-    <section class="section" aria-labelledby="estandares-titulo">
+    <section class="section" aria-labelledby="estandares-titulo" data-acento="cian">
       <div class="container-lf">
         <p class="eyebrow">Estándares de trabajo</p>
         <h2 id="estandares-titulo" class="subrayado mt-3 max-w-[24ch]">
@@ -349,7 +349,7 @@ const schema = [
     </section>
 
     {/* ---------------------------------------------------------------- Método */}
-    <section class="section" aria-labelledby="metodo-titulo">
+    <section class="section" aria-labelledby="metodo-titulo" data-acento="violeta">
       <div class="container-lf">
         <p class="eyebrow">Método</p>
         <h2 id="metodo-titulo" class="subrayado mt-3">Cómo trabajo</h2>
@@ -393,7 +393,7 @@ const schema = [
     </section>
 
     {/* -------------------------------------------------------------- Sobre mí */}
-    <section class="section" aria-labelledby="sobremi-titulo">
+    <section class="section" aria-labelledby="sobremi-titulo" data-acento="coral">
       <div class="container-lf grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
         <Image
           src={retratoImg}
@@ -424,7 +424,7 @@ const schema = [
     {/* ------------------------------------------------------------------ Blog */}
     {/* Los tres artículos más recientes. Enlaces internos a contenido actual
         desde la página con más autoridad del sitio. */}
-    <section class="section" aria-labelledby="blog-titulo">
+    <section class="section" aria-labelledby="blog-titulo" data-acento="turquesa">
       <div class="container-lf">
         <p class="eyebrow">Del blog</p>
         <h2 id="blog-titulo" class="subrayado mt-3">Lo último que he escrito</h2>
@@ -482,7 +482,7 @@ const schema = [
     </section>
 
     {/* ------------------------------------------------------------- CTA final */}
-    <section class="section" aria-labelledby="cta-titulo">
+    <section class="section" aria-labelledby="cta-titulo" data-acento="violeta">
       <div class="container-lf card cta-final">
         <h2 id="cta-titulo">Hablemos de tu negocio</h2>
         <p class="lead mt-3 max-w-[52ch]">
@@ -554,6 +554,27 @@ const schema = [
     font-size: var(--step--1);
   }
 
+  /* Al bajar, la foto del hero sube un poco más despacio que la página y se
+     acerca. Línea de tiempo de scroll: sin JavaScript y sin escuchar scroll.
+     Solo actúa mientras la foto sale de pantalla, así que al cargar está quieta. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .foto-hero {
+        animation-name: deriva-hero;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+    }
+  }
+  @keyframes deriva-hero {
+    to {
+      transform: translateY(-8%) scale(1.04);
+    }
+  }
+
   /* La foto original es vertical (3:4). Sin encuadre dominaba el hero y
      empujaba el texto hacia arriba. Se recorta a 4:5 y se limita la altura
      para que nunca sea más alta que la columna de texto. */
@@ -592,7 +613,7 @@ const schema = [
   }
 
   .h-pequeno {
-    font-size: var(--step-3);
+    font-size: var(--step-2);
   }
 
   .card-title {
@@ -617,7 +638,7 @@ const schema = [
   }
   .caja-cta strong {
     color: var(--color-ink);
-    font-weight: 700;
+    font-weight: 600;
   }
   @media (width >= 768px) {
     .caja-cta {
@@ -752,7 +773,7 @@ const schema = [
     font-family: var(--font-display);
     font-size: var(--step-1);
     font-weight: 800;
-    color: var(--color-electric-soft);
+    color: var(--acento-texto);
   }
 
   .paso-reparto {

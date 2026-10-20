@@ -73,13 +73,41 @@
 
   --accent: var(--color-electric);
 
-  /* Escala tipográfica fluida */
-  --step--1: clamp(0.75rem, 0.73rem + 0.09vw, 0.8125rem);
-  --step-0: clamp(0.9375rem, 0.91rem + 0.12vw, 1rem);
-  --step-1: clamp(1rem, 0.94rem + 0.24vw, 1.125rem);
-  --step-2: clamp(1.25rem, 1.15rem + 0.42vw, 1.5rem);
-  --step-3: clamp(1.625rem, 1.47rem + 0.66vw, 1.875rem);
-  --step-4: clamp(2.125rem, 1.78rem + 1.5vw, 3.25rem);
+  /* Acentos de color.
+     Seis tonos, uno por sección, para que la página tenga ritmo y cada bloque
+     se reconozca al pasar. Cada acento tiene un tono de relleno (líneas,
+     bordes, barras) y un tono de texto. Todos los de texto pasan de 6,7:1
+     sobre los tres fondos del sitio (navy, navy-2 y surface), así que valen
+     para letra pequeña como los antetítulos. */
+  --acento-azul: #007bff;
+  --acento-azul-texto: #66b2ff; /* 8,14:1 sobre surface */
+  --acento-violeta: #8b5cf6;
+  --acento-violeta-texto: #a78bfa; /* 6,70:1 */
+  --acento-turquesa: #2dd4bf; /* 9,79:1 */
+  --acento-coral: #fb7185; /* 6,77:1 */
+  --acento-ambar: #fbbf24; /* 10,92:1 */
+  --acento-cian: #22d3ee; /* 10,08:1 */
+
+  /* Acento activo. Por defecto, el azul de marca. */
+  --acento: var(--acento-azul);
+  --acento-texto: var(--acento-azul-texto);
+
+  /* Escala tipográfica fluida, de 375 a 1440 px de ancho.
+     Antes el texto base bajaba a 15 px y los H2 no tenían tamaño propio
+     (salían al 1.5em del navegador, unos 24 px), así que la diferencia entre
+     un titular de sección y el texto de una tarjeta era mínima. Ahora el
+     texto base no baja de 16 px y cada nivel sube con una proporción clara. */
+  --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem); /* 13 → 14 */
+  --step-0: clamp(1rem, 0.97rem + 0.13vw, 1.0625rem); /* 16 → 17 */
+  --step-1: clamp(1.125rem, 1.08rem + 0.2vw, 1.25rem); /* 18 → 20 */
+  --step-2: clamp(1.3125rem, 1.22rem + 0.4vw, 1.5625rem); /* 21 → 25 */
+  --step-3: clamp(1.75rem, 1.55rem + 0.85vw, 2.25rem); /* 28 → 36 */
+  --step-4: clamp(2.25rem, 1.9rem + 1.5vw, 3.25rem); /* 36 → 52 */
+
+  /* Interlineado por uso */
+  --leading-titular: 1.08;
+  --leading-seccion: 1.15;
+  --leading-texto: 1.65;
 
   /* Espaciado */
   --space-1: 0.5rem;
@@ -144,6 +172,13 @@
   font-weight: 500;
   font-display: swap;
   src: url("/fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-latin-600-normal.woff2") format("woff2");
 }
 
 /* Métricas de respaldo para evitar saltos de maquetación al cargar la fuente */
@@ -228,8 +263,19 @@ button {
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 1rem);
+  /* Nunca negrita ni cursiva fingidas: si falta un peso, se usa el más
+     cercano real en vez de engordar el trazo del 500. */
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+}
+
+/* Desplazamiento suave solo si la persona no ha pedido menos movimiento.
+   Antes se aplicaba a todo el mundo. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -237,7 +283,8 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: var(--step-0);
-  line-height: 1.6;
+  line-height: var(--leading-texto);
+  font-kerning: normal;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -247,12 +294,88 @@ h3,
 h4 {
   font-family: var(--font-display);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: var(--leading-seccion);
   letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Tamaños base. Las clases propias de cada página siguen mandando. */
+h1 {
+  font-size: var(--step-4);
+  line-height: var(--leading-titular);
+  letter-spacing: -0.035em;
+}
+h2 {
+  font-size: var(--step-3);
+  letter-spacing: -0.028em;
+}
+h3 {
+  font-size: var(--step-1);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+}
+h4 {
+  font-size: var(--step-0);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* Párrafos sin palabras huérfanas en la última línea. */
+p,
+li,
+dd,
+blockquote {
+  text-wrap: pretty;
+}
+
+strong,
+b {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* Cifras de ancho fijo: no bailan al contar ni se desalinean en columnas. */
+.cifra,
+.paso-numero,
+time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Botones y enlaces de acción en Manrope, que tiene 700 de verdad. En Inter
+   solo hay 400, 500 y 600. */
+.cta,
+.cta-cabecera,
+.card-link {
+  font-family: var(--font-display);
+  letter-spacing: 0.005em;
+}
+
+/* Texto seleccionado. Blanco sobre #1d4ed8: 6,70:1. Con el azul eléctrico
+   por defecto del navegador sobre este fondo no llegaba a 4,5:1. */
+::selection {
+  background: #1d4ed8;
+  color: #fff;
 }
 
 a {
   color: inherit;
+  /* Sin subrayado por defecto. Lo quitaba el preflight de Tailwind y, al
+     retirarlo, todos los enlaces salían subrayados: botones, menú y pie. */
+  text-decoration: none;
+}
+
+/* Los enlaces dentro de texto corrido sí van subrayados: así no dependen
+   solo del color para reconocerse (WCAG 1.4.1). */
+main :where(p, li, dd, td, blockquote) > a:not([class]) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+  transition: text-decoration-color var(--dur-micro) var(--ease);
+}
+main :where(p, li, dd, td, blockquote) > a:not([class]):hover {
+  text-decoration-color: currentColor;
 }
 
 :focus-visible {
@@ -304,6 +427,33 @@ a {
   @view-transition {
     navigation: auto;
   }
+
+  ::view-transition-old(root) {
+    animation: sale-pagina 0.2s var(--ease) both;
+  }
+  ::view-transition-new(root) {
+    animation: entra-pagina 0.4s var(--ease) both;
+  }
+
+  /* Lo fijo no se mueve entre páginas. */
+  .cabecera {
+    view-transition-name: cabecera;
+  }
+  .barra-movil {
+    view-transition-name: barra-movil;
+  }
+}
+
+@keyframes sale-pagina {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes entra-pagina {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -352,10 +502,11 @@ a {
   inset-inline-start: 0;
   bottom: 0;
   width: 3.5rem;
-  height: 2px;
-  background: var(--grad-cta);
+  height: 3px;
+  /* Del acento de la sección a transparente. */
+  background: linear-gradient(90deg, var(--acento), color-mix(in srgb, var(--acento) 15%, transparent));
   transform-origin: left center;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 /* Subrayado de enlaces de texto, dibujado de izquierda a derecha. */
@@ -526,16 +677,72 @@ a {
    obliga a escuchar mousemove y no compensa su coste. En táctil no hay hover,
    así que el estado normal ya es el correcto. */
 @media (hover: hover) and (pointer: fine) {
-  .card-interactiva {
+  .card-interactiva,
+  main .card:has(a) {
     transition:
-      transform var(--dur-micro) var(--ease),
-      border-color var(--dur-micro) var(--ease);
+      translate var(--dur-micro) var(--ease),
+      border-color var(--dur-micro) var(--ease),
+      box-shadow var(--dur-micro) var(--ease);
   }
 
   .card-interactiva:hover,
-  .card-interactiva:focus-within {
-    transform: translateY(-4px);
-    border-color: var(--svc, var(--color-electric));
+  .card-interactiva:focus-within,
+  main .card:has(a):hover,
+  main .card:has(a:focus-visible) {
+    translate: 0 -4px;
+    border-color: color-mix(in srgb, var(--svc, var(--acento)) 60%, var(--color-line));
+    box-shadow: var(--shadow-2);
+  }
+
+  /* La imagen de la tarjeta se acerca un poco. */
+  main .card:has(a) img {
+    transition: scale 0.7s var(--ease);
+  }
+  main .card:has(a):hover img {
+    scale: 1.045;
+  }
+}
+
+/* La flecha de los botones y enlaces de acción se adelanta al pasar. */
+.cta span[aria-hidden="true"],
+.card-link span[aria-hidden="true"] {
+  display: inline-block;
+  transition: translate var(--dur-micro) var(--ease);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .cta:hover span[aria-hidden="true"],
+  .card-link:hover span[aria-hidden="true"] {
+    translate: 4px 0;
+  }
+}
+
+/* Entrada al hacer scroll en TODAS las páginas, sin JavaScript.
+   Usa una línea de tiempo de vista: cada elemento se anima mientras entra
+   en pantalla y se queda en su estado final. Lo que ya está a la vista al
+   cargar aparece terminado, así que no hay parpadeo ni retraso del LCP.
+   Donde no hay soporte (Firefox, de momento), todo se ve sin animar.
+   Los elementos .reveal de la home tienen su propio script y se excluyen. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main .card:not(.reveal),
+    main h2:not(.reveal),
+    main figure,
+    main .lista-marcas > li,
+    main .faq-item {
+      animation-name: entra-vista;
+      animation-duration: auto;
+      animation-timing-function: var(--ease);
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
+@keyframes entra-vista {
+  from {
+    opacity: 0.35;
+    transform: translateY(28px);
   }
 }
 
@@ -591,12 +798,36 @@ a {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-electric-soft);
+  color: var(--acento-texto);
+}
+
+/* Cada sección elige su acento con data-acento. */
+[data-acento="violeta"] {
+  --acento: var(--acento-violeta);
+  --acento-texto: var(--acento-violeta-texto);
+}
+[data-acento="turquesa"] {
+  --acento: var(--acento-turquesa);
+  --acento-texto: var(--acento-turquesa);
+}
+[data-acento="coral"] {
+  --acento: var(--acento-coral);
+  --acento-texto: var(--acento-coral);
+}
+[data-acento="ambar"] {
+  --acento: var(--acento-ambar);
+  --acento-texto: var(--acento-ambar);
+}
+[data-acento="cian"] {
+  --acento: var(--acento-cian);
+  --acento-texto: var(--acento-cian);
 }
 
 .lead {
   color: var(--color-soft);
   font-size: var(--step-1);
+  line-height: 1.6;
+  max-width: 62ch;
 }
 
 /* ---------------------------------------------------------------------------

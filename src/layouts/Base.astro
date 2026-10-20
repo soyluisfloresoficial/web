@@ -244,5 +244,60 @@ const grafo = {
     }
 
     activarReveals();
+
+    // Las cifras (73 %, 12 h, 40 %) cuentan desde cero al entrar en vista.
+    // El texto final ya está en el HTML: sin JavaScript o con movimiento
+    // reducido se ve tal cual. El número se anima en un span aparte con
+    // aria-hidden, y el valor final queda para los lectores de pantalla.
+    function activarContadores() {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (!("IntersectionObserver" in window)) return;
+      const cifras = document.querySelectorAll<HTMLElement>(".cifra");
+      const obs = new IntersectionObserver(
+        (entradas) => {
+          for (const e of entradas) {
+            if (!e.isIntersecting) continue;
+            obs.unobserve(e.target);
+            contar(e.target as HTMLElement);
+          }
+        },
+        { threshold: 0.6 },
+      );
+      cifras.forEach((c) => obs.observe(c));
+    }
+
+    function contar(el: HTMLElement) {
+      const paseo = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let nodo: Text | null = null;
+      while (paseo.nextNode()) {
+        const n = paseo.currentNode as Text;
+        if (/\d/.test(n.data)) {
+          nodo = n;
+          break;
+        }
+      }
+      if (!nodo) return;
+      const m = nodo.data.match(/^(\D*)(\d+)(.*)$/s);
+      if (!m) return;
+      const [, antes, num, despues] = m;
+      const final = Number(num);
+      const visible = document.createElement("span");
+      visible.setAttribute("aria-hidden", "true");
+      const lector = document.createElement("span");
+      lector.className = "sr-only";
+      lector.textContent = nodo.data;
+      nodo.replaceWith(visible, lector);
+      const inicio = performance.now();
+      const duracion = 1100;
+      const paso = (t: number) => {
+        const p = Math.min((t - inicio) / duracion, 1);
+        const suave = 1 - Math.pow(1 - p, 3);
+        visible.textContent = antes + Math.round(final * suave) + despues;
+        if (p < 1) requestAnimationFrame(paso);
+      };
+      requestAnimationFrame(paso);
+    }
+
+    activarContadores();
   </script>
 </html>

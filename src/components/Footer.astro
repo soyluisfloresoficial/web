@@ -152,6 +152,16 @@ const anio = new Date().getFullYear();
   .pie-col a:hover {
     color: var(--color-ink);
   }
+  .pie-col a {
+    background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+    transition:
+      color var(--dur-base) ease,
+      background-size var(--dur-micro) var(--ease);
+  }
+  .pie-col a:hover,
+  .pie-col a:focus-visible {
+    background-size: 100% 1px;
+  }
   .pie-boton {
     padding: 0;
     border: 0;

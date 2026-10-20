@@ -63,7 +63,7 @@ const schema = [
 ---
 
 <Base title={meta.title} description={meta.description} schema={schema}>
-  <main style={`--svc: var(${servicio.color})`}>
+  <main style={`--svc: var(${servicio.color}); --acento: var(${servicio.color}); --acento-texto: var(${servicio.color})`}>
     {/* ----------------------------------------------------------- Migas */}
     <nav class="migas container-lf" aria-label="Migas de pan">
       <ol>
@@ -221,6 +221,7 @@ const schema = [
     color: var(--color-line);
   }
   .migas a {
+    text-decoration: none;
     color: var(--color-soft);
   }
 
@@ -261,7 +262,7 @@ const schema = [
   }
 
   .h-pequeno {
-    font-size: var(--step-3);
+    font-size: var(--step-2);
   }
   .card-title {
     font-size: var(--step-2);
