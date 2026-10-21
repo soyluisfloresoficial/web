@@ -49,7 +49,7 @@ export const GET: APIRoute = async () => {
     `- [Sobre mí](${SITIO.url}/sobre-mi): biografía, valores, formación y cómo se miden los resultados.`,
   );
   lineas.push(
-    `- [Calculadora ROI](${SITIO.url}/roi): estimación orientativa, basada en hipótesis visibles, de horas ahorradas e ingresos adicionales. No muestra precios.`,
+    `- [Calculadora de ROI](${SITIO.url}/roi): estimación orientativa, basada en hipótesis visibles, de horas ahorradas e ingresos adicionales. No muestra precios.`,
   );
   lineas.push(
     `- [Blog](${SITIO.url}/blog): guías prácticas sobre IA aplicada, automatización y funnels.`,
@@ -74,7 +74,7 @@ export const GET: APIRoute = async () => {
   }
   lineas.push("");
 
-  lineas.push("## Proyectos propios");
+  lineas.push("## Producto propio");
   lineas.push("");
   for (const p of proyectos) {
     lineas.push(`- [${p.nombre}](${p.url})${p.descripcion ? `: ${p.descripcion}` : ""}`);

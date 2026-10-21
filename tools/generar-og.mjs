@@ -143,6 +143,9 @@ for (const { ruta, fichero } of paginas(dist)) {
   });
   const nombre = ruta === "/" ? "inicio" : ruta.slice(1).replaceAll("/", "-");
   await pag.screenshot({ path: path.join(salida, `${nombre}.jpg`), type: "jpeg", quality: 86 });
+  // La de la home también es la imagen general (og-default.png), la que usan
+  // las páginas sin imagen propia.
+  if (ruta === "/") await pag.screenshot({ path: path.join(raiz, "public", "og-default.png"), type: "png" });
   n++;
 }
 

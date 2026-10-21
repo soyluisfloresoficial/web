@@ -32,7 +32,7 @@ const schema = [
     "@type": "WebPage",
     "@id": `${url}#page`,
     url,
-    name: "Calculadora ROI",
+    name: "Calculadora de ROI",
     description,
     isPartOf: { "@id": `${SITIO.url}/#website` },
     inLanguage: "es",
@@ -42,7 +42,7 @@ const schema = [
     "@id": `${url}#breadcrumb`,
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
-      { "@type": "ListItem", position: 2, name: "Calculadora ROI", item: url },
+      { "@type": "ListItem", position: 2, name: "Calculadora de ROI", item: url },
     ],
   },
 ];
@@ -51,8 +51,8 @@ const schema = [
 <Base title={title} description={description} schema={schema}>
   <main>
     <CabeceraPagina
-      migas={[{ texto: "Inicio", href: "/" }, { texto: "Calculadora ROI" }]}
-      antetitulo="Calculadora ROI"
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Calculadora de ROI" }]}
+      antetitulo="Calculadora de ROI"
       acento="ambar"
       titulo="¿Cuánto podrías ganar y ahorrar"
       destacado="automatizando?"

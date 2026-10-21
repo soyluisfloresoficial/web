@@ -145,7 +145,8 @@ export const SITIO = {
   whatsappVisible: "+34 631 65 49 19",
   telefono: "+34631654919",
   localidad: "Manresa",
-  region: "Cataluña",
+  // Igual que el domicilio público del aviso legal: «Manresa, Barcelona, España».
+  region: "Barcelona",
   pais: "ES",
   lema: "Menos tareas repetitivas. Más tiempo para ti.",
   /** Definición extraíble: la frase que debe poder citar un buscador de IA
@@ -156,7 +157,6 @@ export const SITIO = {
     "https://www.linkedin.com/in/soyluisflores/",
     "https://www.instagram.com/soyluisflores_/",
     "https://www.tiktok.com/@soyluisfloresoficial",
-    "https://novafunnels.es",
     "https://smilbot.com",
   ],
 } as const;
@@ -171,18 +171,13 @@ export const AREA_SERVIDA = [
 ];
 
 /**
- * Proyectos propios. [COMPLETAR: frase factual de Nova Funnels; hoy
- * novafunnels.es no devuelve title, description ni h1 legibles.]
+ * Productos propios. Nova Funnels se retiró el 21/10/2026 porque
+ * novafunnels.es ya no está activo.
  */
 export const proyectos = [
   {
     nombre: "Smilbot",
     url: "https://smilbot.com",
     descripcion: "Recepcionista de IA para clínicas dentales, disponible 24/7.",
-  },
-  {
-    nombre: "Nova Funnels",
-    url: "https://novafunnels.es",
-    descripcion: "",
   },
 ];

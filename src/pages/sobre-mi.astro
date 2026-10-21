@@ -101,7 +101,7 @@ const schema = [
         />
         <div class="info-flotante info-abajo info-derecha">
           <span class="info-etiqueta">Base</span>
-          <span class="info-valor">Manresa · Cataluña</span>
+          <span class="info-valor">Manresa · Barcelona</span>
           <span class="info-sub">Trabajo en remoto con Latinoamérica y España</span>
         </div>
         <div class="info-flotante info-arriba info-izquierda">
@@ -267,14 +267,15 @@ const schema = [
       <div class="container-lf">
         <div class="cabecera-seccion">
           <div>
-            <p class="eyebrow">Mis proyectos</p>
-            <h2 id="proyectos-titulo" class="subrayado mt-4">Mis otros proyectos</h2>
+            <p class="eyebrow">Producto propio</p>
+            <h2 id="proyectos-titulo" class="subrayado mt-4">Lo que aplico en mi propio producto</h2>
           </div>
           <p class="lead">
-            Productos propios donde uso lo mismo que implemento para mis clientes.
+            Uso en mi producto lo mismo que implemento para mis clientes, así lo pruebo
+            todos los días.
           </p>
         </div>
-        <ul class="rejilla-2 mt-10">
+        <ul class="proyectos mt-10">
           {
             proyectos.map((p) => (
               <li class="card tarjeta proyecto reveal">
@@ -413,7 +414,6 @@ const schema = [
   }
 
   /* ---------------------------------------------------------- Rejillas */
-  .rejilla-2,
   .rejilla-3,
   .rejilla-4 {
     display: grid;
@@ -424,7 +424,6 @@ const schema = [
     list-style: none;
   }
   @media (width >= 640px) {
-    .rejilla-2,
     .rejilla-4 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -482,6 +481,15 @@ const schema = [
   }
 
   /* --------------------------------------------------------- Proyectos */
+  .proyectos {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 48rem;
+    margin-inline: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+  }
   .proyecto {
     display: flex;
     gap: 1.25rem;
