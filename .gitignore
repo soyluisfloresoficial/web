@@ -14,3 +14,4 @@ assets-raw/
 
 # Caché local de Wrangler
 .wrangler/
+revision-cintas/

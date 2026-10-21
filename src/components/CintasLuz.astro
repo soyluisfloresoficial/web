@@ -1,0 +1,261 @@
+---
+/**
+ * Cintas de luz de fondo (estilo «Relé»): decenas de hilos finos que forman
+ * una cinta de seda, se retuercen despacio y cambian de forma con el scroll.
+ * Colores de marca: azul eléctrico → índigo → violeta.
+ *
+ * Decisiones:
+ * - Canvas 2D, sin librerías ni vídeo. Los hilos se suman con «lighter»: donde
+ *   la cinta se pliega, se juntan y brillan solos, como la seda.
+ * - Arranca después de cargar la página (no compite con el contenido ni con
+ *   el LCP) y aparece con un fundido.
+ * - Celular: la mitad de hilos y 30 fotogramas por segundo, para no gastar
+ *   batería. Se para cuando la pestaña no está visible.
+ * - Movimiento reducido: se dibuja una sola vez, quieta.
+ * - Es decorativa: aria-hidden y sin eventos de puntero.
+ */
+---
+
+<div class="cintas" aria-hidden="true">
+  <canvas class="cintas-lienzo" data-cintas></canvas>
+</div>
+
+<script>
+  const lienzo = document.querySelector<HTMLCanvasElement>("[data-cintas]");
+  const ctx = lienzo?.getContext("2d");
+
+  if (lienzo && ctx) {
+    const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const movil = matchMedia("(width < 768px)").matches;
+    const HILOS = movil ? 40 : 90;
+    const PUNTOS = movil ? 46 : 84;
+    const FPS = movil ? 30 : 60;
+
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+    const medir = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, movil ? 1.25 : 1.75);
+      w = window.innerWidth;
+      // En celular la barra del navegador cambia la altura al hacer scroll:
+      // se usa la mayor para no redimensionar el lienzo a cada momento.
+      h = Math.max(h && movil ? h : 0, window.innerHeight);
+      lienzo.width = Math.round(w * dpr);
+      lienzo.height = Math.round(h * dpr);
+    };
+    medir();
+    let anchoPrevio = w;
+    window.addEventListener("resize", () => {
+      if (movil && window.innerWidth === anchoPrevio) return;
+      anchoPrevio = window.innerWidth;
+      h = 0;
+      medir();
+      if (quieto) dibujar(0);
+    });
+
+    // Avance del scroll (0 arriba, 1 abajo), suavizado.
+    let scrollObjetivo = 0;
+    let scrollActual = 0;
+    const leerScroll = () => {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollObjetivo = window.scrollY / max;
+    };
+    window.addEventListener("scroll", leerScroll, { passive: true });
+    leerScroll();
+    scrollActual = scrollObjetivo;
+
+    // Motas de luz que viajan por la cinta.
+    const motas = Array.from({ length: movil ? 22 : 46 }, () => ({
+      u: Math.random() - 0.5,
+      p: Math.random(),
+      v: 0.012 + Math.random() * 0.03,
+      r: 0.5 + Math.random() * 1.3,
+      f: Math.random() * Math.PI * 2,
+    }));
+
+    // Curva de Bézier cúbica en una dimensión.
+    const bez = (a: number, b: number, c: number, d: number, p: number) => {
+      const q = 1 - p;
+      return q * q * q * a + 3 * q * q * p * b + 3 * q * p * p * c + p * p * p * d;
+    };
+
+    // Eje de la cinta, en coordenadas de 0 a 1. Sube desde abajo por el hueco
+    // entre el texto y la foto y sale arriba a la derecha. En celular va
+    // pegada al borde derecho para no pasar por detrás del texto.
+    const eje = (p: number, t: number, s: number) => {
+      const fase = t * 0.16 + s * 4.2;
+      const vaiven = 0.06 * Math.sin(s * Math.PI * 2);
+      const x = movil
+        ? bez(0.62, 0.86, 0.94, 1.18, p) + 0.03 * Math.sin(fase)
+        : bez(0.4 + vaiven, 0.5 + 0.04 * Math.sin(fase * 1.3), 0.6 + 0.05 * Math.cos(fase * 0.9), 1.12, p);
+      const y = bez(1.14, 0.74 + 0.04 * Math.sin(fase), 0.34, -0.1 + 0.05 * Math.sin(fase * 0.7), p);
+      return [x * w, y * h] as const;
+    };
+
+    // Forma de la cinta en este fotograma, calculada una sola vez para todos
+    // los hilos: posición del eje, normal, ancho, torsión y temblor.
+    const N = PUNTOS + 1;
+    const EX = new Float32Array(N);
+    const EY = new Float32Array(N);
+    const NX = new Float32Array(N);
+    const NY = new Float32Array(N);
+    const AN = new Float32Array(N);
+    const TS = new Float32Array(N);
+    const TC = new Float32Array(N);
+    let base = 1;
+
+    const preparar = (t: number, s: number) => {
+      base = Math.min(w, h * 1.4);
+      for (let i = 0; i < N; i++) {
+        const p = i / PUNTOS;
+        const [x, y] = eje(p, t, s);
+        EX[i] = x;
+        EY[i] = y;
+      }
+      for (let i = 0; i < N; i++) {
+        const a = Math.min(N - 1, i + 1);
+        const b = Math.max(0, i - 1);
+        let nx = -(EY[a] - EY[b]);
+        let ny = EX[a] - EX[b];
+        const largo = Math.hypot(nx, ny) || 1;
+        NX[i] = nx / largo;
+        NY[i] = ny / largo;
+        const p = i / PUNTOS;
+        // Abanico: más estrecha abajo y abierta arriba. La torsión hace que
+        // los hilos se crucen y brillen donde la cinta gira.
+        const ancho = base * (0.065 + 0.3 * Math.pow(p, 1.3) + 0.03 * Math.sin(p * 3 + t * 0.25));
+        AN[i] = ancho * (0.25 + 0.75 * Math.cos(p * 7.5 + t * 0.34 + s * 5));
+        TS[i] = Math.sin(p * 11 + t * 0.8);
+        TC[i] = Math.cos(p * 11 + t * 0.8);
+      }
+    };
+
+    // Trazo de un hilo (u de −0,75 a 0,75 a lo ancho de la cinta).
+    const hilo = (u: number) => {
+      const su = Math.sin(u * 9);
+      const cu = Math.cos(u * 9);
+      const tb = base * 0.005;
+      ctx.beginPath();
+      for (let i = 0; i < N; i++) {
+        // sin(a + b) = sin a·cos b + cos a·sin b: evita un seno por punto.
+        const d = u * AN[i] + tb * (TS[i] * cu + TC[i] * su);
+        const x = EX[i] + NX[i] * d;
+        const y = EY[i] + NY[i] * d;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    };
+
+    let degradado: CanvasGradient | null = null;
+    let tamDegradado = "";
+    const pincel = () => {
+      const clave = `${w}x${h}`;
+      if (!degradado || clave !== tamDegradado) {
+        degradado = ctx.createLinearGradient(0, h, w, 0);
+        degradado.addColorStop(0, "#007bff");
+        degradado.addColorStop(0.45, "#4f7dff");
+        degradado.addColorStop(0.7, "#6366f1");
+        degradado.addColorStop(1, "#8b5cf6");
+        tamDegradado = clave;
+      }
+      return degradado;
+    };
+
+    function dibujar(tiempo: number) {
+      const t = tiempo / 1000;
+      scrollActual += (scrollObjetivo - scrollActual) * 0.06;
+      const s = scrollActual;
+      const enHero = Math.max(0, 1 - window.scrollY / (h * 0.9));
+      const fuerza = (movil ? 0.7 : 1) * (0.4 + 0.6 * enHero);
+
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx!.globalCompositeOperation = "source-over";
+      ctx!.clearRect(0, 0, w, h);
+      ctx!.globalCompositeOperation = "lighter";
+      ctx!.lineCap = "round";
+      ctx!.strokeStyle = pincel();
+      preparar(t, s);
+
+      // Resplandor: pocos trazos gruesos y muy transparentes por el centro.
+      ctx!.globalAlpha = 0.04 * fuerza;
+      ctx!.lineWidth = movil ? 16 : 28;
+      for (let k = 0; k < 7; k++) hilo((k / 6 - 0.5) * 0.6);
+
+      // Hilos finos. Los de los lados (|u| > 0,5) van sueltos y más tenues.
+      ctx!.lineWidth = 1;
+      for (let j = 0; j < HILOS; j++) {
+        const u = (j / (HILOS - 1) - 0.5) * 1.5;
+        const centro = Math.max(0, 1 - Math.abs(u) * 2);
+        ctx!.globalAlpha = (0.045 + 0.22 * Math.pow(centro, 1.2)) * fuerza;
+        hilo(u);
+      }
+
+      // Motas que viajan por la cinta.
+      ctx!.fillStyle = "#cfe3ff";
+      for (const m of motas) {
+        const p = quieto ? m.p % 1 : (m.p + t * m.v) % 1;
+        const k = Math.round(p * PUNTOS);
+        const d = m.u * AN[k];
+        const x = EX[k] + NX[k] * d;
+        const y = EY[k] + NY[k] * d;
+        ctx!.globalAlpha = (0.25 + 0.45 * (0.5 + 0.5 * Math.sin(t * 2 + m.f))) * fuerza;
+        ctx!.beginPath();
+        ctx!.arc(x, y, m.r, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+      ctx!.globalAlpha = 1;
+    }
+
+    const arrancar = () => {
+      lienzo.classList.add("activa");
+      if (quieto) {
+        dibujar(8000);
+        return;
+      }
+      let ultimo = 0;
+      let reloj = 0;
+      let previo = performance.now();
+      const bucle = (ahora: number) => {
+        requestAnimationFrame(bucle);
+        // Con la pestaña oculta el navegador ya no llama; al volver, el
+        // tiempo de la animación sigue donde estaba (sin saltos).
+        const delta = Math.min(ahora - previo, 100);
+        previo = ahora;
+        reloj += delta;
+        if (ahora - ultimo < 1000 / FPS - 2) return;
+        ultimo = ahora;
+        dibujar(reloj);
+      };
+      requestAnimationFrame(bucle);
+    };
+
+    // Después de la carga y cuando el navegador esté libre.
+    const cuandoLibre = () =>
+      "requestIdleCallback" in window
+        ? (window as Window & { requestIdleCallback: (f: () => void, o?: { timeout: number }) => void }).requestIdleCallback(arrancar, { timeout: 1500 })
+        : setTimeout(arrancar, 300);
+    if (document.readyState === "complete") cuandoLibre();
+    else window.addEventListener("load", cuandoLibre, { once: true });
+  }
+</script>
+
+<style>
+  .cintas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .cintas-lienzo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.6s var(--ease);
+  }
+  .cintas-lienzo:global(.activa) {
+    opacity: 1;
+  }
+</style>
