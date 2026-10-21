@@ -103,7 +103,7 @@ export const proceso = [
     numero: "03",
     titulo: "Medición y mejora",
     texto:
-      "Revisamos los resultados con datos y ajustamos lo que no está funcionando.",
+      "Revisamos los resultados con datos, ajustamos lo que no está funcionando y vemos qué conviene mejorar después.",
     yo: "Mido los resultados y corrijo lo que no rinde.",
     tu: "Me cuentas qué cambios notas en el día a día.",
     imagen: "proceso-medicion",

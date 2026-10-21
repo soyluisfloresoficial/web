@@ -52,7 +52,7 @@ export const servicios: Servicio[] = [
     nombre: "Automatización de procesos",
     definicion:
       "Automatizar procesos es lograr que tus herramientas se pasen datos y hagan las tareas repetitivas sin que nadie tenga que intervenir.",
-    resumen: "Flujos en Make, n8n o Zapier que te avisan si algo falla.",
+    resumen: "Flujos en Make, n8n o Zapier que conectan tus herramientas y te avisan si algo falla.",
     color: "--svc-automatizacion",
     imagen: "automatizacion",
     icono: "flujo",
@@ -98,7 +98,7 @@ export const servicios: Servicio[] = [
     nombre: "Páginas web con IA",
     definicion:
       "Una página web con IA es un sitio rápido, con un objetivo claro, que puede incluir un asistente que responde y capta contactos.",
-    resumen: "Rápidas, fáciles de usar y con un objetivo claro en cada página.",
+    resumen: "Rápidas, fáciles de usar y con un objetivo claro en cada página, también desde el celular.",
     color: "--svc-webs-ia",
     imagen: "webs-ia",
     icono: "web",
@@ -120,7 +120,7 @@ export const servicios: Servicio[] = [
     nombre: "Consultoría de IA",
     definicion:
       "La consultoría de IA es un diagnóstico de tu negocio que termina en un plan ordenado por prioridades para empezar a usar inteligencia artificial.",
-    resumen: "Un diagnóstico y un plan claro de por dónde empezar.",
+    resumen: "Un diagnóstico de tu negocio y un plan claro de qué automatizar primero y con qué herramienta.",
     color: "--svc-consultoria-ia",
     imagen: "consultoria-ia",
     icono: "brujula",
