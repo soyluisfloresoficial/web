@@ -1,9 +1,13 @@
 ---
 import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
+import CabeceraPagina from "../../components/CabeceraPagina.astro";
+import Cierre from "../../components/Cierre.astro";
+import Icono from "../../components/Icono.astro";
 import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import { servicios, SITIO, AREA_SERVIDA } from "../../data/servicios";
 import { detalles, metas } from "../../data/servicios-detalle";
+import { ilustraciones } from "../../data/ilustraciones";
 import { proceso } from "../../data/home";
 
 export function getStaticPaths() {
@@ -26,11 +30,14 @@ function imagenDe(nombre: string) {
   return clave ? imagenes[clave].default : undefined;
 }
 
-const img = imagenDe(servicio.imagen);
+// Igual que en la home: si el servicio tiene ilustración, va antes que la foto.
+const img = ilustraciones[servicio.slug] ? undefined : imagenDe(servicio.imagen);
 const url = `${SITIO.url}/servicios/${servicio.slug}`;
 
-// Los otros cinco servicios, para el enlazado cruzado del final.
+// Los demás servicios, para el enlazado cruzado del final.
 const otros = servicios.filter((s) => s.slug !== servicio.slug);
+
+const iconosResultado = ["tendencia", "reloj", "check"] as const;
 
 const schema = [
   {
@@ -41,6 +48,7 @@ const schema = [
     url,
     provider: { "@id": `${SITIO.url}/#organization` },
     areaServed: AREA_SERVIDA,
+    availableLanguage: "es",
   },
   {
     "@type": "BreadcrumbList",
@@ -68,76 +76,116 @@ const schema = [
 
 <Base title={meta.title} description={meta.description} schema={schema}>
   <main style={`--svc: var(${servicio.color}); --acento: var(${servicio.color}); --acento-texto: var(${servicio.color})`}>
-    {/* ----------------------------------------------------------- Migas */}
-    <nav class="migas container-lf" aria-label="Migas de pan">
-      <ol>
-        <li><a href="/">Inicio</a></li>
-        <li><a href="/servicios">Servicios</a></li>
-        <li aria-current="page">{servicio.nombre}</li>
-      </ol>
-    </nav>
+    {/* ----------------------------------------------------------- Cabecera */}
+    <CabeceraPagina
+      migas={[
+        { texto: "Inicio", href: "/" },
+        { texto: "Servicios", href: "/servicios" },
+        { texto: servicio.nombre },
+      ]}
+      antetitulo={servicio.nombre}
+      titulo={d.h1}
+      entradilla={d.intro}
+    >
+      {/* La definición va aparte y a la vista: es la frase que un buscador o
+          una IA puede citar tal cual cuando le preguntan qué es esto. */}
+      <p class="definicion mt-6">
+        <span class="definicion-etiqueta">En pocas palabras</span>
+        {servicio.definicion}
+      </p>
 
-    {/* ------------------------------------------------------------ Hero */}
-    <section class="section pt-0">
-      <div class="container-lf grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:items-center">
-        <div>
-          <p class="definicion">{servicio.definicion}</p>
-          <h1 class="mt-4">{d.h1}</h1>
-          <p class="lead mt-5 max-w-[52ch]">{d.intro}</p>
-          <a class="cta mt-8 inline-flex items-center gap-2" href="/contacto">
-            Agenda tu llamada gratis <span aria-hidden="true">→</span>
-          </a>
-          <p class="nota mt-4">
-            Probado antes en mi negocio · documentación incluida
-          </p>
-        </div>
-
-        {
-          img ? (
-            <Image
-              src={img}
-              alt={servicio.imagenAlt}
-              widths={[420, 640, 860]}
-              sizes="(min-width: 1024px) 38vw, 100vw"
-              loading="eager"
-              fetchpriority="high"
-              class="foto-servicio rounded-2xl"
-            />
-          ) : (
-            <IlustracionServicio
-              slug={servicio.slug}
-              color={servicio.color}
-              alt={servicio.imagenAlt}
-              variante="hero"
-            />
-          )
-        }
+      <div class="botones mt-8">
+        <a class="cta" href="/contacto">
+          <Icono nombre="calendario" tamano={18} />
+          Agenda tu llamada gratis <span aria-hidden="true">→</span>
+        </a>
+        <a class="boton-secundario" href="#que-incluye">Ver qué incluye</a>
       </div>
-    </section>
+
+      <ul class="garantias mt-8" aria-label="Cómo trabajo">
+        <li><Icono nombre="escudo" tamano={18} /> Probado antes en mi negocio</li>
+        <li><Icono nombre="check" tamano={18} grosor={2.2} /> Documentación incluida</li>
+        <li><Icono nombre="globo" tamano={18} /> En español y en tu horario</li>
+      </ul>
+
+      <figure slot="lateral" class="visual">
+        <div class={`visual-marco${img ? " media duotono" : ""}`}>
+          {
+            img ? (
+              <Image
+                src={img}
+                alt={servicio.imagenAlt}
+                widths={[420, 640, 860]}
+                sizes="(min-width: 1024px) 38vw, 100vw"
+                loading="eager"
+                fetchpriority="high"
+                class="foto-servicio"
+              />
+            ) : (
+              <IlustracionServicio
+                slug={servicio.slug}
+                color={servicio.color}
+                alt={servicio.imagenAlt}
+                variante="hero"
+              />
+            )
+          }
+        </div>
+        <div class="info-flotante info-abajo">
+          <span class="info-etiqueta">Servicio</span>
+          <span class="info-valor">{servicio.nombre}</span>
+          <span class="info-sub">{servicio.resumen}</span>
+        </div>
+      </figure>
+    </CabeceraPagina>
 
     {/* -------------------------------------------------------- Resultado */}
-    <section class="section" aria-labelledby="resultado-titulo">
+    <section class="section banda" aria-labelledby="resultado-titulo">
       <div class="container-lf">
-        <p class="eyebrow">Qué consigues</p>
-        <h2 id="resultado-titulo" class="mt-3">El resultado para tu negocio</h2>
-        <ul class="grid-3 mt-8">
-          {d.resultado.map((r) => <li class="card p-6"><p>{r}</p></li>)}
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Qué consigues</p>
+            <h2 id="resultado-titulo" class="subrayado mt-4">El resultado para tu negocio</h2>
+          </div>
+          <p class="lead">Lo que cambia en tu día a día cuando este sistema queda funcionando.</p>
+        </div>
+        <ul class="rejilla-3 mt-10">
+          {
+            d.resultado.map((r, i) => (
+              <li class="card tarjeta resultado reveal">
+                <span class="icono-caja" aria-hidden="true">
+                  <Icono nombre={iconosResultado[i % iconosResultado.length]} tamano={22} grosor={1.7} />
+                </span>
+                <p class="resultado-texto mt-5">{r}</p>
+              </li>
+            ))
+          }
         </ul>
       </div>
     </section>
 
     {/* ------------------------------------------- Para quién / Qué incluye */}
-    <section class="section">
-      <div class="container-lf grid gap-10 lg:grid-cols-2">
-        <div>
-          <h2 class="h-pequeno" id="para-quien">Para quién es</h2>
-          <ul class="lista-marcas mt-4" aria-labelledby="para-quien">
+    <section class="section" aria-label="Para quién es y qué incluye">
+      <div class="container-lf encaje">
+        <div class="card tarjeta bloque reveal">
+          <div class="bloque-cabecera">
+            <span class="anillo-degradado anillo-medio" aria-hidden="true">
+              <Icono nombre="usuarios" tamano={20} grosor={1.7} degradado />
+            </span>
+            <h2 class="bloque-titulo" id="para-quien">Para quién es</h2>
+          </div>
+          <ul class="lista-check mt-6" aria-labelledby="para-quien">
             {d.paraQuien.map((p) => <li>{p}</li>)}
           </ul>
         </div>
-        <div>
-          <h2 class="h-pequeno" id="que-incluye">Qué incluye</h2>
-          <ul class="lista-marcas mt-4" aria-labelledby="que-incluye">
+        <div class="card tarjeta bloque incluye reveal" id="que-incluye">
+          <div class="bloque-cabecera">
+            <span class="anillo-degradado anillo-medio" aria-hidden="true">
+              <Icono nombre="check" tamano={20} grosor={2} degradado />
+            </span>
+            <h2 class="bloque-titulo" id="que-incluye-titulo">Qué incluye</h2>
+          </div>
+          <ul class="lista-check mt-6" aria-labelledby="que-incluye-titulo">
             {d.queIncluye.map((p) => <li>{p}</li>)}
           </ul>
         </div>
@@ -145,17 +193,32 @@ const schema = [
     </section>
 
     {/* ----------------------------------------------------- Cómo funciona */}
-    <section class="section" aria-labelledby="como-titulo">
+    <section class="section banda" aria-labelledby="como-titulo">
       <div class="container-lf">
-        <p class="eyebrow">Método</p>
-        <h2 id="como-titulo" class="mt-3">Cómo funciona</h2>
-        <ol class="grid-3 mt-8">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Método</p>
+            <h2 id="como-titulo" class="subrayado mt-4">Cómo trabajamos</h2>
+          </div>
+          <p class="lead">Son tres pasos, y en cada uno sabes qué estoy haciendo y qué necesito de ti.</p>
+        </div>
+        <ol class="pasos mt-10">
           {
-            proceso.map((p) => (
-              <li class="card p-6">
-                <p class="paso-numero">{p.numero}</p>
-                <h3 class="card-title mt-1">{p.titulo}</h3>
-                <p class="card-text mt-3">{p.texto}</p>
+            proceso.map((p, i) => (
+              <li class="card tarjeta paso reveal">
+                <span class="numero-circulo" aria-hidden="true">{i + 1}</span>
+                <h3 class="card-title mt-5">{p.titulo}</h3>
+                <p class="card-text mt-2">{p.texto}</p>
+                <dl class="roles mt-5">
+                  <div>
+                    <dt>Qué hago yo</dt>
+                    <dd>{p.yo}</dd>
+                  </div>
+                  <div>
+                    <dt>Qué haces tú</dt>
+                    <dd>{p.tu}</dd>
+                  </div>
+                </dl>
               </li>
             ))
           }
@@ -165,200 +228,313 @@ const schema = [
 
     {/* ------------------------------------------------------------- FAQ */}
     <section class="section" aria-labelledby="faq-titulo">
-      <div class="container-lf">
-        <h2 id="faq-titulo">Preguntas frecuentes: {servicio.nombre}</h2>
-        {
-          d.faq.map((p) => (
-            <details class="card faq-item mt-3">
-              <summary>{p.pregunta}</summary>
-              <div class="faq-cuerpo"><p class="card-text">{p.respuesta}</p></div>
-            </details>
-          ))
-        }
+      <div class="container-lf faq-rejilla">
+        <div class="faq-lateral">
+          <p class="eyebrow">Preguntas frecuentes</p>
+          <h2 id="faq-titulo" class="subrayado mt-4">{servicio.nombre}: lo que más me preguntan</h2>
+          <p class="lead mt-5">¿Tu pregunta no está aquí? La vemos en la llamada.</p>
+        </div>
+        <div>
+          {
+            d.faq.map((p) => (
+              <details class="card faq-item mt-3">
+                <summary>{p.pregunta}</summary>
+                <div class="faq-cuerpo"><p class="card-text">{p.respuesta}</p></div>
+              </details>
+            ))
+          }
+        </div>
       </div>
     </section>
 
-    {/* ------------------------------------------------------- CTA + otros */}
-    <section class="section" aria-labelledby="cta-titulo">
-      <div class="container-lf card cta-final">
-        <h2 id="cta-titulo">¿Este servicio es para tu negocio?</h2>
-        <p class="lead mt-3 max-w-[52ch]">
-          En 30 minutos te digo si te conviene y por dónde empezar. Es gratis.
-        </p>
-        <a class="cta mt-6 inline-flex items-center gap-2" href="/contacto">
-          Agenda tu llamada gratis <span aria-hidden="true">→</span>
-        </a>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="otros-titulo">
+    {/* ------------------------------------------------------- Otros */}
+    <section class="section banda" aria-labelledby="otros-titulo">
       <div class="container-lf">
-        <h2 id="otros-titulo" class="h-pequeno">Otros servicios</h2>
-        <ul class="grid-3 mt-6">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Otros servicios</p>
+            <h2 id="otros-titulo" class="subrayado mt-4">Se combinan entre sí</h2>
+          </div>
+          <p class="lead">Muchos proyectos juntan dos o tres de estas piezas en un mismo sistema.</p>
+        </div>
+        <ul class="otros mt-10">
           {
             otros.map((s) => (
-              <li class="card p-5" style={`--svc: var(${s.color})`}>
-                <h3 class="card-title">{s.nombre}</h3>
-                <p class="card-text mt-2">{s.resumen}</p>
-                <a class="card-link mt-3 inline-block" href={`/servicios/${s.slug}`}>
-                  Ver el servicio <span aria-hidden="true">→</span>
-                </a>
+              <li class="card otro" style={`--svc: var(${s.color})`}>
+                <span class="otro-icono" aria-hidden="true">
+                  <Icono nombre={s.icono} tamano={20} grosor={1.8} />
+                </span>
+                <h3 class="otro-titulo">
+                  <a href={`/servicios/${s.slug}`} class="enlace-tarjeta">{s.nombre}</a>
+                </h3>
+                <Icono nombre="flecha" tamano={18} class="otro-flecha" />
               </li>
             ))
           }
         </ul>
       </div>
     </section>
+
+    <Cierre
+      titulo="¿Este servicio es para tu negocio?"
+      entradilla="En 30 minutos te digo si te conviene, por dónde empezaría y qué puedes esperar. Es gratis y no te compromete a nada."
+    />
   </main>
 </Base>
 
 <style>
-  .migas {
-    padding-block: 1rem;
-    font-size: var(--step--1);
+  /* ------------------------------------------------------------ Cabecera */
+  .definicion {
+    max-width: 40rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--svc) 35%, transparent);
+    border-left-width: 3px;
+    border-radius: 0 14px 14px 0;
+    background: color-mix(in srgb, var(--svc) 8%, transparent);
+    color: var(--color-ink);
+    font-size: var(--step-0);
+    line-height: 1.6;
   }
-  .migas ol {
+  .definicion-etiqueta {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--svc);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .botones {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    list-style: none;
-    margin: 0;
+    gap: 0.75rem;
+  }
+  .garantias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.75rem;
+    margin-inline: 0;
+    margin-bottom: 0;
     padding: 0;
-    color: var(--color-muted);
-  }
-  .migas li + li::before {
-    content: "/";
-    margin-inline-end: 0.5rem;
-    color: var(--color-line);
-  }
-  .migas a {
-    text-decoration: none;
+    list-style: none;
     color: var(--color-soft);
+    font-size: var(--step--1);
+  }
+  .garantias li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .garantias :global(svg) {
+    color: var(--svc);
   }
 
-  /* Las fotos de servicio vienen con proporciones distintas (3:2, 16:9,
-     1.57:1). Se recortan todas a 4:3 para que todas las páginas tengan
-     el mismo encuadre y no se vean desniveladas entre sí. */
+  .visual {
+    position: relative;
+    margin: 0;
+    padding-bottom: 2.5rem;
+  }
+  /* Halo del color del servicio por detrás de la imagen. */
+  .visual::before {
+    content: "";
+    position: absolute;
+    inset: 12% 4% 14% 8%;
+    border-radius: 2rem;
+    background: var(--svc);
+    opacity: 0.16;
+    filter: blur(60px);
+  }
+  .visual-marco {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 1.5rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-2);
+  }
   .foto-servicio {
+    display: block;
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
-    max-height: 26rem;
+  }
+  .visual-marco :global(.ilustracion) {
+    aspect-ratio: 4 / 3;
+  }
+  .visual .info-flotante {
+    z-index: 2;
+    max-width: 17rem;
   }
 
-  .definicion {
-    color: var(--svc, var(--color-electric-soft));
+  /* ----------------------------------------------------------- Rejillas */
+  .rejilla-3,
+  .otros,
+  .pasos {
+    display: grid;
+    gap: 1.25rem;
+    margin-inline: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 768px) {
+    .rejilla-3,
+    .pasos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .otros {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (width >= 1024px) {
+    .otros {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .resultado {
+    border-top: 2px solid color-mix(in srgb, var(--svc) 55%, transparent);
+  }
+  .resultado-texto {
+    color: var(--color-ink);
     font-size: var(--step-1);
-    font-weight: 500;
-    max-width: 56ch;
+    line-height: 1.45;
   }
 
-  .lead {
-    color: var(--color-soft);
-    font-size: var(--step-1);
+  .encaje {
+    display: grid;
+    gap: 1.25rem;
+    align-items: start;
   }
-
-  .nota {
-    color: var(--color-muted);
-    font-size: var(--step--1);
+  @media (width >= 900px) {
+    .encaje {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
   }
-
-  .cta {
-    background: var(--grad-cta);
-    color: #fff;
-    border-radius: 999px;
-    padding: 0.875rem 1.5rem;
-    font-weight: 700;
-    box-shadow: var(--shadow-cta);
+  .bloque {
+    padding: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
   }
-
-  .h-pequeno {
+  .incluye {
+    border-color: color-mix(in srgb, var(--svc) 35%, var(--color-line));
+    background:
+      radial-gradient(70% 50% at 100% 0%, color-mix(in srgb, var(--svc) 12%, transparent), transparent 70%),
+      var(--color-surface);
+  }
+  .bloque-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .bloque-titulo {
     font-size: var(--step-2);
+  }
+
+  @media (width >= 768px) {
+    .pasos {
+      position: relative;
+    }
+    /* Línea que une los tres pasos, por detrás de las tarjetas. */
+    .pasos::before {
+      content: "";
+      position: absolute;
+      top: 3.1rem;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--svc), transparent);
+      opacity: 0.6;
+    }
+  }
+  .paso {
+    position: relative;
   }
   .card-title {
-    font-size: var(--step-2);
+    font-size: var(--step-1);
   }
   .card-text {
     color: var(--color-soft);
   }
-  .card-link {
-    color: var(--svc, var(--color-electric-soft));
+  .roles {
+    display: grid;
+    gap: 0.875rem;
+    margin: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .roles dt {
+    color: var(--svc);
+    font-size: 0.75rem;
     font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
-
-  .grid-3 {
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: 1fr;
-    list-style: none;
-    padding: 0;
-    /* Sin margen arriba: lo pone la clase mt-* del marcado. Con
-       margin: 0 aquí, la clase no se aplicaba y el título quedaba pegado. */
-    margin-inline: 0;
-    margin-bottom: 0;
-  }
-
-  .lista-marcas {
-    display: grid;
-    gap: 0.75rem;
-    list-style: none;
-    padding: 0;
-    /* Sin margen arriba: lo pone la clase mt-* del marcado. Con
-       margin: 0 aquí, la clase no se aplicaba y el título quedaba pegado. */
-    margin-inline: 0;
-    margin-bottom: 0;
+  .roles dd {
+    margin: 0.25rem 0 0;
     color: var(--color-soft);
-  }
-  .lista-marcas li {
-    padding-inline-start: 1.5rem;
-    position: relative;
-  }
-  .lista-marcas li::before {
-    content: "";
-    position: absolute;
-    inset-inline-start: 0;
-    top: 0.55em;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--svc, var(--color-electric));
+    font-size: var(--step--1);
   }
 
-  .paso-numero {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
-    font-weight: 800;
-    color: var(--svc, var(--color-electric-soft));
-  }
-
-  .faq-item {
-    padding: 1rem 1.25rem;
-  }
-  .faq-item summary {
-    font-family: var(--font-display);
-    font-weight: 700;
-    cursor: pointer;
-    font-size: var(--step-1);
-  }
-  .faq-item[open] summary {
-    margin-bottom: 0.75rem;
-  }
-
-  .cta-final {
-    padding: var(--space-6) var(--space-4);
-    text-align: center;
+  /* ---------------------------------------------------------------- FAQ */
+  .faq-rejilla {
     display: grid;
-    justify-items: center;
-  }
-
-  @media (width >= 640px) {
-    .grid-3 {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    gap: 2rem;
   }
   @media (width >= 1024px) {
-    .grid-3 {
-      grid-template-columns: repeat(3, 1fr);
+    .faq-rejilla {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 4rem;
+      align-items: start;
+    }
+    .faq-lateral {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+  .faq-rejilla .faq-item:first-child {
+    margin-top: 0;
+  }
+
+  /* -------------------------------------------------------------- Otros */
+  .otro {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.875rem;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    transition:
+      border-color var(--dur-micro) var(--ease),
+      transform var(--dur-micro) var(--ease);
+  }
+  .otro:hover {
+    border-color: color-mix(in srgb, var(--svc) 55%, transparent);
+    transform: translateY(-2px);
+  }
+  .otro-icono {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--svc) 14%, transparent);
+    color: var(--svc);
+  }
+  .otro-titulo {
+    font-size: var(--step-0);
+    line-height: 1.3;
+  }
+  .otro :global(.otro-flecha) {
+    color: var(--color-muted);
+    transition: color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
+  }
+  .otro:hover :global(.otro-flecha) {
+    color: var(--svc);
+    transform: translateX(3px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .otro,
+    .otro:hover {
+      transform: none;
     }
   }
 </style>
