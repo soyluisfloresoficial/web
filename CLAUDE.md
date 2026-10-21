@@ -42,6 +42,10 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 - No cambies el texto legal salvo que el titular lo pida; si ves un hueco, avisa de que lo revise un abogado.
 - Tono de quien implementa: directo, sin promesas garantizadas ni urgencia artificial. Nada que suene a principiante («unos tres años», «empecé como freelance») en los textos de presentación.
 
+## Imágenes para compartir
+
+Cada página tiene su imagen para redes (Open Graph) en `public/og/`. Se generan con `node tools/generar-og.mjs` después de `npm run build` (necesita Edge o Chrome en el ordenador). Al añadir un servicio, un artículo o cambiar un título, vuelve a ejecutarlo, compila otra vez y sube las imágenes. Si una página no tiene la suya, usa `og-default.png`.
+
 ## Referencias
 
 - `SISTEMA-DISENO.md`: tipografía, acentos de color y movimiento.

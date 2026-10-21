@@ -1,6 +1,7 @@
 ---
 import { getImage } from "astro:assets";
 import { SITIO, AREA_SERVIDA, servicios } from "../data/servicios";
+import { imagenOg } from "../data/og";
 import retratoImg from "../assets/luis-flores-sobre-mi.png";
 import JsonLd from "../components/JsonLd.astro";
 import Header from "../components/Header.astro";
@@ -29,8 +30,8 @@ interface Props {
 const {
   title,
   description,
-  ogImage = "/og-default.png",
-  ogImageAlt = "Luis Flores · IA aplicada a negocios reales",
+  ogImage,
+  ogImageAlt,
   ogType = "website",
   publishedTime,
   modifiedTime,
@@ -41,7 +42,11 @@ const {
 // trailingSlash: "never". La raíz es la excepción y conserva su barra.
 const ruta = Astro.url.pathname.replace(/\/+$/, "");
 const canonical = `${SITIO.url}${ruta === "" ? "/" : ruta}`;
-const ogImageAbs = new URL(ogImage, SITIO.url).href;
+// Cada página tiene su propia imagen para compartir (tools/generar-og.mjs);
+// si aún no existe, se usa la general.
+const ogFinal = ogImage ?? imagenOg(ruta);
+const ogAlt = ogImageAlt ?? (ogFinal === "/og-default.png" ? "Luis Flores · IA aplicada a negocios reales" : title);
+const ogImageAbs = new URL(ogFinal, SITIO.url).href;
 
 // Retrato para Person.image. Sale del mismo original que /sobre-mi.
 const retrato = await getImage({ src: retratoImg, width: 640, format: "jpg" });
@@ -159,7 +164,7 @@ const grafo = {
     <meta property="og:image" content={ogImageAbs} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:image:alt" content={ogAlt} />
 
     {
       ogType === "article" && publishedTime && (

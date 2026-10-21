@@ -8,6 +8,7 @@ import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import { servicios, SITIO, AREA_SERVIDA } from "../../data/servicios";
 import { detalles, metas } from "../../data/servicios-detalle";
 import { ilustraciones } from "../../data/ilustraciones";
+import { imagenOg } from "../../data/og";
 import { proceso } from "../../data/home";
 
 export function getStaticPaths() {
@@ -49,6 +50,7 @@ const schema = [
     provider: { "@id": `${SITIO.url}/#organization` },
     areaServed: AREA_SERVIDA,
     availableLanguage: "es",
+    image: `${SITIO.url}${imagenOg(`/servicios/${servicio.slug}`)}`,
   },
   {
     "@type": "BreadcrumbList",
