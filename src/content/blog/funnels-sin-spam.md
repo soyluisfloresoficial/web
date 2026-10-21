@@ -33,4 +33,20 @@ No depende de cuántos mensajes mandas, sino de **qué** mandas:
 
 Sin medición, cuando algo no vende no sabes si el problema es que llega poca gente, que la página no convence o que el seguimiento se queda corto. Con cada etapa medida lo ves claro y arreglas **primero** la que más clientes te hace perder. Así mejoras con datos y no por intuición.
 
+## Errores comunes al armar un embudo
+
+- **Una página con muchos objetivos.** Si la página de captación pide suscribirse, agendar, comprar y seguirte en redes, la persona no hace nada.
+- **Pedir demasiados datos.** Cada campo extra en el formulario hace que menos gente lo complete. Pide solo lo que vas a usar.
+- **Seguimiento que solo vende.** Si cada mensaje es una oferta, la gente deja de leer. Alterna contenido útil con propuestas claras.
+- **No medir.** Sin métricas por etapa, no sabes qué arreglar y terminas cambiando cosas a ciegas.
+
+## Preguntas que me hacen seguido
+
+**¿Un embudo sirve si vendo servicios y no productos?** Sí. En servicios el objetivo del embudo suele ser que la persona agende una llamada o pida una cotización.
+
+**¿Cuánto tarda en dar resultados?** Depende de cuánta gente llegue y de tu ciclo de venta. Lo importante es medir desde el primer día para ir corrigiendo.
+
+**¿Necesito una página web completa?** No necesariamente. Muchos embudos funcionan con una sola página de captación bien hecha, conectada a tu CRM.
+
+
 Un embudo no tiene por qué incomodar a nadie. Bien armado, consigue más clientes y además deja una buena impresión. Si quieres, revisamos cómo te llegan hoy los contactos y en qué parte se te escapan, en una llamada de 30 minutos.

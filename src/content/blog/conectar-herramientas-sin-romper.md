@@ -28,4 +28,20 @@ Es tentador querer conectarlo todo de una vez, y casi siempre sale mal. Elige un
 
 Depende del caso, no de la moda. Make es muy visual y flexible, n8n lo puedes instalar en tu propio servidor y Zapier es práctico para flujos cortos. Elijo según tus herramientas, tu volumen de trabajo y tu presupuesto. Y si ya usas alguna, lo primero es ver si se puede conectar antes de sugerirte un cambio.
 
+## Errores comunes al conectar herramientas
+
+- **Conectar sin mapear el proceso.** Si no está claro qué pasa en cada paso, la automatización copia el desorden.
+- **No probar con datos raros.** Un nombre con acentos, un teléfono con espacios o un campo vacío pueden romper un flujo que funcionaba con los ejemplos fáciles.
+- **Depender de una sola persona.** Si solo quien la armó sabe cómo funciona, cualquier cambio se vuelve un problema. Por eso la documentación no es opcional.
+- **No revisar los avisos.** Los avisos de error sirven si alguien los lee. Conviene decidir desde el principio quién los recibe.
+
+## Preguntas que me hacen seguido
+
+**¿Qué pasa si una de las herramientas cambia?** A veces una herramienta actualiza su forma de conectarse. Con los avisos de error activos te enteras al momento y se ajusta el flujo antes de que afecte a tus clientes.
+
+**¿Las automatizaciones tienen costo mensual?** Las herramientas como Make, n8n o Zapier tienen planes según el volumen de uso. En la propuesta te digo cuál conviene y cuánto cuesta, y la suscripción queda a tu nombre.
+
+**¿Puedo hacer cambios yo mismo?** Sí. Con la documentación puedes hacer los cambios simples, y para los grandes conviene revisarlos antes.
+
+
 Hacerlo bien desde el principio te ahorra muchos dolores de cabeza después. Si quieres, hacemos juntos la lista de tus tareas repetitivas y vemos cuál conviene automatizar primero, en una llamada de 30 minutos.

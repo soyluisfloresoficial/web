@@ -33,4 +33,20 @@ Que el agente sepa cuándo hacerse a un lado está planeado desde el principio. 
 - Tomar los datos básicos de un cliente potencial y registrarlos donde trabajas.
 - Filtrar lo repetitivo para que tu equipo solo atienda lo que necesita una persona.
 
+## Errores comunes al poner un agente de IA
+
+- **Darle información desordenada.** Si los precios están en un PDF viejo y los horarios en otro lado, el agente va a dudar igual que dudaría una persona nueva. Antes de configurarlo conviene ordenar la información en un solo lugar.
+- **No definir cuándo pasa a una persona.** Sin esa regla, el agente intenta resolver todo y frustra al cliente en las consultas delicadas.
+- **Activarlo sin probar.** Siempre hay preguntas que nadie anticipó. Probarlo con casos reales antes de publicarlo evita sorpresas.
+- **Olvidarse de actualizarlo.** Si cambian los precios o los horarios, el agente tiene que saberlo el mismo día.
+
+## Preguntas que me hacen seguido
+
+**¿El cliente sabe que está hablando con una IA?** Debería. Indicarlo con claridad genera confianza y es lo que piden cada vez más leyes. Además, la persona siempre puede pedir hablar con alguien del equipo.
+
+**¿Qué pasa con las preguntas que no estaban previstas?** El agente reconoce que no tiene la respuesta y pasa la conversación a tu equipo. Con esas preguntas, después, se completa la información del agente.
+
+**¿Sirve para cualquier negocio?** Sirve sobre todo en negocios que reciben muchas preguntas repetidas o que trabajan con citas. Si cada consulta es única y compleja, conviene empezar por otra automatización.
+
+
 Todo lo que configuro lo probamos juntos con casos reales antes de activarlo, y queda documentado. Así ves con tus propios ojos qué contesta y qué hace cuando no sabe algo. Si quieres, lo revisamos para tu caso en una llamada de 30 minutos.

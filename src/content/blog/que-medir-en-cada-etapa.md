@@ -33,4 +33,20 @@ Cada vez que cambies algo, ya sea una automatización nueva, una página o un me
 
 Mi recomendación: empieza con una tabla sencilla con esas cuatro etapas y revísala una vez por semana. Cuando te acostumbres a mirar los saltos entre etapas, las decisiones se vuelven mucho más fáciles. Lo vistoso puede esperar.
 
+## Errores comunes al medir
+
+- **Mirar solo las métricas que suben.** Seguidores o visitas pueden crecer mientras las ventas no se mueven. Mira el recorrido completo.
+- **Comparar períodos distintos.** Un mes con feriados no es igual a uno sin ellos. Compara semanas o meses parecidos.
+- **Cambiar varias cosas a la vez.** Si cambias la página, el precio y el seguimiento juntos, no vas a saber qué funcionó.
+- **Medir sin decidir.** Si nunca cambias nada por lo que ves en los números, la medición no está cumpliendo su función.
+
+## Preguntas que me hacen seguido
+
+**¿Necesito un software especial para medir?** Para empezar, no. Una tabla simple con las cuatro etapas alcanza. Cuando los datos están en muchas herramientas, un panel que se actualice solo ahorra horas.
+
+**¿Cada cuánto debería revisar los números?** Una vez por semana es un buen ritmo para la mayoría de los negocios.
+
+**¿Qué hago si no tengo datos de antes?** Empieza a registrar desde hoy. En unas semanas ya vas a tener tu punto de partida.
+
+
 Si quieres, vemos qué medir en tu caso y cómo dejarlo registrado sin que te quite tiempo, en una llamada de 30 minutos.

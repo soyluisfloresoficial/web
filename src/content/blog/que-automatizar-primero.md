@@ -36,4 +36,22 @@ Contestar tarde a un cliente potencial tiene un costo directo, porque casi siemp
 
 Ir de una en una parece lento, pero es lo que hace que funcione de verdad y que tu equipo le tenga confianza. En mi propio negocio lo hice exactamente así: una tarea, medida, y después la siguiente.
 
+## Ejemplos de buenas primeras automatizaciones
+
+Para que el criterio se vea en la práctica, estos son procesos que suelen cumplir las tres condiciones en negocios de servicios:
+
+- **Confirmar y recordar citas.** Pasa muchas veces por semana, siempre sigue las mismas reglas y afecta directamente a que el cliente llegue.
+- **Registrar contactos nuevos.** Cada formulario o mensaje entra solo al CRM, con su origen marcado.
+- **Responder preguntas frecuentes.** Horarios, ubicación, formas de pago o cómo agendar, con la información que tú apruebas.
+- **Avisar al equipo.** Cuando entra un contacto importante o se agenda una cita, la persona responsable recibe el aviso al momento.
+
+## Preguntas que me hacen seguido
+
+**¿Y si mi tarea más repetitiva no afecta al cliente?** También puede ser una buena candidata, sobre todo si te quita muchas horas. Pero si tienes dos opciones parecidas, conviene empezar por la que afecta al cliente.
+
+**¿Qué hago si no tengo claro cuánto tiempo me lleva cada tarea?** Anótalo durante una semana. No hace falta precisión, alcanza con una idea aproximada.
+
+**¿Cada cuánto conviene sumar una automatización nueva?** Cuando la anterior lleva unas semanas funcionando sin problemas y ya mediste el cambio.
+
+
 Si no tienes claro cuál es tu primera tarea, eso es justo lo que vemos en la llamada de diagnóstico. En 30 minutos sales con una prioridad concreta y no con una lista interminable.
