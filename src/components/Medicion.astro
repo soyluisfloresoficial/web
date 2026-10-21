@@ -1,0 +1,64 @@
+---
+/**
+ * Eventos de medición para GA4 (vía Google Tag Manager).
+ *
+ * Separado del banner de cookies a propósito: el banner decide el
+ * consentimiento y carga GTM; este componente solo empuja eventos al
+ * dataLayer. Si la persona no acepta, GTM nunca se carga y los eventos se
+ * quedan en el navegador sin salir a ningún sitio.
+ *
+ * Eventos (nombres tal cual se configuran en GTM y GA4):
+ * - cta_click: botones de agendar la llamada (a /contacto o a la agenda).
+ *   cta_location: hero, header, servicios, faq, footer, cierre, barra-movil,
+ *   contacto-tarjeta u otra sección. cta_text: texto del botón.
+ * - whatsapp_click y email_click: enlaces a WhatsApp y al correo.
+ * - roi_calculator_use: al calcular en /roi (lo envía roi.astro).
+ * - form_start y generate_lead: agenda de Calendly en /contacto (los envía
+ *   contacto.astro con form_id "calendly-diagnostico").
+ * Todos llevan page_path.
+ */
+---
+
+<script>
+  // Solo mide si hay GTM configurado: el banner de cookies solo se pinta en ese caso.
+  if (document.querySelector("[data-cookie-banner]")) {
+      const w = window as unknown as { dataLayer: unknown[] };
+      w.dataLayer = w.dataLayer || [];
+
+      // Sección normalizada del botón, para que GA4 agrupe bien.
+      const ubicacion = (el: Element): string => {
+        const propia = el.closest<HTMLElement>("[data-ubicacion]")?.dataset.ubicacion;
+        if (propia) return propia;
+        if (el.closest("header")) return "header";
+        if (el.closest("footer")) return "footer";
+        if (el.closest(".hero, .cabecera-pagina")) return "hero";
+        if (el.closest(".seccion-cierre")) return "cierre";
+        if (el.closest("[aria-labelledby='servicios-titulo'], [aria-labelledby='todos-titulo']")) return "servicios";
+        if (el.closest("[aria-labelledby='faq-titulo']")) return "faq";
+        return el.closest("section[aria-labelledby]")?.getAttribute("aria-labelledby") ?? "otra";
+      };
+
+      document.addEventListener("click", (e) => {
+        const enlace = (e.target as Element | null)?.closest<HTMLAnchorElement>("a[href]");
+        if (!enlace) return;
+        const href = enlace.getAttribute("href") ?? "";
+        const esAgenda =
+          enlace.matches("a.cta, a.cta-cabecera") &&
+          (href === "/contacto" || href === "#agenda" || href.includes("calendly.com"));
+        const evento = href.includes("wa.me/")
+          ? "whatsapp_click"
+          : href.startsWith("mailto:")
+            ? "email_click"
+            : esAgenda
+              ? "cta_click"
+              : null;
+        if (!evento) return;
+        w.dataLayer.push({
+          event: evento,
+          cta_location: ubicacion(enlace),
+          cta_text: (enlace.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 60),
+          page_path: location.pathname,
+        });
+      });
+  }
+</script>

@@ -176,36 +176,7 @@ const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
       }),
     );
 
-    // Clics de contacto. El dataLayer solo llega a algún sitio si GTM se ha
-    // cargado, es decir, si la persona aceptó.
-    // - cta_diagnostico_click: botones de agendar la llamada.
-    // - whatsapp_click y email_click: enlaces a WhatsApp y al correo.
-    // Cada evento lleva la sección (cta_location), el texto del botón
-    // (cta_text) y la página (page_path).
-    document.addEventListener("click", (e) => {
-      const enlace = (e.target as Element | null)?.closest<HTMLAnchorElement>("a[href]");
-      if (!enlace) return;
-      const href = enlace.getAttribute("href") ?? "";
-      const evento = href.includes("wa.me/")
-        ? "whatsapp_click"
-        : href.startsWith("mailto:")
-          ? "email_click"
-          : enlace.matches("a.cta, a.cta-cabecera")
-            ? "cta_diagnostico_click"
-            : null;
-      if (!evento) return;
-      const seccion = enlace.closest("section[aria-labelledby], header, footer, [data-ubicacion]");
-      w.dataLayer.push({
-        event: evento,
-        cta_location:
-          (enlace.closest("[data-ubicacion]") as HTMLElement | null)?.dataset.ubicacion ??
-          seccion?.getAttribute("aria-labelledby") ??
-          seccion?.tagName.toLowerCase() ??
-          "desconocida",
-        cta_text: (enlace.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 60),
-        page_path: location.pathname,
-      });
-    });
+    // Los eventos de clic están en Medicion.astro.
   }
 </script>
 

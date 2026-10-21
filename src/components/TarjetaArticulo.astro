@@ -57,6 +57,7 @@ const fecha = post.data.datePublished.toLocaleDateString("es", {
         <Image
           src={fotoPropia}
           alt=""
+          aria-hidden="true"
           widths={destacado ? [640, 960, 1280] : [480, 720]}
           sizes={destacado ? "(min-width: 1024px) 55vw, 100vw" : "(min-width: 1024px) 30vw, 100vw"}
           loading="lazy"
@@ -68,6 +69,7 @@ const fecha = post.data.datePublished.toLocaleDateString("es", {
           <Image
             src={fotoServicio}
             alt=""
+            aria-hidden="true"
             widths={destacado ? [640, 960] : [480, 720]}
             sizes={destacado ? "(min-width: 1024px) 55vw, 100vw" : "(min-width: 1024px) 30vw, 100vw"}
             loading="lazy"

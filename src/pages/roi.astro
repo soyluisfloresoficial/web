@@ -257,8 +257,7 @@ const schema = [
     e.preventDefault();
     // Medición: alguien usó la calculadora (no se envía ninguna cifra).
     (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({
-      event: "calculadora_roi_calculo",
-      cta_location: "calculadora",
+      event: "roi_calculator_use",
       page_path: location.pathname,
     });
 

@@ -81,7 +81,7 @@ const schema = [
       entradilla="Lo más rápido es una llamada de 30 minutos. Me cuentas cómo funciona tu negocio y te digo qué conviene automatizar primero. Es gratis y no te compromete a nada."
     >
       <div class="botones mt-8">
-        <a class="cta" href={SITIO.calendly} data-ubicacion="contacto-cabecera">
+        <a class="cta" href="#agenda" data-ubicacion="hero" data-abrir-agenda>
           <Icono nombre="calendario" tamano={18} />
           Agenda tu llamada gratis <span aria-hidden="true">→</span>
         </a>
@@ -111,11 +111,54 @@ const schema = [
           <li><Icono nombre="escudo" tamano={18} /> Gratis y sin compromiso de contratar</li>
           <li><Icono nombre="globo" tamano={18} /> Latinoamérica y España, en tu horario</li>
         </ul>
-        <a class="cta reserva-boton" href={SITIO.calendly} data-ubicacion="contacto-tarjeta">
+        <a class="cta reserva-boton" href="#agenda" data-ubicacion="contacto-tarjeta" data-abrir-agenda>
           Elegir día y hora <span aria-hidden="true">→</span>
         </a>
       </aside>
     </CabeceraPagina>
+
+    {/* ------------------------------------------------------------- Agenda */}
+    {/*
+      Calendly dentro de la página. El iframe se crea cuando la persona lo pide
+      (botón o enlace a #agenda), así no se carga contenido de terceros antes.
+      Calendly avisa por postMessage al elegir hora y al confirmar la reserva:
+      ahí salen form_start y generate_lead (form_id "calendly-diagnostico").
+    */}
+    <section class="section seccion-agenda" id="agenda" aria-labelledby="agenda-titulo" data-acento="azul">
+      <div class="container-lf">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Agenda</p>
+            <h2 id="agenda-titulo" class="subrayado mt-4">Elige día y hora</h2>
+          </div>
+          <p class="lead">
+            Verás los horarios libres en tu zona horaria. Al confirmar te llega un
+            correo con el enlace de la videollamada.
+          </p>
+        </div>
+        <div class="card agenda mt-10" data-agenda data-url={SITIO.calendly}>
+          <div class="agenda-aviso" data-agenda-aviso>
+            <span class="anillo-degradado anillo-grande" aria-hidden="true">
+              <Icono nombre="calendario" tamano={24} grosor={1.6} degradado />
+            </span>
+            <p class="agenda-texto">
+              La agenda la gestiona Calendly. Al abrirla se carga su servicio, que
+              trata tus datos según la <a href="/politica-de-privacidad">política de privacidad</a>.
+            </p>
+            <button type="button" class="cta" data-agenda-cargar>
+              Ver horarios disponibles <span aria-hidden="true">→</span>
+            </button>
+            <a class="agenda-externa" href={SITIO.calendly} rel="noopener" target="_blank">
+              O ábrela en una pestaña nueva
+            </a>
+          </div>
+          <p class="agenda-exito" data-agenda-exito role="status" hidden>
+            Listo, tu llamada quedó agendada. Revisa tu correo: ahí tienes la
+            confirmación y el enlace de la videollamada.
+          </p>
+        </div>
+      </div>
+    </section>
 
     {/* -------------------------------------------------------------- Pasos */}
     <section class="section banda" aria-labelledby="pasos-titulo" data-acento="violeta">
@@ -234,7 +277,89 @@ const schema = [
   </main>
 </Base>
 
+<script>
+  const caja = document.querySelector<HTMLElement>("[data-agenda]");
+  const aviso = caja?.querySelector<HTMLElement>("[data-agenda-aviso]");
+  const exito = caja?.querySelector<HTMLElement>("[data-agenda-exito]");
+  let cargada = false;
+
+  const cargar = () => {
+    if (!caja || !aviso || cargada) return;
+    cargada = true;
+    const url = new URL(caja.dataset.url ?? "");
+    url.searchParams.set("embed_domain", location.hostname);
+    url.searchParams.set("embed_type", "Inline");
+    url.searchParams.set("hide_gdpr_banner", "1");
+    url.searchParams.set("locale", "es");
+    const marco = document.createElement("iframe");
+    marco.src = url.toString();
+    marco.title = "Agenda de Calendly para la llamada de diagnóstico";
+    marco.className = "agenda-marco";
+    marco.loading = "lazy";
+    aviso.replaceWith(marco);
+  };
+
+  caja?.querySelector("[data-agenda-cargar]")?.addEventListener("click", cargar);
+  document.querySelectorAll("[data-abrir-agenda]").forEach((a) => a.addEventListener("click", cargar));
+  if (location.hash === "#agenda") cargar();
+
+  // Eventos de Calendly (solo los que vienen de calendly.com).
+  const w = window as unknown as { dataLayer?: unknown[] };
+  let empezado = false;
+  window.addEventListener("message", (e) => {
+    if (e.origin !== "https://calendly.com") return;
+    const tipo = (e.data as { event?: string } | null)?.event;
+    if (tipo === "calendly.date_and_time_selected" && !empezado) {
+      empezado = true;
+      w.dataLayer?.push({ event: "form_start", form_id: "calendly-diagnostico", page_path: location.pathname });
+    }
+    if (tipo === "calendly.event_scheduled") {
+      w.dataLayer?.push({ event: "generate_lead", form_id: "calendly-diagnostico", method: "calendly", page_path: location.pathname });
+      if (exito) exito.hidden = false;
+    }
+  });
+</script>
+
 <style>
+  /* ------------------------------------------------------------- Agenda */
+  .agenda {
+    overflow: hidden;
+    padding: 0;
+  }
+  .agenda-aviso {
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+    padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) 1.5rem;
+    text-align: center;
+  }
+  .agenda-texto {
+    max-width: 46ch;
+    color: var(--color-soft);
+  }
+  .agenda-texto a,
+  .agenda-externa {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .agenda-externa {
+    font-size: var(--step--1);
+  }
+  .agenda :global(.agenda-marco) {
+    display: block;
+    width: 100%;
+    height: 720px;
+    border: 0;
+    background: #fff;
+  }
+  .agenda-exito {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--color-line);
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
   .nota-respuesta {
     color: var(--color-muted);
     font-size: var(--step--1);

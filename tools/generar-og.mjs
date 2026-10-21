@@ -80,9 +80,12 @@ const servidor = http.createServer((req, res) => {
 await new Promise((r) => servidor.listen(0, r));
 const origen = `http://localhost:${servidor.address().port}`;
 
-// Retrato: la versión más grande que haya generado Astro.
-const sobreMi = fs.readFileSync(path.join(dist, "sobre-mi", "index.html"), "utf8");
-const retratos = [...sobreMi.matchAll(/\/_astro\/luis-flores-sobre-mi[^"\s,]*\.webp/g)].map((m) => m[0]);
+// Retrato: la versión más grande que haya generado Astro del original
+// luis-flores-sobre-mi.png (lo usan el schema y el autor del blog).
+const retratos = fs
+  .readdirSync(path.join(dist, "_astro"))
+  .filter((n) => /^luis-flores-sobre-mi\.[^.]+\.(webp|jpg)$/.test(n))
+  .map((n) => `/_astro/${n}`);
 const retrato = retratos.sort((a, b) => fs.statSync(path.join(dist, b)).size - fs.statSync(path.join(dist, a)).size)[0];
 
 function plantilla({ antetitulo, titulo, color }) {
