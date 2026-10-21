@@ -255,6 +255,12 @@ const schema = [
 
   form?.addEventListener("submit", (e) => {
     e.preventDefault();
+    // Medición: alguien usó la calculadora (no se envía ninguna cifra).
+    (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({
+      event: "calculadora_roi_calculo",
+      cta_location: "calculadora",
+      page_path: location.pathname,
+    });
 
     const leads = leer("leads");
     const ticket = leer("ticket");
