@@ -64,7 +64,7 @@ export const servicios: Servicio[] = [
     slug: "crm-seguimiento-leads",
     nombre: "CRM y seguimiento de leads",
     definicion:
-      "Un CRM es el sistema donde guardas cada contacto con su historial, la etapa en la que está y el siguiente paso, para que ningún cliente potencial se quede sin respuesta.",
+      "Un CRM es el sistema donde guardas cada contacto con su historial, su etapa y el siguiente paso a dar.",
     resumen: "Cada contacto en su etapa y con su siguiente paso, sin hojas de cálculo sueltas.",
     color: "--svc-crm-seguimiento-leads",
     imagen: "",
@@ -97,7 +97,7 @@ export const servicios: Servicio[] = [
     slug: "webs-ia",
     nombre: "Páginas web con IA",
     definicion:
-      "Una página web con IA es un sitio rápido, pensado para un objetivo concreto, que puede incluir un asistente que responde preguntas y capta contactos.",
+      "Una página web con IA es un sitio rápido, con un objetivo claro, que puede incluir un asistente que responde y capta contactos.",
     resumen: "Rápidas, fáciles de usar y con un objetivo claro en cada página.",
     color: "--svc-webs-ia",
     imagen: "webs-ia",

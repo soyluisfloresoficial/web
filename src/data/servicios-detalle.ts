@@ -22,7 +22,7 @@ export interface DetalleServicio {
 
 export const detalles: Record<string, DetalleServicio> = {
   "agentes-ia": {
-    h1: "Agentes de IA que atienden y agendan a tus clientes las 24 horas",
+    h1: "Agentes de IA que atienden y agendan a tus clientes 24/7",
     intro:
       "A tu negocio le escriben y le llaman fuera de horario, en medio de una reunión o cuando todo el equipo está ocupado. Un agente de IA contesta en el momento, resuelve las preguntas de siempre y deja la cita agendada en tu calendario.",
     resultado: [
@@ -298,7 +298,7 @@ export const detalles: Record<string, DetalleServicio> = {
   // titular se resolvieron con él el 21/10/2026.
 
   "crm-seguimiento-leads": {
-    h1: "CRM y seguimiento de clientes potenciales para que ningún contacto se pierda",
+    h1: "Un CRM para que no se te pierda ningún contacto",
     intro:
       "Los contactos te llegan por la web, WhatsApp, Instagram o por teléfono, y terminan repartidos entre el correo, el celular y una hoja de cálculo. Configuro un CRM donde cada contacto tiene su etapa, su historial y su siguiente paso, y los recordatorios salen solos.",
     resultado: [
