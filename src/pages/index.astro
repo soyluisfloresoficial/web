@@ -7,8 +7,8 @@ import { fugas, publicos, herramientas, estandares, proceso, faq, faqPlana, queM
 import Showcase from "../components/Showcase.astro";
 import heroImg from "../assets/luis-flores-monitores.jpg";
 import retratoImg from "../assets/luis-flores-sobre-mi.png";
-import fondoRed from "../assets/fondo-red.webp";
 import Icono from "../components/Icono.astro";
+import Cierre from "../components/Cierre.astro";
 import { logos } from "../data/logos";
 import { ilustraciones } from "../data/ilustraciones";
 
@@ -676,37 +676,7 @@ const schema = [
     </section>
 
     {/* ------------------------------------------------------------- CTA final */}
-    <section class="section" aria-labelledby="cta-titulo" data-acento="violeta">
-      <div class="container-lf">
-        <div class="cierre reveal">
-          <Image
-            src={fondoRed}
-            alt=""
-            widths={[640, 960]}
-            sizes="(min-width: 1024px) 80vw, 100vw"
-            loading="lazy"
-            class="cierre-fondo"
-          />
-          <div class="fondo-reticula" aria-hidden="true"></div>
-          <p class="eyebrow">Siguiente paso</p>
-          <h2 id="cta-titulo" class="mt-5">Hablemos de tu negocio</h2>
-          <p class="lead mt-5">
-            En 30 minutos revisamos tu caso y te digo qué automatizaría primero.
-            Es gratis y no te compromete a nada.
-          </p>
-          <div class="botones botones-centro mt-10">
-            <a class="cta" href="/contacto">
-              <Icono nombre="calendario" tamano={18} />
-              Agenda tu llamada gratis <span aria-hidden="true">→</span>
-            </a>
-            <a class="boton-secundario" href={SITIO.whatsapp} rel="noopener">
-              <Icono nombre="whatsapp" tamano={18} />
-              Escríbeme por WhatsApp
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
+    <Cierre />
   </main>
 </Base>
 
@@ -1814,51 +1784,5 @@ const schema = [
       position: sticky;
       top: calc(var(--header-h) + 2rem);
     }
-  }
-
-  /* --------------------------------------------------------------- Cierre */
-  .cierre {
-    position: relative;
-    overflow: hidden;
-    display: grid;
-    justify-items: center;
-    text-align: center;
-    padding: clamp(3.5rem, 2rem + 5vw, 6.5rem) clamp(1.5rem, 1rem + 4vw, 5rem);
-    border: 1px solid var(--color-line);
-    border-radius: 1.75rem;
-    background: var(--color-surface);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), var(--shadow-3);
-  }
-  .cierre-fondo {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.32;
-    filter: saturate(0.9);
-  }
-  /* Velo sobre la imagen. Va en ::after para pintarse DESPUÉS de la foto:
-     con ::before quedaba debajo y el texto se leía mal sobre la red. */
-  .cierre::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background:
-      linear-gradient(rgb(16 21 34 / 0.72), rgb(16 21 34 / 0.9)),
-      radial-gradient(50% 70% at 50% 0%, rgb(0 123 255 / 0.28), transparent 70%),
-      radial-gradient(40% 60% at 85% 100%, rgb(139 92 246 / 0.22), transparent 70%);
-  }
-  .cierre > :not(.fondo-reticula):not(.cierre-fondo) {
-    position: relative;
-    z-index: 1;
-  }
-  .cierre h2 {
-    max-width: 18ch;
-    font-size: var(--step-4);
-  }
-  .cierre .lead {
-    max-width: 52ch;
   }
 </style>
