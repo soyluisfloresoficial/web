@@ -1398,11 +1398,36 @@ main > .section.banda + .section.banda {
   top: 1rem;
   right: 1rem;
 }
+/* Arriba a la izquierda: en el retrato de Sobre mí el letrero con el logo
+   está arriba a la derecha y la tarjeta no debe taparlo. */
+.info-arriba.info-izquierda {
+  right: auto;
+  left: 1rem;
+}
+.info-abajo.info-derecha {
+  left: auto;
+  right: 1rem;
+}
+/* En celular la foto es estrecha y esa tarjeta taparía la cara y el logo.
+   Su mensaje ya está en el texto de al lado. */
+@media (width < 640px) {
+  .info-arriba.info-izquierda {
+    display: none;
+  }
+}
 @media (width >= 768px) {
   .info-abajo {
     left: -1rem;
   }
   .info-arriba {
+    right: -1rem;
+  }
+  .info-arriba.info-izquierda {
+    right: auto;
+    left: -1rem;
+  }
+  .info-abajo.info-derecha {
+    left: auto;
     right: -1rem;
   }
 }
