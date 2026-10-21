@@ -85,6 +85,12 @@ const {
       radial-gradient(50% 70% at 50% 0%, rgb(0 123 255 / 0.28), transparent 70%),
       radial-gradient(40% 60% at 85% 100%, rgb(139 92 246 / 0.22), transparent 70%);
   }
+  /* En celular, menos margen lateral para que el botón quepa en una línea. */
+  @media (width < 480px) {
+    .cierre {
+      padding-inline: 1rem;
+    }
+  }
   .cierre > p,
   .cierre > h2,
   .cierre > .botones {

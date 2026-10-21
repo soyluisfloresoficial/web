@@ -20,7 +20,7 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
         src="/logo/monograma-80.webp"
         alt=""
         width="40"
-        height="40"
+        height="43"
         class="marca-mono"
       />
       <span class="marca-textos">
@@ -185,9 +185,10 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
     gap: 0.625rem;
     flex-shrink: 0;
   }
+  /* El monograma es 80 × 86: altura automática para no deformarlo. */
   .marca-mono {
     width: 2rem;
-    height: 2rem;
+    height: auto;
   }
   .marca-nombre {
     height: 1.25rem;
