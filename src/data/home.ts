@@ -1,32 +1,32 @@
 /**
- * Contenido de la home. Los textos son los del sitio en producción, extraídos
- * del HTML el 18/10/2026. No están reescritos: si algo hay que cambiar, se
- * cambia aquí y afecta a la página y al schema a la vez.
+ * Contenido de la home. Parten de los textos de producción (18/10/2026) y se
+ * pasaron a español latino neutro el 21/10/2026, a pedido del titular. Si algo
+ * hay que cambiar, se cambia aquí y afecta a la página y al schema a la vez.
  */
 
 export const fugas = [
   {
-    titulo: "Respondes tarde y el lead se enfría",
+    titulo: "Respondes tarde y el cliente se va",
     texto:
-      "Llega una consulta a mediodía y la contestas por la noche, cuando ya han escrito a otro. El primero que responde suele llevarse al cliente.",
+      "Te escriben al mediodía y contestas en la noche. Para entonces ya le escribieron a otro, y casi siempre se queda con el cliente el primero que responde.",
   },
   {
-    titulo: "El día se va en tareas que se repiten",
+    titulo: "El día se te va en tareas repetidas",
     texto:
-      "Agendar, confirmar, pasar datos de un sitio a otro, responder siempre lo mismo. Trabajo necesario que no deja tiempo para lo que de verdad hace crecer el negocio.",
+      "Agendar, confirmar, pasar datos de una herramienta a otra, contestar las mismas preguntas. Hay que hacerlo, pero te quita el tiempo que necesitas para hacer crecer el negocio.",
   },
   {
-    titulo: "Huecos vacíos por citas que no aparecen",
+    titulo: "Citas agendadas que nadie atiende",
     texto:
-      "Reservas que nadie confirma y recordatorios que se envían a mano (o no se envían). Cada no-show es una hora perdida que no vuelve.",
+      "Nadie confirma las citas y los recordatorios se mandan a mano, cuando alguien se acuerda. Cada persona que no llega es una hora de agenda que ya no recuperas.",
   },
 ];
 
 export const publicos = [
-  { titulo: "Coaches y consultores online", texto: "Más leads, menos tareas manuales." },
-  { titulo: "Infoproductores y formadores", texto: "Funnels que captan y nutren." },
-  { titulo: "Clínicas y negocios con cita", texto: "Agenda ordenada, menos no-shows." },
-  { titulo: "Agencias y pequeñas empresas", texto: "Procesos que escalan." },
+  { titulo: "Coaches y consultores online", texto: "Más clientes potenciales, menos trabajo manual." },
+  { titulo: "Creadores de cursos y mentores", texto: "Embudos que captan y hacen seguimiento." },
+  { titulo: "Clínicas y negocios con citas", texto: "Agenda en orden y menos inasistencias." },
+  { titulo: "Agencias y pequeñas empresas", texto: "Procesos que aguantan cuando creces." },
 ];
 
 export const herramientas = [
@@ -47,34 +47,34 @@ export const herramientas = [
 
 export const estandares = [
   {
-    titulo: "Diagnóstico antes de proponer",
+    titulo: "Primero el diagnóstico",
     texto:
-      "Primero entiendo cómo funciona tu negocio. Solo después decido qué tiene sentido automatizar y qué no.",
+      "Antes de proponerte algo, entiendo cómo funciona tu negocio. Después vemos juntos qué conviene automatizar y qué es mejor dejar como está.",
   },
   {
-    titulo: "Se integra con lo que ya usas",
+    titulo: "Uso lo que ya tienes",
     texto:
-      "Reviso tus herramientas actuales antes de proponerte cambiar nada. Menos fricción para tu equipo.",
+      "Reviso tus herramientas actuales antes de sugerir un cambio. Así tu equipo no tiene que aprender todo desde cero.",
   },
   {
-    titulo: "Control de errores y avisos",
+    titulo: "Avisos cuando algo falla",
     texto:
-      "Cada flujo registra los fallos y avisa antes de que afecten a tus clientes.",
+      "Cada automatización guarda un registro de errores y te avisa antes de que el problema llegue a tus clientes.",
   },
   {
-    titulo: "La IA no inventa",
+    titulo: "La IA no inventa respuestas",
     texto:
-      "Los agentes responden solo con la información que tú validas. Si no saben algo, derivan a una persona.",
+      "Los agentes contestan solo con la información que tú apruebas. Si no saben algo, pasan la conversación a una persona.",
   },
   {
-    titulo: "Documentación incluida",
+    titulo: "Todo queda documentado",
     texto:
-      "Entrego cada sistema documentado para que tu equipo sepa qué hace y cómo mantenerlo.",
+      "Te entrego cada sistema con su documentación, para que tu equipo sepa qué hace y cómo mantenerlo.",
   },
   {
     titulo: "Decisiones con datos",
     texto:
-      "Mido cada etapa desde el primer día y mejoro primero lo que más impacto tiene en tu cuenta de resultados.",
+      "Mido cada etapa desde el primer día y empiezo a mejorar por lo que más pesa en tus ventas y tus costos.",
   },
 ];
 
@@ -83,9 +83,9 @@ export const proceso = [
     numero: "01",
     titulo: "Diagnóstico",
     texto:
-      "Analizo tus procesos, tus herramientas y dónde se pierde tiempo o dinero. Sales con prioridades claras.",
-    yo: "Reviso tu operativa y priorizo qué automatizar primero.",
-    tu: "Me enseñas cómo trabajas hoy en una llamada de 30 min.",
+      "Reviso tus procesos y tus herramientas, y busco dónde se te van el tiempo y el dinero. Terminas con una lista clara de prioridades.",
+    yo: "Analizo cómo trabajas y ordeno qué automatizar primero.",
+    tu: "Me muestras tu día a día en una llamada de 30 minutos.",
     imagen: "proceso-diagnostico",
     imagenAlt: "Luis Carlos Flores revisando el proceso de un cliente",
   },
@@ -93,9 +93,9 @@ export const proceso = [
     numero: "02",
     titulo: "Implementación",
     texto:
-      "Construyo la solución, la conecto a tus herramientas y la pruebo contigo con casos reales. La documentación está incluida.",
-    yo: "Monto, conecto y pruebo todo, y lo dejo documentado.",
-    tu: "Me das acceso a las herramientas y validas con un caso real.",
+      "Armo la solución, la conecto con tus herramientas y la probamos juntos con casos reales. La documentación va incluida.",
+    yo: "Configuro, conecto y pruebo cada parte, y la dejo documentada.",
+    tu: "Me das acceso a las herramientas y revisas un caso real.",
     imagen: "proceso-implementacion",
     imagenAlt: "Configuración de una automatización en pantalla",
   },
@@ -103,9 +103,9 @@ export const proceso = [
     numero: "03",
     titulo: "Medición y mejora",
     texto:
-      "Mido los resultados con datos y ajusto lo que no rinde. Se mejora lo que se mide.",
-    yo: "Mido los resultados y ajusto lo que no rinde.",
-    tu: "Me cuentas qué notas en el día a día del negocio.",
+      "Revisamos los resultados con datos y ajustamos lo que no está funcionando.",
+    yo: "Mido los resultados y corrijo lo que no rinde.",
+    tu: "Me cuentas qué cambios notas en el día a día.",
     imagen: "proceso-medicion",
     imagenAlt: "Panel de métricas de un sistema ya en marcha",
   },
@@ -128,17 +128,17 @@ export const faq: GrupoFaq[] = [
       {
         pregunta: "¿Esto sirve para un negocio pequeño como el mío?",
         respuesta:
-          "Sí. Cuanto más limitados están el tiempo y el equipo, más importa automatizar lo correcto primero. Empezamos por una sola cosa que te libere tiempo o deje de perder clientes.",
+          "Sí. Cuando el tiempo y el equipo son pocos, elegir bien qué automatizar importa todavía más. Empezamos por una sola cosa que te ahorre horas o evite que se te escapen clientes.",
       },
       {
         pregunta: "¿Necesito saber de tecnología?",
         respuesta:
-          "No. Yo lo implemento y te lo explico en lenguaje claro, con ejemplos de tu propio negocio. Al terminar queda documentado para que tu equipo sepa qué hace y cómo mantenerlo.",
+          "No. Yo me encargo de la parte técnica y te explico todo con ejemplos de tu propio negocio. Al final te dejo la documentación para que tu equipo sepa cómo funciona y cómo mantenerlo.",
       },
       {
         pregunta: "¿Qué se puede automatizar en mi negocio?",
         respuesta:
-          "Lo que se repite y sigue reglas claras: responder consultas frecuentes, agendar y confirmar citas, seguimiento de leads, pasar datos entre herramientas o enviar recordatorios. Lo que requiere criterio humano se queda en tu equipo.",
+          "Todo lo que se repite y sigue reglas claras. Por ejemplo, responder preguntas frecuentes, agendar y confirmar citas, dar seguimiento a contactos, pasar datos entre herramientas o mandar recordatorios. Lo que necesita criterio humano lo sigue haciendo tu equipo.",
       },
     ],
   },
@@ -148,17 +148,17 @@ export const faq: GrupoFaq[] = [
       {
         pregunta: "¿Cómo es la primera llamada?",
         respuesta:
-          "Son 30 minutos por videollamada. Me cuentas cómo funciona tu negocio y dónde pierdes tiempo u oportunidades, y te digo qué automatizaría primero. Sin compromiso.",
+          "Es una videollamada de 30 minutos. Me cuentas cómo funciona tu negocio y dónde pierdes tiempo o clientes, y te digo qué automatizaría primero. No tienes que contratar nada.",
       },
       {
         pregunta: "¿Qué pasa después del diagnóstico?",
         respuesta:
-          "Si encaja, te paso una propuesta por escrito. Trabajo en tres fases: diagnóstico, implementación (con la documentación incluida) y medición con datos para ajustar lo que no rinde.",
+          "Si tiene sentido trabajar juntos, te mando una propuesta por escrito. El trabajo tiene tres fases: diagnóstico, implementación con documentación incluida, y medición para corregir lo que no funcione.",
       },
       {
-        pregunta: "¿Trabajas con negocios fuera de España?",
+        pregunta: "¿Trabajas con negocios de mi país?",
         respuesta:
-          "Sí, en remoto con España y Latinoamérica. Las llamadas y la documentación son en español y adapto los horarios a tu zona.",
+          "Sí. Trabajo en remoto con negocios de España y de toda Latinoamérica. Las llamadas y la documentación son en español, y acomodo los horarios a tu zona.",
       },
     ],
   },
@@ -168,17 +168,17 @@ export const faq: GrupoFaq[] = [
       {
         pregunta: "¿Cuánto cuesta?",
         respuesta:
-          "Depende del alcance: no es lo mismo una automatización concreta que un sistema completo. Tras la llamada de diagnóstico recibes una propuesta cerrada por escrito, sin sorpresas.",
+          "Depende de lo que haya que hacer. Una automatización puntual no cuesta lo mismo que un sistema completo. Después de la llamada te mando una propuesta por escrito con el precio cerrado.",
       },
       {
         pregunta: "¿Cuánto tarda un proyecto?",
         respuesta:
-          "Depende de lo que montemos y de las herramientas que ya uses. Te doy una estimación por escrito tras la primera llamada; no prometo plazos cerrados sin conocer tu caso.",
+          "Depende de lo que armemos y de las herramientas que ya uses. Después de la primera llamada te doy una estimación por escrito. Sin conocer tu caso no te puedo prometer una fecha.",
       },
       {
-        pregunta: "¿Hay permanencia o cuotas obligatorias?",
+        pregunta: "¿Hay contrato de permanencia o pagos mensuales obligatorios?",
         respuesta:
-          "Lo definimos en la propuesta según tu caso, sin letra pequeña. Algunas herramientas tienen su propia suscripción (la contratas tú y a tu nombre); te lo digo con claridad antes de empezar.",
+          "Eso lo definimos en la propuesta, según tu caso, y queda todo por escrito. Algunas herramientas tienen su propia suscripción, que contratas tú y queda a tu nombre. Te lo digo antes de empezar.",
       },
     ],
   },
@@ -188,17 +188,17 @@ export const faq: GrupoFaq[] = [
       {
         pregunta: "¿Qué herramientas usas?",
         respuesta:
-          "Sobre todo Make, n8n, Zapier, GoHighLevel, ManyChat, ActiveCampaign, Airtable y Stripe. Si ya usas otras, reviso si se pueden integrar antes de proponerte cambiar nada.",
+          "Sobre todo Make, n8n, Zapier, GoHighLevel, ManyChat, ActiveCampaign, Airtable y Stripe. Si ya usas otras, primero reviso si se pueden conectar antes de sugerirte un cambio.",
       },
       {
         pregunta: "¿La IA puede inventar información?",
         respuesta:
-          "Se configura para responder solo con la información que tú validas. Si no sabe algo, lo dice y deriva a una persona. Precios, horarios y disponibilidad salen de tus datos, nunca de suposiciones.",
+          "La configuro para que responda solo con la información que tú apruebas. Si no sabe algo, lo dice y pasa la conversación a una persona. Los precios, horarios y disponibilidad salen de tus datos, nunca de suposiciones.",
       },
       {
-        pregunta: "¿Cómo quedan los datos y el RGPD?",
+        pregunta: "¿Qué pasa con los datos de mis clientes?",
         respuesta:
-          "Monto los sistemas con el consentimiento y la finalidad claros, y sin pedir datos sensibles. Para el detalle legal de tu caso te recomiendo revisarlo con un profesional; yo me ocupo de la parte técnica.",
+          "Configuro los sistemas para pedir solo los datos necesarios, con consentimiento y para un fin claro. Cada país tiene su ley de protección de datos (en Europa, el RGPD), así que para la parte legal te recomiendo consultar con un profesional. Yo me encargo de la parte técnica.",
       },
     ],
   },
@@ -213,7 +213,7 @@ export const faqPlana: Pregunta[] = faq.flatMap((g) => g.preguntas);
  * [COMPLETAR: periodo, número de negocios y método de cada cifra.]
  */
 export const metricas = [
-  { cifra: "73%", texto: "de los leads respondidos al instante" },
-  { cifra: "12 h", texto: "por semana liberadas" },
-  { cifra: "40%", texto: "menos no-shows en negocios con citas" },
+  { cifra: "73%", texto: "de los contactos reciben respuesta al instante" },
+  { cifra: "12 h", texto: "liberadas por semana" },
+  { cifra: "40%", texto: "menos inasistencias en negocios con citas" },
 ];

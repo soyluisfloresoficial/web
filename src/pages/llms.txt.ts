@@ -24,7 +24,7 @@ export const GET: APIRoute = async () => {
   lineas.push(`# ${SITIO.nombreCompleto}`);
   lineas.push("");
   lineas.push(
-    `> ${SITIO.nombreCompleto} (marca: ${SITIO.nombre}) implementa IA aplicada a negocios reales para pymes y emprendedores de España y Latinoamérica: ${servicios.map((s) => s.nombre).join(", ")}. Con base en ${SITIO.localidad} (${SITIO.region}, España).`,
+    `> ${SITIO.nombreCompleto} (marca: ${SITIO.nombre}) implementa IA aplicada a negocios reales para pymes y emprendedores de Latinoamérica y España: ${servicios.map((s) => s.nombre).join(", ")}. Con base en ${SITIO.localidad} (${SITIO.region}, España).`,
   );
   lineas.push("");
   lineas.push(
@@ -33,7 +33,8 @@ export const GET: APIRoute = async () => {
   lineas.push(
     "- Herramientas habituales: Make, n8n, Zapier, GoHighLevel, ManyChat, ActiveCampaign, Airtable, Stripe.",
   );
-  lineas.push("- Primera llamada: 30 minutos, gratuita.");
+  lineas.push("- Primera llamada: 30 minutos por videollamada, gratis.");
+  lineas.push("- Idioma y zona: español. Atiende en remoto a negocios de Latinoamérica y España, con horarios adaptados a cada país.");
   lineas.push(`- Contacto: ${SITIO.email}`);
   lineas.push(`- Lema: "${SITIO.lema}"`);
   lineas.push("");

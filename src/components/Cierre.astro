@@ -17,7 +17,7 @@ interface Props {
 
 const {
   titulo = "Hablemos de tu negocio",
-  entradilla = "En 30 minutos reviso tu caso y te digo qué automatizaría primero. Sin compromiso y sin tecnicismos.",
+  entradilla = "En 30 minutos revisamos tu caso y te digo qué automatizaría primero. Es gratis y no te compromete a nada.",
   antetitulo = "Siguiente paso",
   acento = "violeta",
 } = Astro.props;
@@ -41,7 +41,7 @@ const {
       <div class="botones botones-centro mt-10">
         <a class="cta" href="/contacto">
           <Icono nombre="calendario" tamano={18} />
-          Reservar diagnóstico <span aria-hidden="true">→</span>
+          Agenda tu llamada gratis <span aria-hidden="true">→</span>
         </a>
         <a class="boton-secundario" href={`mailto:${SITIO.email}`}>
           <Icono nombre="email" tamano={18} />

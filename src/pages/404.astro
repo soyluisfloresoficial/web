@@ -4,7 +4,7 @@ import { servicios } from "../data/servicios";
 
 const title = "Página no encontrada: error 404 en el sitio | Luis Flores";
 const description =
-  "La página que buscas no existe o ha cambiado de dirección. Desde aquí puedes ir a los servicios, al blog o reservar una llamada de diagnóstico.";
+  "La página que buscas no existe o cambió de dirección. Desde aquí puedes ir a los servicios, al blog o agendar una llamada gratis.";
 ---
 
 {/* El 404 no necesita noindex: el propio código de estado ya se lo dice a los
@@ -14,12 +14,12 @@ const description =
     <p class="eyebrow">Error 404</p>
     <h1 class="mt-3">Esta página no existe</h1>
     <p class="lead mt-5 max-w-[56ch]">
-      O la dirección ha cambiado, o el enlace que has seguido está roto. No te
-      quedes aquí: abajo tienes todo lo que hay en la web.
+      Puede que la dirección haya cambiado o que el enlace esté roto. Abajo
+      tienes todo lo que hay en la web.
     </p>
 
     <a class="cta mt-8 inline-flex items-center gap-2" href="/contacto">
-      Reservar diagnóstico <span aria-hidden="true">→</span>
+      Agenda tu llamada gratis <span aria-hidden="true">→</span>
     </a>
 
     <h2 class="h-pequeno mt-12">Servicios</h2>
@@ -30,7 +30,7 @@ const description =
             <h3 class="card-title">{s.nombre}</h3>
             <p class="card-text mt-2">{s.resumen}</p>
             <a class="card-link mt-3 inline-block" href={`/servicios/${s.slug}`}>
-              Ver servicio <span aria-hidden="true">→</span>
+              Ver el servicio <span aria-hidden="true">→</span>
             </a>
           </li>
         ))
@@ -43,7 +43,7 @@ const description =
       <li><a href="/servicios">Todos los servicios</a></li>
       <li><a href="/blog">Blog</a></li>
       <li><a href="/sobre-mi">Sobre mí</a></li>
-      <li><a href="/roi">Calculadora ROI</a></li>
+      <li><a href="/roi">Calculadora de ROI</a></li>
       <li><a href="/contacto">Contacto</a></li>
     </ul>
   </main>

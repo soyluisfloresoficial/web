@@ -10,32 +10,32 @@ import retratoImg from "../assets/luis-flores-retrato.jpg";
 
 const url = `${SITIO.url}/sobre-mi`;
 
-const title = "Sobre mí: Luis Carlos Flores, IA aplicada | Luis Flores";
+const title = "Luis Carlos Flores, consultor de IA y automatización";
 const description =
-  "Luis Carlos Flores dirige desde Manresa una agencia de IA y automatización para negocios. Todo lo que implementa lo prueba antes en su propio negocio.";
+  "Luis Carlos Flores dirige una agencia de IA y automatización para negocios de Latinoamérica y España. Todo lo que implementa lo prueba antes en su negocio.";
 
 const compromisos = [
   {
-    titulo: "Te hablo claro",
+    titulo: "Te hablo en simple",
     icono: "chat",
     texto:
-      "Nada de tecnicismos. Te explico cada cosa con ejemplos de tu propio negocio, para que entiendas qué hace y por qué.",
+      "Sin palabras técnicas. Te explico cada cosa con ejemplos de tu propio negocio, para que entiendas qué hace y por qué.",
   },
   {
     titulo: "Primero lo pruebo yo",
     icono: "escudo",
-    texto: "Lo que te propongo ya ha pasado por mi negocio. Si no me fío yo, no te lo ofrezco.",
+    texto: "Lo que te propongo ya lo usé en mi negocio. Si no me convence a mí, no te lo ofrezco.",
   },
   {
-    titulo: "Te enseño los números",
+    titulo: "Te muestro los números",
     icono: "tendencia",
-    texto: "Sin promesas mágicas. Medimos antes y después, y ajustamos lo que no rinde.",
+    texto: "No te prometo milagros. Medimos antes y después, y corregimos lo que no funciona.",
   },
   {
     titulo: "Tu tiempo es el objetivo",
     icono: "reloj",
     texto:
-      "Automatizo para que dejes de depender de jornadas interminables, no para añadirte complejidad.",
+      "Automatizo para que dejes de trabajar jornadas eternas, y no para complicarte más el día.",
   },
 ] as const;
 
@@ -57,7 +57,7 @@ const schema = [
     name: title,
     description,
     isPartOf: { "@id": `${SITIO.url}/#website` },
-    inLanguage: "es-ES",
+    inLanguage: "es",
     mainEntity: { "@id": `${SITIO.url}/#person` },
   },
   {
@@ -79,12 +79,12 @@ const schema = [
       antetitulo="Sobre mí"
       titulo="Soy Luis Carlos Flores y pongo la IA"
       destacado="a trabajar para tu negocio"
-      entradilla="Dirijo una agencia desde Manresa, en Cataluña, y diseño e implemento sistemas de IA y automatización para negocios de España y Latinoamérica. Te hablo claro y sin tecnicismos: sé lo que es llevar un negocio y que el día no llegue para todo, porque lo he vivido."
+      entradilla="Dirijo una agencia con base en Manresa, España, y diseño e implemento sistemas de IA y automatización para negocios de Latinoamérica y España. Te hablo en simple, porque sé lo que es llevar un negocio y sentir que el día no alcanza. Lo viví."
     >
       <div class="botones mt-8">
         <a class="cta" href="/contacto">
           <Icono nombre="calendario" tamano={18} />
-          Reservar diagnóstico <span aria-hidden="true">→</span>
+          Agenda tu llamada gratis <span aria-hidden="true">→</span>
         </a>
         <a class="boton-secundario" href="/servicios">Ver servicios</a>
       </div>
@@ -102,7 +102,7 @@ const schema = [
         <div class="info-flotante info-abajo">
           <span class="info-etiqueta">Base</span>
           <span class="info-valor">Manresa · Cataluña</span>
-          <span class="info-sub">Trabajo en remoto con España y LATAM</span>
+          <span class="info-sub">Trabajo en remoto con Latinoamérica y España</span>
         </div>
         <div class="info-flotante info-arriba">
           <span class="info-etiqueta">Lo que propongo</span>
@@ -116,10 +116,9 @@ const schema = [
       <div class="container-lf historia">
         <div class="historia-lateral">
           <p class="eyebrow">Mi historia</p>
-          <h2 id="historia-titulo" class="subrayado mt-4">De apagar fuegos a montar sistemas</h2>
+          <h2 id="historia-titulo" class="subrayado mt-4">De apagar incendios a construir sistemas</h2>
           <blockquote class="cita mt-8">
-            Nada de lo que te propongo es teoría: lo he probado antes en mi propia
-            operativa.
+            Todo lo que te propongo lo probé antes en mi propio negocio.
           </blockquote>
         </div>
 
@@ -127,27 +126,27 @@ const schema = [
           <li class="reveal">
             <span class="hito">Antes</span>
             <p>
-              Empecé trabajando por mi cuenta. Y me pasaba lo que a casi todo el que
-              emprende solo: se me iba el día respondiendo mensajes, haciendo
-              seguimientos y repitiendo las mismas tareas una y otra vez. Cosas
-              necesarias, sí, pero que no hacían crecer el negocio.
+              Llevando mi negocio solo, me pasaba lo mismo que a casi cualquier
+              emprendedor. El día se me iba en contestar mensajes, dar seguimiento y
+              repetir las mismas tareas. Había que hacerlas, pero no hacían crecer el
+              negocio.
             </p>
           </li>
           <li class="reveal">
             <span class="hito">El cambio</span>
             <p>
-              Un día decidí darle la vuelta: apliqué IA y automatización a mi propio
-              negocio antes de ofrecérselo a nadie. Me devolvió horas cada semana y me
-              dejó espacio para lo que de verdad importaba. Ese cambio me llevó de
-              trabajar solo a montar y dirigir mi propia agencia.
+              Un día decidí cambiar eso. Apliqué IA y automatización en mi propio
+              negocio antes de ofrecérselo a nadie, recuperé horas cada semana y tuve
+              tiempo para lo importante. Así pasé de trabajar solo a dirigir mi
+              propia agencia.
             </p>
           </li>
           <li class="reveal">
             <span class="hito">Hoy</span>
             <p>
-              Hago exactamente eso por otros negocios: implemento agentes de IA,
-              automatizaciones, funnels y webs, y lo dejo todo documentado para que tu
-              equipo sepa qué hace y cómo mantenerlo.
+              Hago lo mismo por otros negocios. Implemento agentes de IA,
+              automatizaciones, embudos de venta y páginas web, y dejo todo
+              documentado para que tu equipo sepa cómo funciona y cómo mantenerlo.
             </p>
           </li>
         </ol>
@@ -163,8 +162,7 @@ const schema = [
             <h2 id="compromisos-titulo" class="subrayado mt-4">A qué me comprometo</h2>
           </div>
           <p class="lead">
-            Sin letra pequeña. Esto es lo que puedes esperar de mí desde la primera
-            llamada.
+            Esto es lo que puedes esperar de mí desde la primera llamada.
           </p>
         </div>
         <ul class="rejilla-4 mt-10">
@@ -192,12 +190,12 @@ const schema = [
       <div class="container-lf">
         <div class="cabecera-seccion">
           <div>
-            <p class="eyebrow">Lo que ya he medido</p>
+            <p class="eyebrow">Lo que ya medí</p>
             <h2 id="metricas-titulo" class="subrayado mt-4">Números de mis propias implementaciones</h2>
           </div>
           <p class="lead">
-            Rapidez de respuesta, horas liberadas y asistencia a las citas: lo que mido
-            en cada sistema que monto.
+            En cada sistema que implemento mido qué tan rápido se responde, cuántas
+            horas se liberan y cuántas personas llegan a su cita.
           </p>
         </div>
         <ul class="rejilla-3 mt-10">
@@ -226,14 +224,14 @@ const schema = [
           <div>
             <h3 class="card-title">Cómo se midió</h3>
             <p class="card-text mt-3">
-              Son métricas de implementaciones propias con negocios reales. Lo que mido
-              en cada una: rapidez de respuesta a los leads, horas liberadas a la semana
-              y asistencia a las citas agendadas. La medición se hace antes y después de
-              implementar, sobre las herramientas del propio negocio.
+              Son métricas de implementaciones propias con negocios reales. En cada una
+              mido qué tan rápido se responde a los contactos, cuántas horas se liberan
+              por semana y cuántas personas llegan a su cita. Mido antes y después de
+              implementar, con las herramientas del propio negocio.
             </p>
             <p class="card-text mt-3">
-              No son datos de mercado ni promesas de resultado: tu caso depende de tu
-              sector, tu volumen y tu punto de partida.
+              No son promedios del mercado ni una promesa. Tu resultado depende de tu
+              sector, de tu volumen de trabajo y de dónde partes.
             </p>
           </div>
         </div>
@@ -245,7 +243,7 @@ const schema = [
       <div class="container-lf">
         <div class="cabecera-seccion">
           <div>
-            <p class="eyebrow">En qué me he formado</p>
+            <p class="eyebrow">Mi formación</p>
             <h2 id="formacion-titulo" class="subrayado mt-4">Formación y especialización</h2>
           </div>
         </div>
@@ -271,10 +269,10 @@ const schema = [
         <div class="cabecera-seccion">
           <div>
             <p class="eyebrow">Mis proyectos</p>
-            <h2 id="proyectos-titulo" class="subrayado mt-4">Lo que llevo además de esto</h2>
+            <h2 id="proyectos-titulo" class="subrayado mt-4">Mis otros proyectos</h2>
           </div>
           <p class="lead">
-            Productos propios donde aplico lo mismo que monto para mis clientes.
+            Productos propios donde uso lo mismo que implemento para mis clientes.
           </p>
         </div>
         <ul class="rejilla-2 mt-10">
@@ -298,7 +296,7 @@ const schema = [
 
     <Cierre
       titulo="¿Hablamos de tu negocio?"
-      entradilla="Cuéntame cómo trabajas hoy y te digo qué automatizaría primero. Sin coste y sin venta a presión."
+      entradilla="Cuéntame cómo trabajas hoy y te digo qué automatizaría primero. Es gratis y sin presión para contratar."
     />
   </main>
 </Base>

@@ -29,8 +29,8 @@ export const servicios: Servicio[] = [
     slug: "agentes-ia",
     nombre: "Agentes de IA",
     definicion:
-      "Un agente de IA es un sistema que atiende a tus clientes por voz o chat y gestiona citas de forma automática.",
-    resumen: "Atienden por chat y voz 24/7 y agendan citas por ti.",
+      "Un agente de IA es un asistente que atiende a tus clientes por chat o por teléfono y agenda sus citas de forma automática.",
+    resumen: "Atienden por chat y por teléfono las 24 horas y agendan citas por ti.",
     color: "--svc-agentes-ia",
     imagen: "agentes-ia",
     icono: "robot",
@@ -40,8 +40,8 @@ export const servicios: Servicio[] = [
     slug: "funnels-conversion",
     nombre: "Funnels de conversión",
     definicion:
-      "Un funnel de conversión es el recorrido ordenado que lleva a un desconocido a convertirse en cliente, con cada paso medido.",
-    resumen: "Landing, captación y seguimiento por email y WhatsApp.",
+      "Un funnel de conversión, o embudo de ventas, es el camino que sigue una persona desde que te conoce hasta que te compra, con cada paso medido.",
+    resumen: "Página de captación y seguimiento por correo y WhatsApp.",
     color: "--svc-funnels-conversion",
     imagen: "funnels-conversion",
     icono: "embudo",
@@ -51,8 +51,8 @@ export const servicios: Servicio[] = [
     slug: "automatizacion",
     nombre: "Automatización de procesos",
     definicion:
-      "La automatización de procesos consiste en que tus herramientas se pasen datos y ejecuten tareas repetitivas sin intervención manual.",
-    resumen: "Flujos con Make, n8n y Zapier, con control de errores.",
+      "Automatizar procesos es lograr que tus herramientas se pasen datos y hagan las tareas repetitivas sin que nadie tenga que intervenir.",
+    resumen: "Flujos en Make, n8n o Zapier que te avisan si algo falla.",
     color: "--svc-automatizacion",
     imagen: "automatizacion",
     icono: "flujo",
@@ -64,8 +64,8 @@ export const servicios: Servicio[] = [
     slug: "crm-seguimiento-leads",
     nombre: "CRM y seguimiento de leads",
     definicion:
-      "Un CRM es el sistema donde se guarda cada contacto con su historial, su etapa y la siguiente acción, para que ningún lead se quede sin respuesta.",
-    resumen: "Cada contacto en su etapa y con su siguiente paso, sin hojas sueltas.",
+      "Un CRM es el sistema donde guardas cada contacto con su historial, la etapa en la que está y el siguiente paso, para que ningún cliente potencial se quede sin respuesta.",
+    resumen: "Cada contacto en su etapa y con su siguiente paso, sin hojas de cálculo sueltas.",
     color: "--svc-crm-seguimiento-leads",
     imagen: "",
     icono: "usuarios",
@@ -75,8 +75,8 @@ export const servicios: Servicio[] = [
     slug: "email-marketing",
     nombre: "Email marketing y secuencias",
     definicion:
-      "Una secuencia de email es una serie de correos que se envían solos, en orden y según lo que hace cada contacto, para acompañarle hasta la compra.",
-    resumen: "Bienvenida, seguimiento y recuperación de contactos, con su consentimiento.",
+      "Una secuencia de email es una serie de correos que se envían solos, en orden y según lo que hace cada contacto, para acompañarlo hasta la compra.",
+    resumen: "Correos de bienvenida, seguimiento y reactivación, solo a quien dio su permiso.",
     color: "--svc-email-marketing",
     imagen: "",
     icono: "email",
@@ -86,8 +86,8 @@ export const servicios: Servicio[] = [
     slug: "paneles-de-metricas",
     nombre: "Paneles de métricas e informes",
     definicion:
-      "Un panel de métricas reúne en una sola pantalla los números de cada etapa del negocio, sacados de las herramientas que ya usas, para decidir con datos.",
-    resumen: "Las cifras de cada etapa en una sola pantalla, sin copiar a mano.",
+      "Un panel de métricas junta en una sola pantalla los números de cada etapa de tu negocio, tomados de las herramientas que ya usas, para que decidas con datos.",
+    resumen: "Los números de cada etapa en una pantalla, sin copiar datos a mano.",
     color: "--svc-paneles-de-metricas",
     imagen: "",
     icono: "grafica",
@@ -95,21 +95,21 @@ export const servicios: Servicio[] = [
   },
   {
     slug: "webs-ia",
-    nombre: "Webs con IA",
+    nombre: "Páginas web con IA",
     definicion:
-      "Una web con IA es un sitio rápido y orientado a un objetivo que puede incluir un asistente que responde y capta contactos.",
-    resumen: "Rápidas, accesibles y con un objetivo claro por página.",
+      "Una página web con IA es un sitio rápido, pensado para un objetivo concreto, que puede incluir un asistente que responde preguntas y capta contactos.",
+    resumen: "Rápidas, fáciles de usar y con un objetivo claro en cada página.",
     color: "--svc-webs-ia",
     imagen: "webs-ia",
     icono: "web",
-    imagenAlt: "Web mobile-first con formulario de contacto",
+    imagenAlt: "Página web pensada para celular con formulario de contacto",
   },
   {
     slug: "trafico-de-pago",
-    nombre: "Tráfico de pago",
+    nombre: "Publicidad en Meta y Google",
     definicion:
-      "El tráfico de pago es la publicidad en plataformas como Meta y Google para llevar a tu oferta a personas con interés real.",
-    resumen: "Meta Ads y Google Ads con medición correcta desde el día uno.",
+      "La publicidad pagada en Meta (Facebook e Instagram) y Google lleva tu oferta a personas que de verdad pueden estar interesadas.",
+    resumen: "Campañas en Meta Ads y Google Ads, bien medidas desde el primer día.",
     color: "--svc-trafico-de-pago",
     imagen: "trafico-de-pago",
     icono: "megafono",
@@ -117,14 +117,14 @@ export const servicios: Servicio[] = [
   },
   {
     slug: "consultoria-ia",
-    nombre: "Consultoría IA",
+    nombre: "Consultoría de IA",
     definicion:
-      "La consultoría de IA es un diagnóstico de tu negocio que termina en una hoja de ruta priorizada para adoptar inteligencia artificial.",
-    resumen: "Diagnóstico y hoja de ruta priorizada para tu negocio.",
+      "La consultoría de IA es un diagnóstico de tu negocio que termina en un plan ordenado por prioridades para empezar a usar inteligencia artificial.",
+    resumen: "Un diagnóstico y un plan claro de por dónde empezar.",
     color: "--svc-consultoria-ia",
     imagen: "consultoria-ia",
     icono: "brujula",
-    imagenAlt: "Hoja de ruta de adopción de IA priorizada",
+    imagenAlt: "Plan de adopción de IA ordenado por prioridades",
   },
 ];
 
@@ -149,7 +149,7 @@ export const SITIO = {
   /** Definición extraíble: la frase que debe poder citar un buscador de IA
    *  cuando le preguntan qué hace Luis Flores. Va en el JSON-LD de Person. */
   descripcion:
-    "Luis Carlos Flores implementa agentes de IA, automatizaciones, funnels de conversión, CRM, email marketing y paneles de métricas para pymes y emprendedores de España y Latinoamérica, desde Manresa.",
+    "Luis Carlos Flores implementa agentes de IA, automatizaciones, embudos de venta, CRM, email marketing y paneles de métricas para pymes y emprendedores de Latinoamérica y España.",
   perfiles: [
     "https://www.linkedin.com/in/soyluisflores/",
     "https://www.instagram.com/soyluisflores_/",
@@ -164,8 +164,8 @@ export const SITIO = {
  * código ISO ("ES") y texto libre ("Latinoamérica") en el mismo array.
  */
 export const AREA_SERVIDA = [
-  { "@type": "Country", name: "España" },
   { "@type": "Place", name: "Latinoamérica" },
+  { "@type": "Country", name: "España" },
 ];
 
 /**

@@ -42,7 +42,7 @@ const relacionados = todos
 const minutos = minutosLectura(post.body);
 
 const fechaLarga = (d: Date) =>
-  d.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+  d.toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" });
 
 const schema = [
   {
@@ -63,7 +63,7 @@ const schema = [
       articleSection: servicio.nombre,
       about: { "@id": `${SITIO.url}/servicios/${servicio.slug}#service` },
     }),
-    inLanguage: "es-ES",
+    inLanguage: "es",
   },
   {
     "@type": "BreadcrumbList",
@@ -172,8 +172,9 @@ const schema = [
         <div>
           <p class="autor-nombre">{SITIO.nombreCompleto}</p>
           <p class="card-text">
-            Dirijo una agencia desde Manresa y diseño e implemento sistemas de IA,
-            automatización y captación para negocios de España y Latinoamérica.
+            Dirijo una agencia con base en Manresa, España, y diseño e implemento
+            sistemas de IA, automatización y captación de clientes para negocios de
+            Latinoamérica y España.
           </p>
           <a class="card-link mt-2 inline-block" href="/sobre-mi">
             Sobre mí <span aria-hidden="true">→</span>
@@ -209,7 +210,7 @@ const schema = [
 
     <Cierre
       titulo="¿Lo aplicamos a tu negocio?"
-      entradilla="En 30 minutos reviso tu caso y te digo qué haría primero. Sin compromiso."
+      entradilla="En 30 minutos revisamos tu caso y te digo qué haría primero. Es gratis."
     />
   </main>
 </Base>

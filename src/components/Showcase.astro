@@ -22,17 +22,17 @@ const icono = {
 };
 
 const conversacion = [
-  { de: "cliente", texto: "Hola, ¿tenéis hueco esta semana para una primera consulta?", hora: "22:14" },
-  { de: "agente", texto: "¡Hola! Sí. Tengo el jueves a las 10:00 o el viernes a las 17:30. ¿Cuál te va mejor?", hora: "22:14" },
+  { de: "cliente", texto: "Hola, ¿tienen disponibilidad esta semana para una primera consulta?", hora: "22:14" },
+  { de: "agente", texto: "¡Hola! Sí, tengo el jueves a las 10:00 o el viernes a las 17:30. ¿Cuál te queda mejor?", hora: "22:14" },
   { de: "cliente", texto: "El jueves a las 10, perfecto.", hora: "22:15" },
-  { de: "agente", texto: "Hecho: te he reservado el jueves a las 10:00. Te enviaré un recordatorio el día antes.", hora: "22:15" },
+  { de: "agente", texto: "Listo, te agendé el jueves a las 10:00. Te mando un recordatorio un día antes.", hora: "22:15" },
 ];
 
 // Agenda de la semana: "o" ocupado, "n" la cita nueva, "" libre.
 const agenda = [
   { dia: "L", huecos: ["", "o", "", ""] },
   { dia: "M", huecos: ["o", "", "", ""] },
-  { dia: "X", huecos: ["", "", "o", ""] },
+  { dia: "Mi", huecos: ["", "", "o", ""] },
   { dia: "J", huecos: ["", "", "n", ""] },
   { dia: "V", huecos: ["", "o", "", ""] },
 ];
@@ -40,7 +40,7 @@ const agenda = [
 const registro = [
   { icono: icono.persona, texto: "Contacto creado en el CRM", etiqueta: "CRM" },
   { icono: icono.check, texto: "Etiqueta «Interesado» añadida", etiqueta: "CRM" },
-  { icono: icono.email, texto: "Email de bienvenida enviado", etiqueta: "Email" },
+  { icono: icono.email, texto: "Correo de bienvenida enviado", etiqueta: "Email" },
   { icono: icono.calendario, texto: "Cita registrada en la agenda", etiqueta: "Agenda" },
   { icono: icono.chat, texto: "Aviso al equipo por WhatsApp", etiqueta: "Equipo" },
 ];
@@ -63,9 +63,9 @@ const etapas = [
           Un cliente escribe de noche. Mira qué pasa.
         </h2>
         <p class="lead mt-4">
-          Son las 22:14 y llega un mensaje. A partir de ahí, el sistema hace el
-          trabajo solo, paso a paso, sin que tú ni nadie de tu equipo tenga que
-          tocar nada.
+          Son las 22:14 y entra un mensaje. Desde ese momento el sistema hace todo
+          el trabajo, paso a paso, sin que tú ni nadie de tu equipo tenga que
+          intervenir.
         </p>
       </div>
       <p class="aviso">Ejemplos ilustrativos, no capturas de clientes.</p>
@@ -99,8 +99,8 @@ const etapas = [
           <p class="paso"><span class="paso-num">1</span>El agente contesta y cierra la cita</p>
           <h3 class="bento-titulo">Responde al instante por WhatsApp</h3>
           <p class="bento-desc">
-            Con la información que tú validas. Propone un hueco libre y deja la
-            cita reservada, a cualquier hora.
+            Con la información que tú apruebas. Ofrece un horario libre y deja la
+            cita agendada, a cualquier hora.
           </p>
         </div>
       </li>
@@ -133,8 +133,8 @@ const etapas = [
           <p class="paso"><span class="paso-num">2</span>La cita aparece en tu agenda</p>
           <h3 class="bento-titulo">Tu agenda se actualiza sola</h3>
           <p class="bento-desc">
-            La reserva queda registrada al momento y se envía un recordatorio
-            antes de la cita. Menos ausencias.
+            La cita queda registrada al instante y se manda un recordatorio antes
+            de la hora. Así llega más gente.
           </p>
         </div>
       </li>
@@ -143,7 +143,7 @@ const etapas = [
       <li class="card bento-card reveal">
         <div class="maqueta" aria-hidden="true">
           <p class="maqueta-cabecera">
-            <span>Automatización · nuevo lead</span>
+            <span>Automatización · nuevo contacto</span>
             <span class="activa">activa</span>
           </p>
           <ul class="registro">
@@ -164,8 +164,8 @@ const etapas = [
           <p class="paso"><span class="paso-num">3</span>El papeleo se hace solo</p>
           <h3 class="bento-titulo">Todo lo demás, en automático</h3>
           <p class="bento-desc">
-            Se crea el contacto, se etiqueta, se envía el email de bienvenida y tu
-            equipo recibe el aviso. Con control de errores por si algo falla.
+            Se crea el contacto, se le pone una etiqueta, sale el correo de
+            bienvenida y tu equipo recibe el aviso. Si algo falla, te enteras.
           </p>
         </div>
       </li>
@@ -174,7 +174,7 @@ const etapas = [
       <li class="card bento-card bento-ancha reveal">
         <div class="maqueta" aria-hidden="true">
           <p class="maqueta-cabecera">
-            <span>Funnel · cada etapa medida</span>
+            <span>Embudo · cada etapa medida</span>
             <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.embudo} /></svg>
           </p>
           <ul class="etapas">
@@ -194,8 +194,8 @@ const etapas = [
           <p class="paso"><span class="paso-num">4</span>Y queda todo medido</p>
           <h3 class="bento-titulo">Ves en qué punto se pierde la gente</h3>
           <p class="bento-desc">
-            Cada etapa cuenta: de las visitas a los clientes. Así sabemos qué paso
-            falla y mejoramos ese primero, con datos.
+            Se mide cada etapa, desde la visita hasta la venta. Así vemos qué paso
+            falla y lo mejoramos primero.
           </p>
         </div>
       </li>

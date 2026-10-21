@@ -74,7 +74,7 @@ const grafoBase = [
     name: SITIO.nombre,
     url: `${SITIO.url}/`,
     description:
-      "Implementación de agentes de IA, automatizaciones y funnels de conversión para pymes y emprendedores de España y Latinoamérica.",
+      "Implementación de agentes de IA, automatizaciones y embudos de venta para pymes y emprendedores de Latinoamérica y España.",
     // Google pide un logo de al menos 112 × 112 px. El logotipo con el nombre
     // es apaisado y no llega en altura; el monograma de 180 × 180 sí.
     logo: {
@@ -100,7 +100,7 @@ const grafoBase = [
     "@id": `${SITIO.url}/#website`,
     url: `${SITIO.url}/`,
     name: SITIO.nombre,
-    inLanguage: "es-ES",
+    inLanguage: "es",
     publisher: { "@id": `${SITIO.url}/#person` },
   },
 ];
@@ -112,7 +112,7 @@ const grafo = {
 ---
 
 <!doctype html>
-<html lang="es-ES">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -148,7 +148,9 @@ const grafo = {
       content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}
     />
 
-    <meta property="og:locale" content="es_ES" />
+    {/* Español neutro para Latinoamérica, con España como variante. */}
+    <meta property="og:locale" content="es_LA" />
+    <meta property="og:locale:alternate" content="es_ES" />
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITIO.nombre} />
     <meta property="og:title" content={title} />

@@ -1,37 +1,36 @@
 ---
-title: "Agentes de IA que no inventan información: cómo se consigue"
-description: "El mayor miedo con un agente de IA es que invente precios u horarios. Te explico cómo se configura para que responda solo con lo que tú validas."
+title: "Agentes de IA que no inventan información: cómo se logra"
+description: "Lo que más preocupa de un agente de IA es que invente precios u horarios. Te explico cómo se configura para que responda solo con lo que tú apruebas."
 metaTitle: "Agentes de IA que no inventan información | Luis Flores"
 datePublished: 2026-09-24
-dateModified: 2026-09-24
+dateModified: 2026-10-21
 servicio: "agentes-ia"
 ---
-El miedo número uno cuando propongo un agente de IA para atender clientes es siempre el mismo: *«¿Y si se inventa un precio o le da una hora que no tengo libre?»*. Es una preocupación legítima, y la respuesta corta es: un agente bien montado no debería inventarse nada. La clave no está en el modelo, está en cómo lo configuras.
+Cada vez que propongo un agente de IA para atender clientes, me hacen la misma pregunta: *«¿Y si inventa un precio o le da a alguien una hora que no tengo libre?»*. Es una duda muy válida. La respuesta corta es que un agente bien configurado no debería inventar nada, y que eso depende mucho más de la configuración que del modelo de IA que uses.
 
-## El problema real: un modelo suelto sí inventa
+## Un chatbot genérico sí inventa
 
-Si coges un chatbot genérico y le preguntas por tus precios, te contestará *algo*, aunque no lo sepa. Eso es lo que la gente llama «alucinación»: rellena el hueco con lo que le suena. En un negocio, eso es inaceptable: un precio inventado es una reclamación o una venta perdida.
+Si abres un chatbot cualquiera y le preguntas por tus precios, te va a contestar *algo* aunque no tenga idea. A eso se le llama «alucinación»: completa lo que no sabe con lo que le suena. En un negocio no te lo puedes permitir, porque un precio inventado termina en un reclamo o en una venta perdida.
 
-## Cómo se evita, en la práctica
+## Cómo se evita en la práctica
 
-Un agente serio no responde «de memoria». Se configura con tres capas:
+Un agente bien hecho no responde de memoria. Lo configuro en tres capas:
 
-1. **Fuente de verdad acotada.** El agente solo puede usar la información que tú le das: tus servicios, tus horarios, tus condiciones. No improvisa fuera de ahí.
-2. **Datos en vivo, no suposiciones.** Precios, disponibilidad y citas salen de tus herramientas reales (tu agenda, tu CRM) en el momento, no de una respuesta memorizada.
-3. **Reglas de «no sé».** Si le preguntan algo que no está en su fuente, no se lo inventa: lo dice y deriva a una persona.
+1. **Una sola fuente de información.** El agente solo usa lo que tú le das: tus servicios, tus horarios y tus condiciones. Fuera de eso no improvisa.
+2. **Datos en tiempo real.** Los precios, la disponibilidad y las citas salen en el momento de tus herramientas (tu calendario, tu CRM), no de una respuesta guardada.
+3. **Una regla para cuando no sabe.** Si le preguntan algo que no está en su información, lo dice y pasa la conversación a una persona.
 
-> Un buen agente de IA sabe decir «esto no lo sé, te paso con alguien». Esa frase, bien puesta, vale más que mil respuestas ingeniosas.
+> Un buen agente sabe decir «eso no lo sé, te comunico con alguien del equipo». Esa respuesta, en el momento justo, genera mucha confianza.
 
-## La derivación a una persona es parte del diseño
+## Pasar la conversación a una persona también se diseña
 
-Que el agente sepa cuándo apartarse no es un fallo, es una función. Cuando una consulta es delicada o el cliente pide hablar con alguien, el agente traspasa la conversación a tu equipo con el contexto de lo hablado, para que nadie tenga que repetir nada.
+Que el agente sepa cuándo hacerse a un lado está planeado desde el principio. Cuando una consulta es delicada o el cliente pide hablar con alguien, el agente le pasa la conversación a tu equipo con todo lo que se habló, para que el cliente no tenga que repetir nada.
 
-## Qué le puedes pedir con tranquilidad
+## Lo que le puedes encargar con tranquilidad
 
-- Responder las dudas frecuentes de siempre, a cualquier hora.
-- Agendar y confirmar citas contra tu agenda real.
-- Recoger los datos básicos de un lead y registrarlos donde tú trabajas.
-- Filtrar lo repetitivo para que tu equipo solo toque lo que de verdad necesita una persona.
+- Contestar las preguntas de siempre, a cualquier hora.
+- Agendar y confirmar citas con tu calendario real.
+- Tomar los datos básicos de un cliente potencial y registrarlos donde trabajas.
+- Filtrar lo repetitivo para que tu equipo solo atienda lo que necesita una persona.
 
-Lo que configuro siempre lo probamos juntos con casos reales antes de activarlo, y queda documentado. Así ves con tus propios ojos qué responde y qué hace cuando no sabe algo. Si quieres, lo revisamos sobre tu caso en una llamada de 30 minutos.
-
+Todo lo que configuro lo probamos juntos con casos reales antes de activarlo, y queda documentado. Así ves con tus propios ojos qué contesta y qué hace cuando no sabe algo. Si quieres, lo revisamos para tu caso en una llamada de 30 minutos.

@@ -6,42 +6,42 @@ import { SITIO } from "../data/servicios";
 
 const url = `${SITIO.url}/contacto`;
 
-const title = "Contacto: agenda una llamada sobre IA | Luis Flores";
+const title = "Contacto: agenda una llamada gratis | Luis Flores";
 const description =
-  "Agenda una llamada gratuita de 30 minutos o escríbeme a hola@soyluisflores.es. Te ayudo a decidir qué automatizar primero en tu negocio con IA.";
+  "Agenda una llamada gratis de 30 minutos o escríbeme a hola@soyluisflores.es. Te ayudo a decidir qué automatizar primero en tu negocio con IA.";
 
 const pasos = [
   {
     n: "1",
     titulo: "Me cuentas tu caso",
-    texto: "Cómo funciona tu negocio y dónde pierdes tiempo u oportunidades.",
+    texto: "Cómo funciona tu negocio y dónde pierdes tiempo o clientes.",
   },
   {
     n: "2",
-    titulo: "Detectamos qué automatizar",
-    texto: "Vemos juntos qué tiene más impacto y por dónde conviene empezar.",
+    titulo: "Vemos qué automatizar",
+    texto: "Buscamos juntos lo que más te ayuda y por dónde conviene empezar.",
   },
   {
     n: "3",
-    titulo: "Sales con un plan",
-    texto: "Te digo qué haría primero y qué esperar. Decidas o no trabajar conmigo.",
+    titulo: "Te llevas un plan",
+    texto: "Te digo qué haría primero y qué puedes esperar, trabajes conmigo o no.",
   },
 ];
 
 const encaja = [
   "Tienes un negocio o pyme en marcha y ya recibes clientes o consultas.",
-  "Pierdes tiempo en tareas repetitivas o se te escapan leads por no responder a tiempo.",
-  "Quieres decisiones basadas en datos, no en promesas.",
+  "Pierdes tiempo en tareas repetitivas o se te van clientes por no responder a tiempo.",
+  "Quieres tomar decisiones con datos.",
 ];
 
 const todaviaNo = [
   "Buscas resultados garantizados de la noche a la mañana.",
-  "Aún no tienes una oferta clara ni forma de atraer contactos.",
-  "Quieres «la última herramienta de moda» sin un objetivo detrás.",
+  "Todavía no tienes una oferta clara ni una forma de conseguir contactos.",
+  "Quieres probar la herramienta de moda sin tener claro para qué.",
 ];
 
 const canales = [
-  { nombre: "Email", valor: SITIO.email, href: `mailto:${SITIO.email}`, icono: "email" },
+  { nombre: "Correo", valor: SITIO.email, href: `mailto:${SITIO.email}`, icono: "email" },
   { nombre: "Instagram", valor: "@soyluisflores_", href: "https://www.instagram.com/soyluisflores_/", icono: "instagram" },
   { nombre: "LinkedIn", valor: "Luis Carlos Flores", href: "https://www.linkedin.com/in/soyluisflores/", icono: "linkedin" },
   { nombre: "TikTok", valor: "@soyluisfloresoficial", href: "https://www.tiktok.com/@soyluisfloresoficial", icono: "tiktok" },
@@ -55,7 +55,7 @@ const schema = [
     name: "Contacto",
     description,
     isPartOf: { "@id": `${SITIO.url}/#website` },
-    inLanguage: "es-ES",
+    inLanguage: "es",
     mainEntity: { "@id": `${SITIO.url}/#person` },
   },
   {
@@ -77,19 +77,19 @@ const schema = [
       antetitulo="Contacto"
       titulo="Hablemos de"
       destacado="tu negocio"
-      entradilla="La forma más rápida es una llamada de 30 minutos. Me cuentas cómo funciona tu negocio y te digo qué automatizar primero. Gratis y sin compromiso."
+      entradilla="Lo más rápido es una llamada de 30 minutos. Me cuentas cómo funciona tu negocio y te digo qué conviene automatizar primero. Es gratis y no te compromete a nada."
     >
       <div class="botones mt-8">
         <a class="cta" href={SITIO.calendly} data-ubicacion="contacto-cabecera">
           <Icono nombre="calendario" tamano={18} />
-          Reservar diagnóstico <span aria-hidden="true">→</span>
+          Agenda tu llamada gratis <span aria-hidden="true">→</span>
         </a>
         <a class="boton-secundario" href={`mailto:${SITIO.email}`}>
           <Icono nombre="email" tamano={18} />
-          Escribirme un email
+          Escríbeme un correo
         </a>
       </div>
-      <p class="nota-respuesta mt-5">Respondo los emails en 24-48 h laborables.</p>
+      <p class="nota-respuesta mt-5">Respondo los correos en 24 a 48 horas hábiles.</p>
 
       <aside slot="lateral" class="card reserva" aria-labelledby="reserva-titulo">
         <div class="reserva-cabecera">
@@ -104,8 +104,8 @@ const schema = [
         <ul class="reserva-datos">
           <li><Icono nombre="reloj" tamano={18} /> 30 minutos</li>
           <li><Icono nombre="video" tamano={18} /> Por videollamada</li>
-          <li><Icono nombre="escudo" tamano={18} /> Gratis y sin compromiso</li>
-          <li><Icono nombre="globo" tamano={18} /> España y Latinoamérica, en tu horario</li>
+          <li><Icono nombre="escudo" tamano={18} /> Gratis y sin compromiso de contratar</li>
+          <li><Icono nombre="globo" tamano={18} /> Latinoamérica y España, en tu horario</li>
         </ul>
         <a class="cta reserva-boton" href={SITIO.calendly} data-ubicacion="contacto-tarjeta">
           Elegir día y hora <span aria-hidden="true">→</span>
@@ -121,7 +121,7 @@ const schema = [
             <p class="eyebrow">La llamada</p>
             <h2 id="pasos-titulo" class="subrayado mt-4">Qué pasa en esos 30 minutos</h2>
           </div>
-          <p class="lead">Sin presentaciones comerciales: hablamos de tu negocio y sales con un plan.</p>
+          <p class="lead">No te voy a hacer una presentación de ventas. Hablamos de tu negocio y te llevas un plan.</p>
         </div>
         <ol class="pasos mt-10">
           {
@@ -142,10 +142,10 @@ const schema = [
       <div class="container-lf">
         <div class="cabecera-seccion">
           <div>
-            <p class="eyebrow">Antes de reservar</p>
+            <p class="eyebrow">Antes de agendar</p>
             <h2 id="encaje-titulo" class="subrayado mt-4">Para quién es esta llamada</h2>
           </div>
-          <p class="lead">Prefiero decírtelo ahora: así no pierdes 30 minutos.</p>
+          <p class="lead">Prefiero decírtelo desde ahora, así no pierdes 30 minutos.</p>
         </div>
         <div class="encaje mt-10">
           <div class="card tarjeta encaje-si reveal">
@@ -155,7 +155,7 @@ const schema = [
             </ul>
           </div>
           <div class="card tarjeta encaje-no reveal">
-            <h3 class="card-title">Quizá todavía no si…</h3>
+            <h3 class="card-title">Tal vez todavía no, si…</h3>
             <ul class="lista-cruz mt-5">
               {todaviaNo.map((e) => <li>{e}</li>)}
             </ul>
@@ -173,19 +173,19 @@ const schema = [
             <p class="eyebrow">Calculadora gratuita</p>
             <h2 id="roi-titulo" class="mt-4">¿Cuánto te cuesta no automatizar?</h2>
             <p class="lead mt-4">
-              Pon tus números y verás una estimación de horas ahorradas, ingresos
-              adicionales y en cuánto tiempo recuperarías la inversión. Orientativa y
-              basada en hipótesis visibles.
+              Pon tus números y verás cuántas horas ahorrarías, cuánto podrías vender
+              de más y en cuánto tiempo recuperarías la inversión. Es una estimación
+              con supuestos a la vista.
             </p>
             <a class="cta mt-8" href="/roi">
               <Icono nombre="tendencia" tamano={18} />
-              Abrir la calculadora <span aria-hidden="true">→</span>
+              Calcular mi caso <span aria-hidden="true">→</span>
             </a>
           </div>
           {/* Vista previa de lo que calcula. Sin cifras: las pone cada persona. */}
           <dl class="vista-previa" aria-hidden="true">
             <div><dt>Horas liberadas al mes</dt><dd>—</dd></div>
-            <div><dt>Ingresos adicionales al mes</dt><dd>—</dd></div>
+            <div><dt>Ventas extra al mes</dt><dd>—</dd></div>
             <div><dt>Recuperación de la inversión</dt><dd>—</dd></div>
             <div><dt>ROI a 12 meses</dt><dd>—</dd></div>
           </dl>
@@ -202,8 +202,7 @@ const schema = [
             <h2 id="canales-titulo" class="subrayado mt-4">Si prefieres escribirme</h2>
           </div>
           <p class="lead">
-            Escríbeme por el canal que te resulte más cómodo y te respondo lo antes
-            posible.
+            Escríbeme por donde te quede más cómodo y te respondo lo antes posible.
           </p>
         </div>
         <ul class="canales mt-10">

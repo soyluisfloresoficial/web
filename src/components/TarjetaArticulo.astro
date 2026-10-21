@@ -40,7 +40,7 @@ const fotoPropia = post.data.image;
 const ilus = servicio && ilustraciones[servicio.slug] ? servicio.slug : undefined;
 const fotoServicio = !fotoPropia && !ilus ? imagenDe(servicio?.imagen) : undefined;
 
-const fecha = post.data.datePublished.toLocaleDateString("es-ES", {
+const fecha = post.data.datePublished.toLocaleDateString("es", {
   day: "numeric",
   month: "long",
   year: "numeric",

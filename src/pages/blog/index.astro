@@ -21,9 +21,9 @@ const minutosTotales = posts.reduce((n, p) => n + minutosLectura(p.body), 0);
 
 const url = `${SITIO.url}/blog`;
 
-const title = "Blog sobre IA aplicada y automatización | Luis Flores";
+const title = "Blog de IA y automatización para negocios | Luis Flores";
 const description =
-  "Guías prácticas sobre IA aplicada: agentes de IA, automatización, funnels de conversión y medición, escritas desde la implementación real en negocios.";
+  "Guías prácticas de IA para negocios: agentes de IA, automatización, embudos de venta y métricas, escritas a partir de implementaciones reales.";
 
 const schema = [
   {
@@ -34,7 +34,7 @@ const schema = [
     description,
     isPartOf: { "@id": `${SITIO.url}/#website` },
     about: { "@id": `${SITIO.url}/#person` },
-    inLanguage: "es-ES",
+    inLanguage: "es",
   },
   {
     "@type": "Blog",
@@ -42,7 +42,7 @@ const schema = [
     url,
     name: "Blog de Luis Flores",
     description,
-    inLanguage: "es-ES",
+    inLanguage: "es",
     publisher: { "@id": `${SITIO.url}/#person` },
     blogPost: posts.map((p) => ({ "@id": `${SITIO.url}/blog/${p.id}#post` })),
   },
@@ -72,9 +72,9 @@ const schema = [
     <CabeceraPagina
       migas={[{ texto: "Inicio", href: "/" }, { texto: "Blog" }]}
       antetitulo="Blog"
-      titulo="IA aplicada a negocios,"
-      destacado="explicada sin humo"
-      entradilla="Lo que aprendo implementando: qué automatizar antes, qué medir y dónde se pierden las oportunidades. Guías cortas, con criterio y sin tecnicismos."
+      titulo="IA para tu negocio,"
+      destacado="explicada paso a paso"
+      entradilla="Lo que voy aprendiendo en cada implementación: qué automatizar primero, qué medir y dónde se te escapan los clientes. Guías cortas y en palabras simples."
     >
       <ul class="cifras-blog mt-8" aria-label="El blog en cifras">
         <li><strong>{posts.length}</strong> guías prácticas</li>
@@ -145,7 +145,7 @@ const schema = [
 
     <Cierre
       titulo="¿Lo aplicamos a tu negocio?"
-      entradilla="Leer ayuda a decidir; aplicarlo bien es otra cosa. En 30 minutos reviso tu caso y te digo qué haría primero. Sin compromiso."
+      entradilla="Leer te ayuda a decidir, pero aplicarlo bien lleva su trabajo. En 30 minutos revisamos tu caso y te digo qué haría primero. Es gratis."
     />
   </main>
 </Base>

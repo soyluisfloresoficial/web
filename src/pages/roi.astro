@@ -7,18 +7,18 @@ import { SITIO } from "../data/servicios";
 
 const url = `${SITIO.url}/roi`;
 
-const title = "Calculadora ROI de IA y automatización | Luis Flores";
+const title = "Calculadora de ROI de IA y automatización | Luis Flores";
 const description =
-  "Calcula una estimación de horas ahorradas, ingresos adicionales y recuperación de la inversión al aplicar IA, automatización y funnels en tu negocio.";
+  "Calcula cuántas horas ahorrarías, cuánto podrías vender de más y en cuánto tiempo recuperarías la inversión al automatizar tu negocio con IA.";
 
 const campos = [
-  { name: "leads", label: "Leads al mes", pista: "Contactos interesados que recibes al mes", ph: "80", step: "1", max: "" },
-  { name: "ticket", label: "Ticket medio (€)", pista: "Ingreso medio por cliente", ph: "600", step: "10", max: "" },
-  { name: "conversion", label: "Conversión actual (%)", pista: "De leads a clientes, hoy", ph: "20", step: "1", max: "100" },
-  { name: "hours", label: "Horas/semana en tareas manuales", pista: "Seguimiento, copiar datos, responder…", ph: "10", step: "1", max: "" },
-  { name: "cost", label: "Coste por hora (€)", pista: "Lo que cuesta esa hora (tuya o de tu equipo)", ph: "25", step: "1", max: "" },
-  { name: "lost", label: "Leads perdidos por no responder a tiempo (%)", pista: "Estimación", ph: "25", step: "1", max: "100" },
-  { name: "investment", label: "Inversión estimada (€)", pista: "Lo que estás dispuesto a invertir", ph: "3000", step: "100", max: "" },
+  { name: "leads", label: "Contactos al mes", pista: "Personas interesadas que te escriben o te llaman al mes", ph: "80", step: "1", max: "" },
+  { name: "ticket", label: "Ticket promedio", pista: "Lo que te deja en promedio cada cliente, en tu moneda", ph: "600", step: "10", max: "" },
+  { name: "conversion", label: "Conversión actual (%)", pista: "Cuántos contactos se vuelven clientes hoy", ph: "20", step: "1", max: "100" },
+  { name: "hours", label: "Horas por semana en tareas manuales", pista: "Seguimiento, copiar datos, contestar mensajes…", ph: "10", step: "1", max: "" },
+  { name: "cost", label: "Costo por hora", pista: "Lo que vale esa hora, tuya o de tu equipo, en tu moneda", ph: "25", step: "1", max: "" },
+  { name: "lost", label: "Contactos perdidos por no responder a tiempo (%)", pista: "Un cálculo aproximado", ph: "25", step: "1", max: "100" },
+  { name: "investment", label: "Inversión estimada", pista: "Lo que estarías dispuesto a invertir, en tu moneda", ph: "3000", step: "100", max: "" },
 ];
 
 const escenarios = [
@@ -35,7 +35,7 @@ const schema = [
     name: "Calculadora ROI",
     description,
     isPartOf: { "@id": `${SITIO.url}/#website` },
-    inLanguage: "es-ES",
+    inLanguage: "es",
   },
   {
     "@type": "BreadcrumbList",
@@ -56,10 +56,10 @@ const schema = [
       acento="ambar"
       titulo="¿Cuánto podrías ganar y ahorrar"
       destacado="automatizando?"
-      entradilla="Pon tus números y verás una estimación de horas ahorradas, ingresos adicionales y en cuánto tiempo recuperarías la inversión. Es orientativa y se basa en hipótesis que puedes ver más abajo: tú decides la inversión, y no hay precios por defecto."
+      entradilla="Pon tus números y verás cuántas horas ahorrarías, cuánto podrías vender de más y en cuánto tiempo recuperarías la inversión. Es una estimación, los supuestos están más abajo y la inversión la pones tú. Funciona con cualquier moneda."
     >
       <ul class="garantias-roi mt-8" aria-label="Cómo funciona">
-        <li><Icono nombre="reloj" tamano={18} /> Un minuto</li>
+        <li><Icono nombre="reloj" tamano={18} /> Toma un minuto</li>
         <li><Icono nombre="escudo" tamano={18} /> No se envía ni se guarda nada</li>
         <li><Icono nombre="check" tamano={18} grosor={2.2} /> Fórmula a la vista</li>
       </ul>
@@ -100,8 +100,8 @@ const schema = [
           <fieldset class="escenarios mt-5">
             <legend>Escenario</legend>
             <p class="pista">
-              Cuánta de esa carga manual se llega a automatizar. Son hipótesis, no
-              datos de mercado.
+              Qué parte de ese trabajo manual se logra automatizar. Son supuestos, no
+              datos del mercado.
             </p>
             <div class="opciones mt-3">
               {
@@ -122,7 +122,7 @@ const schema = [
 
           <button class="cta boton-calcular mt-8" type="submit">
             <Icono nombre="tendencia" tamano={18} />
-            Calcular estimación
+            Calcular mi estimación
           </button>
         </form>
 
@@ -133,7 +133,7 @@ const schema = [
           </div>
 
           <p class="pista mt-3" data-roi-vacio>
-            Rellena tus números y pulsa «Calcular estimación».
+            Completa tus números y haz clic en «Calcular mi estimación».
           </p>
 
           <dl class="salidas mt-4" data-roi-salida hidden>
@@ -142,11 +142,11 @@ const schema = [
               <dd data-roi="horas">—</dd>
             </div>
             <div>
-              <dt>Ahorro en coste al mes</dt>
+              <dt>Ahorro en costos al mes</dt>
               <dd data-roi="ahorro">—</dd>
             </div>
             <div>
-              <dt>Ingresos adicionales al mes</dt>
+              <dt>Ventas extra al mes</dt>
               <dd data-roi="ingresos">—</dd>
             </div>
             <div>
@@ -164,13 +164,13 @@ const schema = [
           </dl>
 
           <p class="pista mt-5">
-            Estimación orientativa calculada solo con los datos que tú introduces y
-            con las hipótesis de abajo. No es una promesa de resultados.
+            Es una estimación hecha solo con los datos que ingresaste y los supuestos
+            de abajo. No es una promesa de resultados.
           </p>
 
           <a class="cta mt-6 boton-plan" href="/contacto">
             <Icono nombre="calendario" tamano={18} />
-            Convertirlo en un plan <span aria-hidden="true">→</span>
+            Quiero un plan para mi negocio <span aria-hidden="true">→</span>
           </a>
         </div>
       </div>
@@ -179,13 +179,12 @@ const schema = [
     <section class="section banda" aria-labelledby="hipotesis-titulo" data-acento="ambar">
       <div class="container-lf hipotesis">
         <div class="hipotesis-lateral">
-          <p class="eyebrow">Transparencia</p>
-          <h2 id="hipotesis-titulo" class="subrayado mt-4">Las hipótesis, a la vista</h2>
+          <p class="eyebrow">Cómo se calcula</p>
+          <h2 id="hipotesis-titulo" class="subrayado mt-4">La fórmula completa</h2>
         </div>
         <div class="card tarjeta">
         <p class="card-text mt-3">
-          Una calculadora que no enseña su fórmula no sirve de nada. Esta es
-          exactamente la que se aplica:
+          Estas son las cuentas exactas que hace la calculadora:
         </p>
         <ul class="lista mt-4">
           <li>
@@ -194,12 +193,12 @@ const schema = [
             50%, optimista 70%).
           </li>
           <li>
-            <strong>Ahorro en coste:</strong> esas horas liberadas × tu coste por hora.
+            <strong>Ahorro en costos:</strong> esas horas liberadas × tu costo por hora.
           </li>
           <li>
-            <strong>Ingresos adicionales:</strong> se asume que recuperas la mitad de
-            los leads que hoy pierdes por no responder a tiempo, y que convierten a
-            tu tasa actual. Esos clientes × tu ticket medio.
+            <strong>Ventas extra:</strong> se supone que recuperas la mitad de los
+            contactos que hoy pierdes por no responder a tiempo, y que compran en la
+            misma proporción que el resto. Esos clientes × tu ticket promedio.
           </li>
           <li>
             <strong>Recuperación:</strong> tu inversión ÷ el beneficio mensual estimado.
@@ -210,8 +209,8 @@ const schema = [
           </li>
         </ul>
         <p class="card-text mt-4">
-          Los porcentajes de los escenarios son supuestos de trabajo, no medias del
-          sector. Tu resultado real depende de tu operativa.
+          Los porcentajes de cada escenario son supuestos de trabajo, no promedios
+          del sector. Tu resultado real depende de cómo funciona tu negocio.
         </p>
         </div>
       </div>
@@ -238,12 +237,10 @@ const schema = [
 
   const SEMANAS_MES = 4.33;
 
-  const eur = new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  });
-  const num = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 });
+  // Sin símbolo de moneda: la web es para Latinoamérica y España, y cada
+  // persona escribe las cifras en la suya.
+  const eur = new Intl.NumberFormat("es", { maximumFractionDigits: 0 });
+  const num = new Intl.NumberFormat("es", { maximumFractionDigits: 1 });
 
   function leer(nombre: string): number {
     const el = form?.elements.namedItem(nombre) as HTMLInputElement | null;

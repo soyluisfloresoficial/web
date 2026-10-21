@@ -1,37 +1,36 @@
 ---
-title: "Funnels de conversión: captar y nutrir sin parecer spam"
-description: "Un funnel no es bombardear a correos. Te cuento cómo captar contactos y hacer seguimiento con criterio, aportando valor en cada mensaje que envías."
-metaTitle: "Funnels de conversión sin parecer spam | Luis Flores"
+title: "Embudos de venta: cómo captar y dar seguimiento sin hacer spam"
+description: "Un embudo de ventas no consiste en llenar de correos a la gente. Te cuento cómo captar contactos y darles seguimiento con mensajes que de verdad les sirvan."
+metaTitle: "Embudos de venta sin hacer spam | Luis Flores"
 datePublished: 2026-10-02
-dateModified: 2026-10-02
+dateModified: 2026-10-21
 servicio: "funnels-conversion"
 ---
-«Funnel» se ha ganado mala fama, y con razón: mucha gente lo asocia a una secuencia de correos insistentes que te persiguen hasta que te das de baja. Pero un funnel bien hecho es justo lo contrario: un recorrido ordenado en el que cada paso le resulta útil a la persona, no solo a ti.
+La palabra «funnel» tiene mala fama, y se entiende: mucha gente la asocia con una serie de correos insistentes que te persiguen hasta que te das de baja. Un funnel bien hecho, o embudo de ventas, funciona al revés. Es un camino ordenado donde cada paso le sirve a la persona, no solo a ti.
 
-## Qué es un funnel, sin la jerga
+## Qué es un embudo de ventas, en palabras simples
 
-Es el camino que recorre alguien desde que no te conoce hasta que te compra. Tiene etapas: llega, deja su contacto, recibe seguimiento, decide. Montar un funnel es simplemente hacer ese camino claro y ordenado, y medir dónde se pierde la gente.
+Es el camino que recorre alguien desde que no te conoce hasta que te compra. Tiene etapas: llega, deja sus datos, recibe seguimiento y decide. Armar un embudo es hacer ese camino claro y ordenado, y medir en qué parte se va la gente.
 
-## La diferencia entre seguimiento y spam
+## La diferencia entre dar seguimiento y hacer spam
 
-No está en cuántos mensajes envías, sino en **qué** envías:
+No depende de cuántos mensajes mandas, sino de **qué** mandas:
 
-- **Spam:** «¿Ya lo has pensado?», «Última oportunidad», tres veces por semana, sin aportar nada.
-- **Seguimiento con criterio:** responder una duda real, enseñar un ejemplo útil, dar un paso concreto. Cada mensaje deja a la persona un poco mejor que antes, compre o no.
+- **Spam:** «¿Ya lo pensaste?», «Última oportunidad», tres veces por semana y sin aportar nada.
+- **Seguimiento con criterio:** responder una duda real, mostrar un ejemplo útil o proponer un paso concreto. Cada mensaje deja a la persona un poco mejor que antes, compre o no.
 
-> Si quitas la oferta final y tu secuencia de correos sigue siendo útil de leer, vas por buen camino. Si sin la venta no queda nada, es spam.
+> Haz esta prueba: si quitas la oferta del final y tus correos siguen valiendo la pena, vas bien. Si sin la venta no queda nada, es spam.
 
-## Las piezas de un funnel que respeta al cliente
+## Las partes de un embudo que respeta al cliente
 
-1. **Una landing con un solo objetivo.** Una página, una promesa, una acción. Sin veinte botones compitiendo.
-2. **Captación conectada a tu CRM.** El contacto entra directo a donde trabajas, sin copiar y pegar.
-3. **Seguimiento por email y WhatsApp** con mensajes que aportan, espaciados con cabeza.
-4. **Puntuación de leads:** para saber a quién llamar primero según lo que hace, no a ojo.
-5. **Métrica por etapa:** visitas, registros, citas, ventas. Así ves qué paso falla.
+1. **Una página de captación con un solo objetivo.** Una página, una propuesta y una acción, sin veinte botones peleando por atención.
+2. **Formularios conectados a tu CRM.** El contacto entra directo a donde trabajas, sin copiar y pegar.
+3. **Seguimiento por correo y WhatsApp**, con mensajes útiles y bien espaciados.
+4. **Puntuación de contactos**, para saber a quién llamar primero según lo que hace cada uno.
+5. **Métricas por etapa**: visitas, registros, citas y ventas. Así ves qué paso falla.
 
-## Por qué medir cada etapa lo cambia todo
+## Por qué conviene medir cada etapa
 
-Sin medición, cuando algo no vende, no sabes si el problema es que llega poca gente, que la landing no convence o que el seguimiento se queda corto. Con las etapas medidas, lo ves y arreglas **primero** la que más oportunidades pierde. Es la diferencia entre mejorar con datos y mejorar a base de intuición.
+Sin medición, cuando algo no vende no sabes si el problema es que llega poca gente, que la página no convence o que el seguimiento se queda corto. Con cada etapa medida lo ves claro y arreglas **primero** la que más clientes te hace perder. Así mejoras con datos y no por intuición.
 
-Un funnel no tiene por qué incomodar a nadie. Bien montado, capta mejor *y* deja buena impresión. Si quieres, revisamos cómo llegan hoy tus contactos y dónde se te escapan, en una llamada de 30 minutos.
-
+Un embudo no tiene por qué incomodar a nadie. Bien armado, consigue más clientes y además deja una buena impresión. Si quieres, revisamos cómo te llegan hoy los contactos y en qué parte se te escapan, en una llamada de 30 minutos.

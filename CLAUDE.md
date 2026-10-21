@@ -36,7 +36,7 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 
 ## Reglas de contenido
 
-- Español de España.
+- Español latino neutro (decisión del titular, 21/10/2026): tuteo, sin vosotros ni modismos de España (costo, celular, agendar, horas hábiles, «te agendé» mejor que «te he reservado»). Que suene natural, escrito por una persona: sin rayas largas, sin «no es X, es Y», sin frases hechas como «sin humo» o «sin letra pequeña». Los textos legales se quedan como están.
 - No inventes cifras, clientes, casos, reseñas, testimonios, fechas ni fuentes. Si falta un dato: `[COMPLETAR: qué falta]` o `[VERIFICAR: dónde]`.
 - El NIE/NIF solo puede aparecer en `/aviso-legal`, nunca en el pie, en el JSON-LD ni en `llms.txt`. El domicilio público es solo «Manresa, Barcelona, España», sin calle ni código postal.
 - No cambies el texto legal salvo que el titular lo pida; si ves un hueco, avisa de que lo revise un abogado.
