@@ -5,7 +5,7 @@ import CabeceraPagina from "../components/CabeceraPagina.astro";
 import Cierre from "../components/Cierre.astro";
 import Icono from "../components/Icono.astro";
 import { SITIO, proyectos } from "../data/servicios";
-import { metricas } from "../data/home";
+import { queMido } from "../data/home";
 import retratoImg from "../assets/luis-flores-sobre-mi.png";
 
 const url = `${SITIO.url}/sobre-mi`;
@@ -181,37 +181,37 @@ const schema = [
       </div>
     </section>
 
-    {/* ------------------------------------------------------------ Métricas */}
+    {/* ------------------------------------------------------------ Medición */}
     {/*
-      Las cifras conservan el asterisco y llevan a «Cómo se midió», justo debajo.
-      [COMPLETAR: un caso con periodo, método y fuente de cada cifra.]
+      Sin cifras (21/10/2026): no hay un caso publicable que las respalde.
+      Se enseña el método. Si algún día hay un caso real con permiso del
+      cliente, va en esta sección.
     */}
     <section class="section banda" aria-labelledby="metricas-titulo" data-acento="turquesa">
       <div class="container-lf">
         <div class="cabecera-seccion">
           <div>
-            <p class="eyebrow">Lo que ya medí</p>
-            <h2 id="metricas-titulo" class="subrayado mt-4">Números de mis propias implementaciones</h2>
+            <p class="eyebrow">Resultados medibles</p>
+            <h2 id="metricas-titulo" class="subrayado mt-4">Cómo mido lo que implemento</h2>
           </div>
           <p class="lead">
-            En cada sistema que implemento mido qué tan rápido se responde, cuántas
-            horas se liberan y cuántas personas llegan a su cita.
+            En cada proyecto acordamos qué medir y lo comparamos antes y después, con
+            las herramientas de tu propio negocio.
           </p>
         </div>
         <ul class="rejilla-3 mt-10">
           {
-            metricas.map((m, i) => (
-              <li class="card tarjeta metrica reveal">
+            queMido.map((m, i) => (
+              <li class="card tarjeta medida reveal">
                 <span class="anillo-degradado anillo-medio" aria-hidden="true">
                   <Icono nombre={iconosMetricas[i]} tamano={20} grosor={1.8} degradado />
                 </span>
-                <div>
-                  <p class="cifra">
-                    <span class="gradient-text">{m.cifra}</span>
-                    <a href="#como-mido" class="asterisco" aria-label="Cómo se midió">*</a>
-                  </p>
-                  <p class="metrica-texto">{m.texto}</p>
-                </div>
+                <h3 class="card-title mt-5">{m.titulo}</h3>
+                <p class="card-text mt-2">{m.texto}</p>
+                <p class="medida-como">
+                  <span>Cómo lo mido</span>
+                  {m.como}
+                </p>
               </li>
             ))
           }
@@ -222,16 +222,15 @@ const schema = [
             <Icono nombre="escudo" tamano={22} grosor={1.6} />
           </span>
           <div>
-            <h3 class="card-title">Cómo se midió</h3>
+            <h3 class="card-title">Por qué no publico porcentajes</h3>
             <p class="card-text mt-3">
-              Son métricas de implementaciones propias con negocios reales. En cada una
-              mido qué tan rápido se responde a los contactos, cuántas horas se liberan
-              por semana y cuántas personas llegan a su cita. Mido antes y después de
-              implementar, con las herramientas del propio negocio.
+              Cada negocio parte de un punto distinto, y un porcentaje sacado de otro
+              caso no te dice nada del tuyo. Por eso no te prometo cifras antes de
+              conocerte.
             </p>
             <p class="card-text mt-3">
-              No son promedios del mercado ni una promesa. Tu resultado depende de tu
-              sector, de tu volumen de trabajo y de dónde partes.
+              Lo que sí hago es dejar definido en la propuesta qué vamos a medir y
+              mostrarte el antes y el después con tus propios datos.
             </p>
           </div>
         </div>
@@ -452,30 +451,29 @@ const schema = [
     font-weight: 700;
   }
 
-  /* ---------------------------------------------------------- Métricas */
-  .metrica {
+  /* ---------------------------------------------------------- Medición */
+  .medida {
     display: flex;
-    align-items: center;
-    gap: 1.125rem;
+    flex-direction: column;
   }
-  .cifra {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 2rem + 1.6vw, 3rem);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.035em;
+  .medida .card-text {
+    margin-bottom: 1.25rem;
   }
-  .asterisco {
-    margin-inline-start: 0.1em;
-    font-size: 0.5em;
-    vertical-align: super;
-    color: var(--color-electric-soft);
-  }
-  .metrica-texto {
-    margin-top: 0.375rem;
-    font-size: 0.9375rem;
-    line-height: 1.4;
+  .medida-como {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
     color: var(--color-soft);
+    font-size: var(--step--1);
+  }
+  .medida-como span {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--acento-texto);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
   .como-mido {
     display: flex;

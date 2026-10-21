@@ -208,12 +208,25 @@ export const faq: GrupoFaq[] = [
 export const faqPlana: Pregunta[] = faq.flatMap((g) => g.preguntas);
 
 /**
- * Cifras de implementaciones propias. Salen en la home y en /sobre-mi, y el
- * asterisco de las dos lleva a /sobre-mi#como-mido.
- * [COMPLETAR: periodo, número de negocios y método de cada cifra.]
+ * Qué se mide en cada proyecto. Sustituye a las cifras 73 % / 12 h / 40 %
+ * (21/10/2026): el titular no tiene un caso publicable que las respalde, así
+ * que la web enseña el método de medición en vez de resultados.
+ * Si algún día hay un caso real con permiso del cliente, va aquí al lado.
  */
-export const metricas = [
-  { cifra: "73%", texto: "de los contactos reciben respuesta al instante" },
-  { cifra: "12 h", texto: "liberadas por semana" },
-  { cifra: "40%", texto: "menos inasistencias en negocios con citas" },
+export const queMido = [
+  {
+    titulo: "Tiempo de respuesta",
+    texto: "Cuánto tarda tu negocio en contestar un mensaje o una llamada, antes y después de automatizar.",
+    como: "Con los registros de WhatsApp, del correo o del CRM.",
+  },
+  {
+    titulo: "Horas liberadas",
+    texto: "Cuántas horas a la semana dejan de irse en tareas manuales como copiar datos, confirmar citas o contestar lo mismo.",
+    como: "Con el registro de lo que hace cada automatización.",
+  },
+  {
+    titulo: "Citas y clientes",
+    texto: "Cuántas personas agendan, cuántas llegan a su cita y cuántas terminan comprando.",
+    como: "Con tu calendario, tu CRM y tus pagos.",
+  },
 ];
