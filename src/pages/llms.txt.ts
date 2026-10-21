@@ -35,7 +35,7 @@ export const GET: APIRoute = async () => {
   );
   lineas.push("- Primera llamada: 30 minutos por videollamada, gratis.");
   lineas.push("- Idioma y zona: español. Atiende en remoto a negocios de Latinoamérica y España, con horarios adaptados a cada país.");
-  lineas.push(`- Contacto: ${SITIO.email}`);
+  lineas.push(`- Contacto: ${SITIO.email} · WhatsApp ${SITIO.whatsappVisible}`);
   lineas.push(`- Lema: "${SITIO.lema}"`);
   lineas.push("");
 

@@ -1,5 +1,6 @@
 ---
 import { servicios, proyectos, SITIO } from "../data/servicios";
+import Icono from "./Icono.astro";
 
 // El botón solo tiene sentido si hay banner, y el banner solo existe con GTM.
 const hayBannerCookies = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
@@ -17,6 +18,10 @@ const anio = new Date().getFullYear();
           y España. {SITIO.lema}
         </p>
         <a class="pie-email" href={`mailto:${SITIO.email}`}>{SITIO.email}</a>
+        <a class="pie-whatsapp" href={SITIO.whatsapp} rel="noopener">
+          <Icono nombre="whatsapp" tamano={16} />
+          <span class="sr-only">WhatsApp</span> {SITIO.whatsappVisible}
+        </a>
       </div>
 
       {/* PARCHE P1-C: todos los servicios. El pie anterior listaba cuatro de seis.
@@ -120,6 +125,21 @@ const anio = new Date().getFullYear();
     max-width: 42ch;
   }
 
+  .pie-whatsapp {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    width: fit-content;
+    margin-top: 0.5rem;
+    white-space: nowrap;
+    color: var(--color-soft);
+  }
+  .pie-whatsapp:hover {
+    color: var(--color-ink);
+  }
+  .pie-whatsapp :global(svg) {
+    color: var(--color-whatsapp);
+  }
   .pie-email {
     display: inline-block;
     margin-top: 0.75rem;

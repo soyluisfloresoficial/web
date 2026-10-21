@@ -116,7 +116,7 @@ const sugerencias = [
   <script
     type="application/json"
     data-chat-datos
-    set:html={JSON.stringify({ documentos, email: SITIO.email })}
+    set:html={JSON.stringify({ documentos, email: SITIO.email, whatsapp: SITIO.whatsapp })}
   />
 </div>
 
@@ -127,9 +127,10 @@ const sugerencias = [
   const datosEl = raiz?.querySelector("[data-chat-datos]");
 
   if (raiz && datosEl) {
-    const { documentos, email } = JSON.parse(datosEl.textContent ?? "{}") as {
+    const { documentos, email, whatsapp } = JSON.parse(datosEl.textContent ?? "{}") as {
       documentos: Documento[];
       email: string;
+      whatsapp: string;
     };
     const abrir = raiz.querySelector<HTMLButtonElement>("[data-chat-abrir]")!;
     const etiqueta = raiz.querySelector<HTMLElement>("[data-chat-etiqueta]")!;
@@ -237,7 +238,9 @@ const sugerencias = [
         pintar("bot", [
           "Esa pregunta no está en las frecuentes. Lo mejor es que lo hablemos: ",
           enlace("agenda una llamada", "/contacto"),
-          " o escríbeme a ",
+          ", escríbeme por ",
+          enlace("WhatsApp", whatsapp),
+          " o a ",
           enlace(email, `mailto:${email}`),
           ".",
         ]);

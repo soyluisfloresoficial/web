@@ -139,9 +139,11 @@ export const SITIO = {
   // [COMPLETAR: el ID real. Mientras esté vacío no se carga GTM ni se
   // muestra el banner de cookies, porque no hay nada para lo que pedir permiso.]
   gtm: (import.meta.env.PUBLIC_GTM_ID ?? "") as string,
-  // [COMPLETAR: número real de WhatsApp. En producción el enlace es
-  // https://wa.me/34XXXXXXXXX, un marcador sin sustituir, así que aquí no se
-  // pone ningún enlace de WhatsApp hasta tener el número.]
+  // WhatsApp del titular (21/10/2026). El enlace abre el chat con un primer
+  // mensaje escrito, que la persona puede cambiar antes de enviarlo.
+  whatsapp: "https://wa.me/34631654919?text=" + encodeURIComponent("Hola, Luis. Vengo de tu web y quiero hablar de mi negocio."),
+  whatsappVisible: "+34 631 65 49 19",
+  telefono: "+34631654919",
   localidad: "Manresa",
   region: "Cataluña",
   pais: "ES",

@@ -3,6 +3,9 @@
  * Barra fija de reserva en móvil y tableta, como la de producción.
  * No sale en /contacto, que ya es la página de reserva.
  */
+import Icono from "./Icono.astro";
+import { SITIO } from "../data/servicios";
+
 const ruta = Astro.url.pathname.replace(/\/+$/, "") || "/";
 const mostrar = ruta !== "/contacto";
 ---
@@ -12,6 +15,9 @@ const mostrar = ruta !== "/contacto";
     <div class="barra-movil" data-ubicacion="barra-movil">
       <a class="cta boton" href="/contacto">
         Agenda tu llamada gratis <span aria-hidden="true">→</span>
+      </a>
+      <a class="boton-whatsapp" href={SITIO.whatsapp} rel="noopener" aria-label="Escríbeme por WhatsApp">
+        <Icono nombre="whatsapp" tamano={22} grosor={1.8} />
       </a>
     </div>
   )
@@ -27,6 +33,24 @@ const mostrar = ruta !== "/contacto";
     padding-bottom: calc(0.625rem + env(safe-area-inset-bottom));
     border-top: 1px solid var(--color-line);
     background: var(--color-navy-glass);
+    display: flex;
+    gap: 0.625rem;
+  }
+  /* WhatsApp al lado del botón principal: en Latinoamérica es el canal más usado. */
+  .boton-whatsapp {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.875rem;
+    height: 2.875rem;
+    border: 1px solid rgb(37 211 102 / 0.45);
+    border-radius: 999px;
+    background: rgb(37 211 102 / 0.12);
+    color: var(--color-whatsapp);
+  }
+  .boton-whatsapp:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
   }
   @supports (backdrop-filter: blur(12px)) {
     .barra-movil {

@@ -89,6 +89,15 @@ const grafoBase = [
       height: 180,
     },
     email: `mailto:${SITIO.email}`,
+    telephone: SITIO.telefono,
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      telephone: SITIO.telefono,
+      email: SITIO.email,
+      availableLanguage: "es",
+      areaServed: AREA_SERVIDA,
+    },
     founder: { "@id": `${SITIO.url}/#person` },
     address: {
       "@type": "PostalAddress",

@@ -41,6 +41,7 @@ const todaviaNo = [
 ];
 
 const canales = [
+  { nombre: "WhatsApp", valor: SITIO.whatsappVisible, href: SITIO.whatsapp, icono: "whatsapp" },
   { nombre: "Correo", valor: SITIO.email, href: `mailto:${SITIO.email}`, icono: "email" },
   { nombre: "Instagram", valor: "@soyluisflores_", href: "https://www.instagram.com/soyluisflores_/", icono: "instagram" },
   { nombre: "LinkedIn", valor: "Luis Carlos Flores", href: "https://www.linkedin.com/in/soyluisflores/", icono: "linkedin" },
@@ -84,12 +85,15 @@ const schema = [
           <Icono nombre="calendario" tamano={18} />
           Agenda tu llamada gratis <span aria-hidden="true">→</span>
         </a>
-        <a class="boton-secundario" href={`mailto:${SITIO.email}`}>
-          <Icono nombre="email" tamano={18} />
-          Escríbeme un correo
+        <a class="boton-secundario" href={SITIO.whatsapp} rel="noopener">
+          <Icono nombre="whatsapp" tamano={18} />
+          WhatsApp
         </a>
       </div>
-      <p class="nota-respuesta mt-5">Respondo los correos en 24 a 48 horas hábiles.</p>
+      <p class="nota-respuesta mt-5">
+        También puedes escribirme a <a href={`mailto:${SITIO.email}`}>{SITIO.email}</a>.
+        Respondo en 24 a 48 horas hábiles.
+      </p>
 
       <aside slot="lateral" class="card reserva" aria-labelledby="reserva-titulo">
         <div class="reserva-cabecera">
@@ -234,6 +238,11 @@ const schema = [
   .nota-respuesta {
     color: var(--color-muted);
     font-size: var(--step--1);
+  }
+  .nota-respuesta a {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   /* ---------------------------------------------------- Tarjeta reserva */
