@@ -1,6 +1,6 @@
 ---
 import { getImage } from "astro:assets";
-import { SITIO, AREA_SERVIDA } from "../data/servicios";
+import { SITIO, AREA_SERVIDA, servicios } from "../data/servicios";
 import retratoImg from "../assets/luis-flores-retrato.jpg";
 import JsonLd from "../components/JsonLd.astro";
 import Header from "../components/Header.astro";
@@ -64,13 +64,7 @@ const grafoBase = [
       addressRegion: SITIO.region,
       addressCountry: SITIO.pais,
     },
-    knowsAbout: [
-      "Inteligencia artificial aplicada a negocios",
-      "Agentes de IA",
-      "Automatización de procesos",
-      "Funnels de conversión",
-      "Desarrollo web",
-    ],
+    knowsAbout: ["Inteligencia artificial aplicada a negocios", ...servicios.map((s) => s.nombre)],
     sameAs: SITIO.perfiles,
     worksFor: { "@id": `${SITIO.url}/#organization` },
   },
@@ -91,6 +85,13 @@ const grafoBase = [
     },
     email: `mailto:${SITIO.email}`,
     founder: { "@id": `${SITIO.url}/#person` },
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: SITIO.localidad,
+      addressRegion: SITIO.region,
+      addressCountry: SITIO.pais,
+    },
+    knowsAbout: servicios.map((s) => s.nombre),
     areaServed: AREA_SERVIDA,
     sameAs: SITIO.perfiles,
   },

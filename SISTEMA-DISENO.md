@@ -93,3 +93,17 @@ Al final de `global.css`. Piezas reutilizables:
 Espaciado entre secciones: de 72 a 120 px. Contenedor: 1240 px.
 
 Micro movimiento añadido: filete del antetítulo que se dibuja al entrar en pantalla, respuesta al pulsar los botones (`scale: 0.97`), botón principal que sube 2 px, entrada encadenada del hero (botones, garantías, foto y etiqueta) y realce del borde de las herramientas.
+
+## Piezas compartidas de las páginas interiores (21/10/2026)
+
+| Pieza | Para qué |
+|---|---|
+| `CabeceraPagina.astro` | Cabecera de todas las páginas interiores: migas, antetítulo, H1 con parte destacada en degradado, entradilla, botones y una columna lateral opcional |
+| `Cierre.astro` | Llamada final «Hablemos de tu negocio» con foto de fondo velada. Título, entradilla y acento por página |
+| `TarjetaArticulo.astro` | Tarjeta del blog: portada (foto propia, ilustración o foto del servicio), tema, fecha, minutos de lectura. Variante destacada horizontal |
+| `src/data/lectura.ts` | Palabras y minutos de lectura (200 por minuto). Lo usan las tarjetas y el JSON-LD de los artículos |
+| Clases globales | `.icono-caja`, `.anillo-degradado`, `.numero-circulo`, `.etiqueta-servicio`, `.lista-check` / `.lista-cruz`, `.info-flotante` |
+
+Espaciado entre secciones: `--space-section` (56 a 88 px). Dos secciones seguidas del mismo fondo no suman el relleno superior.
+
+Sombras y velos: el duotono de las fotos va a brillo 0,98 y el velo inferior solo cubre el 32 % de la imagen (al 50 %). Antes cubría la mitad con un 82 % y tapaba la foto. `--shadow-3` es más corta para no ensuciar la sección de debajo.

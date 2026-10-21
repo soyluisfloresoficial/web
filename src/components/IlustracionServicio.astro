@@ -17,10 +17,12 @@ interface Props {
   color: string;
   /** Descripción para lectores de pantalla, la misma que tendría la foto. */
   alt: string;
-  variante?: "hero" | "tarjeta";
+  variante?: "hero" | "tarjeta" | "portada";
+  /** Si es solo adorno (por ejemplo, la portada de un artículo), no se anuncia. */
+  decorativa?: boolean;
 }
 
-const { slug, color, alt, variante = "tarjeta" } = Astro.props;
+const { slug, color, alt, variante = "tarjeta", decorativa = false } = Astro.props;
 const svg = ilustraciones[slug];
 ---
 
@@ -28,8 +30,9 @@ const svg = ilustraciones[slug];
   svg && (
     <div
       class={`ilustracion ilustracion-${variante} reveal`}
-      role="img"
-      aria-label={alt}
+      role={decorativa ? undefined : "img"}
+      aria-label={decorativa ? undefined : alt}
+      aria-hidden={decorativa ? "true" : undefined}
       style={`--svc: var(${color})`}
     >
       <Fragment set:html={svg} />
@@ -46,7 +49,8 @@ const svg = ilustraciones[slug];
       radial-gradient(70% 90% at 60% 30%, color-mix(in srgb, var(--svc) 22%, transparent), transparent 70%),
       var(--color-surface);
   }
-  .ilustracion-tarjeta {
+  .ilustracion-tarjeta,
+  .ilustracion-portada {
     aspect-ratio: 16 / 9;
   }
   .ilustracion-hero {

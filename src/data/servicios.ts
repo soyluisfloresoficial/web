@@ -149,7 +149,7 @@ export const SITIO = {
   /** Definición extraíble: la frase que debe poder citar un buscador de IA
    *  cuando le preguntan qué hace Luis Flores. Va en el JSON-LD de Person. */
   descripcion:
-    "Luis Carlos Flores implementa agentes de IA, automatizaciones y funnels de conversión para pymes y emprendedores de España y Latinoamérica, desde Manresa.",
+    "Luis Carlos Flores implementa agentes de IA, automatizaciones, funnels de conversión, CRM, email marketing y paneles de métricas para pymes y emprendedores de España y Latinoamérica, desde Manresa.",
   perfiles: [
     "https://www.linkedin.com/in/soyluisflores/",
     "https://www.instagram.com/soyluisflores_/",

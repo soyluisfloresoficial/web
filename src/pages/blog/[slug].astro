@@ -4,6 +4,10 @@ import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import { servicios, SITIO } from "../../data/servicios";
 import retratoImg from "../../assets/luis-flores-retrato.jpg";
+import TarjetaArticulo from "../../components/TarjetaArticulo.astro";
+import Cierre from "../../components/Cierre.astro";
+import Icono from "../../components/Icono.astro";
+import { minutosLectura, palabras } from "../../data/lectura";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -33,7 +37,9 @@ const relacionados = todos
     if (mismoA !== mismoB) return mismoA - mismoB;
     return b.data.datePublished.getTime() - a.data.datePublished.getTime();
   })
-  .slice(0, 2);
+  .slice(0, 3);
+
+const minutos = minutosLectura(post.body);
 
 const fechaLarga = (d: Date) =>
   d.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
@@ -50,6 +56,13 @@ const schema = [
     author: { "@id": `${SITIO.url}/#person` },
     publisher: { "@id": `${SITIO.url}/#organization` },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    isPartOf: { "@id": `${SITIO.url}/blog#blog` },
+    wordCount: palabras(post.body),
+    timeRequired: `PT${minutos}M`,
+    ...(servicio && {
+      articleSection: servicio.nombre,
+      about: { "@id": `${SITIO.url}/servicios/${servicio.slug}#service` },
+    }),
     inLanguage: "es-ES",
   },
   {
@@ -85,12 +98,32 @@ const schema = [
       </ol>
     </nav>
 
-    <article class="container-lf articulo">
-      <header>
-        <h1>{post.data.title}</h1>
-        <p class="meta">
-          Por {SITIO.nombreCompleto} ·
-          <time datetime={publicado.toISOString()}>{fechaLarga(publicado)}</time>
+    <article class="container-lf articulo" style={servicio ? `--svc: var(${servicio.color})` : undefined}>
+      <header class="articulo-cabecera">
+        {
+          servicio && (
+            <a class="etiqueta-servicio" href={`/servicios/${servicio.slug}`}>
+              {servicio.nombre}
+            </a>
+          )
+        }
+        <h1 class="mt-5">{post.data.title}</h1>
+        <p class="entradilla-articulo mt-5">{post.data.description}</p>
+        <div class="firma mt-8">
+          <Image
+            src={retratoImg}
+            alt=""
+            widths={[56, 112]}
+            sizes="56px"
+            loading="eager"
+            class="firma-foto"
+          />
+          <p class="meta">
+            <span class="firma-nombre">{SITIO.nombreCompleto}</span>
+            <span>
+              <time datetime={publicado.toISOString()}>{fechaLarga(publicado)}</time>
+              {" · "}
+              {minutos} min de lectura
           {
             modificado.getTime() !== publicado.getTime() && (
               <>
@@ -102,7 +135,9 @@ const schema = [
               </>
             )
           }
-        </p>
+            </span>
+          </p>
+        </div>
       </header>
 
       <div class="prosa">
@@ -112,6 +147,9 @@ const schema = [
       {
         servicio && (
           <aside class="servicio-rel card" style={`--svc: var(${servicio.color})`}>
+            <span class="servicio-rel-icono" aria-hidden="true">
+              <Icono nombre={servicio.icono} tamano={22} grosor={1.7} />
+            </span>
             <p class="eyebrow">Servicio relacionado</p>
             <h2 class="mt-2">{servicio.nombre}</h2>
             <p class="card-text mt-2">{servicio.definicion}</p>
@@ -134,8 +172,8 @@ const schema = [
         <div>
           <p class="autor-nombre">{SITIO.nombreCompleto}</p>
           <p class="card-text">
-            Implemento IA, automatización y funnels para pymes de España y LATAM.
-            Desde Manresa, en remoto.
+            Dirijo una agencia desde Manresa y diseño e implemento sistemas de IA,
+            automatización y captación para negocios de España y Latinoamérica.
           </p>
           <a class="card-link mt-2 inline-block" href="/sobre-mi">
             Sobre mí <span aria-hidden="true">→</span>
@@ -146,34 +184,33 @@ const schema = [
 
     {
       relacionados.length > 0 && (
-        <section class="section container-lf" aria-labelledby="rel-titulo">
-          <h2 id="rel-titulo" class="h-pequeno">Sigue leyendo</h2>
-          <ul class="grid-2 mt-6">
-            {relacionados.map((p) => (
-              <li class="card p-5">
-                <h3 class="card-title">{p.data.title}</h3>
-                <p class="card-text mt-2">{p.data.description}</p>
-                <a class="card-link mt-3 inline-block" href={`/blog/${p.id}`}>
-                  Leer <span aria-hidden="true">→</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+        <section class="section banda" aria-labelledby="rel-titulo">
+          <div class="container-lf">
+            <div class="cabecera-seccion">
+              <div>
+                <p class="eyebrow">Sigue leyendo</p>
+                <h2 id="rel-titulo" class="subrayado mt-4">Más guías como esta</h2>
+              </div>
+              <a class="card-link cabecera-enlace" href="/blog">
+                Ver todas <span aria-hidden="true">→</span>
+              </a>
+            </div>
+            <ul class="rejilla-relacionados mt-10">
+              {relacionados.map((p) => (
+                <li class="reveal">
+                  <TarjetaArticulo post={p} nivel="h3" />
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       )
     }
 
-    <section class="section" aria-labelledby="cta-titulo">
-      <div class="container-lf card cta-final">
-        <h2 id="cta-titulo">¿Lo aplicamos a tu negocio?</h2>
-        <p class="lead mt-3 max-w-[52ch]">
-          En 30 minutos reviso tu caso y te digo qué haría primero. Sin compromiso.
-        </p>
-        <a class="cta mt-6 inline-flex items-center gap-2" href="/contacto">
-          Reservar diagnóstico <span aria-hidden="true">→</span>
-        </a>
-      </div>
-    </section>
+    <Cierre
+      titulo="¿Lo aplicamos a tu negocio?"
+      entradilla="En 30 minutos reviso tu caso y te digo qué haría primero. Sin compromiso."
+    />
   </main>
 </Base>
 
@@ -203,7 +240,80 @@ const schema = [
 
   .articulo {
     max-width: 72ch;
-    padding-block: var(--space-2) var(--space-6);
+    padding-block: var(--space-2) var(--space-section);
+  }
+  .articulo-cabecera {
+    padding-bottom: 2.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .articulo-cabecera h1 {
+    font-size: clamp(2.125rem, 1.6rem + 2.2vw, 3.25rem);
+    line-height: 1.08;
+  }
+  .entradilla-articulo {
+    font-size: var(--step-1);
+    line-height: 1.6;
+    color: var(--color-soft);
+  }
+  .firma {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .firma-foto {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 2px solid var(--color-line);
+  }
+  .firma .meta {
+    display: grid;
+    margin-top: 0;
+  }
+  .firma-nombre {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .servicio-rel h2 {
+    font-size: var(--step-2);
+  }
+  .servicio-rel {
+    position: relative;
+    padding-left: 5rem !important;
+  }
+  .servicio-rel-icono {
+    position: absolute;
+    left: 1.5rem;
+    top: 1.5rem;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid color-mix(in srgb, var(--svc) 45%, var(--color-line));
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--svc) 10%, transparent);
+    color: var(--svc);
+  }
+  .rejilla-relacionados {
+    display: grid;
+    gap: 1.5rem;
+    margin-inline: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 768px) {
+    .rejilla-relacionados {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (width >= 1100px) {
+    .rejilla-relacionados {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .meta {
@@ -303,7 +413,10 @@ const schema = [
     grid-template-columns: 1fr;
     list-style: none;
     padding: 0;
-    margin: 0;
+    /* Sin margen arriba: lo pone la clase mt-* del marcado. Con
+       margin: 0 aquí, la clase no se aplicaba y el título quedaba pegado. */
+    margin-inline: 0;
+    margin-bottom: 0;
   }
 
   .cta {

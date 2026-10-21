@@ -21,7 +21,7 @@ const anio = new Date().getFullYear();
 
       {/* PARCHE P1-C: todos los servicios. El pie anterior listaba cuatro de seis.
           Salen del mismo array que la home y /servicios. */}
-      <nav class="pie-col" aria-labelledby="pie-servicios">
+      <nav class="pie-col pie-col-servicios" aria-labelledby="pie-servicios">
         <h2 class="pie-titulo" id="pie-servicios">Servicios</h2>
         <ul>
           {
@@ -207,9 +207,25 @@ const anio = new Date().getFullYear();
     }
   }
 
+  /* Nueve servicios: en dos columnas para que no se corten en tres líneas. */
+  @media (width >= 640px) {
+    .pie-col-servicios ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
+  }
+  @media (width >= 768px) {
+    .pie-col-servicios {
+      grid-column: span 2;
+    }
+  }
   @media (width >= 1024px) {
     .pie-grid {
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 2fr 2.4fr 1fr 1fr 0.9fr;
+      column-gap: 2.5rem;
+    }
+    .pie-col-servicios {
+      grid-column: auto;
     }
   }
 </style>

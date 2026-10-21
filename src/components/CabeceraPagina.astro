@@ -1,0 +1,168 @@
+---
+/**
+ * Cabecera de las páginas interiores: migas, antetítulo, H1 y entradilla,
+ * con la misma retícula y la misma luz que el hero de la home.
+ *
+ * Slots:
+ * - por defecto: lo que va bajo la entradilla (botones, garantías…).
+ * - «lateral»: columna derecha opcional (una tarjeta, una imagen…).
+ */
+interface Miga {
+  texto: string;
+  href?: string;
+}
+interface Props {
+  migas: Miga[];
+  antetitulo: string;
+  titulo: string;
+  /** Parte final del H1 que va en degradado. Opcional. */
+  destacado?: string;
+  entradilla?: string;
+  acento?: string;
+}
+
+const { migas, antetitulo, titulo, destacado, entradilla, acento } = Astro.props;
+const conLateral = Astro.slots.has("lateral");
+---
+
+<section class="cabecera-pagina" data-acento={acento}>
+  <div class="fondo-reticula" aria-hidden="true"></div>
+  <div class="cabecera-luz" aria-hidden="true"></div>
+
+  <div class="container-lf cabecera-contenido">
+    <nav class="migas" aria-label="Migas de pan">
+      <ol>
+        {
+          migas.map((m, i) =>
+            i === migas.length - 1 ? (
+              <li aria-current="page">{m.texto}</li>
+            ) : (
+              <li>
+                <a href={m.href}>{m.texto}</a>
+              </li>
+            ),
+          )
+        }
+      </ol>
+    </nav>
+
+    <div class={`cabecera-rejilla${conLateral ? " con-lateral" : ""}`}>
+      <div class="cabecera-texto">
+        <p class="eyebrow">{antetitulo}</p>
+        <h1 class="mt-5">
+          {titulo}
+          {destacado && <span class="gradient-text"> {destacado}</span>}
+        </h1>
+        {entradilla && <p class="lead mt-6">{entradilla}</p>}
+        <slot />
+      </div>
+      {
+        conLateral && (
+          <div class="cabecera-lateral">
+            <slot name="lateral" />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .cabecera-pagina {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: clamp(3rem, 2rem + 3vw, 5rem);
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .cabecera-luz {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(40rem 22rem at 12% -10%, rgb(0 123 255 / 0.14), transparent 70%),
+      radial-gradient(34rem 22rem at 95% 30%, rgb(139 92 246 / 0.1), transparent 70%);
+  }
+  .fondo-reticula {
+    mask-image: radial-gradient(70% 80% at 30% 20%, #000 10%, transparent 75%);
+  }
+  .cabecera-contenido {
+    position: relative;
+    z-index: 1;
+  }
+
+  .migas {
+    padding-block: 1.25rem;
+    font-size: var(--step--1);
+  }
+  .migas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-muted);
+  }
+  .migas li + li::before {
+    content: "/";
+    margin-inline-end: 0.5rem;
+    color: var(--color-line);
+  }
+  .migas a {
+    color: var(--color-soft);
+  }
+  .migas a:hover {
+    color: var(--color-ink);
+  }
+
+  .cabecera-rejilla {
+    display: grid;
+    gap: 3rem;
+    padding-top: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+  }
+  .cabecera-texto {
+    max-width: 44rem;
+  }
+  .cabecera-texto h1 {
+    font-size: clamp(2.375rem, 1.7rem + 2.8vw, 3.75rem);
+    line-height: 1.05;
+  }
+  @media (width >= 1024px) {
+    .cabecera-rejilla.con-lateral {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      align-items: center;
+      gap: 4.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .cabecera-texto > * {
+      animation: entrada-cabecera 0.6s var(--ease) both;
+    }
+    :global(.js) .cabecera-texto > :nth-child(2) {
+      animation-name: sube-cabecera;
+      animation-delay: 0.08s;
+    }
+    :global(.js) .cabecera-texto > :nth-child(3) {
+      animation-delay: 0.18s;
+    }
+    :global(.js) .cabecera-texto > :nth-child(n + 4) {
+      animation-delay: 0.28s;
+    }
+    :global(.js) .cabecera-lateral {
+      animation: entrada-cabecera 0.7s var(--ease) 0.2s both;
+    }
+  }
+  @keyframes entrada-cabecera {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+  /* El H1 solo se desplaza: su opacidad no se toca para no retrasar el LCP. */
+  @keyframes sube-cabecera {
+    from {
+      transform: translateY(14px);
+    }
+  }
+</style>

@@ -1,5 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
+import CabeceraPagina from "../components/CabeceraPagina.astro";
+import Icono from "../components/Icono.astro";
 import { SITIO } from "../data/servicios";
 
 const url = `${SITIO.url}/contacto`;
@@ -39,11 +41,11 @@ const todaviaNo = [
 ];
 
 const canales = [
-  { nombre: "Email", valor: SITIO.email, href: `mailto:${SITIO.email}` },
-  { nombre: "Instagram", valor: "@soyluisflores_", href: "https://www.instagram.com/soyluisflores_/" },
-  { nombre: "LinkedIn", valor: "Luis Carlos Flores", href: "https://www.linkedin.com/in/soyluisflores/" },
-  { nombre: "TikTok", valor: "@soyluisfloresoficial", href: "https://www.tiktok.com/@soyluisfloresoficial" },
-];
+  { nombre: "Email", valor: SITIO.email, href: `mailto:${SITIO.email}`, icono: "email" },
+  { nombre: "Instagram", valor: "@soyluisflores_", href: "https://www.instagram.com/soyluisflores_/", icono: "instagram" },
+  { nombre: "LinkedIn", valor: "Luis Carlos Flores", href: "https://www.linkedin.com/in/soyluisflores/", icono: "linkedin" },
+  { nombre: "TikTok", valor: "@soyluisfloresoficial", href: "https://www.tiktok.com/@soyluisfloresoficial", icono: "tiktok" },
+] as const;
 
 const schema = [
   {
@@ -69,44 +71,64 @@ const schema = [
 
 <Base title={title} description={description} schema={schema}>
   <main>
-    <nav class="migas container-lf" aria-label="Migas de pan">
-      <ol>
-        <li><a href="/">Inicio</a></li>
-        <li aria-current="page">Contacto</li>
-      </ol>
-    </nav>
-
-    <section class="section pt-0">
-      <div class="container-lf max-w-[62ch]">
-        <p class="eyebrow">Contacto</p>
-        <h1 class="mt-3">Hablemos de tu negocio</h1>
-        <p class="lead mt-5">
-          La forma más rápida es una llamada de 30 minutos. Me cuentas cómo funciona
-          tu negocio y te digo qué automatizar primero. Gratis y sin compromiso.
-        </p>
-        <a
-          class="cta mt-8 inline-flex items-center gap-2"
-          href={SITIO.calendly}
-          rel="noopener"
-        >
+    {/* ----------------------------------------------------------- Cabecera */}
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Contacto" }]}
+      antetitulo="Contacto"
+      titulo="Hablemos de"
+      destacado="tu negocio"
+      entradilla="La forma más rápida es una llamada de 30 minutos. Me cuentas cómo funciona tu negocio y te digo qué automatizar primero. Gratis y sin compromiso."
+    >
+      <div class="botones mt-8">
+        <a class="cta" href={SITIO.calendly} data-ubicacion="contacto-cabecera">
+          <Icono nombre="calendario" tamano={18} />
           Reservar diagnóstico <span aria-hidden="true">→</span>
         </a>
-        <p class="nota mt-4">
-          ¿Prefieres escribir? <a href={`mailto:${SITIO.email}`}>{SITIO.email}</a>.
-          Respondo los emails en 24-48 h laborables.
-        </p>
+        <a class="boton-secundario" href={`mailto:${SITIO.email}`}>
+          <Icono nombre="email" tamano={18} />
+          Escribirme un email
+        </a>
       </div>
-    </section>
+      <p class="nota-respuesta mt-5">Respondo los emails en 24-48 h laborables.</p>
 
-    <section class="section" aria-labelledby="pasos-titulo">
+      <aside slot="lateral" class="card reserva" aria-labelledby="reserva-titulo">
+        <div class="reserva-cabecera">
+          <span class="anillo-degradado anillo-medio" aria-hidden="true">
+            <Icono nombre="calendario" tamano={20} grosor={1.8} degradado />
+          </span>
+          <div>
+            <p id="reserva-titulo" class="reserva-titulo">Llamada de diagnóstico</p>
+            <p class="reserva-sub">Con Luis Carlos Flores</p>
+          </div>
+        </div>
+        <ul class="reserva-datos">
+          <li><Icono nombre="reloj" tamano={18} /> 30 minutos</li>
+          <li><Icono nombre="video" tamano={18} /> Por videollamada</li>
+          <li><Icono nombre="escudo" tamano={18} /> Gratis y sin compromiso</li>
+          <li><Icono nombre="globo" tamano={18} /> España y Latinoamérica, en tu horario</li>
+        </ul>
+        <a class="cta reserva-boton" href={SITIO.calendly} data-ubicacion="contacto-tarjeta">
+          Elegir día y hora <span aria-hidden="true">→</span>
+        </a>
+      </aside>
+    </CabeceraPagina>
+
+    {/* -------------------------------------------------------------- Pasos */}
+    <section class="section banda" aria-labelledby="pasos-titulo" data-acento="violeta">
       <div class="container-lf">
-        <h2 id="pasos-titulo" class="h-pequeno">Qué pasa en la llamada</h2>
-        <ol class="grid-3 mt-6">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">La llamada</p>
+            <h2 id="pasos-titulo" class="subrayado mt-4">Qué pasa en esos 30 minutos</h2>
+          </div>
+          <p class="lead">Sin presentaciones comerciales: hablamos de tu negocio y sales con un plan.</p>
+        </div>
+        <ol class="pasos mt-10">
           {
             pasos.map((p) => (
-              <li class="card p-6">
-                <p class="paso-numero">{p.n}</p>
-                <h3 class="card-title mt-1">{p.titulo}</h3>
+              <li class="card tarjeta paso reveal">
+                <span class="numero-circulo" aria-hidden="true">{p.n}</span>
+                <h3 class="card-title mt-5">{p.titulo}</h3>
                 <p class="card-text mt-2">{p.texto}</p>
               </li>
             ))
@@ -115,19 +137,26 @@ const schema = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="encaje-titulo">
+    {/* ------------------------------------------------------------- Encaje */}
+    <section class="section" aria-labelledby="encaje-titulo" data-acento="turquesa">
       <div class="container-lf">
-        <h2 id="encaje-titulo" class="h-pequeno">Para quién es esta llamada</h2>
-        <div class="grid gap-6 mt-6 md:grid-cols-2">
-          <div class="card p-6">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Antes de reservar</p>
+            <h2 id="encaje-titulo" class="subrayado mt-4">Para quién es esta llamada</h2>
+          </div>
+          <p class="lead">Prefiero decírtelo ahora: así no pierdes 30 minutos.</p>
+        </div>
+        <div class="encaje mt-10">
+          <div class="card tarjeta encaje-si reveal">
             <h3 class="card-title">Tiene sentido si…</h3>
-            <ul class="lista mt-4">
+            <ul class="lista-check mt-5">
               {encaja.map((e) => <li>{e}</li>)}
             </ul>
           </div>
-          <div class="card p-6">
+          <div class="card tarjeta encaje-no reveal">
             <h3 class="card-title">Quizá todavía no si…</h3>
-            <ul class="lista lista--no mt-4">
+            <ul class="lista-cruz mt-5">
               {todaviaNo.map((e) => <li>{e}</li>)}
             </ul>
           </div>
@@ -135,35 +164,64 @@ const schema = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="roi-titulo">
-      <div class="container-lf card p-6">
-        <p class="eyebrow">Calculadora gratuita</p>
-        <h2 id="roi-titulo" class="mt-3">¿Cuánto te cuesta no automatizar?</h2>
-        <p class="card-text mt-3 max-w-[62ch]">
-          Pon tus números y te calculo una estimación de lo que cuestan al mes y al
-          año las tareas repetitivas. Orientativo y basado en hipótesis visibles.
-        </p>
-        <a class="card-link mt-4 inline-block" href="/roi">
-          Abrir la calculadora <span aria-hidden="true">→</span>
-        </a>
+    {/* -------------------------------------------------------- Calculadora */}
+    <section class="section banda" aria-labelledby="roi-titulo" data-acento="ambar">
+      <div class="container-lf">
+        <div class="card calculadora reveal">
+          <div class="fondo-reticula" aria-hidden="true"></div>
+          <div class="calculadora-texto">
+            <p class="eyebrow">Calculadora gratuita</p>
+            <h2 id="roi-titulo" class="mt-4">¿Cuánto te cuesta no automatizar?</h2>
+            <p class="lead mt-4">
+              Pon tus números y verás una estimación de horas ahorradas, ingresos
+              adicionales y en cuánto tiempo recuperarías la inversión. Orientativa y
+              basada en hipótesis visibles.
+            </p>
+            <a class="cta mt-8" href="/roi">
+              <Icono nombre="tendencia" tamano={18} />
+              Abrir la calculadora <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          {/* Vista previa de lo que calcula. Sin cifras: las pone cada persona. */}
+          <dl class="vista-previa" aria-hidden="true">
+            <div><dt>Horas liberadas al mes</dt><dd>—</dd></div>
+            <div><dt>Ingresos adicionales al mes</dt><dd>—</dd></div>
+            <div><dt>Recuperación de la inversión</dt><dd>—</dd></div>
+            <div><dt>ROI a 12 meses</dt><dd>—</dd></div>
+          </dl>
+        </div>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="canales-titulo">
+    {/* ------------------------------------------------------------ Canales */}
+    <section class="section" aria-labelledby="canales-titulo" data-acento="azul">
       <div class="container-lf">
-        <h2 id="canales-titulo" class="h-pequeno">Otras vías</h2>
-        <p class="card-text mt-3 max-w-[62ch]">
-          Si prefieres no usar la calculadora, escríbeme por el canal que te resulte
-          más cómodo y te respondo lo antes posible.
-        </p>
-        <ul class="grid-2 mt-6">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Otras vías</p>
+            <h2 id="canales-titulo" class="subrayado mt-4">Si prefieres escribirme</h2>
+          </div>
+          <p class="lead">
+            Escríbeme por el canal que te resulte más cómodo y te respondo lo antes
+            posible.
+          </p>
+        </div>
+        <ul class="canales mt-10">
           {
             canales.map((c) => (
-              <li class="card p-5">
-                <p class="canal-nombre">{c.nombre}</p>
-                <a class="card-link mt-1 inline-block" href={c.href} rel="noopener">
-                  {c.valor}
-                </a>
+              <li class="card tarjeta canal reveal">
+                <span class="icono-caja" aria-hidden="true">
+                  <Icono nombre={c.icono} tamano={22} grosor={1.7} />
+                </span>
+                <div class="canal-cuerpo">
+                  <p class="canal-nombre">{c.nombre}</p>
+                  <a class="canal-enlace" href={c.href} rel={c.href.startsWith("http") ? "noopener" : undefined}>
+                    {c.valor}
+                  </a>
+                </div>
+                <span class="canal-flecha" aria-hidden="true">
+                  <Icono nombre={c.href.startsWith("mailto") ? "flecha" : "externo"} tamano={18} />
+                </span>
               </li>
             ))
           }
@@ -174,121 +232,219 @@ const schema = [
 </Base>
 
 <style>
-  .migas {
-    padding-block: 1rem;
-    font-size: var(--step--1);
-  }
-  .migas ol {
-    display: flex;
-    gap: 0.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .nota-respuesta {
     color: var(--color-muted);
-  }
-  .migas li + li::before {
-    content: "/";
-    margin-inline-end: 0.5rem;
-    color: var(--color-line);
-  }
-  .migas a {
-    text-decoration: none;
-    color: var(--color-soft);
+    font-size: var(--step--1);
   }
 
-  .lead {
-    color: var(--color-soft);
+  /* ---------------------------------------------------- Tarjeta reserva */
+  .reserva {
+    position: relative;
+    padding: clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+    border-color: rgb(0 123 255 / 0.35);
+    background:
+      radial-gradient(80% 60% at 100% 0%, rgb(0 123 255 / 0.14), transparent 70%),
+      linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 40%),
+      var(--color-surface);
+    box-shadow: var(--shadow-2);
+  }
+  .reserva-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .reserva-titulo {
+    font-family: var(--font-display);
     font-size: var(--step-1);
+    font-weight: 700;
+    color: var(--color-ink);
   }
-  .nota {
-    color: var(--color-muted);
+  .reserva-sub {
     font-size: var(--step--1);
+    color: var(--color-muted);
   }
-  .nota a {
+  .reserva-datos {
+    display: grid;
+    gap: 0;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+  }
+  .reserva-datos li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.875rem;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-ink);
+  }
+  .reserva-datos :global(svg) {
     color: var(--color-electric-soft);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    flex-shrink: 0;
   }
-  .h-pequeno {
-    font-size: var(--step-2);
+  .reserva-boton {
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  /* -------------------------------------------------------------- Pasos */
+  .pasos {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+    margin-inline: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 768px) {
+    .pasos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    /* Línea que une los tres pasos, por detrás de las tarjetas. */
+    .pasos::before {
+      content: "";
+      position: absolute;
+      top: 3.25rem;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--acento), transparent);
+      opacity: 0.6;
+    }
+  }
+  .paso {
+    position: relative;
   }
   .card-title {
-    font-size: var(--step-2);
+    font-size: var(--step-1);
   }
   .card-text {
     color: var(--color-soft);
   }
-  .card-link {
-    color: var(--color-electric-soft);
-    font-weight: 700;
+
+  /* ------------------------------------------------------------- Encaje */
+  .encaje {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (width >= 768px) {
+    .encaje {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .encaje-si {
+    border-color: rgb(45 212 191 / 0.3);
+  }
+
+  /* -------------------------------------------------------- Calculadora */
+  .calculadora {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+    padding: clamp(2rem, 1.5rem + 2.5vw, 3rem);
+    background:
+      radial-gradient(45% 80% at 90% 20%, rgb(251 191 36 / 0.1), transparent 70%),
+      var(--color-surface);
+  }
+  .calculadora > :not(.fondo-reticula) {
+    position: relative;
+    z-index: 1;
+  }
+  @media (width >= 1024px) {
+    .calculadora {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 4rem;
+    }
+  }
+  .vista-previa {
+    display: grid;
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-float);
+    background: rgb(7 9 13 / 0.55);
+  }
+  .vista-previa div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .vista-previa div:last-child {
+    border-bottom: 0;
+  }
+  .vista-previa dt {
+    color: var(--color-soft);
+    font-size: var(--step--1);
+  }
+  .vista-previa dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--acento-texto);
+  }
+
+  /* ------------------------------------------------------------ Canales */
+  .canales {
+    display: grid;
+    gap: 1.25rem;
+    margin-inline: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 640px) {
+    .canales {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .canal {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .canal-cuerpo {
+    flex: 1;
+    min-width: 0;
   }
   .canal-nombre {
     font-family: var(--font-display);
     font-weight: 700;
     color: var(--color-ink);
   }
-
-  .paso-numero {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
-    font-weight: 800;
+  /* Tarjeta entera pulsable a través del enlace. */
+  .canal-enlace {
     color: var(--color-electric-soft);
+    font-weight: 600;
+    overflow-wrap: anywhere;
   }
-
-  .grid-2,
-  .grid-3 {
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: 1fr;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .lista {
-    display: grid;
-    gap: 0.75rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    color: var(--color-soft);
-  }
-  .lista li {
-    padding-inline-start: 1.5rem;
-    position: relative;
-  }
-  .lista li::before {
+  .canal-enlace::after {
     content: "";
     position: absolute;
-    inset-inline-start: 0;
-    top: 0.55em;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--color-teal);
+    inset: 0;
+    border-radius: inherit;
   }
-  .lista--no li::before {
-    background: var(--color-muted);
+  .canal:has(.canal-enlace:focus-visible) {
+    outline: 3px solid var(--color-electric);
+    outline-offset: 3px;
   }
-
-  .cta {
-    background: var(--grad-cta);
-    color: #fff;
-    border-radius: 999px;
-    padding: 0.875rem 1.5rem;
-    font-weight: 700;
-    box-shadow: var(--shadow-cta);
+  .canal-enlace:focus-visible {
+    outline: none;
   }
-
-  @media (width >= 640px) {
-    .grid-2,
-    .grid-3 {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .canal-flecha {
+    color: var(--color-muted);
+    transition:
+      color var(--dur-micro) var(--ease),
+      translate var(--dur-micro) var(--ease);
   }
-  @media (width >= 1024px) {
-    .grid-3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  .canal:hover .canal-flecha {
+    color: var(--color-ink);
+    translate: 3px 0;
   }
 </style>

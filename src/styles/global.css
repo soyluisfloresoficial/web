@@ -51,7 +51,7 @@
   /* Sombras */
   --shadow-1: 0 1px 2px #04091642, 0 10px 24px -16px #04091661;
   --shadow-2: 0 2px 6px #0409164d, 0 20px 44px -22px #0409167a;
-  --shadow-3: 0 10px 24px #0206106b, 0 36px 72px -28px #02061094;
+  --shadow-3: 0 8px 20px #02061052, 0 28px 56px -28px #02061080;
   --shadow-float: var(--shadow-1);
   --shadow-cta: var(--shadow-1);
 }
@@ -1093,7 +1093,7 @@ main :where(p, li, dd, td, blockquote) > a:not([class]):hover {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, transparent 45%, rgb(16 21 34 / 0.85)),
+    linear-gradient(180deg, transparent 62%, rgb(16 21 34 / 0.5)),
     linear-gradient(135deg, color-mix(in srgb, var(--svc, var(--acento)) 18%, transparent), transparent 60%);
 }
 
@@ -1235,4 +1235,236 @@ main li.card > .card-link {
   .botones > .boton-secundario {
     flex: 1 1 100%;
   }
+}
+
+
+/* ===========================================================================
+   Piezas compartidas por todas las páginas (21/10/2026)
+
+   Antes vivían solo en la home. Las páginas interiores tenían su propio
+   estilo, más plano, y por eso parecían de otra web.
+   =========================================================================== */
+
+/* Lo marcado con el atributo hidden no se ve nunca. Lo garantizaba el
+   preflight de Tailwind; sin esta regla, un display:grid de cualquier clase
+   lo anulaba (en /roi se veían los resultados antes de calcular). */
+[hidden] {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------ Espaciado */
+:root {
+  /* De 56 a 88 px. Con 120 px y dos secciones seguidas sumaban 240 px
+     vacíos entre bloques. */
+  --space-section: clamp(3.5rem, 2.5rem + 3vw, 5.5rem);
+}
+
+/* Dos secciones seguidas con el mismo fondo comparten un solo margen. */
+main > .section:not(.banda) + .section:not(.banda),
+main > .section.banda + .section.banda {
+  padding-top: 0;
+}
+
+/* Separación mínima entre un título o una entradilla y lo que le sigue.
+   :where() no suma especificidad, así que cualquier mt-* del marcado manda. */
+:where(main) :where(h2, .lead, .cabecera-seccion) + :where(ul, ol, .grid, form, dl) {
+  margin-top: 2rem;
+}
+
+/* -------------------------------------------------------- Iconos y anillos */
+.banda {
+  --anillo-fondo: var(--color-navy-2);
+}
+.card {
+  --anillo-fondo: var(--color-surface);
+}
+.icono-caja {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--acento) 10%, transparent);
+  color: var(--acento-texto);
+}
+.anillo-degradado {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  background:
+    linear-gradient(var(--anillo-fondo, var(--color-navy)), var(--anillo-fondo, var(--color-navy))) padding-box,
+    var(--grad-icon) border-box;
+  color: var(--color-electric-soft);
+}
+.anillo-grande {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+.anillo-medio {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+.numero-circulo {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  background:
+    linear-gradient(var(--anillo-fondo, var(--color-navy)), var(--anillo-fondo, var(--color-navy))) padding-box,
+    var(--grad-icon) border-box;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* Etiqueta con el color de un servicio (blog, artículos). */
+.etiqueta-servicio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid color-mix(in srgb, var(--svc, var(--acento)) 40%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--svc, var(--acento)) 10%, transparent);
+  color: var(--svc, var(--acento-texto));
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Listas con marca: ✓ en turquesa o × en gris, dibujadas (no se leen). */
+.lista-check,
+.lista-cruz {
+  list-style: none;
+  margin-inline: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.875rem;
+}
+.lista-check li,
+.lista-cruz li {
+  position: relative;
+  padding-left: 2rem;
+  color: var(--color-soft);
+}
+.lista-check li::before,
+.lista-cruz li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+}
+.lista-check li::before {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232dd4bf' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4 8-9'/%3E%3C/svg%3E")
+      center / 0.8rem no-repeat,
+    rgb(45 212 191 / 0.14);
+}
+.lista-cruz li::before {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23778398' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E")
+      center / 0.75rem no-repeat,
+    rgb(255 255 255 / 0.06);
+}
+
+/* -------------------------------------------------- Tarjetas flotantes */
+.info-flotante {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-float);
+  background: rgb(16 21 34 / 0.92);
+  box-shadow: var(--shadow-2);
+}
+.info-abajo {
+  left: 1rem;
+  bottom: 0;
+}
+.info-arriba {
+  top: 1rem;
+  right: 1rem;
+}
+@media (width >= 768px) {
+  .info-abajo {
+    left: -1rem;
+  }
+  .info-arriba {
+    right: -1rem;
+  }
+}
+@media (width >= 1024px) and (prefers-reduced-motion: no-preference) {
+  .info-flotante {
+    animation: flota-suave 7s ease-in-out infinite;
+  }
+  .info-arriba {
+    animation-delay: -3.5s;
+  }
+}
+@keyframes flota-suave {
+  0%,
+  100% {
+    translate: 0 4px;
+  }
+  50% {
+    translate: 0 -4px;
+  }
+}
+.info-etiqueta {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-electric-soft);
+}
+.info-valor {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+.info-sub {
+  font-size: 0.75rem;
+  color: var(--color-soft);
+}
+
+/* --------------------------------------------------------- Duotono */
+/* Tinte azul de marca sobre las fotos de banco, pero sin borrarlas: antes
+   (brightness 0,62, sepia 0,6 y un velo violeta encima) se veían lavadas y
+   moradas. Ahora conservan detalle y contraste. */
+.duotono img {
+  filter: grayscale(1) brightness(0.8) contrast(1.12) sepia(0.35) hue-rotate(185deg) saturate(1.55);
+}
+.duotono-suave img {
+  filter: grayscale(1) brightness(0.95) contrast(1.05) sepia(0.3) hue-rotate(185deg) saturate(1.4);
+}
+.duotono::after {
+  background:
+    radial-gradient(60% 80% at 85% 10%, color-mix(in srgb, var(--svc, var(--acento)) 22%, transparent), transparent 70%),
+    linear-gradient(0deg, rgb(16 21 34 / 0.5) 0%, rgb(16 21 34 / 0) 32%);
+}
+
+/* La cabecera de página ya tiene su margen inferior: la sección que la sigue
+   empieza más cerca. */
+.cabecera-pagina + .section {
+  padding-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+}
+
+/* Duotono con algo más de azul (en la primera versión quedaban grises) y
+   más luz: con brillo 0,82 y el velo inferior al 82 % media foto se perdía
+   en negro. El velo queda solo en el borde inferior, donde va el icono. */
+.duotono img {
+  filter: grayscale(1) brightness(0.98) contrast(1.06) sepia(0.45) hue-rotate(185deg) saturate(1.7);
 }

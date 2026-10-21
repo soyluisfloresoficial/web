@@ -937,7 +937,10 @@ const schema = [
     grid-template-columns: 1fr;
     list-style: none;
     padding: 0;
-    margin: 0;
+    /* Sin margen arriba: lo pone la clase mt-* del marcado. Con
+       margin: 0 aquí, la clase no se aplicaba y el título quedaba pegado. */
+    margin-inline: 0;
+    margin-bottom: 0;
     /* Todas las filas con la misma altura: si no, una tarjeta con el texto
        más largo levanta su fila y el conjunto se ve desnivelado. */
     grid-auto-rows: 1fr;
@@ -1062,14 +1065,6 @@ const schema = [
      Los iconos los pinta Icono.astro, que tiene su propio ámbito de estilos:
      por eso sus <svg> se seleccionan con :global().
      ========================================================================= */
-
-  /* Fondo de los anillos de icono: el de la superficie donde están. */
-  .banda {
-    --anillo-fondo: var(--color-navy-2);
-  }
-  .card {
-    --anillo-fondo: var(--color-surface);
-  }
 
   /* ------------------------------------------------------------------ Hero */
   .hero {
@@ -1263,7 +1258,7 @@ const schema = [
     inset: 0;
     background:
       linear-gradient(180deg, rgb(0 123 255 / 0.08) 0%, transparent 35%),
-      linear-gradient(180deg, transparent 62%, rgb(7 9 13 / 0.85) 100%);
+      linear-gradient(180deg, transparent 70%, rgb(7 9 13 / 0.6) 100%);
   }
   .hero-tarjetas {
     display: contents;
@@ -1316,9 +1311,9 @@ const schema = [
     }
     .hero-sombra {
       background:
-        linear-gradient(90deg, rgb(7 9 13 / 0.75) 0%, transparent 40%),
-        linear-gradient(180deg, rgb(7 9 13 / 0.35) 0%, transparent 30%),
-        linear-gradient(0deg, var(--color-navy) 0%, transparent 32%);
+        linear-gradient(90deg, rgb(7 9 13 / 0.4) 0%, transparent 28%),
+        linear-gradient(180deg, rgb(7 9 13 / 0.2) 0%, transparent 20%),
+        linear-gradient(0deg, var(--color-navy) 0%, transparent 18%);
     }
     .hero-tarjetas {
       display: block;
@@ -1526,37 +1521,6 @@ const schema = [
     :global(.js) .hero-nota { animation-delay: 0.7s; }
   }
 
-  /* ------------------------------------------------- Iconos de las tarjetas */
-  .icono-caja {
-    display: inline-grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid var(--color-line);
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--acento) 10%, transparent);
-    color: var(--acento-texto);
-  }
-  .anillo-degradado {
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    border: 1.5px solid transparent;
-    border-radius: 999px;
-    background:
-      linear-gradient(var(--anillo-fondo, var(--color-navy)), var(--anillo-fondo, var(--color-navy))) padding-box,
-      var(--grad-icon) border-box;
-    color: var(--color-electric-soft);
-  }
-  .anillo-grande {
-    width: 3.5rem;
-    height: 3.5rem;
-  }
-  .anillo-medio {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
   /* Antetítulo blanco, para las secciones cortas. */
   .antetitulo-blanco {
     font-family: var(--font-sans);
@@ -1683,19 +1647,6 @@ const schema = [
   .tarjeta-servicio {
     display: flex;
     flex-direction: column;
-  }
-  /* Duotono azul de producción: mismas fotos de banco, mismo tono. */
-  .duotono img {
-    filter: grayscale(1) brightness(0.62) contrast(1.05) sepia(0.6) hue-rotate(185deg) saturate(2.2);
-  }
-  .duotono-suave img {
-    filter: grayscale(1) brightness(0.9) contrast(1.02) sepia(0.5) hue-rotate(185deg) saturate(1.8);
-  }
-  .duotono::after {
-    background:
-      radial-gradient(60% 80% at 80% 10%, color-mix(in srgb, var(--svc, var(--acento)) 30%, transparent), transparent 70%),
-      linear-gradient(135deg, color-mix(in srgb, var(--svc, var(--color-electric)) 35%, transparent) 0%, rgb(139 92 246 / 0.3) 100%),
-      linear-gradient(0deg, rgb(16 21 34 / 0.8) 0%, transparent 55%);
   }
   .media-ilus {
     aspect-ratio: 16 / 9;
@@ -1872,57 +1823,6 @@ const schema = [
     border: 1px solid var(--color-line);
     border-radius: 1rem;
     box-shadow: var(--shadow-1);
-  }
-  .info-flotante {
-    position: absolute;
-    z-index: 2;
-    display: grid;
-    gap: 0.125rem;
-    padding: 0.875rem 1rem;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-float);
-    background: rgb(16 21 34 / 0.92);
-    box-shadow: var(--shadow-2);
-  }
-  .info-abajo {
-    left: 1rem;
-    bottom: 0;
-  }
-  .info-arriba {
-    top: 1rem;
-    right: 1rem;
-  }
-  @media (width >= 768px) {
-    .info-abajo {
-      left: -1rem;
-    }
-    .info-arriba {
-      right: -1rem;
-    }
-  }
-  @media (width >= 1024px) and (prefers-reduced-motion: no-preference) {
-    .info-flotante {
-      animation: flota 7s ease-in-out infinite;
-    }
-    .info-arriba {
-      animation-delay: -3.5s;
-    }
-  }
-  .info-etiqueta {
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-electric-soft);
-  }
-  .info-valor {
-    font-family: var(--font-display);
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: var(--color-ink);
-  }
-  .info-sub {
-    font-size: 0.75rem;
-    color: var(--color-soft);
   }
   .sobremi-texto {
     display: grid;

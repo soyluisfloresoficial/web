@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { servicios, proyectos, SITIO } from "../data/servicios";
+import { faq } from "../data/home";
 
 /**
  * llms.txt generado desde los mismos datos que la web.
@@ -23,7 +24,7 @@ export const GET: APIRoute = async () => {
   lineas.push(`# ${SITIO.nombreCompleto}`);
   lineas.push("");
   lineas.push(
-    `> ${SITIO.nombreCompleto} (marca: ${SITIO.nombre}) implementa IA aplicada a negocios reales para pymes y emprendedores de España y Latinoamérica: agentes de IA de voz y chat, automatización de procesos, funnels de conversión, webs con IA, tráfico de pago y consultoría de IA. Con base en ${SITIO.localidad} (${SITIO.region}, España).`,
+    `> ${SITIO.nombreCompleto} (marca: ${SITIO.nombre}) implementa IA aplicada a negocios reales para pymes y emprendedores de España y Latinoamérica: ${servicios.map((s) => s.nombre).join(", ")}. Con base en ${SITIO.localidad} (${SITIO.region}, España).`,
   );
   lineas.push("");
   lineas.push(
@@ -76,6 +77,17 @@ export const GET: APIRoute = async () => {
   lineas.push("");
   for (const p of proyectos) {
     lineas.push(`- [${p.nombre}](${p.url})${p.descripcion ? `: ${p.descripcion}` : ""}`);
+  }
+  lineas.push("");
+
+  // Las mismas preguntas que la home, para que un asistente de IA pueda
+  // responderlas con las palabras de la web.
+  lineas.push("## Preguntas frecuentes");
+  lineas.push("");
+  for (const grupo of faq) {
+    for (const p of grupo.preguntas) {
+      lineas.push(`- **${p.pregunta}** ${p.respuesta}`);
+    }
   }
   lineas.push("");
 

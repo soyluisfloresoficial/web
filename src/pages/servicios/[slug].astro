@@ -292,7 +292,10 @@ const schema = [
     grid-template-columns: 1fr;
     list-style: none;
     padding: 0;
-    margin: 0;
+    /* Sin margen arriba: lo pone la clase mt-* del marcado. Con
+       margin: 0 aquí, la clase no se aplicaba y el título quedaba pegado. */
+    margin-inline: 0;
+    margin-bottom: 0;
   }
 
   .lista-marcas {
@@ -300,7 +303,10 @@ const schema = [
     gap: 0.75rem;
     list-style: none;
     padding: 0;
-    margin: 0;
+    /* Sin margen arriba: lo pone la clase mt-* del marcado. Con
+       margin: 0 aquí, la clase no se aplicaba y el título quedaba pegado. */
+    margin-inline: 0;
+    margin-bottom: 0;
     color: var(--color-soft);
   }
   .lista-marcas li {
