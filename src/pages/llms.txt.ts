@@ -110,6 +110,7 @@ export const GET: APIRoute = async () => {
   lineas.push("");
   lineas.push(`- [Aviso legal](${SITIO.url}/aviso-legal)`);
   lineas.push(`- [Política de privacidad](${SITIO.url}/politica-de-privacidad)`);
+  lineas.push(`- [Aviso de privacidad para Latinoamérica](${SITIO.url}/aviso-de-privacidad-latinoamerica)`);
   lineas.push(`- [Política de cookies](${SITIO.url}/politica-de-cookies)`);
   lineas.push("");
 

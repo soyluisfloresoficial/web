@@ -40,6 +40,7 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 - No inventes cifras, clientes, casos, reseñas, testimonios, fechas ni fuentes. Si falta un dato: `[COMPLETAR: qué falta]` o `[VERIFICAR: dónde]`.
 - El NIE/NIF solo puede aparecer en `/aviso-legal`, nunca en el pie, en el JSON-LD ni en `llms.txt`. El domicilio público es solo «Manresa, Barcelona, España», sin calle ni código postal.
 - No cambies el texto legal salvo que el titular lo pida; si ves un hueco, avisa de que lo revise un abogado.
+- `/aviso-de-privacidad-latinoamerica` es un aviso estándar para Latinoamérica que pidió el titular (21/10/2026). Los textos de España (aviso legal, privacidad, cookies) se mantienen. Ambos están pendientes de revisión por un abogado.
 - Tono de quien implementa: directo, sin promesas garantizadas ni urgencia artificial. Nada que suene a principiante («unos tres años», «empecé como freelance») en los textos de presentación.
 
 ## Imágenes para compartir
