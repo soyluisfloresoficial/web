@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import CabeceraPagina from "../components/CabeceraPagina.astro";
 import Icono from "../components/Icono.astro";
+import AgendaCalendly from "../components/AgendaCalendly.astro";
 import { SITIO } from "../data/servicios";
 
 const url = `${SITIO.url}/contacto`;
@@ -136,26 +137,8 @@ const schema = [
             correo con el enlace de la videollamada.
           </p>
         </div>
-        <div class="card agenda mt-10" data-agenda data-url={SITIO.calendly}>
-          <div class="agenda-aviso" data-agenda-aviso>
-            <span class="anillo-degradado anillo-grande" aria-hidden="true">
-              <Icono nombre="calendario" tamano={24} grosor={1.6} degradado />
-            </span>
-            <p class="agenda-texto">
-              La agenda la gestiona Calendly. Al abrirla se carga su servicio, que
-              trata tus datos según la <a href="/politica-de-privacidad">política de privacidad</a>.
-            </p>
-            <button type="button" class="cta" data-agenda-cargar>
-              Ver horarios disponibles <span aria-hidden="true">→</span>
-            </button>
-            <a class="agenda-externa" href={SITIO.calendly} rel="noopener" target="_blank">
-              O ábrela en una pestaña nueva
-            </a>
-          </div>
-          <p class="agenda-exito" data-agenda-exito role="status" hidden>
-            Listo, tu llamada quedó agendada. Revisa tu correo: ahí tienes la
-            confirmación y el enlace de la videollamada.
-          </p>
+        <div class="mt-10">
+          <AgendaCalendly formId="calendly-diagnostico" />
         </div>
       </div>
     </section>
@@ -277,89 +260,7 @@ const schema = [
   </main>
 </Base>
 
-<script>
-  const caja = document.querySelector<HTMLElement>("[data-agenda]");
-  const aviso = caja?.querySelector<HTMLElement>("[data-agenda-aviso]");
-  const exito = caja?.querySelector<HTMLElement>("[data-agenda-exito]");
-  let cargada = false;
-
-  const cargar = () => {
-    if (!caja || !aviso || cargada) return;
-    cargada = true;
-    const url = new URL(caja.dataset.url ?? "");
-    url.searchParams.set("embed_domain", location.hostname);
-    url.searchParams.set("embed_type", "Inline");
-    url.searchParams.set("hide_gdpr_banner", "1");
-    url.searchParams.set("locale", "es");
-    const marco = document.createElement("iframe");
-    marco.src = url.toString();
-    marco.title = "Agenda de Calendly para la llamada de diagnóstico";
-    marco.className = "agenda-marco";
-    marco.loading = "lazy";
-    aviso.replaceWith(marco);
-  };
-
-  caja?.querySelector("[data-agenda-cargar]")?.addEventListener("click", cargar);
-  document.querySelectorAll("[data-abrir-agenda]").forEach((a) => a.addEventListener("click", cargar));
-  if (location.hash === "#agenda") cargar();
-
-  // Eventos de Calendly (solo los que vienen de calendly.com).
-  const w = window as unknown as { dataLayer?: unknown[] };
-  let empezado = false;
-  window.addEventListener("message", (e) => {
-    if (e.origin !== "https://calendly.com") return;
-    const tipo = (e.data as { event?: string } | null)?.event;
-    if (tipo === "calendly.date_and_time_selected" && !empezado) {
-      empezado = true;
-      w.dataLayer?.push({ event: "form_start", form_id: "calendly-diagnostico", page_path: location.pathname });
-    }
-    if (tipo === "calendly.event_scheduled") {
-      w.dataLayer?.push({ event: "generate_lead", form_id: "calendly-diagnostico", method: "calendly", page_path: location.pathname });
-      if (exito) exito.hidden = false;
-    }
-  });
-</script>
-
 <style>
-  /* ------------------------------------------------------------- Agenda */
-  .agenda {
-    overflow: hidden;
-    padding: 0;
-  }
-  .agenda-aviso {
-    display: grid;
-    justify-items: center;
-    gap: 1.25rem;
-    padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) 1.5rem;
-    text-align: center;
-  }
-  .agenda-texto {
-    max-width: 46ch;
-    color: var(--color-soft);
-  }
-  .agenda-texto a,
-  .agenda-externa {
-    color: var(--color-electric-soft);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .agenda-externa {
-    font-size: var(--step--1);
-  }
-  .agenda :global(.agenda-marco) {
-    display: block;
-    width: 100%;
-    height: 720px;
-    border: 0;
-    background: #fff;
-  }
-  .agenda-exito {
-    padding: 1.25rem 1.5rem;
-    border-top: 1px solid var(--color-line);
-    color: var(--color-ink);
-    font-weight: 600;
-  }
-
   .nota-respuesta {
     color: var(--color-muted);
     font-size: var(--step--1);

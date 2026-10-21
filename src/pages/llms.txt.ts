@@ -55,6 +55,9 @@ export const GET: APIRoute = async () => {
     `- [Blog](${SITIO.url}/blog): guías prácticas sobre IA aplicada, automatización y funnels.`,
   );
   lineas.push(
+    `- [Llamada de diagnóstico](${SITIO.url}/diagnostico): videollamada gratis de 30 minutos para decidir qué automatizar primero, con qué herramienta y qué esperar. Agenda en la misma página.`,
+  );
+  lineas.push(
     `- [Contacto](${SITIO.url}/contacto): llamada gratuita de 30 minutos, email y redes sociales.`,
   );
   lineas.push("");

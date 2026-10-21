@@ -13,11 +13,16 @@
  *   batería. Se para cuando la pestaña no está visible.
  * - Movimiento reducido: se dibuja una sola vez, quieta.
  * - Es decorativa: aria-hidden y sin eventos de puntero.
+ * - paleta «lima»: la de /diagnostico (verde lima sobre negro).
  */
+interface Props {
+  paleta?: "marca" | "lima";
+}
+const { paleta = "marca" } = Astro.props;
 ---
 
 <div class="cintas" aria-hidden="true">
-  <canvas class="cintas-lienzo" data-cintas></canvas>
+  <canvas class="cintas-lienzo" data-cintas data-paleta={paleta}></canvas>
 </div>
 
 <script>
@@ -30,6 +35,11 @@
     const HILOS = movil ? 40 : 90;
     const PUNTOS = movil ? 46 : 84;
     const FPS = movil ? 30 : 60;
+    const lima = lienzo.dataset.paleta === "lima";
+    const COLORES = lima
+      ? ["#7fbf1a", "#a6e22e", "#c6ff3d", "#e4ffa0"]
+      : ["#007bff", "#4f7dff", "#6366f1", "#8b5cf6"];
+    const MOTA = lima ? "#efffcc" : "#cfe3ff";
 
     let w = 0;
     let h = 0;
@@ -153,10 +163,10 @@
       const clave = `${w}x${h}`;
       if (!degradado || clave !== tamDegradado) {
         degradado = ctx.createLinearGradient(0, h, w, 0);
-        degradado.addColorStop(0, "#007bff");
-        degradado.addColorStop(0.45, "#4f7dff");
-        degradado.addColorStop(0.7, "#6366f1");
-        degradado.addColorStop(1, "#8b5cf6");
+        degradado.addColorStop(0, COLORES[0]);
+        degradado.addColorStop(0.45, COLORES[1]);
+        degradado.addColorStop(0.7, COLORES[2]);
+        degradado.addColorStop(1, COLORES[3]);
         tamDegradado = clave;
       }
       return degradado;
@@ -192,7 +202,7 @@
       }
 
       // Motas que viajan por la cinta.
-      ctx!.fillStyle = "#cfe3ff";
+      ctx!.fillStyle = MOTA;
       for (const m of motas) {
         const p = quieto ? m.p % 1 : (m.p + t * m.v) % 1;
         const k = Math.round(p * PUNTOS);

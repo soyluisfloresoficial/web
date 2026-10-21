@@ -43,6 +43,10 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 - `/aviso-de-privacidad-latinoamerica` es un aviso estándar para Latinoamérica que pidió el titular (21/10/2026). Los textos de España (aviso legal, privacidad, cookies) se mantienen. Ambos están pendientes de revisión por un abogado.
 - Tono de quien implementa: directo, sin promesas garantizadas ni urgencia artificial. Nada que suene a principiante («unos tres años», «empecé como freelance») en los textos de presentación.
 
+## Página con identidad propia
+
+`/diagnostico` (22/10/2026) es la landing de la llamada de diagnóstico, con identidad propia: lima `#C6FF3D` sobre negro `#050505`, Space Grotesk, Inter y JetBrains Mono, sin la cabecera ni el pie de la web (`Base.astro` con `identidad="lima"`). El lima es solo para la cinta, los estados activos y el botón principal. No uses esa identidad en el resto de la web ni la azul/violeta en esa página. Está indexada y enlazada desde el pie.
+
 ## Imágenes para compartir
 
 Cada página tiene su imagen para redes (Open Graph) en `public/og/`. Se generan con `node tools/generar-og.mjs` después de `npm run build` (necesita Edge o Chrome en el ordenador). Al añadir un servicio, un artículo o cambiar un título, vuelve a ejecutarlo, compila otra vez y sube las imágenes. Si una página no tiene la suya, usa `og-default.png`.
