@@ -128,6 +128,72 @@ export const servicios: Servicio[] = [
   },
 ];
 
+/**
+ * Los tres frentes en los que se agrupan los servicios (23/10/2026).
+ *
+ * Sirven para que quien llega sepa por dónde entrar sin leerse las nueve
+ * tarjetas: primero que te lleguen consultas, luego que no se enfríen y
+ * por último que el proceso aguante sin ti.
+ */
+export interface Pilar {
+  id: "captar" | "convertir" | "escalar";
+  nombre: string;
+  /** Qué se resuelve en este frente, en una frase. */
+  descripcion: string;
+  icono: "embudo" | "chat" | "flujo";
+  /** Slugs de los servicios de este frente, en el orden en que se muestran. */
+  slugs: string[];
+}
+
+export const PILARES: Pilar[] = [
+  {
+    id: "captar",
+    nombre: "Captar",
+    descripcion: "Que te encuentren y te escriban.",
+    icono: "embudo",
+    slugs: ["webs-ia", "trafico-de-pago", "funnels-conversion"],
+  },
+  {
+    id: "convertir",
+    nombre: "Convertir",
+    descripcion: "Que quien escribe no se quede sin respuesta ni sin seguimiento.",
+    icono: "chat",
+    slugs: ["agentes-ia", "crm-seguimiento-leads", "email-marketing"],
+  },
+  {
+    id: "escalar",
+    nombre: "Escalar",
+    descripcion: "Que el proceso aguante más trabajo sin depender de ti.",
+    icono: "flujo",
+    slugs: ["automatizacion", "paneles-de-metricas", "consultoria-ia"],
+  },
+];
+
+/** Los servicios de un frente, en el orden declarado en PILARES. */
+export function serviciosDe(pilar: Pilar): Servicio[] {
+  return pilar.slugs.map((slug) => {
+    const servicio = servicios.find((s) => s.slug === slug);
+    if (!servicio) {
+      throw new Error(
+        `PILARES apunta al servicio «${slug}», que no existe en servicios (src/data/servicios.ts).`,
+      );
+    }
+    return servicio;
+  });
+}
+
+// Si se añade un servicio y se olvida asignarlo a un frente, el build falla
+// aquí en vez de dejarlo fuera de la home y de /servicios sin avisar.
+{
+  const asignados = PILARES.flatMap((p) => p.slugs);
+  const huerfanos = servicios.filter((s) => !asignados.includes(s.slug));
+  if (huerfanos.length > 0) {
+    throw new Error(
+      `Servicios sin frente asignado en PILARES: ${huerfanos.map((s) => s.slug).join(", ")} (src/data/servicios.ts).`,
+    );
+  }
+}
+
 export const SITIO = {
   url: "https://soyluisflores.es",
   nombre: "Luis Flores",

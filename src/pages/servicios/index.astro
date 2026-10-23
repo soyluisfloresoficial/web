@@ -5,7 +5,7 @@ import CabeceraPagina from "../../components/CabeceraPagina.astro";
 import Cierre from "../../components/Cierre.astro";
 import Icono from "../../components/Icono.astro";
 import IlustracionServicio from "../../components/IlustracionServicio.astro";
-import { servicios, SITIO } from "../../data/servicios";
+import { servicios, SITIO, PILARES, serviciosDe } from "../../data/servicios";
 import { ilustraciones } from "../../data/ilustraciones";
 
 const imagenes = import.meta.glob<{ default: ImageMetadata }>(
@@ -113,14 +113,25 @@ const schema = [
             <h2 id="todos-titulo" class="subrayado mt-4">Piezas que se combinan</h2>
           </div>
           <p class="lead">
-            Puedes empezar por una sola. La mayoría de los proyectos termina juntando
-            dos o tres en un mismo sistema.
+            Van en tres frentes: captar, convertir y escalar. Puedes empezar por una
+            sola pieza; la mayoría de los proyectos termina juntando dos o tres en un
+            mismo sistema.
           </p>
         </div>
 
-        <ul class="rejilla-servicios mt-10">
-          {
-            servicios.map((s) => {
+        {
+          PILARES.map((pilar) => (
+            <div class="pilar mt-12">
+              <div class="pilar-cabecera reveal">
+                <span class="pilar-icono" aria-hidden="true">
+                  <Icono nombre={pilar.icono} tamano={20} grosor={1.8} />
+                </span>
+                <h3 class="pilar-nombre">{pilar.nombre}</h3>
+                <p class="pilar-texto">{pilar.descripcion}</p>
+              </div>
+
+              <ul class="rejilla-servicios mt-6">
+                {serviciosDe(pilar).map((s) => {
               // Igual que en la home: si el servicio tiene ilustración, va antes que la foto.
               const img = ilustraciones[s.slug] ? undefined : imagenDe(s.imagen);
               return (
@@ -143,9 +154,9 @@ const schema = [
                     </span>
                   </div>
                   <div class="tarjeta-cuerpo">
-                    <h3 class="tarjeta-titulo">
+                    <h4 class="tarjeta-titulo">
                       <a href={`/servicios/${s.slug}`} class="enlace-tarjeta">{s.nombre}</a>
-                    </h3>
+                    </h4>
                     <p class="tarjeta-texto">{s.definicion}</p>
                     <span class="card-link" aria-hidden="true">
                       Ver el servicio <span aria-hidden="true">→</span>
@@ -153,9 +164,11 @@ const schema = [
                   </div>
                 </li>
               );
-            })
-          }
-        </ul>
+                })}
+              </ul>
+            </div>
+          ))
+        }
       </div>
     </section>
 

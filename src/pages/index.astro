@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import { servicios, SITIO, AREA_SERVIDA } from "../data/servicios";
+import { servicios, SITIO, AREA_SERVIDA, PILARES, serviciosDe } from "../data/servicios";
 import { fugas, publicos, herramientas, estandares, proceso, faq, faqPlana, queMido } from "../data/home";
 import Showcase from "../components/Showcase.astro";
 import heroImg from "../assets/luis-flores-monitores.jpg";
@@ -117,13 +117,18 @@ const schema = [
             <span>IA aplicada · Latinoamérica y España</span>
           </p>
 
-          {/* PARCHE P1-A: el degradado va al beneficio, no al problema. */}
+          {/* Titular (23/10/2026): lo que hago, dicho literal. Sin cifras de
+              horas ni promesas: el degradado va a la acción concreta. */}
+          {/* Cuatro líneas cortas a propósito: a 52 px la columna del hero
+              (500 px) solo admite unos 20 caracteres, y las líneas largas se
+              partían solas por donde no tocaba. */}
           <h1 id="hero-titulo" class="mt-5">
             <span class="hero-line-grad block">
-              <span class="gradient-text">Automatiza tu negocio con IA</span>
+              <span class="gradient-text">Automatizo</span>
             </span>
-            <span class="hero-line-2 block">y deja de trabajar</span>
-            <span class="hero-line-2 block">12 horas al día.</span>
+            <span class="hero-line-2 block">lo que hoy haces</span>
+            <span class="hero-line-2 block">a mano: mensajes,</span>
+            <span class="hero-line-2 block">citas y seguimiento.</span>
           </h1>
 
           <p class="lead hero-lead mt-6">
@@ -136,7 +141,7 @@ const schema = [
           <ul class="claves mt-8" aria-label="Qué implemento">
             <li>
               <Icono nombre="globo" tamano={30} grosor={1.5} degradado />
-              <span>Páginas web<br />que venden</span>
+              <span>Páginas web<br />que piden la cita</span>
             </li>
             <li>
               <Icono nombre="embudo" tamano={30} grosor={1.5} degradado />
@@ -221,7 +226,7 @@ const schema = [
               </span>
               <p>
                 <span class="flotante-titulo">Agentes de IA</span>
-                <span class="flotante-texto">que trabajan por ti</span>
+                <span class="flotante-texto">que contestan y agendan</span>
               </p>
             </div>
           </div>
@@ -322,13 +327,14 @@ const schema = [
           <div>
             <p class="eyebrow">Servicios</p>
             <h2 id="servicios-titulo" class="subrayado mt-4">
-              Todo lo que necesitas para automatizar tu negocio
+              Nueve servicios, tres frentes
             </h2>
           </div>
           <div class="cabecera-columna">
             <p class="lead">
-              Desde un agente de IA hasta un sistema completo para conseguir y
-              atender clientes. Yo lo implemento y te lo dejo documentado.
+              Primero que te lleguen consultas, luego que no se enfríen y por
+              último que el proceso aguante sin ti. Empezamos por el frente que
+              más te esté apretando; yo lo implemento y te lo dejo documentado.
             </p>
             <a class="boton-secundario mt-6" href="/servicios">
               Ver todos los servicios <Icono nombre="flecha" tamano={18} />
@@ -336,48 +342,61 @@ const schema = [
           </div>
         </div>
 
-        {/* PARCHE P1-C: todos los servicios, desde un único array. */}
-        <ul class="services-grid mt-12">
-          {
-            servicios.map((s) => {
-              const img = imagenDe(s.imagen);
-              const ilus = ilustraciones[s.slug];
-              return (
-                <li
-                  class="card card-interactiva tarjeta-servicio reveal overflow-hidden"
-                  style={`--svc: var(${s.color})`}
-                >
-                  <div class={`media duotono${ilus ? " media-ilus" : ""}`}>
-                    {ilus ? (
-                      <Fragment set:html={ilus} />
-                    ) : (
-                      img && (
-                        <Image
-                          src={img}
-                          alt={s.imagenAlt}
-                          widths={[320, 640]}
-                          sizes="(min-width: 1024px) 30vw, 100vw"
-                          loading="lazy"
-                          class="aspect-[16/9] w-full object-cover"
-                        />
-                      )
-                    )}
-                    <span class="distintivo" aria-hidden="true">
-                      <Icono nombre={s.icono} tamano={18} grosor={1.8} />
-                    </span>
-                  </div>
-                  <div class="tarjeta-cuerpo">
-                    <h3 class="card-title">{s.nombre}</h3>
-                    <p class="card-text mt-2">{s.resumen}</p>
-                    <a class="card-link" href={`/servicios/${s.slug}`}>
-                      Ver el servicio <span aria-hidden="true">→</span>
-                    </a>
-                  </div>
-                </li>
-              );
-            })
-          }
-        </ul>
+        {/* Los nueve servicios, agrupados en los tres frentes de PILARES.
+            Siguen saliendo de un único array: aquí solo se ordenan. */}
+        {
+          PILARES.map((pilar) => (
+            <div class="pilar mt-12">
+              <div class="pilar-cabecera reveal">
+                <span class="pilar-icono" aria-hidden="true">
+                  <Icono nombre={pilar.icono} tamano={20} grosor={1.8} />
+                </span>
+                <h3 class="pilar-nombre">{pilar.nombre}</h3>
+                <p class="pilar-texto">{pilar.descripcion}</p>
+              </div>
+
+              <ul class="services-grid mt-6">
+                {serviciosDe(pilar).map((s) => {
+                  const img = imagenDe(s.imagen);
+                  const ilus = ilustraciones[s.slug];
+                  return (
+                    <li
+                      class="card card-interactiva tarjeta-servicio reveal overflow-hidden"
+                      style={`--svc: var(${s.color})`}
+                    >
+                      <div class={`media duotono${ilus ? " media-ilus" : ""}`}>
+                        {ilus ? (
+                          <Fragment set:html={ilus} />
+                        ) : (
+                          img && (
+                            <Image
+                              src={img}
+                              alt={s.imagenAlt}
+                              widths={[320, 640]}
+                              sizes="(min-width: 1024px) 30vw, 100vw"
+                              loading="lazy"
+                              class="aspect-[16/9] w-full object-cover"
+                            />
+                          )
+                        )}
+                        <span class="distintivo" aria-hidden="true">
+                          <Icono nombre={s.icono} tamano={18} grosor={1.8} />
+                        </span>
+                      </div>
+                      <div class="tarjeta-cuerpo">
+                        <h4 class="card-title">{s.nombre}</h4>
+                        <p class="card-text mt-2">{s.resumen}</p>
+                        <a class="card-link" href={`/servicios/${s.slug}`}>
+                          Ver el servicio <span aria-hidden="true">→</span>
+                        </a>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))
+        }
 
         <div class="caja-cta mt-10 reveal">
           <p>
