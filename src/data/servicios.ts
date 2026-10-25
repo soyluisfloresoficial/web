@@ -239,6 +239,14 @@ export const AREA_SERVIDA = [
 /**
  * Productos propios. Nova Funnels se retiró el 21/10/2026 porque
  * novafunnels.es ya no está activo.
+ *
+ * TODO (titular): la auditoría del 26/10/2026 pide nombrar Nova Funnels como
+ * la agencia, en «perfiles» (sameAs) y en /sobre-mi. No se ha hecho porque
+ * novafunnels.es sigue sin resolver: una consulta de DNS del 26/10/2026
+ * devuelve NXDOMAIN para novafunnels.es y www.novafunnels.es. Enlazar un
+ * dominio caído desde el schema es un enlace roto. Hace falta que el titular
+ * diga si el dominio vuelve, si la agencia tiene otra dirección, o si se
+ * nombra sin enlace.
  */
 export const proyectos = [
   {

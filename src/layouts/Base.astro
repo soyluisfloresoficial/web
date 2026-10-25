@@ -25,7 +25,16 @@ interface Props {
   modifiedTime?: Date;
   /** Nodos de schema propios de la página, que se suman al grafo base. */
   schema?: unknown[];
+  /**
+   * La página queda fuera del índice, pero sus enlaces se siguen igual
+   * («noindex, follow»): llevan a páginas que sí interesan.
+   */
   noindex?: boolean;
+  /**
+   * Ruta canónica distinta de la propia, para una página que repite el
+   * contenido de otra (/diagnostico apunta a /contacto).
+   */
+  canonicalDe?: string;
   /**
    * «lima»: página con identidad propia (por ejemplo /diagnostico). No lleva
    * la cabecera, el pie, la barra del celular ni el chat de la web: la
@@ -44,13 +53,16 @@ const {
   modifiedTime,
   schema = [],
   noindex = false,
+  canonicalDe,
   identidad = "marca",
 } = Astro.props;
 const lima = identidad === "lima";
 
 // trailingSlash: "never". La raíz es la excepción y conserva su barra.
 const ruta = Astro.url.pathname.replace(/\/+$/, "");
-const canonical = `${SITIO.url}${ruta === "" ? "/" : ruta}`;
+const propia = `${SITIO.url}${ruta === "" ? "/" : ruta}`;
+// og:url siempre es la dirección real de la página: es la que se comparte.
+const canonical = canonicalDe ? `${SITIO.url}${canonicalDe}` : propia;
 // Cada página tiene su propia imagen para compartir (tools/generar-og.mjs);
 // si aún no existe, se usa la general.
 const ogFinal = ogImage ?? imagenOg(ruta);
@@ -163,12 +175,19 @@ const grafo = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="es" href={canonical} />
-    <link rel="alternate" hreflang="x-default" href={canonical} />
+    {/* Un hreflang hacia una página sin indexar no sirve de nada. */}
+    {
+      !noindex && (
+        <>
+          <link rel="alternate" hreflang="es" href={canonical} />
+          <link rel="alternate" hreflang="x-default" href={canonical} />
+        </>
+      )
+    }
 
     <meta
       name="robots"
-      content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}
+      content={noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
     />
 
     {/* Español neutro para Latinoamérica, con España como variante. */}
@@ -178,7 +197,7 @@ const grafo = {
     <meta property="og:site_name" content={SITIO.nombre} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    <meta property="og:url" content={propia} />
     <meta property="og:image" content={ogImageAbs} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />

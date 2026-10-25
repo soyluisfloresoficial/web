@@ -54,7 +54,6 @@ function lastmodEstaticas() {
     "/servicios": ["src/pages/servicios/index.astro", "src/data/servicios.ts"],
     "/sobre-mi": ["src/pages/sobre-mi.astro"],
     "/contacto": ["src/pages/contacto.astro"],
-    "/diagnostico": ["src/pages/diagnostico.astro"],
     "/roi": ["src/pages/roi.astro"],
     "/blog": ["src/pages/blog/index.astro"],
   };
@@ -110,6 +109,10 @@ export default defineConfig({
 
   integrations: [
     sitemap({
+      // /diagnostico es la landing de campañas: repite el contenido de
+      // /contacto, va con «noindex, follow» y canónica hacia /contacto, así
+      // que fuera del sitemap (26/10/2026).
+      filter: (pagina) => pagina !== "https://soyluisflores.es/diagnostico",
       serialize(item) {
         const fecha = lastmod.get(item.url.replace(/\/$/, ""));
         if (fecha) item.lastmod = fecha;

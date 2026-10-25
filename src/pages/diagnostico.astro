@@ -1,8 +1,13 @@
 ---
 /**
  * /diagnostico: landing de la llamada de diagnóstico, con identidad propia
- * (lima sobre negro). Pedida por el titular el 22/10/2026 para campañas, y
- * también indexada como una página más.
+ * (lima sobre negro). Pedida por el titular el 22/10/2026 para campañas.
+ *
+ * Indexación (26/10/2026): la página repite la agenda y las preguntas de
+ * /contacto, así que va con «noindex, follow», canónica hacia /contacto y
+ * fuera del sitemap. Así no compite con /contacto en los buscadores y sigue
+ * sirviendo para campañas, donde las visitas llegan por anuncio o enlace
+ * directo. Los enlaces internos que ya existen (pie, llms.txt) se quedan.
  *
  * Reglas de la identidad (no reutilizar en el resto de la web):
  * - Lima (#C6FF3D) solo en la cinta de fondo, estados activos y el botón
@@ -113,7 +118,14 @@ const schema = [
 ];
 ---
 
-<Base title={title} description={description} schema={schema} identidad="lima">
+<Base
+  title={title}
+  description={description}
+  schema={schema}
+  identidad="lima"
+  noindex
+  canonicalDe="/contacto"
+>
   <a class="lp-saltar" href="#lp-contenido">Saltar al contenido</a>
 
   {/* --------------------------------------------------------- Cabecera */}
