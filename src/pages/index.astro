@@ -122,12 +122,15 @@ const schema = [
           {/* Cuatro líneas cortas a propósito: a 52 px la columna del hero
               (500 px) solo admite unos 20 caracteres, y las líneas largas se
               partían solas por donde no tocaba. */}
+          {/* Los {" "} separan las líneas en el texto extraído: los <span> son
+              bloques, así que no cambian el diseño, pero sin ellos el H1 se lee
+              «Automatizolo que hoy hacesa mano: mensajes,citas». */}
           <h1 id="hero-titulo" class="mt-5">
             <span class="hero-line-grad block">
               <span class="gradient-text">Automatizo</span>
-            </span>
-            <span class="hero-line-2 block">lo que hoy haces</span>
-            <span class="hero-line-2 block">a mano: mensajes,</span>
+            </span>{" "}
+            <span class="hero-line-2 block">lo que hoy haces</span>{" "}
+            <span class="hero-line-2 block">a mano: mensajes,</span>{" "}
             <span class="hero-line-2 block">citas y seguimiento.</span>
           </h1>
 

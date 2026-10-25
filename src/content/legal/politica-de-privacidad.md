@@ -1,9 +1,12 @@
 ---
+# REVISAR CON ABOGADO: borrador técnico redactado por el implementador,
+# no es asesoramiento jurídico. Los apartados 3 y 4 se reescribieron el
+# 26/10/2026 a partir de lo que hace el código, no de una plantilla.
 title: "Política de privacidad"
 metaTitle: "Política de privacidad y protección de datos | Luis Flores"
 description: "Cómo trato tus datos personales en soyluisflores.es según el RGPD y la LOPDGDD: responsable, finalidades, base jurídica, conservación y tus derechos."
 ---
-Última actualización: 8 de octubre de 2026
+Última actualización: 26 de octubre de 2026
 
 Esta política explica cómo se tratan los datos personales que facilitas a través de este sitio web, conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
 
@@ -23,15 +26,29 @@ No se solicitan categorías especiales de datos. Te pedimos que no las incluyas 
 
 ## 3. Finalidades y base jurídica
 
+Cada tratamiento tiene su propia finalidad, su base jurídica y su plazo. Los plazos se detallan en el apartado 5.
+
+**a) Reservar la llamada de diagnóstico.** Cuando eliges día y hora en la agenda de Calendly se tratan tu nombre, tu correo electrónico, tu zona horaria y lo que escribas al reservar. Sirve para agendar la videollamada, enviarte la confirmación y el recordatorio, y atenderte. La base jurídica es la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Se conservan según el apartado 5.
+
+**b) Responder tus consultas por correo electrónico o WhatsApp.** Se tratan los datos que tú incluyas en el mensaje: nombre, correo, teléfono y el contenido de la consulta. Sirve para contestarte y, si lo pides, prepararte una propuesta. La base jurídica es la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD) y, cuando la consulta no busca contratar, el interés legítimo en atender a quien escribe (art. 6.1.f del RGPD). Se conservan según el apartado 5.
+
+**c) Prestar el servicio contratado y cumplir con la ley.** Si llegamos a trabajar juntos, se tratan los datos necesarios para prestar el servicio, facturarlo y cumplir las obligaciones fiscales y contables. Las bases jurídicas son la ejecución del contrato (art. 6.1.b del RGPD) y el cumplimiento de obligaciones legales (art. 6.1.c del RGPD). Se conservan según el apartado 5.
+
+**d) Medir el uso de la web.** Solo si aceptas las cookies de analítica se tratan datos de navegación de forma agregada, mediante Google Tag Manager. La base jurídica es tu consentimiento (art. 6.1.a del RGPD), que puedes retirar cuando quieras desde «Configurar cookies», en el pie de la web. Los plazos están en la [Política de cookies](/politica-de-cookies).
+
+**e) Medir las campañas publicitarias.** Solo si aceptas las cookies de marketing. La base jurídica es tu consentimiento (art. 6.1.a del RGPD), que puedes retirar del mismo modo. Los plazos están en la [Política de cookies](/politica-de-cookies).
+
+Retirar el consentimiento no afecta a la licitud del tratamiento realizado antes de retirarlo.
+
 No se toman decisiones automatizadas ni se elaboran perfiles con efectos jurídicos sobre ti.
 
 ## 4. Destinatarios
 
 No se ceden datos a terceros salvo obligación legal. Para prestar el servicio se recurre a proveedores que actúan como encargados del tratamiento, con los que existen contratos que garantizan la protección de tus datos:
 
-- Proveedor de alojamiento web: Cloudflare, Inc.
-- Herramienta de reserva de llamadas: Calendly LLC.
-- Proveedor del formulario de contacto y del correo electrónico.
+- Alojamiento de la web: Cloudflare, Inc.
+- Agenda de las llamadas: Calendly LLC.
+- Mensajes por WhatsApp, si eliges ese canal: WhatsApp Ireland Limited (grupo Meta).
 - Google Ireland Ltd. (Google Tag Manager y herramientas de medición), solo si aceptas las cookies correspondientes.
 
 Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Europeo. En ese caso, las transferencias se amparan en decisiones de adecuación de la Comisión Europea, como el Marco de Privacidad de Datos UE-EE. UU., o en cláusulas contractuales tipo.

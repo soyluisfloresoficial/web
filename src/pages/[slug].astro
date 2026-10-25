@@ -113,6 +113,44 @@ const schema = [
     text-decoration: underline;
     text-underline-offset: 3px;
   }
+  /* Tablas (la de cookies). El envoltorio hace el scroll en celular, para
+     que no sea la tabla la que desborde la página (astro.config.mjs). */
+  .prosa :global(.tabla-scroll) {
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+  }
+  .prosa :global(table) {
+    width: 100%;
+    min-width: 34rem;
+    border-collapse: collapse;
+    font-size: var(--step--1);
+  }
+  .prosa :global(th),
+  .prosa :global(td) {
+    padding: 0.75rem 0.875rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .prosa :global(thead th) {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--color-navy-2);
+  }
+  .prosa :global(tbody tr:last-child td) {
+    border-bottom: 0;
+  }
+  .prosa :global(td code) {
+    color: var(--color-ink);
+    font-size: 0.875em;
+    white-space: nowrap;
+  }
   .prosa :global(strong) {
     color: var(--color-ink);
   }
