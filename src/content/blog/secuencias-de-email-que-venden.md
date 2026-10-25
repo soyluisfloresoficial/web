@@ -1,6 +1,6 @@
 ---
 title: "Secuencias de email: cómo armar correos automáticos que acompañan hasta la venta"
-description: "Qué es una secuencia de email, qué tipos conviene tener primero y cómo escribirlas para que ayuden a vender sin que tus contactos sientan que les haces spam."
+description: "Qué es una secuencia de email, qué tipos conviene tener primero y cómo escribirlas para que ayuden a vender sin parecer spam."
 metaTitle: "Secuencias de email automáticas que venden | Luis Flores"
 datePublished: 2026-10-21
 dateModified: 2026-10-21

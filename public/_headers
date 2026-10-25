@@ -1,0 +1,22 @@
+# Cabeceras de seguridad. Cloudflare las aplica a los archivos estáticos del
+# Worker: este archivo se copia tal cual a dist/ durante la compilación.
+#
+# La CSP va en modo Report-Only a propósito (26/10/2026): el navegador avisa
+# en su consola de lo que bloquearía, pero no bloquea nada. Antes de pasarla
+# a modo real (quitando «-Report-Only» del nombre) hay que navegar por la web
+# con la consola abierta, aceptar las cookies, abrir la agenda de Calendly y
+# comprobar que no aparece ningún aviso.
+#
+# Por qué cada origen:
+# - 'unsafe-inline' en script-src: Astro deja los scripts de la web dentro del
+#   HTML, y Google Tag Manager también los inyecta así.
+# - googletagmanager y google-analytics: solo se cargan tras aceptar cookies.
+# - cloudflareinsights y /cdn-cgi: los añade Cloudflare por su cuenta.
+# - calendly.com en frame-src: la agenda va dentro de /contacto y /diagnostico.
+# - WhatsApp no necesita permiso: son enlaces que salen de la web.
+
+/*
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), browsing-topics=()
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net; font-src 'self'; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net https://static.cloudflareinsights.com; frame-src https://calendly.com https://*.calendly.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests

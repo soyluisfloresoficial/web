@@ -1,6 +1,6 @@
 ---
 title: "Embudos de venta: cómo captar y dar seguimiento sin hacer spam"
-description: "Un embudo de ventas no consiste en llenar de correos a la gente. Te cuento cómo captar contactos y darles seguimiento con mensajes que de verdad les sirvan."
+description: "Un embudo de ventas no consiste en llenar de correos a la gente. Te cuento cómo captar contactos y darles seguimiento con mensajes útiles."
 metaTitle: "Embudos de venta sin hacer spam | Luis Flores"
 datePublished: 2026-10-02
 dateModified: 2026-10-21

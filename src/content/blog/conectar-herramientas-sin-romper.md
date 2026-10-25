@@ -1,6 +1,6 @@
 ---
 title: "Cómo conectar tus herramientas sin que nada se rompa"
-description: "Automatizar es lograr que tus herramientas se pasen datos solas. Te explico cómo hacerlo con avisos de error y sin duplicados, para que funcione todos los días."
+description: "Automatizar es lograr que tus herramientas se pasen datos solas. Te explico cómo hacerlo con avisos de error y sin duplicados, para que no falle."
 metaTitle: "Cómo conectar tus herramientas sin romper nada | Luis Flores"
 datePublished: 2026-10-09
 dateModified: 2026-10-21

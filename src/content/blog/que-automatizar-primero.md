@@ -1,6 +1,6 @@
 ---
 title: "Qué automatizar primero en tu negocio: un criterio sencillo"
-description: "Un criterio práctico para decidir qué tareas automatizar primero en tu negocio con IA: que se repitan, que sigan reglas claras y que afecten a tus clientes."
+description: "Un criterio práctico para decidir qué automatizar primero: tareas que se repiten, que siguen reglas claras y que afectan a tus clientes."
 metaTitle: "Qué automatizar primero en tu negocio con IA | Luis Flores"
 datePublished: 2026-09-15
 dateModified: 2026-10-21

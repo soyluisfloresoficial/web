@@ -1,6 +1,6 @@
 ---
 title: "Panel de métricas para tu negocio: qué mostrar y cómo armarlo"
-description: "Cómo armar un panel de métricas que se actualice solo, qué números poner en cada etapa y qué errores evitar para que sirva para decidir y no solo para mirar."
+description: "Cómo armar un panel de métricas que se actualice solo, qué números poner en cada etapa y qué errores evitar para que sirva para decidir."
 metaTitle: "Cómo armar un panel de métricas | Luis Flores"
 datePublished: 2026-10-21
 dateModified: 2026-10-21

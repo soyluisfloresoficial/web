@@ -439,7 +439,7 @@ export const metas: Record<string, { title: string; description: string }> = {
   "agentes-ia": {
     title: "Agentes de IA para WhatsApp, chat y voz | Luis Flores",
     description:
-      "Agentes de IA que atienden a tus clientes por WhatsApp, chat o teléfono las 24 horas, agendan citas y se conectan con tu CRM. No inventan precios ni horarios.",
+      "Agentes de IA que atienden por WhatsApp, chat o teléfono las 24 horas, agendan citas y se conectan con tu CRM. No inventan precios ni horarios.",
   },
   // [VERIFICAR en Search Console / Keyword Planner] qué pesa más en cada país:
   // «funnel de ventas», «embudo de ventas» o «funnel de conversión». El title
@@ -457,17 +457,17 @@ export const metas: Record<string, { title: string; description: string }> = {
   "webs-ia": {
     title: "Páginas web con IA hechas para vender | Luis Flores",
     description:
-      "Páginas web con IA pensadas primero para celular, rápidas y fáciles de usar, con un objetivo claro por página y un chatbot opcional conectado a tu calendario.",
+      "Páginas web pensadas primero para celular, rápidas y fáciles de usar, con un objetivo claro por página y un chatbot de IA opcional conectado a tu agenda.",
   },
   "trafico-de-pago": {
     title: "Publicidad en Meta Ads y Google Ads | Luis Flores",
     description:
-      "Campañas en Meta Ads y Google Ads con la medición bien configurada desde el primer día. Solo se invierte más en lo que demuestra ser rentable para tu negocio.",
+      "Campañas en Meta Ads y Google Ads con la medición bien configurada desde el primer día. Se invierte más solo en lo que demuestra ser rentable.",
   },
   "consultoria-ia": {
     title: "Consultoría de IA para pymes y emprendedores | Luis Flores",
     description:
-      "Consultoría de IA para pymes y emprendedores: diagnóstico de tu negocio y un plan ordenado para empezar a usar inteligencia artificial donde más te conviene.",
+      "Consultoría de IA para pymes: diagnóstico de tu negocio y un plan ordenado para empezar a usar inteligencia artificial donde más te conviene.",
   },
   "crm-seguimiento-leads": {
     title: "CRM y seguimiento de clientes potenciales | Luis Flores",
@@ -477,7 +477,7 @@ export const metas: Record<string, { title: string; description: string }> = {
   "email-marketing": {
     title: "Email marketing y secuencias automáticas | Luis Flores",
     description:
-      "Secuencias de correo de bienvenida, seguimiento y reactivación que se envían solas, solo a contactos que dieron su permiso, y medidas por clics y respuestas.",
+      "Secuencias de correo de bienvenida, seguimiento y reactivación que se envían solas, solo a quien dio su permiso, medidas por clics y respuestas.",
   },
   "paneles-de-metricas": {
     title: "Paneles de métricas y reportes para negocios | Luis Flores",
