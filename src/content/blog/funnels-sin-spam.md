@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa sobre consentimiento y permiso en captación de contactos. No la elijo yo para no inventar una fuente.
 title: "Embudos de venta: cómo captar y dar seguimiento sin hacer spam"
 description: "Un embudo de ventas no consiste en llenar de correos a la gente. Te cuento cómo captar contactos y darles seguimiento con mensajes útiles."
 metaTitle: "Embudos de venta sin hacer spam | Luis Flores"
@@ -48,5 +49,7 @@ Sin medición, cuando algo no vende no sabes si el problema es que llega poca ge
 
 **¿Necesito una página web completa?** No necesariamente. Muchos embudos funcionan con una sola página de captación bien hecha, conectada a tu CRM.
 
+
+Los correos que sostienen el embudo los detallo en [secuencias de email que venden](/blog/secuencias-de-email-que-venden), y los números de cada paso, en [qué medir en cada etapa](/blog/que-medir-en-cada-etapa). Armar el embudo completo es [funnels de conversión](/servicios/funnels-conversion).
 
 Un embudo no tiene por qué incomodar a nadie. Bien armado, consigue más clientes y además deja una buena impresión. Si quieres, revisamos cómo te llegan hoy los contactos y en qué parte se te escapan, en una llamada de 30 minutos.

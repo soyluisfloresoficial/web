@@ -11,6 +11,16 @@
 
 import type { Pregunta } from "./home";
 
+/** Un paso de «Cómo trabajamos», con el reparto de tareas. */
+export interface PasoServicio {
+  titulo: string;
+  texto: string;
+  /** Lo que hago yo en ese paso. */
+  yo: string;
+  /** Lo que necesito del cliente. */
+  tu: string;
+}
+
 export interface DetalleServicio {
   h1: string;
   intro: string;
@@ -18,6 +28,12 @@ export interface DetalleServicio {
   paraQuien: string[];
   queIncluye: string[];
   faq: Pregunta[];
+  /**
+   * Pasos propios de «Cómo trabajamos». Si falta, la página usa los tres
+   * pasos generales de src/data/home.ts. Se añadió el 26/10/2026 porque las
+   * nueve páginas de servicio enseñaban el mismo texto genérico.
+   */
+  proceso?: PasoServicio[];
 }
 
 export const detalles: Record<string, DetalleServicio> = {
@@ -160,8 +176,30 @@ export const detalles: Record<string, DetalleServicio> = {
 
   "webs-ia": {
     h1: "Páginas web con IA rápidas, claras y hechas para vender",
+    proceso: [
+      {
+        titulo: "Briefing y contenido",
+        texto:
+          "Antes de diseñar hay que decidir qué páginas hacen falta y qué va en cada una.",
+        yo: "Reviso qué vendes, a quién y qué debe hacer la persona que llega. Ordeno las páginas y el contenido de cada una.",
+        tu: "Me pasas tus textos y tus fotos, y los accesos al dominio.",
+      },
+      {
+        titulo: "Diseño y maqueta",
+        texto:
+          "Diseño primero para la pantalla del teléfono y después lo adapto a pantallas grandes.",
+        yo: "Diseño, maqueto las páginas y te doy un enlace de prueba para que las revises antes de publicar.",
+        tu: "Revisas el enlace de prueba y me dices qué cambiar.",
+      },
+      {
+        titulo: "Publicación y medición",
+        texto: "La web sale al aire con la medición puesta desde el primer día.",
+        yo: "Publico, dejo el SEO técnico y la medición configurados y te enseño a hacer los cambios más comunes.",
+        tu: "Apruebas la publicación y me cuentas qué preguntas te llegan por la web.",
+      },
+    ],
     intro:
-      "La mayoría de las visitas entra desde el celular y decide en pocos segundos si se queda. Una página rápida, clara y con un solo objetivo por página vende más que una web muy bonita que nadie entiende.",
+      "Una web tiene un solo trabajo: que la persona que llega sepa qué hacer. La hago rápida, con un objetivo y un botón principal en cada página, y pensada primero para la pantalla del teléfono.",
     resultado: [
       "Una web que carga rápido y vende también desde el celular.",
       "Cada página con un objetivo claro, en lugar de un folleto que nadie lee.",
@@ -183,7 +221,7 @@ export const detalles: Record<string, DetalleServicio> = {
       {
         pregunta: "¿Qué quiere decir que una web esté pensada primero para celular?",
         respuesta:
-          "Que se diseña primero para la pantalla del teléfono y después se adapta a pantallas grandes. Desde ahí entra la mayoría de las visitas y ahí es donde más se nota una web lenta o confusa.",
+          "Que se diseña primero para la pantalla del teléfono y después se adapta a pantallas grandes. En esa pantalla es donde más se nota una web lenta o confusa, y en tu panel de analíticas puedes ver cuánta de tu visita llega desde ahí.",
       },
       {
         pregunta: "¿El chatbot es obligatorio?",

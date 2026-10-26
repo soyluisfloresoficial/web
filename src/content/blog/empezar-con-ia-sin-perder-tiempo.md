@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa sobre adopción de IA en pequeñas empresas. No la elijo yo para no inventar una fuente.
 title: "Cómo empezar con IA en tu negocio sin perder tiempo ni dinero"
 description: "Hay cientos de herramientas de IA y es fácil perderse probando. Te propongo un camino para empezar por lo que más te ayuda, sin gastar de más."
 metaTitle: "Cómo empezar con IA en tu negocio | Luis Flores"
@@ -44,5 +45,7 @@ Menos de lo que mucha gente cree, si empiezas por una sola cosa. Muchas herramie
 
 **¿Por dónde empiezo si no sé nada de tecnología?** Por anotar durante una semana en qué se te va el tiempo. Con esa lista ya se puede decidir qué conviene automatizar primero.
 
+
+El criterio concreto para elegir la primera tarea está en [qué automatizar primero](/blog/que-automatizar-primero), y para ver el efecto, en [cómo armar un panel de métricas](/blog/panel-de-metricas-para-tu-negocio). Si quieres el plan hecho y ordenado, eso es [consultoría de IA](/servicios/consultoria-ia).
 
 Empezar con IA sin perder tiempo es, sobre todo, cuestión de orden y prioridades. Si quieres ahorrarte la etapa de probar a ciegas, en una llamada de diagnóstico de 30 minutos definimos una prioridad clara para tu caso.

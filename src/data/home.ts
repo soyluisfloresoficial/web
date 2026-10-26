@@ -8,7 +8,7 @@ export const fugas = [
   {
     titulo: "Respondes tarde y el cliente se va",
     texto:
-      "Te escriben al mediodía y contestas en la noche. Para entonces ya le escribieron a otro, y casi siempre se queda con el cliente el primero que responde.",
+      "Te escriben al mediodía y contestas en la noche. Para entonces esa persona ya le escribió a otro negocio y la conversación sigue allá.",
   },
   {
     titulo: "El día se te va en tareas repetidas",

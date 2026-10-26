@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa con tasas de conversión de referencia por sector. No la elijo yo para no inventar una fuente.
 title: "Qué medir en tu negocio para decidir con datos y no por intuición"
 description: "Medir de más abruma y no sirve. Te muestro las pocas métricas que importan en cada etapa para decidir con datos sin llenarte de reportes."
 metaTitle: "Qué métricas medir en tu negocio para decidir | Luis Flores"
@@ -48,5 +49,7 @@ Mi recomendación: empieza con una tabla sencilla con esas cuatro etapas y reví
 
 **¿Qué hago si no tengo datos de antes?** Empieza a registrar desde hoy. En unas semanas ya vas a tener tu punto de partida.
 
+
+Dónde ver todos esos números juntos está en [cómo armar un panel de métricas](/blog/panel-de-metricas-para-tu-negocio), y el embudo que los genera, en [funnels sin spam](/blog/funnels-sin-spam). Ajustar las etapas una por una es [funnels de conversión](/servicios/funnels-conversion).
 
 Si quieres, vemos qué medir en tu caso y cómo dejarlo registrado sin que te quite tiempo, en una llamada de 30 minutos.

@@ -1,0 +1,132 @@
+---
+/**
+ * Prueba social: casos reales y testimonios, con sus datos en
+ * src/data/prueba-social.ts.
+ *
+ * Mientras las dos listas estén vacías el componente no pinta nada: ni la
+ * sección, ni el título, ni un hueco. Así puede quedarse puesto en la portada
+ * y en las páginas de servicio desde hoy, y aparece solo cuando el titular
+ * pase casos y testimonios reales con permiso del cliente (26/10/2026).
+ *
+ * Reutiliza las clases que ya usa el resto de la web (section, banda,
+ * cabecera-seccion, grid-3, card tarjeta): no trae estilos nuevos salvo el
+ * de la cita.
+ */
+import { casos, testimonios } from "../data/prueba-social";
+
+interface Props {
+  /** Id para aria-labelledby, por si hay dos en la misma página. */
+  id?: string;
+  /** "banda" pinta el fondo alterno, igual que las demás secciones. */
+  banda?: boolean;
+  acento?: "coral" | "cian" | "turquesa" | "ambar" | "violeta";
+  antetitulo?: string;
+  titulo?: string;
+  entradilla?: string;
+}
+
+const {
+  id = "prueba-social-titulo",
+  banda = true,
+  acento = "turquesa",
+  antetitulo = "Casos",
+  titulo = "Lo que ha cambiado en negocios reales",
+  entradilla = "Cada caso lleva el permiso del cliente y el dato con el que se midió el cambio.",
+} = Astro.props;
+
+const hayAlgo = casos.length > 0 || testimonios.length > 0;
+---
+
+{
+  hayAlgo && (
+    <section
+      class={banda ? "section banda" : "section"}
+      aria-labelledby={id}
+      data-acento={acento}
+    >
+      <div class="container-lf">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">{antetitulo}</p>
+            <h2 id={id} class="subrayado mt-4">{titulo}</h2>
+          </div>
+          <p class="lead">{entradilla}</p>
+        </div>
+
+        {casos.length > 0 && (
+          <ul class="grid-3 mt-12">
+            {casos.map((c) => (
+              <li class="card tarjeta reveal">
+                <p class="eyebrow">{c.sector}</p>
+                <h3 class="card-title mt-3">{c.cliente}</h3>
+                <p class="card-text mt-3">{c.queSeHizo}</p>
+                <dl class="roles mt-5">
+                  <div>
+                    <dt>Qué cambió</dt>
+                    <dd>{c.queCambio}</dd>
+                  </div>
+                  <div>
+                    <dt>Cómo se midió</dt>
+                    <dd>{c.comoSeMidio}</dd>
+                  </div>
+                </dl>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {testimonios.length > 0 && (
+          <ul class="grid-3 mt-10">
+            {testimonios.map((t) => (
+              <li class="card tarjeta reveal">
+                <blockquote class="cita">
+                  <p>{t.texto}</p>
+                  <footer>
+                    <span class="cita-nombre">{t.nombre}</span>
+                    <span class="cita-cargo">{t.cargo}</span>
+                  </footer>
+                </blockquote>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .cita {
+    margin: 0;
+  }
+
+  .cita p {
+    color: var(--color-ink);
+    font-size: var(--step-0);
+    line-height: 1.6;
+  }
+
+  .cita p::before {
+    content: "«";
+  }
+
+  .cita p::after {
+    content: "»";
+  }
+
+  .cita footer {
+    display: grid;
+    gap: 0.125rem;
+    margin-top: 1rem;
+  }
+
+  .cita-nombre {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  .cita-cargo {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+  }
+</style>

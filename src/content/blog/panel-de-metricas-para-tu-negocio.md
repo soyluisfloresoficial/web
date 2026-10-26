@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa sobre definición de métricas o KPI. No la elijo yo para no inventar una fuente.
 title: "Panel de métricas para tu negocio: qué mostrar y cómo armarlo"
 description: "Cómo armar un panel de métricas que se actualice solo, qué números poner en cada etapa y qué errores evitar para que sirva para decidir."
 metaTitle: "Cómo armar un panel de métricas | Luis Flores"
@@ -72,5 +73,7 @@ Depende de lo que ya usas. A veces el propio CRM trae paneles suficientes. Otras
 **¿Tengo que cambiar de herramientas?** Normalmente no. El panel toma los datos de lo que ya usas. Solo tendría sentido cambiar si alguna herramienta no deja sacar sus datos.
 
 **¿Cada cuánto tengo que revisarlo?** Una vez por semana suele alcanzar para decidir. Lo importante es revisarlo siempre el mismo día y comparar con las semanas anteriores.
+
+Qué número va en cada etapa lo desarrollo en [qué medir en cada etapa](/blog/que-medir-en-cada-etapa), y la parte de que los datos lleguen solos, en [conectar herramientas sin romper nada](/blog/conectar-herramientas-sin-romper). El panel montado y conectado es [paneles de métricas e informes](/servicios/paneles-de-metricas).
 
 Si quieres, vemos qué números te conviene seguir y de dónde saldría cada uno, en una llamada de 30 minutos.

@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa sobre errores de integración o reintentos (documentación de Make, n8n o similar). No la elijo yo para no inventar una fuente.
 title: "Cómo conectar tus herramientas sin que nada se rompa"
 description: "Automatizar es lograr que tus herramientas se pasen datos solas. Te explico cómo hacerlo con avisos de error y sin duplicados, para que no falle."
 metaTitle: "Cómo conectar tus herramientas sin romper nada | Luis Flores"
@@ -43,5 +44,7 @@ Depende del caso, no de la moda. Make es muy visual y flexible, n8n lo puedes in
 
 **¿Puedo hacer cambios yo mismo?** Sí. Con la documentación puedes hacer los cambios simples, y para los grandes conviene revisarlos antes.
 
+
+Antes de conectar nada hay que decidir qué conectar, y ese criterio está en [qué automatizar primero](/blog/que-automatizar-primero). Cuando los datos ya se mueven solos, el paso siguiente es [un panel de métricas que se actualice solo](/blog/panel-de-metricas-para-tu-negocio). Si prefieres que lo monte yo, eso es [automatización de procesos](/servicios/automatizacion).
 
 Hacerlo bien desde el principio te ahorra muchos dolores de cabeza después. Si quieres, hacemos juntos la lista de tus tareas repetitivas y vemos cuál conviene automatizar primero, en una llamada de 30 minutos.

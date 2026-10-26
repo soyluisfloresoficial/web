@@ -5,6 +5,7 @@ import CabeceraPagina from "../../components/CabeceraPagina.astro";
 import Cierre from "../../components/Cierre.astro";
 import Icono from "../../components/Icono.astro";
 import IlustracionServicio from "../../components/IlustracionServicio.astro";
+import PruebaSocial from "../../components/PruebaSocial.astro";
 import { servicios, SITIO, AREA_SERVIDA } from "../../data/servicios";
 import { detalles, metas } from "../../data/servicios-detalle";
 import { ilustraciones } from "../../data/ilustraciones";
@@ -17,6 +18,8 @@ export function getStaticPaths() {
 
 const { servicio } = Astro.props;
 const d = detalles[servicio.slug];
+// Los pasos propios del servicio, si los tiene; si no, los generales.
+const pasos = d.proceso ?? proceso;
 const meta = metas[servicio.slug];
 
 const imagenes = import.meta.glob<{ default: ImageMetadata }>(
@@ -206,7 +209,7 @@ const schema = [
         </div>
         <ol class="pasos mt-10">
           {
-            proceso.map((p, i) => (
+            pasos.map((p, i) => (
               <li class="card tarjeta paso reveal">
                 <span class="numero-circulo" aria-hidden="true">{i + 1}</span>
                 <h3 class="card-title mt-5">{p.titulo}</h3>
@@ -227,6 +230,15 @@ const schema = [
         </ol>
       </div>
     </section>
+
+    {/* ------------------------------------------------- Casos y opiniones */}
+    {/* Invisible mientras no haya casos ni testimonios reales con permiso. */}
+    <PruebaSocial
+      id="casos-titulo"
+      banda={false}
+      acento="ambar"
+      titulo={`${servicio.nombre}: lo que ha cambiado en negocios reales`}
+    />
 
     {/* ------------------------------------------------------------- FAQ */}
     <section class="section" aria-labelledby="faq-titulo">

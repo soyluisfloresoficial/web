@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa sobre tiempo dedicado a tareas repetitivas. No la elijo yo para no inventar una fuente.
 title: "Qué automatizar primero en tu negocio: un criterio sencillo"
 description: "Un criterio práctico para decidir qué automatizar primero: tareas que se repiten, que siguen reglas claras y que afectan a tus clientes."
 metaTitle: "Qué automatizar primero en tu negocio con IA | Luis Flores"
@@ -53,5 +54,7 @@ Para que el criterio se vea en la práctica, estos son procesos que suelen cumpl
 
 **¿Cada cuánto conviene sumar una automatización nueva?** Cuando la anterior lleva unas semanas funcionando sin problemas y ya mediste el cambio.
 
+
+Cómo quedan esos flujos una vez montados lo cuento en [conectar herramientas sin romper nada](/blog/conectar-herramientas-sin-romper), y el orden para arrancar, en [empezar con IA sin perder tiempo](/blog/empezar-con-ia-sin-perder-tiempo). Si prefieres que lo haga yo, eso es [automatización de procesos](/servicios/automatizacion).
 
 Si no tienes claro cuál es tu primera tarea, eso es justo lo que vemos en la llamada de diagnóstico. En 30 minutos sales con una prioridad concreta y no con una lista interminable.

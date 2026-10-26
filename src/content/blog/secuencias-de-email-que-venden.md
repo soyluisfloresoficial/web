@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa sobre aperturas, clics o bajas en email marketing. No la elijo yo para no inventar una fuente.
 title: "Secuencias de email: cómo armar correos automáticos que acompañan hasta la venta"
 description: "Qué es una secuencia de email, qué tipos conviene tener primero y cómo escribirlas para que ayuden a vender sin parecer spam."
 metaTitle: "Secuencias de email automáticas que venden | Luis Flores"
@@ -76,5 +77,7 @@ En Latinoamérica muchas conversaciones pasan por WhatsApp. La secuencia de corr
 **¿Con qué herramienta se hace?** Trabajo sobre todo con ActiveCampaign, pero si ya usas otra herramienta de correo, primero reviso si se puede conectar con tu CRM.
 
 **¿Quién escribe los correos?** Puedo redactarlos yo o trabajar con tus textos. Lo definimos en la propuesta según lo que prefieras.
+
+De dónde salen los contactos a los que escribes lo cuento en [funnels sin spam](/blog/funnels-sin-spam), y dónde conviene guardarlos, en [CRM para pymes](/blog/crm-para-pymes-por-donde-empezar). Escribir y montar las secuencias es [email marketing y secuencias](/servicios/email-marketing).
 
 Si quieres, revisamos qué pasa hoy con tus contactos después de que te escriben y qué secuencia te conviene armar primero, en una llamada de 30 minutos.

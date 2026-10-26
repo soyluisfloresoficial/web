@@ -1,4 +1,5 @@
 ---
+# TODO (titular): falta una fuente externa sobre tasas de alucinación o buenas prácticas de agentes con base de conocimiento. No la elijo yo para no inventar una fuente.
 title: "Agentes de IA que no inventan información: cómo se logra"
 description: "Lo que más preocupa de un agente de IA es que invente precios u horarios. Te explico cómo se configura para que responda solo con lo que tú apruebas."
 metaTitle: "Agentes de IA que no inventan información | Luis Flores"
@@ -48,5 +49,7 @@ Que el agente sepa cuándo hacerse a un lado está planeado desde el principio. 
 
 **¿Sirve para cualquier negocio?** Sirve sobre todo en negocios que reciben muchas preguntas repetidas o que trabajan con citas. Si cada consulta es única y compleja, conviene empezar por otra automatización.
 
+
+Un agente sirve de poco si los contactos que recoge se pierden después, así que conviene tener antes [un CRM donde caigan](/blog/crm-para-pymes-por-donde-empezar). Y si todavía no sabes por dónde arrancar, en [qué automatizar primero](/blog/que-automatizar-primero) está el criterio. Montar el agente completo es lo que hago en [agentes de IA](/servicios/agentes-ia).
 
 Todo lo que configuro lo probamos juntos con casos reales antes de activarlo, y queda documentado. Así ves con tus propios ojos qué contesta y qué hace cuando no sabe algo. Si quieres, lo revisamos para tu caso en una llamada de 30 minutos.
