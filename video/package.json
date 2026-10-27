@@ -6,7 +6,8 @@
   "scripts": {
     "estudio": "remotion studio src/index.ts --public-dir=../public",
     "piloto": "remotion render src/index.ts Piloto out/piloto.mp4 --public-dir=../public --crf=20",
-    "piloto-vertical": "remotion render src/index.ts PilotoVertical out/piloto-vertical.mp4 --public-dir=../public --crf=20"
+    "piloto-vertical": "remotion render src/index.ts PilotoVertical out/piloto-vertical.mp4 --public-dir=../public --crf=20",
+    "piloto-web": "remotion render src/index.ts Piloto ../public/video/piloto.mp4 --public-dir=../public --scale=0.75 --crf=28 --x264-preset=veryslow && remotion still src/index.ts Piloto ../public/video/piloto-portada.jpg --frame=60 --public-dir=../public --scale=0.75 --image-format=jpeg --jpeg-quality=78"
   },
   "dependencies": {
     "@remotion/cli": "4.0.539",

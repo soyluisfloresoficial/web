@@ -72,8 +72,28 @@ Principios: solo se animan `transform`, `translate`, `scale` y `opacity`. Todo r
 | Barras del embudo y de la calculadora | Home | `scaleX` desde 0 |
 | Maquetas en perspectiva | Home, sección «Por dentro» (`Showcase.astro`) | Teléfono con bisel, isla y botones, y ventanas con los tres puntos, todo en CSS. En escritorio con ratón se inclinan (`rotateX`/`rotateY`) y se enderezan al pasar por la tarjeta. En táctil o con movimiento reducido se quedan planas (27/10/2026) |
 | Barra de progreso | Artículos del blog | Línea de tiempo de scroll |
+| Video piloto | Home, sección «Por dentro» (`Showcase.astro`) | MP4 de 15 s sin sonido, hecho con código en `video/`. Solo se descarga al llegar a pantalla, arranca solo, se para al salir y tiene botón de pausa. Con movimiento reducido no arranca solo (27/10/2026) |
 
-**Qué no se hace, a propósito:** animaciones infinitas de adorno (auroras, brillos, puntos que laten), efectos que siguen al puntero ni capas fijas a pantalla completa. Pesan en móviles de gama media y empeoran el INP. La única animación continua es la marquesina de herramientas, que se para con movimiento reducido.
+**Qué no se hace, a propósito:** animaciones infinitas de adorno (auroras, brillos, puntos que laten), efectos que siguen al puntero ni capas fijas a pantalla completa. Pesan en móviles de gama media y empeoran el INP. La única animación continua es la marquesina de herramientas, que se para con movimiento reducido. El video piloto se mueve más de 5 segundos, pero va dentro de un `<video>` con botón de pausa (WCAG 2.2.2) y no consume CPU de animación en la página.
+
+## Video piloto: efectos (27/10/2026)
+
+El código está en `video/src/Piloto.tsx` (Remotion). Todo usa la curva `--ease` de la web y los colores y fuentes de la marca.
+
+| Efecto | Dónde | Cómo |
+|---|---|---|
+| Texto cinético | Todos los titulares | Entra palabra por palabra, desde abajo y desenfocado, con 3 fotogramas entre palabras |
+| Palabra en degradado | La palabra clave de cada titular | El degradado de los botones (`--grad-cta`) recortado al texto |
+| Reloj que aparece | «22:14», al principio | Crece del 82 al 100 % y se enfoca |
+| Notificación | Mensaje de WhatsApp, al principio | Sube desde abajo con fundido |
+| Antetítulo con filete | «01 · WhatsApp», «02 · Agenda»… | El filete se dibuja de izquierda a derecha |
+| Ventana en perspectiva | Chat, agenda, automatización y embudo | Entra inclinada (`rotateX`/`rotateY`) y se endereza, igual que las maquetas de la web |
+| Burbujas de chat | Escena del agente | Aparecen una a una, con «escribiendo…» de tres puntos antes de la respuesta |
+| Hueco que se llena | Escena de la agenda | El hueco del jueves se rellena con el degradado y brilla |
+| Lista que se marca | Escena de la automatización | Cada fila entra desde la izquierda y su icono pasa a ✓ |
+| Barras que crecen | Escena del embudo | `scaleX` desde 0, escalonadas |
+| Cambio de escena | Entre escenas | La escena sale hacia arriba con desenfoque mientras entra la siguiente |
+| Fondo vivo | Todo el video | Cuadrícula fina que avanza en diagonal y dos brillos (azul y violeta) que se desplazan despacio |
 
 ## Capa premium (20/10/2026)
 

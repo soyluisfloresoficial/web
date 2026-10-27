@@ -1,8 +1,13 @@
 # Videos con código (Remotion)
 
 Videos de *motion graphics* de soyluisflores.es hechos con código en lugar de
-con un editor de video. **No forman parte de la web**: se renderizan aquí y,
-si se aprueban, el MP4 se pone en la web o se sube a redes aparte.
+con un editor de video. Esta carpeta no entra en el build de la web: los
+videos se renderizan aquí y el que se publica se copia a `public/video/`.
+
+**En la web (27/10/2026):** `public/video/piloto.mp4` (1440 × 810, 1,1 MB) y su
+portada `piloto-portada.jpg`, en la sección «Por dentro» de la portada. Si
+cambias el video, vuelve a sacarlos con `npm run piloto-web`. La lista de
+efectos está en `SISTEMA-DISENO.md`.
 
 ## Qué hay
 
@@ -38,6 +43,12 @@ Para sacar los MP4 en `out/` (no se suben a GitHub):
 ```bash
 npm run piloto
 npm run piloto-vertical
+```
+
+Para la versión ligera de la web (escribe directamente en `../public/video/`):
+
+```bash
+npm run piloto-web
 ```
 
 En este ordenador se renderiza con Microsoft Edge en lugar de descargar
