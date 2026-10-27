@@ -4,9 +4,10 @@ Videos de *motion graphics* de soyluisflores.es hechos con código en lugar de
 con un editor de video. Esta carpeta no entra en el build de la web: los
 videos se renderizan aquí y el que se publica se copia a `public/video/`.
 
-**En la web (27/10/2026):** `public/video/piloto.mp4` (1440 × 810, 1,1 MB) y su
-portada `piloto-portada.jpg`, en la sección «Por dentro» de la portada. Si
-cambias el video, vuelve a sacarlos con `npm run piloto-web`. La lista de
+**En la web (27/10/2026):** en la sección «Por dentro» de la portada, dos
+versiones con su portada: `public/video/piloto.mp4` (16:9, 1440 × 810) para
+escritorio y `piloto-vertical.mp4` (9:16, 810 × 1440) para celular, 1,1 MB cada
+una. Si cambias el video, vuelve a sacarlas con `npm run piloto-web`. La lista de
 efectos está en `SISTEMA-DISENO.md`.
 
 ## Qué hay

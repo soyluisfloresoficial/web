@@ -1,57 +1,38 @@
 ---
 /**
- * «Un cliente escribe de noche»: lo que hace un sistema montado, en cuatro
- * pasos. Traído del sitio en producción.
+ * «Un cliente escribe de noche»: lo que hace un sistema montado, contado en
+ * un video de 15 segundos.
  *
- * Las maquetas son ilustrativas y lo dicen en pantalla. Ni la conversación,
- * ni la agenda, ni las barras del embudo son datos de un cliente.
+ * Hasta el 27/10/2026 la sección tenía, además del video, cuatro tarjetas con
+ * maquetas (teléfono, agenda, automatización y embudo) que contaban lo mismo.
+ * El titular pidió quitarlas para no repetir la información: la historia la
+ * cuenta el video y, para quien no puede o no quiere verlo, el texto
+ * desplegable de debajo (alternativa en texto de un video sin sonido).
+ *
+ * El video es ilustrativo y lo dice en pantalla: ni la conversación, ni la
+ * agenda, ni las barras del embudo son datos de un cliente.
  */
 
-// Iconos de trazo, 24 × 24, los mismos que usa el sitio en producción.
-const icono = {
-  agente: "M4 8h16v11H4zM12 4v4M9 13h.01M15 13h.01M9.5 16h5",
-  whatsapp:
-    "M3.5 20.5 4.8 16.4A8.5 8.5 0 1 1 8 19.3l-4.5 1.2ZM9 8.6c.2 3.4 3 6.2 6.4 6.4l1.1-1.5-2-1.1-1 .9a4.3 4.3 0 0 1-2.3-2.3l.9-1-1.1-2L9 8.6Z",
-  calendario: "M3.5 5h17v15h-17zM3.5 10h17M8 3v4M16 3v4",
-  calendarioOk: "M3.5 5h17v15h-17zM3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4",
-  persona: "M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM4.5 20.5a7.5 7.5 0 0 1 15 0",
-  check: "m5 12.5 4.5 4.5L19 7.5",
-  email: "M3 5h18v14H3zM4 7l8 6 8-6",
-  chat: "M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z",
-  embudo: "M4 5h16l-6 7.5V19l-4-2v-4.5L4 5Z",
-  senal: "M5 18v-2M10 18v-5M15 18v-8M20 18V5",
-};
-
-const conversacion = [
-  { de: "cliente", texto: "Hola, ¿tienen disponibilidad esta semana para una primera consulta?", hora: "22:14" },
-  { de: "agente", texto: "¡Hola! Sí, tengo el jueves a las 10:00 o el viernes a las 17:30. ¿Cuál te queda mejor?", hora: "22:14" },
-  { de: "cliente", texto: "El jueves a las 10, perfecto.", hora: "22:15" },
-  { de: "agente", texto: "Listo, te agendé el jueves a las 10:00. Te mando un recordatorio un día antes.", hora: "22:15" },
-];
-
-// Agenda de la semana: "o" ocupado, "n" la cita nueva, "" libre.
-const agenda = [
-  { dia: "L", huecos: ["", "o", "", ""] },
-  { dia: "M", huecos: ["o", "", "", ""] },
-  { dia: "Mi", huecos: ["", "", "o", ""] },
-  { dia: "J", huecos: ["", "", "n", ""] },
-  { dia: "V", huecos: ["", "o", "", ""] },
-];
-
-const registro = [
-  { icono: icono.persona, texto: "Contacto creado en el CRM", etiqueta: "CRM" },
-  { icono: icono.check, texto: "Etiqueta «Interesado» añadida", etiqueta: "CRM" },
-  { icono: icono.email, texto: "Correo de bienvenida enviado", etiqueta: "Email" },
-  { icono: icono.calendario, texto: "Cita registrada en la agenda", etiqueta: "Agenda" },
-  { icono: icono.chat, texto: "Aviso al equipo por WhatsApp", etiqueta: "Equipo" },
-];
-
-// Proporciones de ejemplo para dibujar el embudo. No son datos.
-const etapas = [
-  { nombre: "Visitas", ancho: 1 },
-  { nombre: "Registros", ancho: 0.64 },
-  { nombre: "Citas", ancho: 0.38 },
-  { nombre: "Clientes", ancho: 0.22 },
+// Lo mismo que se ve en el video, en texto.
+const pasos = [
+  {
+    titulo: "El agente contesta y cierra la cita",
+    texto:
+      "Responde al instante por WhatsApp, con la información que tú apruebas. Ofrece un horario libre y deja la cita agendada, a cualquier hora.",
+  },
+  {
+    titulo: "La cita aparece en tu agenda",
+    texto: "Queda registrada al momento y se manda un recordatorio antes de la hora.",
+  },
+  {
+    titulo: "El papeleo se hace solo",
+    texto:
+      "Se crea el contacto, se le pone una etiqueta, sale el correo de bienvenida y tu equipo recibe el aviso. Si algo falla, te enteras.",
+  },
+  {
+    titulo: "Y queda todo medido",
+    texto: "Se mide cada etapa, desde la visita hasta la venta, para ver qué paso falla y mejorarlo primero.",
+  },
 ];
 ---
 
@@ -69,12 +50,16 @@ const etapas = [
           intervenir.
         </p>
       </div>
-      <p class="aviso">Ejemplos ilustrativos, no capturas de clientes.</p>
+      <p class="aviso">Ejemplo ilustrativo, no capturas de clientes.</p>
     </div>
 
     {/*
-      Video piloto (27/10/2026): la misma historia en 15 segundos, hecho con
-      código en video/ (Remotion) y exportado a 1440 × 810, 1,1 MB.
+      Video piloto (27/10/2026), hecho con código en video/ (Remotion).
+      Dos versiones de la misma historia:
+      - Escritorio y tableta: 16:9, 1440 × 810, 1,1 MB (piloto.mp4).
+      - Celular (menos de 768 px): 9:16, 810 × 1440, 1,1 MB (piloto-vertical.mp4).
+      El navegador elige la fuente por el atributo media; el script cambia la
+      portada para que coincida con la versión.
 
       - preload="none": no se descarga nada hasta que llega a pantalla.
       - Arranca solo, sin sonido, cuando se ve al menos el 40 %, y se para al
@@ -82,7 +67,6 @@ const etapas = [
       - Botón de pausa siempre visible (WCAG 2.2.2: todo lo que se mueve más
         de 5 segundos se tiene que poder parar).
       - Sin JavaScript se ven los controles nativos del navegador.
-      - Las tarjetas de debajo cuentan lo mismo en texto.
     */}
     <figure class="video-piloto mt-10" data-video-piloto>
       <div class="video-marco">
@@ -95,8 +79,9 @@ const etapas = [
           poster="/video/piloto-portada.jpg"
           width="1440"
           height="810"
-          aria-label="Video de 15 segundos: a las 22:14 entra un mensaje, el agente contesta, la cita entra en la agenda, el papeleo se hace solo y todo queda medido."
+          aria-label="Video de 15 segundos sin sonido: a las 22:14 entra un mensaje, el agente contesta, la cita entra en la agenda, el papeleo se hace solo y todo queda medido."
         >
+          <source src="/video/piloto-vertical.mp4" type="video/mp4" media="(max-width: 767px)" />
           <source src="/video/piloto.mp4" type="video/mp4" />
         </video>
         <button class="video-control" type="button" data-control hidden>
@@ -109,151 +94,21 @@ const etapas = [
           >
         </button>
       </div>
-      <figcaption class="video-pie">Ejemplo ilustrativo · 15 segundos, sin sonido</figcaption>
+      <figcaption class="video-pie">15 segundos, sin sonido</figcaption>
     </figure>
 
-    <ol class="bento mt-10">
-      {/* 1. El agente contesta por WhatsApp */}
-      <li class="card bento-card bento-chat reveal">
-        <div class="telefono" aria-hidden="true">
-          <div class="telefono-pantalla">
-          <div class="telefono-sistema">
-            <span>22:14</span>
-            <span class="telefono-isla" />
-            <span class="telefono-iconos">
-              <svg viewBox="0 0 24 24" width="14" height="14"><path d={icono.senal} /></svg>
-              <span class="bateria" />
-            </span>
-          </div>
-          <div class="telefono-barra">
-            <span class="telefono-avatar">
-              <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.agente} /></svg>
-            </span>
-            <span>
-              <span class="telefono-nombre">Asistente de tu negocio</span>
-              <span class="telefono-estado">en línea</span>
-            </span>
-          </div>
-          <div class="telefono-cuerpo">
-            {
-              conversacion.map((m) => (
-                <p class={`burbuja burbuja-${m.de}`}>
-                  {m.texto}
-                  <span class="burbuja-hora">{m.hora}</span>
-                </p>
-              ))
-            }
-          </div>
-          </div>
-        </div>
-        <div class="bento-texto">
-          <p class="paso"><span class="paso-num">1</span>El agente contesta y cierra la cita</p>
-          <h3 class="bento-titulo">Responde al instante por WhatsApp</h3>
-          <p class="bento-desc">
-            Con la información que tú apruebas. Ofrece un horario libre y deja la
-            cita agendada, a cualquier hora.
-          </p>
-        </div>
-      </li>
-
-      {/* 2. La agenda */}
-      <li class="card bento-card reveal">
-        <div class="maqueta" aria-hidden="true">
-          <div class="ventana-barra"><span /><span /><span /></div>
-          <p class="maqueta-cabecera">
-            <span>Agenda · esta semana</span>
-            <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.calendario} /></svg>
-          </p>
-          <div class="agenda">
-            {
-              agenda.map((d) => (
-                <div class="agenda-dia">
-                  <span class="agenda-letra">{d.dia}</span>
-                  {d.huecos.map((h) => (
-                    <span class={`hueco${h === "o" ? " ocupado" : h === "n" ? " nuevo" : ""}`} />
-                  ))}
-                </div>
-              ))
-            }
-          </div>
-          <p class="aviso-cita">
-            <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.calendarioOk} /></svg>
-            <span><b>Nueva cita</b> · jueves 10:00 · creada por el agente</span>
-          </p>
-        </div>
-        <div class="bento-texto">
-          <p class="paso"><span class="paso-num">2</span>La cita aparece en tu agenda</p>
-          <h3 class="bento-titulo">Tu agenda se actualiza sola</h3>
-          <p class="bento-desc">
-            La cita queda registrada al instante y se manda un recordatorio antes
-            de la hora. Así llega más gente.
-          </p>
-        </div>
-      </li>
-
-      {/* 3. Registro de la automatización */}
-      <li class="card bento-card reveal">
-        <div class="maqueta" aria-hidden="true">
-          <div class="ventana-barra"><span /><span /><span /></div>
-          <p class="maqueta-cabecera">
-            <span>Automatización · nuevo contacto</span>
-            <span class="activa">activa</span>
-          </p>
-          <ul class="registro">
-            {
-              registro.map((r) => (
-                <li>
-                  <span class="registro-icono">
-                    <svg viewBox="0 0 24 24" width="14" height="14"><path d={r.icono} /></svg>
-                  </span>
-                  <span class="registro-texto">{r.texto}</span>
-                  <span class="registro-etiqueta">{r.etiqueta}</span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-        <div class="bento-texto">
-          <p class="paso"><span class="paso-num">3</span>El papeleo se hace solo</p>
-          <h3 class="bento-titulo">Todo lo demás, en automático</h3>
-          <p class="bento-desc">
-            Se crea el contacto, se le pone una etiqueta, sale el correo de
-            bienvenida y tu equipo recibe el aviso. Si algo falla, te enteras.
-          </p>
-        </div>
-      </li>
-
-      {/* 4. Embudo medido */}
-      <li class="card bento-card bento-ancha reveal">
-        <div class="maqueta" aria-hidden="true">
-          <div class="ventana-barra"><span /><span /><span /></div>
-          <p class="maqueta-cabecera">
-            <span>Embudo · cada etapa medida</span>
-            <svg viewBox="0 0 24 24" width="16" height="16"><path d={icono.embudo} /></svg>
-          </p>
-          <ul class="etapas">
-            {
-              etapas.map((e, i) => (
-                <li>
-                  <span class="etapa-nombre">{e.nombre}</span>
-                  <span class="etapa-pista">
-                    <span class="etapa-barra" style={`--ancho:${e.ancho};--i:${i}`} />
-                  </span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-        <div class="bento-texto">
-          <p class="paso"><span class="paso-num">4</span>Y queda todo medido</p>
-          <h3 class="bento-titulo">Ves en qué punto se pierde la gente</h3>
-          <p class="bento-desc">
-            Se mide cada etapa, desde la visita hasta la venta. Así vemos qué paso
-            falla y lo mejoramos primero.
-          </p>
-        </div>
-      </li>
-    </ol>
+    <details class="video-texto mt-6">
+      <summary>Lo que pasa en el video, en texto</summary>
+      <ol>
+        {
+          pasos.map((p) => (
+            <li>
+              <b>{p.titulo}.</b> {p.texto}
+            </li>
+          ))
+        }
+      </ol>
+    </details>
   </div>
 </section>
 
@@ -267,11 +122,28 @@ const etapas = [
 
   if (figura && video && boton && etiqueta) {
     const reducir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const celular = matchMedia("(max-width: 767px)");
     let pausadoAMano = false;
+    let visible = false;
 
     // Con JavaScript, el botón propio sustituye a los controles nativos.
     video.controls = false;
     boton.hidden = false;
+
+    // La portada tiene que coincidir con la versión del video: el atributo
+    // media de <source> no cambia el poster.
+    const elegirVersion = () => {
+      video.poster = celular.matches ? "/video/piloto-vertical-portada.jpg" : "/video/piloto-portada.jpg";
+    };
+    elegirVersion();
+    celular.addEventListener("change", () => {
+      // Al girar el teléfono o cambiar el tamaño de la ventana, se vuelve a
+      // elegir la fuente.
+      const enMarcha = !video.paused;
+      elegirVersion();
+      video.load();
+      if (enMarcha || (visible && !reducir && !pausadoAMano)) video.play().catch(() => {});
+    });
 
     const pintar = () => {
       const enMarcha = !video.paused;
@@ -294,7 +166,8 @@ const etapas = [
 
     new IntersectionObserver(
       ([entrada]) => {
-        if (entrada.isIntersecting) {
+        visible = entrada.isIntersecting;
+        if (visible) {
           if (!reducir && !pausadoAMano) video.play().catch(() => {});
         } else if (!video.paused) {
           video.pause();
@@ -306,13 +179,6 @@ const etapas = [
 </script>
 
 <style>
-  /* Sombra de las maquetas: profundidad con un reflejo violeta debajo, para
-     que parezcan dispositivos apoyados sobre la sección. */
-  .showcase {
-    --sombra-mockup: 0 2px 6px #0409164d, 0 30px 60px -30px #020610cc,
-      0 40px 80px -40px rgb(91 63 196 / 0.45);
-  }
-
   .showcase-cabecera {
     display: grid;
     gap: 1rem;
@@ -346,7 +212,20 @@ const etapas = [
     border: 1px solid var(--color-line);
     border-radius: 20px;
     background: var(--color-navy);
-    box-shadow: var(--sombra-mockup);
+    /* Profundidad con un reflejo violeta debajo. */
+    box-shadow:
+      0 2px 6px #0409164d,
+      0 30px 60px -30px #020610cc,
+      0 40px 80px -40px rgb(91 63 196 / 0.45);
+  }
+  /* En celular, la versión vertical: ocupa el ancho sin pasar de la altura
+     de la pantalla. */
+  @media (width < 768px) {
+    .video-marco {
+      aspect-ratio: 9 / 16;
+      width: min(100%, calc(82svh * 9 / 16));
+      margin-inline: auto;
+    }
   }
   .video-marco video {
     display: block;
@@ -376,6 +255,7 @@ const etapas = [
   .video-control svg {
     fill: currentColor;
     stroke: currentColor;
+    stroke-linecap: round;
   }
   .video-control .icono-pausa {
     fill: none;
@@ -389,461 +269,34 @@ const etapas = [
     margin-top: 0.75rem;
     color: var(--color-muted);
     font-size: var(--step--1);
-    text-align: right;
-  }
-
-  /* ----------------------------------------------------------- Rejilla */
-  .bento {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1rem;
+    text-align: center;
   }
   @media (width >= 768px) {
-    .bento {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.25rem;
-    }
-    .bento-chat {
-      grid-row: span 2;
-    }
-    .bento-ancha {
-      grid-column: span 2;
-    }
-  }
-  @media (width >= 1100px) {
-    .bento {
-      grid-template-columns: 1.15fr 1fr 1fr;
-    }
-    .bento-ancha {
-      grid-column: 2 / span 2;
+    .video-pie {
+      text-align: right;
     }
   }
 
-  .bento-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.25rem;
-  }
-  .bento-texto {
-    margin-top: auto;
-  }
-  .paso {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.625rem;
-    font-size: var(--step--1);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--acento-texto);
-  }
-  .paso-num {
-    display: inline-grid;
-    place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--acento);
-    font-family: var(--font-display);
-    font-weight: 800;
-    color: var(--color-ink);
-  }
-  .bento-titulo {
-    font-size: var(--step-1);
-  }
-  .bento-desc {
-    margin-top: 0.375rem;
+  /* ----------------------------------------------------------- Texto */
+  .video-texto {
+    max-width: 60ch;
     color: var(--color-soft);
     font-size: var(--step-0);
   }
-
-  svg {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.75;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    flex-shrink: 0;
-  }
-
-  /* ----------------------------------------------------------- Teléfono */
-  /* Maqueta de dispositivo hecha solo con CSS: bisel, isla, barra de estado,
-     botones laterales e indicador de inicio. */
-  .telefono {
-    position: relative;
-    width: 100%;
-    max-width: 21rem;
-    margin-inline: auto;
-    padding: 0.5rem;
-    border-radius: 2.5rem;
-    background: linear-gradient(145deg, #2a3350, #0c1222 45%, #1b2238);
-    box-shadow:
-      inset 0 0 0 1px rgb(255 255 255 / 0.14),
-      inset 0 0 0 4px #05080f,
-      var(--sombra-mockup);
-  }
-  /* Volumen (dos botones con una sola sombra) y encendido. */
-  .telefono::before,
-  .telefono::after {
-    content: "";
-    position: absolute;
-    width: 3px;
-    border-radius: 2px;
-    background: #2a3350;
-  }
-  .telefono::before {
-    left: -3px;
-    top: 6.5rem;
-    height: 3rem;
-    box-shadow: 0 3.75rem 0 #2a3350;
-  }
-  .telefono::after {
-    right: -3px;
-    top: 8rem;
-    height: 4.5rem;
-  }
-  .telefono-pantalla {
-    position: relative;
-    overflow: hidden;
-    border-radius: 2rem;
-    background: var(--color-navy);
-  }
-  .telefono-sistema {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1.5rem 0.375rem;
-    font-size: 0.6875rem;
+  /* Se queda como list-item para conservar la flecha del desplegable. */
+  .video-texto summary {
+    padding-block: 0.625rem;
+    color: var(--color-ink);
     font-weight: 600;
-    color: var(--color-ink);
+    cursor: pointer;
   }
-  .telefono-isla {
-    position: absolute;
-    left: 50%;
-    top: 0.5rem;
-    translate: -50% 0;
-    width: 5.5rem;
-    height: 1.375rem;
-    border-radius: 999px;
-    background: #000;
-  }
-  .telefono-iconos {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
-  .bateria {
-    position: relative;
-    width: 1.25rem;
-    height: 0.625rem;
-    padding: 1px;
-    border: 1px solid currentColor;
-    border-radius: 3px;
-  }
-  .bateria::before {
-    content: "";
-    display: block;
-    width: 75%;
-    height: 100%;
-    border-radius: 1px;
-    background: currentColor;
-  }
-  .bateria::after {
-    content: "";
-    position: absolute;
-    right: -3px;
-    top: 50%;
-    translate: 0 -50%;
-    width: 2px;
-    height: 4px;
-    border-radius: 0 1px 1px 0;
-    background: currentColor;
-  }
-  .telefono-barra {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    padding: 0.75rem 0.875rem;
-    border-bottom: 1px solid var(--color-divider);
-    background: rgb(255 255 255 / 0.04);
-  }
-  .telefono-avatar {
-    display: grid;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 999px;
-    background: var(--grad-cta);
-    color: #fff;
-  }
-  .telefono-nombre {
-    display: block;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: var(--color-ink);
-  }
-  .telefono-estado {
-    display: block;
-    font-size: 0.6875rem;
-    color: var(--color-whatsapp);
-  }
-  .telefono-cuerpo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem 0.875rem 0.625rem;
-  }
-  /* Indicador de inicio, al pie de la pantalla. */
-  .telefono-cuerpo::after {
-    content: "";
-    align-self: center;
-    width: 6rem;
-    height: 4px;
-    margin-top: 0.5rem;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.35);
-  }
-  .burbuja {
-    position: relative;
-    max-width: 85%;
-    padding: 0.5rem 0.75rem 1.125rem;
-    border-radius: 14px;
-    font-size: 0.8125rem;
-    line-height: 1.4;
-  }
-  .burbuja-cliente {
-    align-self: flex-start;
-    border-top-left-radius: 4px;
-    background: rgb(255 255 255 / 0.08);
-    color: var(--color-ink);
-  }
-  .burbuja-agente {
-    align-self: flex-end;
-    border-top-right-radius: 4px;
-    background: linear-gradient(135deg, #1f5fd6, #5b3fc4);
-    color: #fff;
-  }
-  .burbuja-hora {
-    position: absolute;
-    right: 0.625rem;
-    bottom: 0.3rem;
-    font-size: 0.625rem;
-    opacity: 0.75;
-  }
-
-  /* ----------------------------------------------------------- Maquetas */
-  /* Ventana de aplicación: barra con tres puntos, borde con luz arriba y la
-     misma sombra que el teléfono. */
-  .maqueta {
-    position: relative;
-    overflow: hidden;
-    padding: 1rem;
-    border: 1px solid var(--color-line);
-    border-radius: 14px;
-    background: var(--color-navy);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), var(--sombra-mockup);
-  }
-  .ventana-barra {
-    display: flex;
-    gap: 0.375rem;
-    margin: -1rem -1rem 0.875rem;
-    padding: 0.625rem 0.875rem;
-    border-bottom: 1px solid var(--color-divider);
-    background: rgb(255 255 255 / 0.04);
-  }
-  .ventana-barra span {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: #ff5f57;
-    opacity: 0.85;
-  }
-  .ventana-barra span:nth-child(2) {
-    background: #febc2e;
-  }
-  .ventana-barra span:nth-child(3) {
-    background: #28c840;
-  }
-
-  /* Reflejo fijo del cristal: sin animación, solo luz. */
-  .telefono-pantalla::after,
-  .maqueta::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(125deg, rgb(255 255 255 / 0.07), transparent 38%);
-    pointer-events: none;
-  }
-
-  /* Perspectiva: con ratón y pantalla ancha, las maquetas se ven inclinadas
-     y se enderezan al pasar por la tarjeta. Es un estado de hover, no sigue
-     al puntero. En táctil o con movimiento reducido se quedan planas. */
-  @media (width >= 768px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .bento-card {
-      perspective: 1400px;
-    }
-    .telefono,
-    .maqueta {
-      transform: rotateX(4deg) rotateY(-9deg);
-      transition: transform var(--dur-entrada) var(--ease);
-    }
-    .bento-ancha .maqueta {
-      transform: rotateX(6deg) rotateY(-4deg);
-    }
-    .bento-card:hover .telefono,
-    .bento-card:hover .maqueta {
-      transform: none;
-    }
-  }
-  .maqueta-cabecera {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--color-ink);
-  }
-  .maqueta-cabecera svg {
-    color: var(--color-electric-soft);
-  }
-  .activa {
-    font-weight: 500;
-    color: var(--color-teal);
-  }
-
-  .agenda {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.375rem;
-    margin-top: 0.875rem;
-  }
-  .agenda-dia {
-    display: grid;
-    gap: 0.3rem;
-  }
-  .agenda-letra {
-    text-align: center;
-    font-size: 0.6875rem;
-    color: var(--color-muted);
-  }
-  .hueco {
-    height: 1.125rem;
-    border-radius: 4px;
-    background: rgb(255 255 255 / 0.05);
-  }
-  .hueco.ocupado {
-    background: rgb(0 123 255 / 0.35);
-  }
-  .hueco.nuevo {
-    background: var(--grad-cta);
-  }
-  .aviso-cita {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.875rem;
-    padding: 0.5rem 0.625rem;
-    border: 1px solid rgb(45 212 191 / 0.3);
-    border-radius: 8px;
-    background: rgb(45 212 191 / 0.08);
-    font-size: 0.75rem;
-    color: var(--color-soft);
-  }
-  .aviso-cita svg {
-    color: var(--color-teal);
-  }
-  .aviso-cita b {
-    color: var(--color-ink);
-  }
-
-  .registro {
-    list-style: none;
-    margin: 0.875rem 0 0;
-    padding: 0;
-    display: grid;
-    gap: 0.375rem;
-  }
-  .registro li {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.375rem 0.5rem;
-    border-radius: 6px;
-    background: rgb(255 255 255 / 0.035);
-    font-size: 0.75rem;
-    color: var(--color-soft);
-  }
-  .registro-icono {
-    display: grid;
-    place-items: center;
-    width: 1.375rem;
-    height: 1.375rem;
-    border-radius: 6px;
-    background: rgb(0 123 255 / 0.18);
-    color: var(--color-electric-soft);
-    flex-shrink: 0;
-  }
-  .registro-texto {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .registro-etiqueta {
-    padding: 0.125rem 0.4rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    font-size: 0.625rem;
-    color: var(--color-muted);
-  }
-
-  .etapas {
-    list-style: none;
-    margin: 0.875rem 0 0;
-    padding: 0;
+  .video-texto ol {
     display: grid;
     gap: 0.5rem;
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
   }
-  .etapas li {
-    display: grid;
-    grid-template-columns: 4.5rem 1fr;
-    align-items: center;
-    gap: 0.625rem;
-    font-size: 0.75rem;
-    color: var(--color-soft);
-  }
-  .etapa-pista {
-    height: 0.625rem;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.05);
-    overflow: hidden;
-  }
-  /* La barra mide siempre el 100 % de la pista y se escala: así la animación
-     es solo `transform`. En producción se animaba `width`, que recalcula la
-     maquetación en cada fotograma. */
-  .etapa-barra {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: var(--grad-cta);
-    transform-origin: left center;
-    transform: scaleX(var(--ancho));
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    :global(.js) .etapa-barra {
-      transform: scaleX(0);
-      transition: transform 0.9s var(--ease);
-      transition-delay: calc(var(--i) * 0.12s + 0.2s);
-    }
-    :global(.js) .is-visible .etapa-barra {
-      transform: scaleX(var(--ancho));
-    }
+  .video-texto b {
+    color: var(--color-ink);
   }
 </style>
