@@ -70,6 +70,7 @@ Principios: solo se animan `transform`, `translate`, `scale` y `opacity`. Todo r
 | Subrayado del pie | Enlaces del pie | `background-size` de 0 a 100 % |
 | Transición entre páginas | Todo el sitio | `@view-transition` en CSS. La cabecera y la barra móvil se quedan quietas |
 | Barras del embudo y de la calculadora | Home | `scaleX` desde 0 |
+| Maquetas en perspectiva | Home, sección «Por dentro» (`Showcase.astro`) | Teléfono con bisel, isla y botones, y ventanas con los tres puntos, todo en CSS. En escritorio con ratón se inclinan (`rotateX`/`rotateY`) y se enderezan al pasar por la tarjeta. En táctil o con movimiento reducido se quedan planas (27/10/2026) |
 | Barra de progreso | Artículos del blog | Línea de tiempo de scroll |
 
 **Qué no se hace, a propósito:** animaciones infinitas de adorno (auroras, brillos, puntos que laten), efectos que siguen al puntero ni capas fijas a pantalla completa. Pesan en móviles de gama media y empeoran el INP. La única animación continua es la marquesina de herramientas, que se para con movimiento reducido.
