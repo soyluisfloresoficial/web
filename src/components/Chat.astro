@@ -278,6 +278,8 @@ const sugerencias = [
 
     const pasarASinIA = () => {
       sinIA = true;
+      // Sin IA detrás, el aviso de IA ya no es verdad.
+      raiz.querySelector<HTMLElement>(".chat-aviso-ia")?.remove();
       sub.textContent = "Respuestas de las preguntas frecuentes de la web";
       nota.textContent = "Ahora respondo con las preguntas frecuentes de la web, sin IA. No se guarda ni se envía lo que escribes.";
     };
