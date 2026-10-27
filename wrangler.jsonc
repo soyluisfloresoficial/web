@@ -3,12 +3,41 @@
   // El nombre TIENE que coincidir con el del Worker en Cloudflare: «web».
   "name": "web",
   "compatibility_date": "2026-10-20",
+  // Código del Worker (27/10/2026): solo atiende /api/* (el asistente de IA).
+  // El resto de la web son archivos estáticos que Cloudflare sirve sin pasar
+  // por aquí. Ver AGENTE.md.
+  "main": "src/worker/index.ts",
   "assets": {
     "directory": "./dist",
+    // Para que el Worker pueda leer /agente/conocimiento.txt y devolver
+    // los archivos de la web en cualquier otra ruta.
+    "binding": "ASSETS",
+    // Solo /api/* ejecuta el Worker antes de buscar un archivo.
+    "run_worker_first": ["/api/*"],
     // La web usa URL sin barra final (/servicios), igual que el canonical y
     // el sitemap. Por defecto, Cloudflare redirigía /servicios a /servicios/.
     "html_handling": "drop-trailing-slash",
     // Las URL que no existen devuelven la página 404 de la web, con código 404.
     "not_found_handling": "404-page"
-  }
+  },
+  // Límite del chat: 8 mensajes por minuto por IP en cada ubicación de
+  // Cloudflare. Es aproximado; el tope de gasto real se pone en la consola de
+  // Anthropic (AGENTE.md).
+  "ratelimits": [
+    {
+      "name": "LIMITE_CHAT",
+      "namespace_id": "2710",
+      "simple": { "limit": 8, "period": 60 }
+    }
+  ],
+  // Modelo del asistente. Va aquí y no en el panel porque cada publicación
+  // reescribe las variables normales del panel con las de este archivo.
+  // Para gastar menos: "claude-haiku-5-5" (ver AGENTE.md).
+  "vars": {
+    "MODELO_CHAT": "claude-opus-5-5"
+  },
+  // Registros del Worker (solo tokens y errores, nunca las conversaciones).
+  "observability": { "enabled": true }
+  // La clave ANTHROPIC_API_KEY NO va aquí: es un secreto del Worker en el
+  // panel de Cloudflare (Configuración → Variables y secretos).
 }

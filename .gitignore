@@ -19,3 +19,6 @@ revision-diagnostico/
 
 # Videos renderizados con Remotion (video/): se generan con npm run piloto
 video/out/
+
+# Secretos locales de wrangler dev (la clave real va en el panel de Cloudflare)
+.dev.vars

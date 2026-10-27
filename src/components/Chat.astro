@@ -1,21 +1,20 @@
 ---
 /**
- * Chat de preguntas rápidas.
+ * Asistente de IA de la web (27/10/2026).
  *
- * En producción, el chat llamaba a /api/chat. En un despliegue Direct Upload
- * estático esa ruta no existe, así que todo el que lo probaba recibía «Ahora
- * mismo no puedo responder», debajo de un punto verde de «en línea».
+ * Manda la conversación a /api/chat (src/worker/index.ts), que responde con
+ * Claude usando las instrucciones de src/worker/instrucciones.ts y la base de
+ * conocimiento generada desde los datos de la web. Ver AGENTE.md.
  *
- * Esta versión responde en el navegador con las preguntas frecuentes y los
- * servicios de la propia web, sin servidor y sin IA, y lo dice. No envía ni
- * guarda nada de lo que se escribe. Si algún día existe un agente de verdad
- * detrás, se cambia `responder()` y el aviso del pie del panel.
- *
- * NOTA (21/10/2026): hoy no hay ninguna llamada a un modelo de IA ni a ningún
- * servidor; las respuestas salen de faqPlana y de servicios. Si algún día se
- * conecta a una IA, el panel tiene que mostrar, antes del primer mensaje y de
- * forma visible, el aviso «Estás hablando con una IA», y hay que actualizar
- * la política de privacidad (qué proveedor procesa los mensajes).
+ * - Antes del primer mensaje se ve el aviso «Estás hablando con una IA»
+ *   (transparencia exigida para los sistemas de IA que conversan con
+ *   personas) y el pie enlaza la política de privacidad, que nombra al
+ *   proveedor.
+ * - Respaldo: si el Worker no tiene clave, falla o no responde, el chat
+ *   vuelve a contestar en el navegador con las preguntas frecuentes y los
+ *   servicios, sin IA, y lo dice. La web nunca se queda con un chat roto.
+ * - La conversación vive solo en esta pestaña: no se guarda en el navegador
+ *   ni en el servidor.
  *
  * Sin JavaScript no sirve para nada, así que se pinta oculto y es el script
  * quien lo muestra.
@@ -47,7 +46,7 @@ const sugerencias = [
     aria-controls="chat-panel"
     data-chat-abrir
   >
-    <span class="sr-only" data-chat-etiqueta>Abrir preguntas rápidas</span>
+    <span class="sr-only" data-chat-etiqueta>Abrir el asistente</span>
     <svg class="icono-abrir" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
       <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z" />
     </svg>
@@ -66,8 +65,8 @@ const sugerencias = [
   >
     <header class="chat-cabecera">
       <div>
-        <p id="chat-titulo" class="chat-titulo">Preguntas rápidas</p>
-        <p class="chat-sub">Respuestas de las preguntas frecuentes de la web</p>
+        <p id="chat-titulo" class="chat-titulo">Asistente de Luis Flores</p>
+        <p class="chat-sub" data-chat-sub>Asistente de IA · responde con la información de la web</p>
       </div>
       <button type="button" class="chat-cerrar" data-chat-cerrar>
         <span class="sr-only">Cerrar</span>
@@ -77,11 +76,21 @@ const sugerencias = [
       </button>
     </header>
 
-    <div class="chat-registro" role="log" data-chat-registro>
+    <div class="chat-registro" role="log" aria-live="polite" data-chat-registro>
+      <p class="chat-aviso-ia">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M4 8h16v11H4zM12 4v4M9 13h.01M15 13h.01M9.5 16h5" />
+        </svg>
+        <span>
+          <b>Estás hablando con una IA.</b> Puede equivocarse: lo que vale es lo que
+          Luis te confirme por escrito. No escribas datos sensibles.
+        </span>
+      </p>
       <div class="mensaje mensaje-bot">
         <p>
-          Hola, te respondo con lo que está en la web: servicios, forma de trabajo,
-          precios y tiempos. Para tu caso en particular, mejor agendemos una llamada.
+          Hola, soy el asistente de la web de Luis. Pregúntame por los servicios, cómo
+          trabaja, precios o plazos, o cuéntame a qué se dedica tu negocio y te digo qué
+          se podría automatizar primero.
         </p>
       </div>
       <div class="sugerencias" data-chat-sugerencias>
@@ -114,8 +123,9 @@ const sugerencias = [
       </button>
     </form>
 
-    <p class="chat-nota">
-      Respuestas automáticas, sin IA. No se guarda ni se envía lo que escribes.
+    <p class="chat-nota" data-chat-nota>
+      Asistente con IA (Claude, de Anthropic). Tus mensajes se usan solo para
+      responderte y la web no los guarda. <a href="/politica-de-privacidad">Privacidad</a>
     </p>
   </section>
 
@@ -146,6 +156,8 @@ const sugerencias = [
     const form = raiz.querySelector<HTMLFormElement>("[data-chat-form]")!;
     const input = raiz.querySelector<HTMLInputElement>("[data-chat-input]")!;
     const enviar = raiz.querySelector<HTMLButtonElement>("[data-chat-enviar]")!;
+    const sub = raiz.querySelector<HTMLElement>("[data-chat-sub]")!;
+    const nota = raiz.querySelector<HTMLElement>("[data-chat-nota]")!;
 
     // ------------------------------------------------------------ Búsqueda
     const VACIAS = new Set(
@@ -228,11 +240,81 @@ const sugerencias = [
       return a;
     };
 
-    const preguntar = (texto: string) => {
-      const t = texto.trim();
-      if (!t) return;
-      raiz.querySelector("[data-chat-sugerencias]")?.remove();
-      pintar("usuario", [t]);
+    // Convierte en enlaces solo las direcciones de confianza que puede dar el
+    // asistente (la propia web, WhatsApp, Smilbot y el correo). Todo lo demás
+    // se queda como texto: la respuesta nunca se interpreta como HTML.
+    const ENLACE =
+      /(https:\/\/(?:www\.)?soyluisflores\.es[^\s)]*|https:\/\/wa\.me\/[^\s)]*|https:\/\/smilbot\.com[^\s)]*|[a-z0-9._%+-]+@soyluisflores\.es)/gi;
+    const conEnlaces = (texto: string): (string | HTMLElement)[] => {
+      const partes: (string | HTMLElement)[] = [];
+      let desde = 0;
+      for (const m of texto.matchAll(ENLACE)) {
+        let url = m[0];
+        // Un punto o una coma al final son de la frase, no del enlace.
+        const sobra = /[.,;:!?]+$/.exec(url)?.[0] ?? "";
+        url = url.slice(0, url.length - sobra.length);
+        const i = m.index ?? 0;
+        if (i > desde) partes.push(texto.slice(desde, i));
+        if (url.includes("@") && !url.startsWith("http")) {
+          partes.push(enlace(url, `mailto:${url}`));
+        } else {
+          const propio = /^https:\/\/(?:www\.)?soyluisflores\.es/i.test(url);
+          const a = enlace(url.replace(/^https:\/\/(www\.)?/i, ""), propio ? new URL(url).pathname : url);
+          if (!propio) a.rel = "noopener";
+          partes.push(a);
+        }
+        desde = i + url.length;
+      }
+      if (desde < texto.length) partes.push(texto.slice(desde));
+      return partes;
+    };
+
+    // ------------------------------------------------------------ IA
+    type Turno = { rol: "usuario" | "asistente"; texto: string };
+    const historial: Turno[] = [];
+    // Si la IA no está disponible, el resto de la visita se responde en local.
+    let sinIA = false;
+    let esperando = false;
+
+    const pasarASinIA = () => {
+      sinIA = true;
+      sub.textContent = "Respuestas de las preguntas frecuentes de la web";
+      nota.textContent = "Ahora respondo con las preguntas frecuentes de la web, sin IA. No se guarda ni se envía lo que escribes.";
+    };
+
+    const escribiendo = () => {
+      const caja = document.createElement("div");
+      caja.className = "mensaje mensaje-bot escribiendo";
+      caja.setAttribute("aria-label", "El asistente está escribiendo");
+      for (let i = 0; i < 3; i++) caja.append(document.createElement("span"));
+      registro.append(caja);
+      registro.scrollTop = registro.scrollHeight;
+      return caja;
+    };
+
+    /** Respuesta de la IA, o null si hay que usar el respaldo local. */
+    const preguntarIA = async (): Promise<string | null> => {
+      try {
+        const r = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mensajes: historial.slice(-12) }),
+          signal: AbortSignal.timeout(30_000),
+        });
+        const datos = (await r.json().catch(() => ({}))) as { respuesta?: string; error?: string };
+        if (r.ok && datos.respuesta) return datos.respuesta;
+        if (datos.error === "sin-ia" || r.status === 404 || r.status === 405) {
+          pasarASinIA();
+          return null;
+        }
+        // Límite, saturación o fallo puntual: el Worker ya trae un mensaje.
+        return datos.respuesta ?? null;
+      } catch {
+        return null;
+      }
+    };
+
+    const respuestaLocal = (t: string) => {
       const r = responder(t);
       if (r) {
         const partes: (string | HTMLElement)[] = [
@@ -253,11 +335,41 @@ const sugerencias = [
       }
     };
 
+    const preguntar = async (texto: string) => {
+      const t = texto.trim().slice(0, 800);
+      if (!t || esperando) return;
+      raiz.querySelector("[data-chat-sugerencias]")?.remove();
+      pintar("usuario", [t]);
+
+      if (sinIA) return respuestaLocal(t);
+
+      historial.push({ rol: "usuario", texto: t });
+      esperando = true;
+      input.disabled = true;
+      enviar.disabled = true;
+      const puntos = escribiendo();
+      const respuesta = await preguntarIA();
+      puntos.remove();
+      esperando = false;
+      input.disabled = false;
+      input.focus();
+
+      if (respuesta) {
+        historial.push({ rol: "asistente", texto: respuesta });
+        pintar("bot", conEnlaces(respuesta));
+      } else {
+        // La pregunta se queda sin turno de respuesta: se quita para que el
+        // historial siga alternando si la IA vuelve en el siguiente mensaje.
+        historial.pop();
+        respuestaLocal(t);
+      }
+    };
+
     // ------------------------------------------------------------ Apertura
     const estado = (abierto: boolean) => {
       raiz.toggleAttribute("data-abierto", abierto);
       abrir.setAttribute("aria-expanded", String(abierto));
-      etiqueta.textContent = abierto ? "Cerrar preguntas rápidas" : "Abrir preguntas rápidas";
+      etiqueta.textContent = abierto ? "Cerrar el asistente" : "Abrir el asistente";
       panel.hidden = !abierto;
       if (abierto) requestAnimationFrame(() => input.focus());
       else abrir.focus();
@@ -274,13 +386,13 @@ const sugerencias = [
     });
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      preguntar(input.value);
+      const texto = input.value;
       input.value = "";
       enviar.disabled = true;
-      input.focus();
+      void preguntar(texto);
     });
     raiz.querySelectorAll<HTMLButtonElement>(".sugerencia").forEach((b) =>
-      b.addEventListener("click", () => preguntar(b.textContent ?? "")),
+      b.addEventListener("click", () => void preguntar(b.textContent ?? "")),
     );
 
     raiz.hidden = false;
@@ -449,6 +561,64 @@ const sugerencias = [
     color: var(--color-electric-soft);
     text-decoration: underline;
     text-underline-offset: 3px;
+  }
+
+  .chat-aviso-ia {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid rgb(139 92 246 / 0.35);
+    border-radius: 12px;
+    background: rgb(139 92 246 / 0.1);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--color-soft);
+  }
+  .chat-aviso-ia svg {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    color: var(--color-violet);
+  }
+  .chat-aviso-ia b {
+    color: var(--color-ink);
+  }
+
+  /* Tres puntos mientras responde. */
+  .chat-registro :global(.escribiendo) {
+    display: inline-flex;
+    gap: 0.3rem;
+    padding: 0.8rem 0.9rem;
+  }
+  .chat-registro :global(.escribiendo span) {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--color-soft);
+    opacity: 0.5;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-registro :global(.escribiendo span) {
+      animation: punto 1s var(--ease) infinite;
+    }
+    .chat-registro :global(.escribiendo span:nth-child(2)) {
+      animation-delay: 0.15s;
+    }
+    .chat-registro :global(.escribiendo span:nth-child(3)) {
+      animation-delay: 0.3s;
+    }
+  }
+  @keyframes punto {
+    50% {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+  }
+
+  .chat-nota a {
+    color: var(--color-soft);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .sugerencias {

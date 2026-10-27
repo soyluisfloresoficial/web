@@ -27,6 +27,8 @@ Si el build o la auditoría fallan, **no subas nada** y explica qué ha pasado.
 | Web publicada | Cloudflare, Worker `web` → `soyluisflores.es` y `www.soyluisflores.es`. Se reconstruye sola con cada subida a `main` |
 | Configuración de la publicación | `wrangler.jsonc` y `DESPLIEGUE.md` |
 | Variables de compilación (`PUBLIC_GTM_ID`) | Panel de Cloudflare → Worker `web` → Configuración → Compilación. **No** están en el repositorio |
+| Clave del asistente de IA (`ANTHROPIC_API_KEY`) | Panel de Cloudflare → Worker `web` → Configuración → Variables y secretos (tiempo de ejecución, tipo **Secreto**). **No** está en el repositorio. Ver `AGENTE.md` |
+| Asistente de IA: instrucciones y servidor | `src/worker/` y `AGENTE.md`. Lo que sabe se genera solo desde `src/data` y el blog |
 | Contenedor de Google Tag Manager | `gtm/` (ficheros de apoyo; el contenedor real está en tagmanager.google.com) |
 | Reglas de trabajo y preferencias | Este fichero y la memoria de Claude del proyecto |
 

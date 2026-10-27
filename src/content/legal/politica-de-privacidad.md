@@ -2,11 +2,16 @@
 # REVISAR CON ABOGADO: borrador técnico redactado por el implementador,
 # no es asesoramiento jurídico. Los apartados 3 y 4 se reescribieron el
 # 26/10/2026 a partir de lo que hace el código, no de una plantilla.
+# 27/10/2026: añadido el asistente de IA (apartados 2, 3.f, 4 y 5).
+# VERIFICAR: la entidad de Anthropic con la que está contratada la API
+# (Anthropic, PBC o la filial europea) según las condiciones de la cuenta,
+# el mecanismo de transferencia internacional que figura en su acuerdo de
+# tratamiento de datos (DPA) y el plazo de conservación de la API.
 title: "Política de privacidad"
 metaTitle: "Política de privacidad y protección de datos | Luis Flores"
 description: "Cómo trato tus datos personales en soyluisflores.es según el RGPD y la LOPDGDD: responsable, finalidades, base jurídica, conservación y tus derechos."
 ---
-Última actualización: 26 de octubre de 2026
+Última actualización: 27 de octubre de 2026
 
 Esta política explica cómo se tratan los datos personales que facilitas a través de este sitio web, conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
 
@@ -20,6 +25,7 @@ Esta política explica cómo se tratan los datos personales que facilitas a trav
 
 - Datos de contacto que nos facilitas: nombre, email y el contenido de tu mensaje.
 - Datos que facilitas al reservar una llamada a través de Calendly: nombre, email y la información que añadas.
+- Lo que escribas en el asistente de IA de la web (el chat de la esquina inferior).
 - Datos de navegación, solo si aceptas las cookies de analítica o marketing (ver la [Política de cookies](/politica-de-cookies)).
 
 No se solicitan categorías especiales de datos. Te pedimos que no las incluyas en tus mensajes.
@@ -38,6 +44,8 @@ Cada tratamiento tiene su propia finalidad, su base jurídica y su plazo. Los pl
 
 **e) Medir las campañas publicitarias.** Solo si aceptas las cookies de marketing. La base jurídica es tu consentimiento (art. 6.1.a del RGPD), que puedes retirar del mismo modo. Los plazos están en la [Política de cookies](/politica-de-cookies).
 
+**f) Responder en el asistente de IA de la web.** Si escribes en el chat, el texto de la conversación se envía a Anthropic, que genera la respuesta con su modelo de IA Claude. Antes del primer mensaje el chat avisa de que hablas con una IA. La web no guarda las conversaciones: solo existen en la pestaña del navegador mientras la tienes abierta. La base jurídica es el interés legítimo en atender a quien pregunta por los servicios (art. 6.1.f del RGPD) y, si la consulta busca contratar, la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Te pedimos que no escribas datos personales ni sensibles en el chat.
+
 Retirar el consentimiento no afecta a la licitud del tratamiento realizado antes de retirarlo.
 
 No se toman decisiones automatizadas ni se elaboran perfiles con efectos jurídicos sobre ti.
@@ -49,6 +57,7 @@ No se ceden datos a terceros salvo obligación legal. Para prestar el servicio s
 - Alojamiento de la web: Cloudflare, Inc.
 - Agenda de las llamadas: Calendly LLC.
 - Mensajes por WhatsApp, si eliges ese canal: WhatsApp Ireland Limited (grupo Meta).
+- Asistente de IA de la web, si lo usas: Anthropic (proveedor del modelo Claude), que procesa el texto de la conversación para generar la respuesta.
 - Google Ireland Ltd. (Google Tag Manager y herramientas de medición), solo si aceptas las cookies correspondientes.
 
 Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Europeo. En ese caso, las transferencias se amparan en decisiones de adecuación de la Comisión Europea, como el Marco de Privacidad de Datos UE-EE. UU., o en cláusulas contractuales tipo.
@@ -58,6 +67,7 @@ Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Eu
 - Consultas: el tiempo necesario para responderlas y, como máximo, un año después del último contacto si no se inicia una relación comercial.
 - Clientes: mientras dure la relación y, después, durante los plazos legales de conservación (por ejemplo, obligaciones fiscales y mercantiles).
 - Datos de analítica: según los plazos indicados en la [Política de cookies](/politica-de-cookies).
+- Conversaciones del asistente de IA: la web no las guarda. Anthropic las conserva durante el tiempo limitado que establecen sus condiciones para el servicio de API.
 
 ## 6. Tus derechos
 

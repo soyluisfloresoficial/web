@@ -1,9 +1,11 @@
 ---
+# REVISAR CON ABOGADO: aviso estándar pedido por el titular (21/10/2026).
+# 27/10/2026: añadido el asistente de IA de la web (apartados 2, 3, 4 y 6).
 title: "Aviso de privacidad para Latinoamérica"
 metaTitle: "Aviso de privacidad para Latinoamérica | Luis Flores"
 description: "Cómo se tratan los datos de quienes contactan desde Latinoamérica: qué datos se piden, para qué, con quién se comparten y cómo ejercer tus derechos."
 ---
-Última actualización: 21 de octubre de 2026
+Última actualización: 27 de octubre de 2026
 
 Este aviso explica cómo se tratan los datos personales de las personas que visitan soyluisflores.es o contactan desde un país de Latinoamérica. Se redactó teniendo en cuenta los principios comunes de las leyes de protección de datos de la región, como la Ley Federal de Protección de Datos Personales en Posesión de los Particulares en México, la Ley 1581 de 2012 en Colombia, la Ley 25.326 en Argentina, la Ley 29733 en Perú o la Ley 19.628 en Chile.
 
@@ -21,6 +23,7 @@ Los datos identificativos completos están en el [Aviso legal](/aviso-legal).
 
 - **Datos de contacto** que tú facilitas al escribir por correo o por WhatsApp: nombre, correo electrónico, número de teléfono y el contenido de tus mensajes.
 - **Datos para agendar una llamada** a través de Calendly: nombre, correo electrónico, zona horaria y la información que quieras añadir.
+- **Lo que escribas en el asistente de IA** de la web (el chat de la esquina inferior).
 - **Datos de navegación**, solo si aceptas las cookies de analítica o de marketing. El detalle está en la [Política de cookies](/politica-de-cookies).
 
 No se piden datos sensibles, como información de salud, origen étnico, creencias u opiniones políticas. Te pedimos que no los incluyas en tus mensajes.
@@ -29,7 +32,7 @@ No se piden datos sensibles, como información de salud, origen étnico, creenci
 
 **Finalidades necesarias** para atender tu solicitud:
 
-- Responder tus consultas.
+- Responder tus consultas, también en el asistente de IA de la web. Antes del primer mensaje, el chat avisa de que hablas con una IA.
 - Agendar y realizar la llamada de diagnóstico.
 - Preparar y enviarte una propuesta, si la pides.
 - Prestar los servicios contratados y gestionar la relación comercial.
@@ -51,6 +54,7 @@ Tus datos no se venden ni se ceden a terceros para sus propios fines. Para prest
 - Calendly LLC: agenda de llamadas.
 - Google (Google Tag Manager y herramientas de medición), solo si aceptas las cookies correspondientes.
 - WhatsApp, de Meta, si eliges escribir por ese canal.
+- Anthropic (proveedor del modelo de IA Claude), si usas el asistente de la web: procesa el texto de la conversación para generar la respuesta.
 - El proveedor del correo electrónico.
 
 Algunos de estos proveedores están en países distintos al tuyo, como Estados Unidos o países de la Unión Europea. Al usar estos canales, tus datos pueden transferirse a esos países con las garantías que ofrecen los propios proveedores. También se comunicarán datos a las autoridades cuando lo exija la ley.
@@ -75,6 +79,7 @@ Si no quedas conforme con la respuesta, puedes acudir a la autoridad de protecci
 - Consultas: el tiempo necesario para responderlas y, como máximo, un año después del último contacto si no se inicia una relación comercial.
 - Clientes: mientras dure la relación y, después, durante los plazos que exijan las obligaciones legales, fiscales o contables.
 - Datos de navegación: según los plazos de la [Política de cookies](/politica-de-cookies).
+- Conversaciones del asistente de IA: la web no las guarda. Anthropic las conserva durante el tiempo limitado que establecen sus condiciones.
 
 ## 7. Seguridad
 
