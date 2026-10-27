@@ -46,7 +46,7 @@ const todaviaNo = [
 
 const canales = [
   { nombre: "WhatsApp", valor: SITIO.whatsappVisible, href: SITIO.whatsapp, icono: "whatsapp" },
-  { nombre: "Correo", valor: SITIO.email, href: `mailto:${SITIO.email}`, icono: "email" },
+  { nombre: "Correo", valor: SITIO.email, href: SITIO.correoEnlace, icono: "email" },
   { nombre: "Instagram", valor: "@soyluisflores_", href: "https://www.instagram.com/soyluisflores_/", icono: "instagram" },
   { nombre: "LinkedIn", valor: "Luis Carlos Flores", href: "https://www.linkedin.com/in/soyluisflores/", icono: "linkedin" },
   { nombre: "TikTok", valor: "@soyluisfloresoficial", href: "https://www.tiktok.com/@soyluisfloresoficial", icono: "tiktok" },
@@ -95,7 +95,7 @@ const schema = [
         </a>
       </div>
       <p class="nota-respuesta mt-5">
-        También puedes escribirme a <a href={`mailto:${SITIO.email}`}>{SITIO.email}</a>.
+        También puedes escribirme a <a href={SITIO.correoEnlace}>{SITIO.email}</a>.
         Respondo en 24 a 48 horas hábiles.
       </p>
 

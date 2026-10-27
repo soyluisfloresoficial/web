@@ -194,11 +194,29 @@ export function serviciosDe(pilar: Pilar): Servicio[] {
   }
 }
 
+/**
+ * Correo con asunto y mensaje de partida (28/10/2026). Va a todos los enlaces
+ * de correo de la web que invitan a escribir. Los enlaces de los textos
+ * legales no lo llevan: ahí el correo es un dato de contacto, no una invitación.
+ */
+const CORREO = "hola@soyluisflores.es";
+const ASUNTO_CORREO = "Consulta desde soyluisflores.es";
+const MENSAJE_CORREO = [
+  "Hola, Luis. Vengo de tu web y quiero hablar de mi negocio.",
+  "",
+  "Mi negocio:",
+  "Lo que quiero resolver:",
+  "",
+  "Gracias.",
+].join("\r\n");
+
 export const SITIO = {
   url: "https://soyluisflores.es",
   nombre: "Luis Flores",
   nombreCompleto: "Luis Carlos Flores",
-  email: "hola@soyluisflores.es",
+  email: CORREO,
+  /** mailto: con asunto y mensaje de partida. Para texto plano, SITIO.email. */
+  correoEnlace: `mailto:${CORREO}?subject=${encodeURIComponent(ASUNTO_CORREO)}&body=${encodeURIComponent(MENSAJE_CORREO)}`,
   calendly: "https://calendly.com/soyluisfloresoficial/nueva-reunion",
   // ID de Google Tag Manager, desde la variable de entorno PUBLIC_GTM_ID
   // (por ejemplo en Cloudflare Pages → Settings → Environment variables).

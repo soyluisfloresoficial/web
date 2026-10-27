@@ -29,6 +29,7 @@ Si el build o la auditoría fallan, **no subas nada** y explica qué ha pasado.
 | Variables de compilación (`PUBLIC_GTM_ID`) | Panel de Cloudflare → Worker `web` → Configuración → Compilación. **No** están en el repositorio |
 | Clave del asistente de IA (`ANTHROPIC_API_KEY`) | Panel de Cloudflare → Worker `web` → Configuración → Variables y secretos (tiempo de ejecución, tipo **Secreto**). **No** está en el repositorio. Ver `AGENTE.md` |
 | Asistente de IA: instrucciones y servidor | `src/worker/` y `AGENTE.md`. Lo que sabe se genera solo desde `src/data` y el blog |
+| Plantillas de los correos (confirmación, recordatorios, seguimiento) | `correos/PLANTILLAS.md`. Se pegan a mano en Calendly, GoHighLevel o ActiveCampaign |
 | Contenedor de Google Tag Manager | `gtm/` (ficheros de apoyo; el contenedor real está en tagmanager.google.com) |
 | Reglas de trabajo y preferencias | Este fichero y la memoria de Claude del proyecto |
 
