@@ -789,7 +789,11 @@ function EscenaCierre({ vertical }: { vertical: boolean }) {
 }
 
 // ------------------------------------------------------------------ Video
-export function Piloto({ vertical }: { vertical: boolean }) {
+/**
+ * marca: logo y aviso «Ejemplo ilustrativo» dentro del video. En la web van
+ * fuera (la página ya los muestra encima), así que la versión web no los lleva.
+ */
+export function Piloto({ vertical, marca = true }: { vertical: boolean; marca?: boolean }) {
   const escenas = [
     { ...ESCENAS.hora, C: EscenaHora },
     { ...ESCENAS.chat, C: EscenaChat },
@@ -813,7 +817,7 @@ export function Piloto({ vertical }: { vertical: boolean }) {
           <EscenaCierre vertical={vertical} />
         </Escena>
       </Sequence>
-      <Marco vertical={vertical} />
+      {marca && <Marco vertical={vertical} />}
     </AbsoluteFill>
   );
 }

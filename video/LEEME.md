@@ -19,6 +19,12 @@ efectos está en `SISTEMA-DISENO.md`.
 |---|---|---|
 | `Piloto` | 1920 × 1080, 15 s | Web (sección «Por dentro») |
 | `PilotoVertical` | 1080 × 1920, 15 s | Instagram, TikTok y anuncios |
+| `PilotoWeb` | 1920 × 1080, 15 s | La web, sin el logo ni el aviso del marco |
+| `PilotoVerticalWeb` | 1080 × 1920, 15 s | La web en celular, igual que la anterior |
+
+Las versiones para la web (28/10/2026) no llevan el marco con el logo: en la
+web ya está la cabecera con la marca y el logo se repetía. Para redes se usan
+`Piloto` y `PilotoVertical`, que sí lo llevan.
 
 El piloto (27/10/2026) cuenta la historia de «Por dentro»: son las 22:14 y
 entra un mensaje, el agente contesta, la cita entra en la agenda, el papeleo
@@ -49,7 +55,8 @@ npm run piloto
 npm run piloto-vertical
 ```
 
-Para la versión ligera de la web (escribe directamente en `../public/video/`):
+Para la versión ligera de la web, sin logo (escribe directamente en `../public/video/`;
+si la web está abierta con `npm run dev`, ciérrala antes porque bloquea los archivos):
 
 ```bash
 npm run piloto-web

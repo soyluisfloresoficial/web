@@ -7,7 +7,7 @@
     "estudio": "remotion studio src/index.ts --public-dir=../public",
     "piloto": "remotion render src/index.ts Piloto out/piloto.mp4 --public-dir=../public --crf=20",
     "piloto-vertical": "remotion render src/index.ts PilotoVertical out/piloto-vertical.mp4 --public-dir=../public --crf=20",
-    "piloto-web": "remotion render src/index.ts Piloto ../public/video/piloto.mp4 --public-dir=../public --scale=0.75 --crf=28 --x264-preset=veryslow && remotion still src/index.ts Piloto ../public/video/piloto-portada.jpg --frame=60 --public-dir=../public --scale=0.75 --image-format=jpeg --jpeg-quality=78 && remotion render src/index.ts PilotoVertical ../public/video/piloto-vertical.mp4 --public-dir=../public --scale=0.75 --crf=28 --x264-preset=veryslow && remotion still src/index.ts PilotoVertical ../public/video/piloto-vertical-portada.jpg --frame=60 --public-dir=../public --scale=0.75 --image-format=jpeg --jpeg-quality=78 && node ../tools/portadas-video.mjs"
+    "piloto-web": "remotion render src/index.ts PilotoWeb ../public/video/piloto.mp4 --public-dir=../public --scale=0.75 --crf=28 --x264-preset=veryslow && remotion still src/index.ts PilotoWeb ../public/video/piloto-portada.jpg --frame=60 --public-dir=../public --scale=0.75 --image-format=jpeg --jpeg-quality=78 && remotion render src/index.ts PilotoVerticalWeb ../public/video/piloto-vertical.mp4 --public-dir=../public --scale=0.75 --crf=28 --x264-preset=veryslow && remotion still src/index.ts PilotoVerticalWeb ../public/video/piloto-vertical-portada.jpg --frame=60 --public-dir=../public --scale=0.75 --image-format=jpeg --jpeg-quality=78 && node ../tools/portadas-video.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.539",

@@ -7,6 +7,8 @@ import { Piloto, DURACION } from "./Piloto";
  *
  * - Piloto: 16:9, para la web.
  * - PilotoVertical: 9:16, para Instagram, TikTok y anuncios.
+ * - PilotoWeb y PilotoVerticalWeb: las mismas, sin logo ni aviso dentro
+ *   (28/10/2026). En la web ya salen encima del video y se repetían.
  */
 export const Raiz = () => (
   <>
@@ -27,6 +29,24 @@ export const Raiz = () => (
       width={1080}
       height={1920}
       defaultProps={{ vertical: true }}
+    />
+    <Composition
+      id="PilotoWeb"
+      component={Piloto}
+      durationInFrames={DURACION}
+      fps={30}
+      width={1920}
+      height={1080}
+      defaultProps={{ vertical: false, marca: false }}
+    />
+    <Composition
+      id="PilotoVerticalWeb"
+      component={Piloto}
+      durationInFrames={DURACION}
+      fps={30}
+      width={1080}
+      height={1920}
+      defaultProps={{ vertical: true, marca: false }}
     />
   </>
 );
