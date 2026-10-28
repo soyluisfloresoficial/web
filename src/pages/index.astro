@@ -5,6 +5,7 @@ import Base from "../layouts/Base.astro";
 import { servicios, SITIO, AREA_SERVIDA, PILARES, serviciosDe } from "../data/servicios";
 import { fugas, publicos, herramientas, estandares, proceso, faq, faqPlana, queMido } from "../data/home";
 import Showcase from "../components/Showcase.astro";
+import TarjetaArticulo from "../components/TarjetaArticulo.astro";
 import heroImg from "../assets/luis-flores-monitores.jpg";
 import retratoImg from "../assets/luis-flores-sobre-mi-azul.jpg";
 import Icono from "../components/Icono.astro";
@@ -48,8 +49,6 @@ const barrasRoi: [string, number][] = [
   ["Recuperación", 0.38],
   ["ROI 12 meses", 0.85],
 ];
-const fechaCorta = (d: Date) =>
-  d.toLocaleDateString("es", { day: "numeric", month: "short", year: "numeric" });
 
 const schema = [
   {
@@ -676,20 +675,11 @@ const schema = [
         </div>
         <ul class="grid-3 mt-12">
           {
+            /* La misma tarjeta que el índice del blog, con su portada
+               (28/10/2026): antes aquí eran solo texto. */
             ultimos.map((p) => (
-              <li class="card tarjeta tarjeta-articulo">
-                <p class="meta">
-                  <time datetime={p.data.datePublished.toISOString().slice(0, 10)}>
-                    {fechaCorta(p.data.datePublished)}
-                  </time>
-                </p>
-                <h3 class="card-title mt-3">
-                  <a href={`/blog/${p.id}`} class="enlace-tarjeta">{p.data.title}</a>
-                </h3>
-                <p class="card-text mt-3">{p.data.description}</p>
-                <span class="card-link" aria-hidden="true">
-                  Leer el artículo <span aria-hidden="true">→</span>
-                </span>
+              <li class="reveal">
+                <TarjetaArticulo post={p} nivel="h3" />
               </li>
             ))
           }
@@ -1979,11 +1969,6 @@ const schema = [
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.25;
-  }
-
-  /* ----------------------------------------------------------------- Blog */
-  .tarjeta-articulo .card-title {
-    font-size: var(--step-1);
   }
 
   /* ------------------------------------------------------------------ FAQ */
