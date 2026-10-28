@@ -21,13 +21,14 @@
 #   siempre por https.
 # - HSTS de un año para el dominio y sus subdominios (www, panel): el
 #   navegador ya no intenta entrar por http. Todos tienen certificado.
-# - COOP same-origin: aísla la web de las ventanas que abre (WhatsApp,
-#   redes). Calendly va en un iframe, no en una ventana, así que no le afecta.
+# - Sin COOP (Cross-Origin-Opener-Policy) a propósito: con «same-origin» el
+#   navegador abre la página en otro proceso y Lighthouse, y con él
+#   PageSpeed, se queda sin medir el rendimiento (error NO_NAVSTART). Probado
+#   el 28/10/2026: falló en tres pasadas seguidas.
 
 /*
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=31536000; includeSubDomains
-  Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: accelerometer=(), autoplay=(self), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), browsing-topics=()
   Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net; font-src 'self'; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net https://static.cloudflareinsights.com; frame-src https://calendly.com https://*.calendly.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'
