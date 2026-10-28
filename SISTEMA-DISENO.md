@@ -73,7 +73,7 @@ Principios: solo se animan `transform`, `translate`, `scale` y `opacity`. Todo r
 | Barra de progreso | Artículos del blog | Línea de tiempo de scroll |
 | Video piloto | Home, sección «Por dentro» (`Showcase.astro`) | MP4 de 15 s sin sonido, hecho con código en `video/`: 16:9 en escritorio y 9:16 en celular (menos de 768 px). Sustituye a las tarjetas con maquetas, que repetían lo mismo; debajo hay un desplegable con la historia en texto. Solo se descarga al llegar a pantalla, arranca solo, se para al salir y tiene botón de pausa. Con movimiento reducido no arranca solo (27/10/2026) |
 
-**Qué no se hace, a propósito:** animaciones infinitas de adorno (auroras, brillos, puntos que laten), efectos que siguen al puntero ni capas fijas a pantalla completa. Pesan en móviles de gama media y empeoran el INP. La única animación continua es la marquesina de herramientas, que se para con movimiento reducido. El video piloto se mueve más de 5 segundos, pero va dentro de un `<video>` con botón de pausa (WCAG 2.2.2) y no consume CPU de animación en la página.
+**Qué no se hace, a propósito:** animaciones infinitas de adorno (auroras, brillos, puntos que laten), efectos que siguen al puntero ni capas fijas a pantalla completa. Pesan en móviles de gama media y empeoran el INP. La única animación continua es la marquesina de herramientas: desde el 28/10/2026 son dos bandas en sentidos contrarios, con los logos en su color, que se paran al pasar el ratón, con su botón de pausa y con movimiento reducido (donde pasan a ser una rejilla quieta). El video piloto se mueve más de 5 segundos, pero va dentro de un `<video>` con botón de pausa (WCAG 2.2.2) y no consume CPU de animación en la página.
 
 ## Video piloto: efectos (27/10/2026)
 
