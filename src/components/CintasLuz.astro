@@ -66,13 +66,25 @@ const { paleta = "marca" } = Astro.props;
     // Avance del scroll (0 arriba, 1 abajo), suavizado.
     let scrollObjetivo = 0;
     let scrollActual = 0;
+    // El alto de la página se lee una vez por fotograma como mucho y nunca
+    // dentro del evento de scroll: leerlo ahí, después de tocar el lienzo,
+    // obligaba al navegador a recalcular la maquetación (PageSpeed lo marcaba
+    // como «reprocesamiento forzado»).
+    let recorrido = 1;
+    const medirRecorrido = () => {
+      recorrido = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    };
     const leerScroll = () => {
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      scrollObjetivo = window.scrollY / max;
+      scrollObjetivo = window.scrollY / recorrido;
     };
     window.addEventListener("scroll", leerScroll, { passive: true });
-    leerScroll();
-    scrollActual = scrollObjetivo;
+    requestAnimationFrame(() => {
+      medirRecorrido();
+      leerScroll();
+      scrollActual = scrollObjetivo;
+    });
+    window.addEventListener("load", medirRecorrido);
+    window.addEventListener("resize", () => requestAnimationFrame(medirRecorrido));
 
     // Motas de luz que viajan por la cinta.
     const motas = Array.from({ length: movil ? 22 : 46 }, () => ({

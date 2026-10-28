@@ -101,6 +101,12 @@ const lastmod = new Map([...lastmodEstaticas(), ...lastmodPorRuta()]);
 
 export default defineConfig({
   site: "https://soyluisflores.es",
+  // El CSS va dentro de cada página (28/10/2026). Eran dos hojas, unos 17 KB
+  // comprimidos, que el navegador tenía que descargar antes de pintar nada:
+  // PageSpeed las marcaba como bloqueo de renderización (530 ms en celular).
+  // La web es pequeña, así que repetirlas en cada HTML cuesta menos que
+  // esperar esa petición en la primera visita.
+  build: { inlineStylesheets: "always" },
 
   // El sitio en producción redirige /servicios/ a /servicios con un 308,
   // así que la regla es "sin barra final" y se aplica a canonical, og:url,

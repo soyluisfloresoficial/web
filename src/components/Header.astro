@@ -28,12 +28,12 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
         <img
           src="/logo/nombre-360.webp"
           alt="Luis Flores"
-          width="180"
-          height="24"
+          width="360"
+          height="32"
           class="marca-nombre"
         />
         {/* Lema bajo el nombre, como en producción. Solo en pantallas anchas. */}
-        <img src="/logo/lema-360.webp" alt="" aria-hidden="true" width="180" height="10" class="marca-lema" />
+        <img src="/logo/lema-360.webp" alt="" aria-hidden="true" width="360" height="19" class="marca-lema" />
       </span>
     </a>
 
@@ -191,7 +191,10 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
     width: 2rem;
     height: auto;
   }
+  /* align-self: en la columna del lema, sin esto el nombre se estiraba al
+     ancho del lema y se deformaba (PageSpeed: relación de aspecto incorrecta). */
   .marca-nombre {
+    align-self: flex-start;
     height: 1.25rem;
     width: auto;
   }
@@ -200,14 +203,21 @@ const actual = Astro.url.pathname.replace(/\/+$/, "") || "/";
     flex-direction: column;
     gap: 0.4rem;
   }
+  /* El lema no aporta ancho a la columna (width: 0) y se estira al del
+     nombre (min-width: 100%): así los dos miden lo mismo sin deformarse. */
   .marca-lema {
     display: none;
-    width: 100%;
+    width: 0;
+    min-width: 100%;
     height: auto;
   }
   @media (width >= 1100px) {
     .marca-lema {
       display: block;
+    }
+    /* Con el lema debajo, el nombre algo más grande para que el lema se lea. */
+    .marca-nombre {
+      height: 1.6rem;
     }
   }
 

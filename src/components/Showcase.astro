@@ -76,13 +76,15 @@ const pasos = [
           playsinline
           controls
           preload="none"
-          poster="/video/piloto-portada.jpg"
+          poster="/video/piloto-portada.webp"
           width="1440"
           height="810"
           aria-label="Video de 15 segundos sin sonido: a las 22:14 entra un mensaje, el agente contesta, la cita entra en la agenda, el papeleo se hace solo y todo queda medido."
         >
           <source src="/video/piloto-vertical.mp4" type="video/mp4" media="(max-width: 767px)" />
           <source src="/video/piloto.mp4" type="video/mp4" />
+          {/* El video no tiene sonido: la pista repite el texto de la pantalla. */}
+          <track kind="captions" src="/video/piloto.vtt" srclang="es" label="Texto del video" />
         </video>
         <button class="video-control" type="button" data-control hidden>
           <span class="sr-only" data-etiqueta>Reproducir el video</span>
@@ -133,7 +135,7 @@ const pasos = [
     // La portada tiene que coincidir con la versión del video: el atributo
     // media de <source> no cambia el poster.
     const elegirVersion = () => {
-      video.poster = celular.matches ? "/video/piloto-vertical-portada.jpg" : "/video/piloto-portada.jpg";
+      video.poster = celular.matches ? "/video/piloto-vertical-portada.webp" : "/video/piloto-portada.webp";
     };
     elegirVersion();
     celular.addEventListener("change", () => {

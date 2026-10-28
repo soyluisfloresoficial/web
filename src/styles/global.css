@@ -462,18 +462,15 @@ main :where(p, li, dd, td, blockquote) > a:not([class]):hover {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Aparición al entrar en vista. Arranca en 0.55 y no en 0: al bajar deprisa
-     nunca queda una zona en blanco esperando al observador. */
+  /* Aparición al entrar en vista: solo sube, sin transparencia (28/10/2026).
+     Con transparencia, quien no hace scroll (los buscadores, Lighthouse)
+     veía los textos a medio aparecer y con poco contraste. */
   .js .reveal {
-    opacity: 0.55;
     transform: translateY(20px);
-    transition:
-      opacity var(--dur-entrada) var(--ease),
-      transform var(--dur-entrada) var(--ease);
+    transition: transform var(--dur-entrada) var(--ease);
   }
 
   .js .reveal.is-visible {
-    opacity: 1;
     transform: none;
   }
 
@@ -773,9 +770,10 @@ main :where(p, li, dd, td, blockquote) > a:not([class]):hover {
   }
 }
 
+/* Solo movimiento: sin transparencia, el texto tiene siempre su contraste
+   real aunque no se haya hecho scroll hasta él (28/10/2026). */
 @keyframes entra-vista {
   from {
-    opacity: 0.35;
     transform: translateY(28px);
   }
 }

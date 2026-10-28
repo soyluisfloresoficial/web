@@ -7,7 +7,10 @@ videos se renderizan aquí y el que se publica se copia a `public/video/`.
 **En la web (27/10/2026):** en la sección «Por dentro» de la portada, dos
 versiones con su portada: `public/video/piloto.mp4` (16:9, 1440 × 810) para
 escritorio y `piloto-vertical.mp4` (9:16, 810 × 1440) para celular, 1,1 MB cada
-una. Si cambias el video, vuelve a sacarlas con `npm run piloto-web`. La lista de
+una. Si cambias el video, vuelve a sacarlas con `npm run piloto-web`, que también
+convierte las portadas a WebP (`tools/portadas-video.mjs`). Los subtítulos con el
+texto de la pantalla están en `public/video/piloto.vtt`: si cambias un texto del
+video, cámbialo también ahí. La lista de
 efectos está en `SISTEMA-DISENO.md`.
 
 ## Qué hay

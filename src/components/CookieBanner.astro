@@ -20,6 +20,7 @@ const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
 
 {
   gtmValido && (
+    <>
     <section
       class="cookies"
       role="region"
@@ -65,6 +66,24 @@ const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
         </div>
       </div>
     </section>
+    {/*
+      Se muestra en cuanto llega el HTML, sin esperar al script del final
+      (28/10/2026). Antes aparecía tarde y, como es lo más grande que se ve
+      en un celular, PageSpeed lo medía como el elemento principal (LCP) con
+      2,2 s de retraso. Misma clave y misma caducidad que el script de abajo,
+      que sigue siendo quien guarda la elección y carga GTM.
+    */}
+    <script is:inline>
+      (function () {
+        var banner = document.currentScript.previousElementSibling;
+        try {
+          var c = JSON.parse(localStorage.getItem("lf-consent-v1") || "null");
+          if (c && Date.now() - new Date(c.date).getTime() <= 31536000000) return;
+        } catch (e) {}
+        banner.hidden = false;
+      })();
+    </script>
+    </>
   )
 }
 

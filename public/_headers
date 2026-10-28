@@ -14,12 +14,23 @@
 # - cloudflareinsights y /cdn-cgi: los añade Cloudflare por su cuenta.
 # - calendly.com en frame-src: la agenda va dentro de /contacto y /diagnostico.
 # - WhatsApp no necesita permiso: son enlaces que salen de la web.
+#
+# 28/10/2026, a raíz de PageSpeed:
+# - Fuera «upgrade-insecure-requests» de la CSP: en modo Report-Only el
+#   navegador lo ignora y lo avisa como error en la consola. La web ya va
+#   siempre por https.
+# - HSTS de un año para el dominio y sus subdominios (www, panel): el
+#   navegador ya no intenta entrar por http. Todos tienen certificado.
+# - COOP same-origin: aísla la web de las ventanas que abre (WhatsApp,
+#   redes). Calendly va en un iframe, no en una ventana, así que no le afecta.
 
 /*
   Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: SAMEORIGIN
-  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), browsing-topics=()
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net; font-src 'self'; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net https://static.cloudflareinsights.com; frame-src https://calendly.com https://*.calendly.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Permissions-Policy: accelerometer=(), autoplay=(self), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), browsing-topics=()
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net; font-src 'self'; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net https://static.cloudflareinsights.com; frame-src https://calendly.com https://*.calendly.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'
 
 # Base de conocimiento del asistente de IA: es pública (solo repite lo que
 # dice la web), pero no tiene que salir en los buscadores.
