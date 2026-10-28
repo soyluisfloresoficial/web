@@ -30,13 +30,15 @@ const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
       data-gtm={SITIO.gtm}
     >
       <div class="cookies-caja">
-        <p id="cookies-titulo" class="cookies-titulo">Tu privacidad, tu decisión</p>
-        <p class="cookies-texto">
-          Uso cookies técnicas necesarias para que la web funcione. Con tu permiso,
-          también cookies de analítica y marketing para medir visitas y mejorar el
-          contenido. No se activan hasta que aceptes. Detalles en la{" "}
-          <a href="/politica-de-cookies">política de cookies</a>.
-        </p>
+        <div class="cookies-textos">
+          <p id="cookies-titulo" class="cookies-titulo">Tu privacidad, tu decisión</p>
+          <p class="cookies-texto">
+            Uso cookies técnicas necesarias para que la web funcione. Con tu permiso,
+            también cookies de analítica y marketing para medir visitas y mejorar el
+            contenido. No se activan hasta que aceptes. Detalles en la{" "}
+            <a href="/politica-de-cookies">política de cookies</a>.
+          </p>
+        </div>
 
         <form class="cookies-panel" hidden data-cookie-panel>
           <fieldset>
@@ -211,24 +213,32 @@ const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
   .cookies[hidden] {
     display: none;
   }
+  /* Compacto (28/10/2026): antes era una tarjeta grande en mitad de la
+     pantalla que tapaba la portada. En escritorio es una barra baja con el
+     texto a la izquierda y los botones a la derecha; en celular, los tres
+     botones en una fila. Siguen teniendo el mismo peso visual (AEPD). */
   .cookies-caja {
-    max-width: 48rem;
+    display: grid;
+    gap: 0.875rem 1.75rem;
+    max-width: 72rem;
     margin-inline: auto;
-    background: var(--color-navy-2);
+    padding: 1rem 1.125rem;
+    background: rgb(10 14 26 / 0.96);
     border: 1px solid var(--color-line);
-    border-radius: var(--radius-2xl);
+    border-radius: 1.25rem;
     box-shadow: var(--shadow-3);
-    padding: 1.25rem;
+    backdrop-filter: blur(10px);
   }
   .cookies-titulo {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: var(--step-1);
+    font-size: var(--step-0);
     color: var(--color-ink);
   }
   .cookies-texto {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     font-size: var(--step--1);
+    line-height: 1.5;
     color: var(--color-soft);
   }
   .cookies-texto a {
@@ -237,8 +247,7 @@ const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
     text-underline-offset: 3px;
   }
   .cookies-panel {
-    margin-top: 1rem;
-    padding-top: 1rem;
+    padding-top: 0.875rem;
     border-top: 1px solid var(--color-divider);
     display: grid;
     gap: 0.75rem;
@@ -272,34 +281,54 @@ const gtmValido = /^GTM-[A-Z0-9]+$/.test(SITIO.gtm);
     color: var(--color-ink);
   }
   .cookies-acciones {
-    margin-top: 1rem;
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.5rem;
   }
   /* Los tres botones con el mismo peso visual: rechazar no puede ser más
      difícil que aceptar (AEPD, guía de cookies de 2023). */
   .cookies-boton {
     min-height: 2.75rem;
-    padding: 0.5rem 1.25rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 999px;
     border: 1px solid rgb(255 255 255 / 0.6);
     background: transparent;
     color: var(--color-ink);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: var(--step-0);
+    font-size: var(--step--1);
     cursor: pointer;
     transition: border-color var(--dur-micro) var(--ease);
   }
   .cookies-boton:hover {
     border-color: var(--color-electric);
   }
-  @media (width >= 640px) {
-    .cookies-acciones {
-      grid-template-columns: repeat(3, 1fr);
+  .cookies-panel .cookies-boton {
+    justify-self: start;
+    padding-inline: 1.25rem;
+  }
+  /* Escritorio: texto y botones en la misma fila; el panel de configurar,
+     cuando se abre, ocupa la fila de abajo. */
+  @media (width >= 900px) {
+    .cookies-caja {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      padding: 1rem 1.25rem 1rem 1.5rem;
     }
-    .cookies-panel .cookies-boton {
-      justify-self: start;
+    .cookies-textos {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .cookies-acciones {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .cookies-acciones .cookies-boton {
+      min-width: 8rem;
+    }
+    .cookies-panel {
+      grid-column: 1 / -1;
+      grid-row: 2;
     }
   }
 </style>
