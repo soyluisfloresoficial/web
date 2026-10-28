@@ -51,6 +51,8 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 
 `/diagnostico` (22/10/2026) es la landing de la llamada de diagnóstico, con identidad propia: lima `#C6FF3D` sobre negro `#050505`, Space Grotesk, Inter y JetBrains Mono, sin la cabecera ni el pie de la web (`Base.astro` con `identidad="lima"`). El lima es solo para la cinta, los estados activos y el botón principal. No uses esa identidad en el resto de la web ni la azul/violeta en esa página. Desde la auditoría del 26/10/2026 va con `noindex, follow`, canónica hacia `/contacto` y fuera del sitemap, porque repite su contenido; sigue enlazada desde el pie y desde `llms.txt`, y es la página que se usa en campañas.
 
+Desde el 28/10/2026 hay además un funnel por servicio en `/diagnostico/[servicio]` (por ejemplo `/diagnostico/agentes-ia`), con la misma identidad y plantilla (`src/components/LandingDiagnostico.astro`), `noindex, follow`, canónica hacia `/servicios/[servicio]` y fuera del sitemap. Textos en `src/data/funnels.ts`; enlaces, parámetros de campaña y conversiones en `FUNNELS.md`.
+
 ## Imágenes para compartir
 
 Cada página tiene su imagen para redes (Open Graph) en `public/og/`. Se generan con `node tools/generar-og.mjs` después de `npm run build` (necesita Edge o Chrome en el ordenador). Al añadir un servicio, un artículo o cambiar un título, vuelve a ejecutarlo, compila otra vez y sube las imágenes. Si una página no tiene la suya, usa `og-default.png`.

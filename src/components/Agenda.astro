@@ -315,6 +315,26 @@ const { formId, variante = "marca" } = Astro.props;
     if (location.hash === "#agenda") raiz.querySelector<HTMLButtonElement>("[data-agenda-cargar]")?.click();
   }
 
+  // De dónde llega la visita (funnel y campaña), para anotarlo en la cita.
+  // Se guarda la primera campaña de la sesión, aunque la persona navegue.
+  function origenVisita(): string {
+    let campana = "";
+    try {
+      const p = new URLSearchParams(location.search);
+      const partes = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]
+        .filter((k) => p.get(k))
+        .map((k) => `${k.replace("utm_", "")}=${p.get(k)!.slice(0, 60)}`);
+      if (p.has("gclid")) partes.push("clic de Google Ads");
+      if (p.has("fbclid")) partes.push("clic de Meta");
+      if (partes.length && !sessionStorage.getItem("lf-origen")) sessionStorage.setItem("lf-origen", partes.join(" · "));
+      campana = sessionStorage.getItem("lf-origen") ?? "";
+    } catch {
+      /* sin almacenamiento: solo el funnel */
+    }
+    return [formId, campana].filter(Boolean).join(" · ").slice(0, 300);
+  }
+  origenVisita();
+
   // ----------------------------------------------------- Conexión con /api
 
   async function simulacion(): Promise<{ huecos: string[] }> {
@@ -395,6 +415,7 @@ const { formId, variante = "marca" } = Astro.props;
         mensaje: String(campos.get("mensaje") ?? ""),
         web: String(campos.get("web") ?? ""),
         zona,
+        origen: origenVisita(),
       });
       if (r.estado === 200) {
         w.dataLayer?.push({ event: "generate_lead", form_id: formId, method: "agenda-propia", page_path: location.pathname });

@@ -14,7 +14,7 @@
 
 Variables: **GA4 - ID de medición** (**[COMPLETAR: viene con `G-XXXXXXXXXX`]**) y **DLV - cta_location**, **DLV - cta_text**, **DLV - page_path**, **DLV - form_id**, **DLV - method** (variables de capa de datos, versión 2).
 
-Valores de `cta_location`: `hero`, `header`, `servicios`, `faq`, `footer`, `cierre`, `barra-movil`, `contacto-tarjeta`, o el id de la sección si es otra. `form_id` es siempre `calendly-diagnostico` y `method`, `calendly`.
+Valores de `cta_location`: `hero`, `header`, `servicios`, `faq`, `footer`, `cierre`, `barra-movil`, `contacto-tarjeta`, o el id de la sección si es otra. `form_id` dice de qué página llega la reserva: `calendly-diagnostico` (/contacto), `calendly-diagnostico-landing` (/diagnostico) o `funnel-<servicio>` (los funnels de anuncios, ver `FUNNELS.md`). `method` es `agenda-propia` con la agenda conectada a Google Calendar y `calendly` con la de respaldo. Las conversiones de Meta Ads y Google Ads están en `FUNNELS.md`.
 
 GTM solo se carga si la persona acepta las cookies de analítica o de marketing en el banner. Antes de cargarlo, Consent Mode v2 queda en `denied` para todo (`analytics_storage`, `ad_storage`, `ad_user_data`, `ad_personalization`).
 

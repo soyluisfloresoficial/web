@@ -102,6 +102,8 @@ interface Reserva {
   empresa: string;
   mensaje: string;
   zonaCliente: string;
+  /** Funnel y campaña de la que llegó (utm_*), si la hay. */
+  origen: string;
 }
 
 function texto(v: unknown, max: number): string | null {
@@ -133,6 +135,7 @@ function aReserva(datos: unknown): Reserva | null {
   const empresa = texto(d.empresa, 120);
   const mensaje = texto(d.mensaje, 1000);
   const zonaCliente = texto(d.zona, 64);
+  const origen = texto(d.origen, 300) ?? "";
   if (!Number.isFinite(inicio) || !nombre || nombre.length < 2) return null;
   if (!correo || !CORREO.test(correo)) return null;
   if (empresa === null || mensaje === null || zonaCliente === null) return null;
@@ -143,6 +146,7 @@ function aReserva(datos: unknown): Reserva | null {
     empresa,
     mensaje,
     zonaCliente: zonaCliente && zonaValida(zonaCliente) ? zonaCliente : AGENDA.zona,
+    origen,
   };
 }
 
@@ -166,6 +170,7 @@ async function crearEvento(env: EnvAgenda, r: Reserva): Promise<{ meet: string |
     `Correo: ${r.correo}`,
     r.empresa ? `Negocio: ${r.empresa}` : "",
     `Zona horaria del cliente: ${r.zonaCliente} (${horaLegible(r.inicio, r.zonaCliente)})`,
+    r.origen ? `Llegó desde: ${r.origen}` : "",
     "",
     r.mensaje ? `Lo que quiere resolver:\n${r.mensaje}` : "No dejó mensaje.",
   ]

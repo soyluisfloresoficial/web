@@ -1,0 +1,103 @@
+---
+/**
+ * Funnels de campaña por servicio (28/10/2026): /diagnostico/agentes-ia,
+ * /diagnostico/automatizacion, etc. Ver FUNNELS.md.
+ *
+ * Misma plantilla e identidad que /diagnostico. Van con «noindex, follow»,
+ * canónica hacia la página del servicio y fuera del sitemap: son destinos de
+ * anuncios y no deben competir con /servicios/[slug] en los buscadores.
+ *
+ * Cada agenda mide con su propio form_id (funnel-<servicio>), así en
+ * GTM, Meta Ads y Google Ads se ve qué funnel trae cada reserva.
+ */
+import LandingDiagnostico from "../../components/LandingDiagnostico.astro";
+import { SITIO, AREA_SERVIDA, servicios } from "../../data/servicios";
+import { detalles } from "../../data/servicios-detalle";
+import { faqPlana } from "../../data/home";
+import { funnels, todaviaNoFunnel } from "../../data/funnels";
+
+export function getStaticPaths() {
+  return servicios.filter((s) => funnels[s.slug] && detalles[s.slug]).map((s) => ({ params: { servicio: s.slug } }));
+}
+
+const { servicio } = Astro.params;
+const s = servicios.find((x) => x.slug === servicio)!;
+const f = funnels[servicio!];
+const d = detalles[servicio!];
+
+const url = `${SITIO.url}/diagnostico/${s.slug}`;
+const title = `Diagnóstico gratis: ${s.nombre} | Luis Flores`;
+
+// Primero las del servicio y después las dos que más se preguntan antes de agendar.
+const generales = ["¿Cuánto cuesta?", "¿Trabajas con negocios de mi país?"]
+  .map((p) => faqPlana.find((x) => x.pregunta === p))
+  .filter((p): p is NonNullable<typeof p> => Boolean(p));
+const preguntas = [...d.faq.slice(0, 3), ...generales];
+
+const schema = [
+  {
+    "@type": "WebPage",
+    "@id": `${url}#page`,
+    url,
+    name: title,
+    description: f.description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es",
+    about: { "@id": `${url}#service` },
+  },
+  {
+    "@type": "Service",
+    "@id": `${url}#service`,
+    name: `Llamada de diagnóstico de ${s.nombre.toLowerCase()}`,
+    description: f.description,
+    serviceType: s.nombre,
+    provider: { "@id": `${SITIO.url}/#organization` },
+    areaServed: AREA_SERVIDA,
+    availableLanguage: "es",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR", url },
+  },
+  {
+    "@type": "FAQPage",
+    "@id": `${url}#faq`,
+    mainEntity: preguntas.map((p) => ({
+      "@type": "Question",
+      name: p.pregunta,
+      acceptedAnswer: { "@type": "Answer", text: p.respuesta },
+    })),
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Llamada de diagnóstico", item: `${SITIO.url}/diagnostico` },
+      { "@type": "ListItem", position: 3, name: s.nombre, item: url },
+    ],
+  },
+];
+---
+
+<LandingDiagnostico
+  title={title}
+  description={f.description}
+  schema={schema}
+  canonicalDe={`/servicios/${s.slug}`}
+  formId={`funnel-${s.slug}`}
+  etiqueta={`Diagnóstico gratis · ${f.etiqueta} · 30 min`}
+  titulo={f.titulo}
+  entrada={f.entrada}
+  ventana={f.ventana}
+  etapas={f.etapas}
+  dolores={f.dolores}
+  solucion={{
+    etiqueta: "Lo que implemento",
+    titulo: f.solucion,
+    incluye: d.queIncluye,
+    cambia: d.resultado,
+    enlace: `/servicios/${s.slug}`,
+  }}
+  llevas={f.llevas}
+  encaja={d.paraQuien}
+  todaviaNo={todaviaNoFunnel}
+  preguntas={preguntas}
+/>
