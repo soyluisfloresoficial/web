@@ -18,6 +18,23 @@ import { ilustraciones } from "../data/ilustraciones";
 // Iconos de cada bloque, en el mismo orden que los datos de home.ts.
 const iconosFugas = ["reloj", "flujo", "calendarioOk"] as const;
 const iconosPublicos = ["persona", "birrete", "corazon", "edificio"] as const;
+// Datos de dibujo de las maquetas de «Cómo trabajo». Son ejemplos para
+// ilustrar cada paso, no datos de un cliente.
+const prioridadesEjemplo: [string, number, string][] = [
+  ["Responder mensajes", 0.92, "Primero"],
+  ["Confirmar citas", 0.68, "Después"],
+  ["Pasar datos al CRM", 0.46, "Después"],
+];
+const flujoEjemplo: [string, "whatsapp" | "robot" | "persona"][] = [
+  ["WhatsApp", "whatsapp"],
+  ["Agente", "robot"],
+  ["CRM", "persona"],
+];
+const medidasEjemplo: [string, string][] = [
+  ["Tiempo de respuesta", "0,6 20,8 40,10 60,15 80,17 100,19"],
+  ["Horas en tareas", "0,5 20,7 40,11 60,12 80,16 100,18"],
+  ["Citas atendidas", "0,19 20,16 40,15 60,11 80,9 100,6"],
+];
 // Un acento por público, de la paleta de la marca (global.css).
 const coloresPublicos = ["--acento-cian", "--acento-violeta", "--acento-turquesa", "--acento-ambar"] as const;
 const iconosMetricas = ["tendencia", "reloj", "calendarioOk"] as const;
@@ -570,22 +587,62 @@ const schema = [
 
         <ol class="grid-3 mt-12 paso-lista">
           {
-            proceso.map((p) => {
-              const img = imagenDe(p.imagen);
+            /* Maquetas propias en lugar de fotos de banco (28/10/2026): una
+               lista de prioridades, un flujo conectado y un panel de
+               medición. Son código, así que no pesan y siempre se ven
+               nítidas. Ilustrativas y decorativas: el texto de la tarjeta
+               ya cuenta el paso. */
+            proceso.map((p, i) => {
               return (
                 <li class="card reveal overflow-hidden paso">
-                  <div class="media duotono">
-                    {img && (
-                      <Image
-                        src={img}
-                        alt={p.imagenAlt}
-                        widths={[320, 640]}
-                        sizes="(min-width: 1024px) 30vw, 100vw"
-                        loading="lazy"
-                        class="aspect-[16/9] w-full object-cover"
-                      />
+                  <div class="paso-visual" aria-hidden="true">
+                    {i === 0 && (
+                      <div class="mini-ventana">
+                        <p class="mini-titulo">Prioridades</p>
+                        <ul class="mini-prioridades">
+                          {prioridadesEjemplo.map(([tarea, ancho, nivel], k) => (
+                            <li class={k === 0 ? "es-primera" : undefined}>
+                              <span class="mini-texto">{tarea}</span>
+                              <span class="mini-pista"><span style={`--ancho: ${ancho}`} /></span>
+                              <span class="mini-etiqueta">{nivel}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
-                    <span class="paso-circulo" aria-hidden="true">{p.numero}</span>
+                    {i === 1 && (
+                      <div class="mini-flujo">
+                        {flujoEjemplo.map(([nombre, icono], k) => (
+                          <>
+                            {k > 0 && <span class="mini-linea" />}
+                            <span class="mini-nodo">
+                              <Icono nombre={icono} tamano={20} grosor={1.7} />
+                              <span>{nombre}</span>
+                            </span>
+                          </>
+                        ))}
+                        <span class="mini-ok">
+                          <Icono nombre="check" tamano={14} grosor={2.4} />
+                          Probado con un caso real
+                        </span>
+                      </div>
+                    )}
+                    {i === 2 && (
+                      <div class="mini-ventana">
+                        <p class="mini-titulo">Medición semanal</p>
+                        <ul class="mini-medidas">
+                          {medidasEjemplo.map(([nombre, puntos]) => (
+                            <li>
+                              <span class="mini-texto">{nombre}</span>
+                              <svg viewBox="0 0 100 24" preserveAspectRatio="none">
+                                <polyline points={puntos} />
+                              </svg>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <span class="paso-circulo">{p.numero}</span>
                   </div>
                   <div class="tarjeta-cuerpo">
                     <h3 class="card-title">{p.titulo}</h3>
@@ -993,14 +1050,6 @@ const schema = [
     border: 1px solid var(--color-line);
     border-radius: 12px;
     background: rgb(255 255 255 / 0.025);
-  }
-  /* Mismo tono en las tres fotos: la del paso 2 (código sobre fondo negro)
-     salía mucho más oscura que las otras. */
-  .paso .media :global(img) {
-    filter: grayscale(1) brightness(1.05) contrast(1.02) sepia(0.45) hue-rotate(185deg) saturate(1.7);
-  }
-  .paso:nth-child(2) .media :global(img) {
-    filter: grayscale(1) brightness(1.45) contrast(0.95) sepia(0.45) hue-rotate(185deg) saturate(1.7);
   }
   .paso-reparto dt {
     color: var(--color-muted);
@@ -1903,6 +1952,139 @@ const schema = [
   }
 
   /* --------------------------------------------------------------- Método */
+  /* Maquetas de cada paso: el mismo lenguaje que el video de «Por dentro». */
+  .paso-visual {
+    position: relative;
+    display: grid;
+    place-items: center;
+    /* Alto fijo y no 16:9: en tres columnas la proporción dejaba la maqueta
+       cortada. Abajo queda sitio para el número del paso. */
+    min-height: 14rem;
+    padding: 1.5rem 1.25rem 4rem;
+    border-bottom: 1px solid var(--color-line);
+    background:
+      radial-gradient(80% 90% at 70% 0%, color-mix(in srgb, var(--acento) 20%, transparent), transparent 70%),
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px) 0 0 / 28px 28px,
+      var(--color-navy-2);
+    overflow: hidden;
+  }
+  .mini-ventana {
+    width: min(100%, 19rem);
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.875rem;
+    background: rgb(16 21 34 / 0.92);
+    box-shadow: 0 18px 40px -22px #000;
+  }
+  .mini-titulo {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .mini-prioridades,
+  .mini-medidas {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.625rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .mini-prioridades li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.25rem 0.5rem;
+    align-items: center;
+  }
+  .mini-texto {
+    font-size: 0.6875rem;
+    color: var(--color-soft);
+  }
+  .mini-pista {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    height: 0.375rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.06);
+    overflow: hidden;
+  }
+  .mini-pista span {
+    display: block;
+    height: 100%;
+    width: calc(var(--ancho) * 100%);
+    border-radius: inherit;
+    background: rgb(255 255 255 / 0.22);
+  }
+  .es-primera .mini-pista span {
+    background: var(--grad-cta);
+  }
+  .mini-etiqueta {
+    padding: 0.0625rem 0.4375rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-size: 0.625rem;
+    color: var(--color-muted);
+  }
+  .es-primera .mini-etiqueta {
+    border-color: color-mix(in srgb, var(--acento) 55%, transparent);
+    color: var(--acento-texto);
+  }
+  .mini-flujo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 0;
+  }
+  .mini-nodo {
+    display: grid;
+    justify-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.875rem;
+    background: rgb(16 21 34 / 0.92);
+    color: var(--acento-texto);
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+  .mini-nodo span {
+    color: var(--color-ink);
+  }
+  .mini-linea {
+    width: 1.75rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-electric), var(--color-violet));
+  }
+  .mini-ok {
+    flex-basis: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    color: var(--color-teal);
+  }
+  .mini-medidas li {
+    display: grid;
+    grid-template-columns: 1fr 5.5rem;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .mini-medidas svg {
+    width: 100%;
+    height: 1.25rem;
+    overflow: visible;
+  }
+  .mini-medidas polyline {
+    fill: none;
+    stroke: var(--acento-texto);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
   .paso-circulo {
     position: absolute;
     left: 1.25rem;
