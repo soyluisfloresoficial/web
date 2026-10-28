@@ -18,6 +18,8 @@ import { ilustraciones } from "../data/ilustraciones";
 // Iconos de cada bloque, en el mismo orden que los datos de home.ts.
 const iconosFugas = ["reloj", "flujo", "calendarioOk"] as const;
 const iconosPublicos = ["persona", "birrete", "corazon", "edificio"] as const;
+// Un acento por público, de la paleta de la marca (global.css).
+const coloresPublicos = ["--acento-cian", "--acento-violeta", "--acento-turquesa", "--acento-ambar"] as const;
 const iconosMetricas = ["tendencia", "reloj", "calendarioOk"] as const;
 const iconosEstandares = ["brujula", "flujo", "escudo", "robot", "web", "tendencia"] as const;
 
@@ -269,20 +271,26 @@ const schema = [
     </section>
 
     {/* --------------------------------------------------------------- Público */}
+    {/*
+      Para quién (28/10/2026): antes era una franja de cuatro columnas
+      estrechas con los títulos partidos en tres líneas. Ahora cada público
+      tiene su tarjeta con su color, para que quien llega se reconozca de un
+      vistazo. Las tarjetas no llevan enlace, así que no se elevan al pasar el
+      ratón (SISTEMA-DISENO.md).
+    */}
     <section class="section seccion-corta" aria-labelledby="publico-titulo" data-acento="cian">
       <div class="container-lf">
-        <h2 id="publico-titulo" class="antetitulo-blanco">Trabajo con negocios que quieren crecer</h2>
-        <ul class="perfiles mt-8">
+        <p class="eyebrow">Para quién trabajo</p>
+        <h2 id="publico-titulo" class="subrayado mt-4">Trabajo con negocios que quieren crecer</h2>
+        <ul class="perfiles mt-10">
           {
             publicos.map((p, i) => (
-              <li class="perfil">
-                <span class="anillo-degradado anillo-grande" aria-hidden="true">
-                  <Icono nombre={iconosPublicos[i]} tamano={24} grosor={1.6} degradado />
+              <li class="perfil reveal" data-i={i} style={`--acc: var(${coloresPublicos[i]})`}>
+                <span class="perfil-icono" aria-hidden="true">
+                  <Icono nombre={iconosPublicos[i]} tamano={26} grosor={1.6} />
                 </span>
-                <span>
-                  <span class="perfil-titulo">{p.titulo}</span>
-                  <span class="perfil-texto">{p.texto}</span>
-                </span>
+                <h3 class="perfil-titulo">{p.titulo}</h3>
+                <p class="perfil-texto">{p.texto}</p>
               </li>
             ))
           }
@@ -1519,65 +1527,68 @@ const schema = [
     :global(.js) .hero-tarjetas { animation-delay: 0.5s; }
   }
 
-  /* Antetítulo blanco, para las secciones cortas. */
-  .antetitulo-blanco {
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    line-height: 1.4;
-    text-transform: uppercase;
-    color: var(--color-ink);
-  }
-
   /* ------------------------------------------------------------- Público */
   .perfiles {
     list-style: none;
     margin-inline: 0;
     padding: 0;
     display: grid;
-    gap: 1.25rem;
-  }
-  .perfil {
-    display: flex;
-    align-items: center;
     gap: 1rem;
   }
-  .perfil-titulo {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 0.9375rem;
-    font-weight: 700;
-    line-height: 1.35;
-    color: var(--color-ink);
-  }
-  .perfil-texto {
-    display: block;
-    margin-top: 0.125rem;
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    color: var(--color-muted);
-  }
-  @media (width >= 768px) {
+  @media (width >= 640px) {
     .perfiles {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem 2rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   @media (width >= 1024px) {
     .perfiles {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0;
+      gap: 1.25rem;
     }
-    .perfil {
-      padding-inline: 1.5rem;
-    }
-    .perfil:first-child {
-      padding-left: 0;
-    }
-    .perfil + .perfil {
-      border-left: 1px solid var(--color-divider);
-    }
+  }
+  /* Tarjeta con el color de su público: filete arriba y un brillo suave en
+     la esquina. Todo quieto. */
+  .perfil {
+    position: relative;
+    overflow: hidden;
+    padding: 1.75rem 1.5rem 1.625rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1.25rem;
+    background:
+      radial-gradient(90% 70% at 0% 0%, color-mix(in srgb, var(--acc) 14%, transparent), transparent 70%),
+      var(--color-surface);
+  }
+  .perfil::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, var(--acc), transparent 85%);
+  }
+  .perfil-icono {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--acc) 14%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--acc) 35%, transparent);
+    color: var(--acc);
+  }
+  .perfil-titulo {
+    margin-top: 1.25rem;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  .perfil-texto {
+    margin-top: 0.5rem;
+    font-size: var(--step-0);
+    line-height: 1.5;
+    color: var(--color-soft);
   }
 
   /* -------------------------------------------------------- Herramientas */
