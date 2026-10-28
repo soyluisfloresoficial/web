@@ -50,6 +50,26 @@ const formacion = [
 
 const iconosMetricas = ["tendencia", "reloj", "calendarioOk"] as const;
 
+// Maquetas de «Mi historia» (28/10/2026). Son ilustrativas: muestran el tipo
+// de trabajo de cada momento, sin cifras ni clientes.
+const pendientesAntes = [
+  { texto: "¿Me pasas los precios?", estado: "Sin responder", icono: "whatsapp" },
+  { texto: "Seguimiento del presupuesto", estado: "Pendiente", icono: "reloj" },
+  { texto: "Pasar los datos al Excel", estado: "A mano", icono: "persona" },
+] as const;
+const flujoCambio = [
+  { nombre: "Mensaje", icono: "whatsapp" },
+  { nombre: "Agente", icono: "robot" },
+  { nombre: "Agenda", icono: "calendarioOk" },
+] as const;
+const entregasHoy = [
+  "Agentes de IA",
+  "Automatizaciones",
+  "Embudos de venta",
+  "Páginas web",
+  "Documentación para tu equipo",
+];
+
 
 const schema = [
   {
@@ -125,31 +145,104 @@ const schema = [
         </div>
 
         <ol class="linea-tiempo">
-          <li class="reveal">
-            <span class="hito">Antes</span>
-            <p>
+          <li class="momento reveal" style="--tono: var(--acento-coral)">
+            <span class="momento-marca" aria-hidden="true">
+              <Icono nombre="reloj" tamano={18} grosor={1.8} />
+            </span>
+            <div class="momento-caja">
+              <div class="escena" aria-hidden="true">
+                <div class="mini-ventana">
+                  <p class="mini-titulo">Pendientes de hoy</p>
+                  <ul class="mini-pendientes">
+                    {
+                      pendientesAntes.map((p) => (
+                        <li>
+                          <Icono nombre={p.icono} tamano={13} grosor={1.8} />
+                          <span class="mini-texto">{p.texto}</span>
+                          <span class="mini-estado">{p.estado}</span>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
+              <div class="momento-texto">
+                <span class="hito">Antes</span>
+                <h3 class="momento-titulo">El día se me iba en lo urgente</h3>
+                <p>
               Llevando mi negocio solo, me pasaba lo mismo que a casi cualquier
               emprendedor. El día se me iba en contestar mensajes, dar seguimiento y
               repetir las mismas tareas. Había que hacerlas, pero no hacían crecer el
               negocio.
-            </p>
+                </p>
+              </div>
+            </div>
           </li>
-          <li class="reveal">
-            <span class="hito">El cambio</span>
-            <p>
+          <li class="momento reveal" style="--tono: var(--acento-violeta)">
+            <span class="momento-marca" aria-hidden="true">
+              <Icono nombre="flujo" tamano={18} grosor={1.8} />
+            </span>
+            <div class="momento-caja">
+              <div class="escena" aria-hidden="true">
+                <div class="mini-flujo">
+                  {
+                    flujoCambio.map((n, k) => (
+                      <>
+                        {k > 0 && <span class="mini-linea" />}
+                        <span class="mini-nodo">
+                          <Icono nombre={n.icono} tamano={18} grosor={1.8} />
+                          <span>{n.nombre}</span>
+                        </span>
+                      </>
+                    ))
+                  }
+                </div>
+                <span class="mini-sello">
+                  <Icono nombre="check" tamano={12} grosor={2.4} /> Probado en mi negocio
+                </span>
+              </div>
+              <div class="momento-texto">
+                <span class="hito">El cambio</span>
+                <h3 class="momento-titulo">Lo probé primero en mi negocio</h3>
+                <p>
               Un día decidí cambiar eso. Apliqué IA y automatización en mi propio
               negocio antes de ofrecérselo a nadie, recuperé horas cada semana y tuve
               tiempo para lo importante. Así pasé de trabajar solo a dirigir mi
               propia agencia.
-            </p>
+                </p>
+              </div>
+            </div>
           </li>
-          <li class="reveal">
-            <span class="hito">Hoy</span>
-            <p>
+          <li class="momento reveal" style="--tono: var(--acento-turquesa)">
+            <span class="momento-marca" aria-hidden="true">
+              <Icono nombre="check" tamano={18} grosor={2.2} />
+            </span>
+            <div class="momento-caja">
+              <div class="escena" aria-hidden="true">
+                <div class="mini-ventana">
+                  <p class="mini-titulo">Lo que dejo funcionando</p>
+                  <ul class="mini-entregas">
+                    {
+                      entregasHoy.map((e) => (
+                        <li>
+                          <span class="mini-check"><Icono nombre="check" tamano={11} grosor={2.6} /></span>
+                          {e}
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
+              <div class="momento-texto">
+                <span class="hito">Hoy</span>
+                <h3 class="momento-titulo">Ahora lo hago por otros negocios</h3>
+                <p>
               Hago lo mismo por otros negocios. Implemento agentes de IA,
               automatizaciones, embudos de venta y páginas web, y dejo todo
               documentado para que tu equipo sepa cómo funciona y cómo mantenerlo.
-            </p>
+                </p>
+              </div>
+            </div>
           </li>
         </ol>
       </div>
@@ -367,37 +460,93 @@ const schema = [
     letter-spacing: -0.015em;
     color: var(--color-ink);
   }
+  /* Línea de tiempo visual (28/10/2026). Cada momento tiene su tono
+     (coral, violeta, turquesa) y su tramo de línea, que se dibuja al
+     entrar en vista. Solo transform; con movimiento reducido ya se ve
+     completa. */
   .linea-tiempo {
     position: relative;
     display: grid;
-    gap: 2.25rem;
+    gap: 2rem;
     margin: 0;
-    padding: 0 0 0 2rem;
+    padding: 0 0 0 3.5rem;
     list-style: none;
   }
-  /* Línea vertical que une los tres momentos. */
+  /* Riel de fondo, apagado. */
   .linea-tiempo::before {
     content: "";
     position: absolute;
-    left: 0.4rem;
-    top: 0.5rem;
-    bottom: 0.5rem;
-    width: 1px;
-    background: linear-gradient(var(--acento), color-mix(in srgb, var(--acento) 10%, transparent));
+    left: 1.25rem;
+    top: 1.25rem;
+    bottom: 1.25rem;
+    width: 2px;
+    border-radius: 2px;
+    background: rgb(255 255 255 / 0.08);
   }
-  .linea-tiempo li {
+  .momento {
     position: relative;
   }
-  .linea-tiempo li::before {
+  /* Tramo de color de cada momento, hasta el siguiente. */
+  .momento:not(:last-child)::after {
     content: "";
     position: absolute;
-    left: -1.95rem;
-    top: 0.3rem;
-    width: 0.8rem;
-    height: 0.8rem;
-    border: 2px solid var(--acento);
+    left: -2.25rem;
+    top: 2.5rem;
+    bottom: -2rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(var(--tono), color-mix(in srgb, var(--tono) 25%, transparent));
+    transform-origin: top;
+  }
+  .momento-marca {
+    position: absolute;
+    left: -3.5rem;
+    top: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px solid var(--tono);
     border-radius: 999px;
     background: var(--color-navy-2);
+    color: var(--tono);
+    box-shadow: 0 0 0 6px var(--color-navy), 0 0 24px -4px color-mix(in srgb, var(--tono) 60%, transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .momento:not(:last-child)::after {
+      transform: scaleY(0);
+      transition: transform 0.9s var(--ease) 0.25s;
+    }
+    :global(.js) .momento.is-visible::after {
+      transform: scaleY(1);
+    }
+  }
+  .momento-caja {
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: 1.25rem;
+    background: var(--color-surface);
+  }
+  .momento:hover .momento-caja {
+    border-color: color-mix(in srgb, var(--tono) 45%, var(--color-line));
+  }
+  .escena {
+    position: relative;
+    display: grid;
+    place-items: center;
+    gap: 0.875rem;
+    min-height: 11rem;
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--color-line);
+    background:
+      radial-gradient(80% 90% at 75% 0%, color-mix(in srgb, var(--tono) 20%, transparent), transparent 70%),
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px) 0 0 / 28px 28px,
+      var(--color-navy-2);
+  }
+  .momento-texto {
+    padding: 1.25rem 1.375rem 1.5rem;
   }
   .hito {
     display: block;
@@ -405,14 +554,154 @@ const schema = [
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--acento-texto);
+    color: var(--tono);
   }
-  .linea-tiempo p {
-    margin-top: 0.5rem;
+  .momento-titulo {
+    margin-top: 0.375rem;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+  .momento-texto p {
+    margin-top: 0.625rem;
     max-width: 62ch;
-    font-size: var(--step-1);
     line-height: 1.65;
     color: var(--color-soft);
+  }
+
+  /* Maquetas: mismas piezas que «Cómo trabajo» en la portada. */
+  .mini-ventana {
+    width: min(100%, 21rem);
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.875rem;
+    background: rgb(16 21 34 / 0.92);
+    box-shadow: 0 18px 40px -22px #000;
+  }
+  .mini-titulo {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .mini-pendientes,
+  .mini-entregas {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.625rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .mini-pendientes li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.5rem;
+    background: rgb(255 255 255 / 0.03);
+    color: var(--color-muted);
+  }
+  .mini-texto {
+    overflow: hidden;
+    font-size: 0.6875rem;
+    color: var(--color-soft);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mini-estado {
+    padding: 0.125rem 0.4rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--acento-coral) 16%, transparent);
+    color: var(--acento-coral);
+    font-size: 0.625rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .mini-flujo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 21rem);
+  }
+  .mini-nodo {
+    display: grid;
+    justify-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+    color: var(--color-ink);
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+  .mini-nodo :global(svg) {
+    box-sizing: content-box;
+    padding: 0.625rem;
+    border: 1px solid color-mix(in srgb, var(--tono) 50%, var(--color-line));
+    border-radius: 0.875rem;
+    background: rgb(16 21 34 / 0.92);
+    color: var(--tono);
+  }
+  .mini-linea {
+    flex: 1;
+    min-width: 1.25rem;
+    height: 2px;
+    margin: 0 0.375rem 1.25rem;
+    border-radius: 2px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--tono) 30%, transparent), var(--tono));
+  }
+  .mini-sello {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid color-mix(in srgb, var(--acento-turquesa) 40%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--acento-turquesa) 12%, transparent);
+    color: var(--acento-turquesa);
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+  .mini-entregas li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    color: var(--color-soft);
+  }
+  .mini-check {
+    display: grid;
+    place-items: center;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--tono) 22%, transparent);
+    color: var(--tono);
+  }
+
+  /* En celular la línea se acerca al borde para dejar sitio al texto. */
+  @media (width < 640px) {
+    .linea-tiempo {
+      padding-left: 2.75rem;
+    }
+    .linea-tiempo::before {
+      left: 1rem;
+    }
+    .momento-marca {
+      left: -2.75rem;
+      width: 2rem;
+      height: 2rem;
+    }
+    .momento-marca :global(svg) {
+      width: 15px;
+      height: 15px;
+    }
+    .momento:not(:last-child)::after {
+      left: -1.8rem;
+      top: 2rem;
+    }
   }
 
   /* ---------------------------------------------------------- Rejillas */
