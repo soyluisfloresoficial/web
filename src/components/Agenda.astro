@@ -1,0 +1,842 @@
+---
+/**
+ * Agenda propia de la llamada de diagnóstico (28/10/2026). Ver AGENDA.md.
+ * Se usa en /contacto y en /diagnostico.
+ *
+ * Pide las horas libres a /api/agenda (que las saca de Google Calendar) y
+ * reserva ahí mismo, sin salir de la web ni cargar servicios de terceros.
+ *
+ * Si el servidor responde que Google no está conectado, o falla, se muestra
+ * la agenda de Calendly de siempre (AgendaCalendly). Sin JavaScript también
+ * se ve Calendly. La web nunca se queda sin forma de reservar.
+ *
+ * Medición: form_start al elegir hora y generate_lead al confirmar, con el
+ * mismo form_id que tenía Calendly y method "agenda-propia".
+ */
+import AgendaCalendly from "./AgendaCalendly.astro";
+import Icono from "./Icono.astro";
+import { SITIO } from "../data/servicios";
+import { AGENDA } from "../data/agenda";
+
+interface Props {
+  formId: string;
+  variante?: "marca" | "lima";
+}
+
+const { formId, variante = "marca" } = Astro.props;
+---
+
+<div
+  class={`agenda-propia agenda-propia-${variante}`}
+  data-agenda-propia
+  data-estado="comprobando"
+  data-form-id={formId}
+  data-duracion={AGENDA.duracion}
+  data-zona-agenda={AGENDA.zona}
+>
+  <div class="ap-cargando card" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="card ap-caja" data-ap-caja>
+    <div class="ap-eleccion" data-ap-eleccion>
+      <div class="ap-columna">
+        <p class="ap-paso"><span aria-hidden="true">1</span> Elige el día</p>
+        <div class="ap-dias" data-ap-dias role="group" aria-label="Días con horas libres"></div>
+        <label class="ap-zona">
+          <span>Horas en tu zona horaria</span>
+          <select data-ap-zona></select>
+        </label>
+      </div>
+      <div class="ap-columna">
+        <p class="ap-paso"><span aria-hidden="true">2</span> Elige la hora</p>
+        <p class="ap-dia-elegido" data-ap-dia-elegido></p>
+        <div class="ap-horas" data-ap-horas role="group" aria-label="Horas libres"></div>
+        <p class="ap-vacio" data-ap-sin-horas hidden>
+          No quedan horas libres en los próximos días. Escríbeme por
+          <a href={SITIO.whatsapp} rel="noopener">WhatsApp</a> y buscamos un hueco.
+        </p>
+      </div>
+    </div>
+
+    <form class="ap-form" data-ap-form hidden novalidate>
+      <div class="ap-form-cabecera">
+        <p class="ap-paso"><span aria-hidden="true">3</span> Tus datos</p>
+        <p class="ap-resumen">
+          <Icono nombre="calendarioOk" tamano={18} grosor={1.8} />
+          <span data-ap-resumen></span>
+          <button type="button" class="ap-cambiar" data-ap-cambiar>Cambiar</button>
+        </p>
+      </div>
+
+      <div class="ap-campos">
+        <label class="ap-campo">
+          <span>Nombre</span>
+          <input name="nombre" autocomplete="name" required minlength="2" maxlength="80" />
+        </label>
+        <label class="ap-campo">
+          <span>Correo</span>
+          <input name="correo" type="email" autocomplete="email" inputmode="email" required maxlength="120" />
+        </label>
+        <label class="ap-campo">
+          <span>Tu negocio o tu web <em>(opcional)</em></span>
+          <input name="empresa" autocomplete="organization" maxlength="120" />
+        </label>
+        <label class="ap-campo ap-campo-ancho">
+          <span>¿Qué te gustaría resolver? <em>(opcional)</em></span>
+          <textarea name="mensaje" rows="3" maxlength="1000"></textarea>
+        </label>
+        {/* Campo trampa contra programas automáticos: las personas no lo ven. */}
+        <div class="ap-trampa" aria-hidden="true">
+          <label>Web <input name="web" tabindex="-1" autocomplete="off" /></label>
+        </div>
+      </div>
+
+      <p class="ap-legal">
+        Uso tus datos solo para agendar la llamada y enviarte la invitación de
+        Google Calendar con el enlace de Google Meet. Más información en la
+        <a href="/politica-de-privacidad">política de privacidad</a>.
+      </p>
+      <p class="ap-error" data-ap-error role="alert" hidden></p>
+      <button class="cta ap-enviar" type="submit" data-ap-enviar>
+        <Icono nombre="check" tamano={18} grosor={2.2} />
+        <span data-ap-enviar-texto>Confirmar la llamada</span>
+      </button>
+    </form>
+
+    <div class="ap-exito" data-ap-exito hidden tabindex="-1">
+      <span class="ap-exito-icono" aria-hidden="true">
+        <Icono nombre="check" tamano={26} grosor={2.4} />
+      </span>
+      <h3 class="ap-exito-titulo">Listo, tu llamada quedó agendada</h3>
+      <p class="ap-exito-cuando" data-ap-exito-cuando></p>
+      <p class="ap-exito-texto" data-ap-exito-texto></p>
+    </div>
+  </div>
+
+  <div class="agenda-respaldo" data-agenda-respaldo>
+    <AgendaCalendly formId={formId} variante={variante} />
+  </div>
+</div>
+
+<script>
+  type Hueco = { iso: string; ms: number };
+
+  const raiz = document.querySelector<HTMLElement>("[data-agenda-propia]");
+  const $ = <T extends HTMLElement>(sel: string) => raiz?.querySelector<T>(sel) ?? null;
+  const dias = $("[data-ap-dias]");
+  const horas = $("[data-ap-horas]");
+  const zonaSelect = $<HTMLSelectElement>("[data-ap-zona]");
+  const diaElegido = $("[data-ap-dia-elegido]");
+  const sinHoras = $("[data-ap-sin-horas]");
+  const eleccion = $("[data-ap-eleccion]");
+  const form = $<HTMLFormElement>("[data-ap-form]");
+  const resumen = $("[data-ap-resumen]");
+  const error = $("[data-ap-error]");
+  const enviar = $<HTMLButtonElement>("[data-ap-enviar]");
+  const enviarTexto = $("[data-ap-enviar-texto]");
+  const exito = $("[data-ap-exito]");
+  const formId = raiz?.dataset.formId ?? "agenda";
+  const duracion = Number(raiz?.dataset.duracion ?? 30);
+  const w = window as unknown as { dataLayer?: unknown[] };
+
+  // Zonas más habituales de quien reserva. La del navegador va primero.
+  const ZONAS: [string, string][] = [
+    ["Europe/Madrid", "España (península)"],
+    ["Atlantic/Canary", "Canarias"],
+    ["America/Mexico_City", "México (centro)"],
+    ["America/Bogota", "Colombia"],
+    ["America/Lima", "Perú"],
+    ["America/Guayaquil", "Ecuador"],
+    ["America/Caracas", "Venezuela"],
+    ["America/Santiago", "Chile"],
+    ["America/Argentina/Buenos_Aires", "Argentina"],
+    ["America/Montevideo", "Uruguay"],
+    ["America/Asuncion", "Paraguay"],
+    ["America/La_Paz", "Bolivia"],
+    ["America/Panama", "Panamá"],
+    ["America/Costa_Rica", "Costa Rica"],
+    ["America/Guatemala", "Guatemala"],
+    ["America/El_Salvador", "El Salvador"],
+    ["America/Tegucigalpa", "Honduras"],
+    ["America/Managua", "Nicaragua"],
+    ["America/Santo_Domingo", "República Dominicana"],
+    ["America/Puerto_Rico", "Puerto Rico"],
+    ["America/New_York", "Estados Unidos (este)"],
+    ["America/Los_Angeles", "Estados Unidos (pacífico)"],
+  ];
+
+  let zona = "Europe/Madrid";
+  try {
+    zona = Intl.DateTimeFormat().resolvedOptions().timeZone || zona;
+  } catch {
+    /* navegador sin zona: se queda Madrid */
+  }
+
+  let huecos: Hueco[] = [];
+  let diaActual = "";
+  let elegido: Hueco | null = null;
+  let empezado = false;
+
+  const fmt = (opciones: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("es", { timeZone: zona, ...opciones });
+  const claveDia = (ms: number) => new Intl.DateTimeFormat("en-CA", { timeZone: zona }).format(ms);
+  const hora = (ms: number) => fmt({ hour: "2-digit", minute: "2-digit" }).format(ms);
+  const mayuscula = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const diaLargo = (ms: number) => mayuscula(fmt({ weekday: "long", day: "numeric", month: "long" }).format(ms));
+
+  function nombreZona(z: string): string {
+    return ZONAS.find(([id]) => id === z)?.[1] ?? z.split("/").pop()!.replace(/_/g, " ");
+  }
+
+  function pintarZonas() {
+    if (!zonaSelect) return;
+    const lista = ZONAS.some(([id]) => id === zona) ? ZONAS : [[zona, nombreZona(zona)] as [string, string], ...ZONAS];
+    const ahora = Date.now();
+    zonaSelect.replaceChildren(
+      ...lista.map(([id, nombre]) => {
+        const o = document.createElement("option");
+        o.value = id;
+        let reloj = "";
+        try {
+          reloj = new Intl.DateTimeFormat("es", { timeZone: id, hour: "2-digit", minute: "2-digit" }).format(ahora);
+        } catch {
+          /* zona desconocida para este navegador */
+        }
+        o.textContent = reloj ? `${nombre} · ahora ${reloj}` : nombre;
+        o.selected = id === zona;
+        return o;
+      }),
+    );
+  }
+
+  function porDia(): Map<string, Hueco[]> {
+    const m = new Map<string, Hueco[]>();
+    for (const h of huecos) {
+      const k = claveDia(h.ms);
+      if (!m.has(k)) m.set(k, []);
+      m.get(k)!.push(h);
+    }
+    return m;
+  }
+
+  function boton(clase: string, pulsado: boolean): HTMLButtonElement {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = clase;
+    b.setAttribute("aria-pressed", String(pulsado));
+    return b;
+  }
+
+  function pintarDias() {
+    if (!dias) return;
+    const grupos = porDia();
+    if (!grupos.has(diaActual)) diaActual = grupos.keys().next().value ?? "";
+    if (sinHoras) sinHoras.hidden = grupos.size > 0;
+    dias.replaceChildren(
+      ...[...grupos].map(([k, lista]) => {
+        const ms = lista[0].ms;
+        const b = boton("ap-dia", k === diaActual);
+        const semana = document.createElement("span");
+        semana.className = "ap-dia-semana";
+        semana.textContent = fmt({ weekday: "short" }).format(ms).replace(".", "");
+        const numero = document.createElement("span");
+        numero.className = "ap-dia-numero";
+        numero.textContent = fmt({ day: "numeric" }).format(ms);
+        const mes = document.createElement("span");
+        mes.className = "ap-dia-mes";
+        mes.textContent = fmt({ month: "short" }).format(ms).replace(".", "");
+        b.append(semana, numero, mes);
+        b.setAttribute("aria-label", `${diaLargo(ms)}, ${lista.length} horas libres`);
+        b.addEventListener("click", () => {
+          diaActual = k;
+          pintarDias();
+          pintarHoras();
+        });
+        return b;
+      }),
+    );
+    dias.querySelector<HTMLElement>('[aria-pressed="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  function pintarHoras() {
+    if (!horas) return;
+    const lista = porDia().get(diaActual) ?? [];
+    if (diaElegido) diaElegido.textContent = lista.length ? diaLargo(lista[0].ms) : "";
+    horas.replaceChildren(
+      ...lista.map((h) => {
+        const b = boton("ap-hora", elegido?.iso === h.iso);
+        b.textContent = hora(h.ms);
+        b.addEventListener("click", () => elegir(h));
+        return b;
+      }),
+    );
+  }
+
+  function textoCita(ms: number): string {
+    const fin = ms + duracion * 60_000;
+    return `${diaLargo(ms)}, de ${hora(ms)} a ${hora(fin)} (${nombreZona(zona)})`;
+  }
+
+  function elegir(h: Hueco) {
+    elegido = h;
+    pintarHoras();
+    if (!empezado) {
+      empezado = true;
+      w.dataLayer?.push({ event: "form_start", form_id: formId, page_path: location.pathname });
+    }
+    if (resumen) resumen.textContent = textoCita(h.ms);
+    if (eleccion) eleccion.hidden = true;
+    if (form) {
+      form.hidden = false;
+      form.querySelector<HTMLInputElement>('[name="nombre"]')?.focus({ preventScroll: true });
+      form.scrollIntoView({ block: "nearest" });
+    }
+  }
+
+  function volver() {
+    if (form) form.hidden = true;
+    if (eleccion) eleccion.hidden = false;
+    mostrarError("");
+    pintarDias();
+    pintarHoras();
+    horas?.querySelector<HTMLElement>('[aria-pressed="true"]')?.focus();
+  }
+
+  function mostrarError(texto: string) {
+    if (!error) return;
+    error.textContent = texto;
+    error.hidden = !texto;
+  }
+
+  function aRespaldo() {
+    if (!raiz) return;
+    raiz.dataset.estado = "respaldo";
+    // Quien llegó con #agenda o pidió la agenda ve Calendly abierto, como antes.
+    if (location.hash === "#agenda") raiz.querySelector<HTMLButtonElement>("[data-agenda-cargar]")?.click();
+  }
+
+  // ----------------------------------------------------- Conexión con /api
+
+  async function simulacion(): Promise<{ huecos: string[] }> {
+    // Solo en la vista previa (npm run dev), donde no corre el servidor de
+    // Cloudflare: huecos de ejemplo con el horario real de src/data/agenda.ts.
+    const [{ calcularHuecos }, { AGENDA }] = await Promise.all([
+      import("../worker/agenda-huecos"),
+      import("../data/agenda"),
+    ]);
+    const ahora = Date.now();
+    const ocupado = { inicio: ahora + 26 * 3_600_000, fin: ahora + 28 * 3_600_000 };
+    return { huecos: calcularHuecos(AGENDA, ahora, [ocupado]).map((t) => new Date(t).toISOString()) };
+  }
+
+  async function pedirHuecos(): Promise<boolean> {
+    try {
+      const r = await fetch("/api/agenda", { headers: { Accept: "application/json" } });
+      if (r.ok) {
+        const d = (await r.json()) as { huecos?: string[] };
+        cargarHuecos(d.huecos ?? []);
+        return true;
+      }
+      if (import.meta.env.DEV && r.status === 404) {
+        cargarHuecos((await simulacion()).huecos);
+        return true;
+      }
+    } catch {
+      /* sin red o servidor caído: Calendly */
+    }
+    return false;
+  }
+
+  function cargarHuecos(lista: string[]) {
+    huecos = lista.map((iso) => ({ iso, ms: Date.parse(iso) })).filter((h) => Number.isFinite(h.ms));
+  }
+
+  async function reservar(datos: Record<string, string>): Promise<{ estado: number; meet?: string | null }> {
+    if (import.meta.env.DEV) {
+      const r = await fetch("/api/agenda", { method: "POST", body: "{}" }).catch(() => null);
+      if (!r || r.status === 404) {
+        await new Promise((ok) => setTimeout(ok, 700));
+        return { estado: 200, meet: null };
+      }
+    }
+    const r = await fetch("/api/agenda", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos),
+    });
+    const d = (await r.json().catch(() => ({}))) as { meet?: string | null };
+    return { estado: r.status, meet: d.meet };
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!elegido || !enviar) return;
+    const campos = new FormData(form);
+    const nombre = String(campos.get("nombre") ?? "").trim();
+    const correo = String(campos.get("correo") ?? "").trim();
+    form.querySelectorAll("input[required]").forEach((i) => i.removeAttribute("aria-invalid"));
+    if (!form.checkValidity() || nombre.length < 2) {
+      const malo = form.querySelector<HTMLInputElement>("input:invalid") ?? form.querySelector<HTMLInputElement>('[name="nombre"]');
+      malo?.setAttribute("aria-invalid", "true");
+      malo?.focus();
+      mostrarError(malo?.name === "correo" ? "Revisa tu correo: ahí te llega la invitación." : "Escribe tu nombre para agendar la llamada.");
+      return;
+    }
+
+    mostrarError("");
+    enviar.disabled = true;
+    if (enviarTexto) enviarTexto.textContent = "Agendando…";
+    try {
+      const r = await reservar({
+        inicio: elegido.iso,
+        nombre,
+        correo,
+        empresa: String(campos.get("empresa") ?? ""),
+        mensaje: String(campos.get("mensaje") ?? ""),
+        web: String(campos.get("web") ?? ""),
+        zona,
+      });
+      if (r.estado === 200) {
+        w.dataLayer?.push({ event: "generate_lead", form_id: formId, method: "agenda-propia", page_path: location.pathname });
+        const cuando = $("[data-ap-exito-cuando]");
+        const texto = $("[data-ap-exito-texto]");
+        if (cuando) cuando.textContent = textoCita(elegido.ms);
+        if (texto) {
+          texto.textContent = `Te envié la invitación de Google Calendar a ${correo}, con el enlace de Google Meet. Si no la ves en unos minutos, revisa la carpeta de spam o de promociones.`;
+        }
+        form.hidden = true;
+        if (exito) {
+          exito.hidden = false;
+          exito.focus({ preventScroll: true });
+          exito.scrollIntoView({ block: "nearest" });
+        }
+        return;
+      }
+      if (r.estado === 409) {
+        await pedirHuecos();
+        elegido = null;
+        volver();
+        mostrarError("");
+        if (sinHoras && !sinHoras.hidden) return;
+        if (diaElegido) diaElegido.textContent = `Esa hora se acaba de ocupar. Elige otra. ${diaElegido.textContent}`;
+        return;
+      }
+      if (r.estado === 429) {
+        mostrarError("Hubo demasiados intentos seguidos. Espera un minuto y vuelve a confirmar.");
+        return;
+      }
+      if (r.estado === 400) {
+        mostrarError("Revisa tus datos: alguno no se pudo leer bien.");
+        return;
+      }
+      mostrarError("No pude confirmar la llamada. Inténtalo de nuevo en un momento o escríbeme por WhatsApp.");
+    } catch {
+      mostrarError("No hay conexión. Revisa tu internet y vuelve a confirmar.");
+    } finally {
+      enviar.disabled = false;
+      if (enviarTexto) enviarTexto.textContent = "Confirmar la llamada";
+    }
+  });
+
+  $("[data-ap-cambiar]")?.addEventListener("click", volver);
+  zonaSelect?.addEventListener("change", () => {
+    zona = zonaSelect.value;
+    diaActual = "";
+    pintarDias();
+    pintarHoras();
+  });
+
+  // Los botones «Elegir día y hora» de la página llevan a la agenda.
+  document.querySelectorAll("[data-abrir-agenda]").forEach((a) =>
+    a.addEventListener("click", () => {
+      if (raiz?.dataset.estado === "activa") dias?.querySelector<HTMLElement>('[aria-pressed="true"]')?.focus({ preventScroll: true });
+    }),
+  );
+
+  (async () => {
+    if (!raiz) return;
+    if (!(await pedirHuecos())) return aRespaldo();
+    pintarZonas();
+    pintarDias();
+    pintarHoras();
+    raiz.dataset.estado = "activa";
+  })();
+</script>
+
+<!-- Días y horas los crea el script: sus reglas van con :global() dentro de
+     su contenedor para que les lleguen los estilos. -->
+<style>
+  .agenda-propia {
+    --ap-acento: var(--color-electric);
+    --ap-acento-texto: var(--color-electric-soft);
+    --ap-sobre-acento: #fff;
+    --ap-radio: 14px;
+  }
+  .agenda-propia-lima {
+    --ap-acento: var(--lime);
+    --ap-acento-texto: var(--lime);
+    --ap-sobre-acento: var(--lime-ink);
+    --ap-radio: 10px;
+  }
+
+  /* Estados. Sin JavaScript solo se ve Calendly. */
+  .ap-cargando,
+  .ap-caja {
+    display: none;
+  }
+  :global(.js) .agenda-propia[data-estado="comprobando"] .ap-cargando,
+  :global(.js) .agenda-propia[data-estado="activa"] .ap-caja {
+    display: block;
+  }
+  :global(.js) .agenda-propia:not([data-estado="respaldo"]) .agenda-respaldo {
+    display: none;
+  }
+
+  .ap-cargando {
+    display: none;
+    padding: 2rem;
+  }
+  :global(.js) .agenda-propia[data-estado="comprobando"] .ap-cargando {
+    display: grid;
+    gap: 0.875rem;
+  }
+  .ap-cargando span {
+    height: 3rem;
+    border-radius: var(--ap-radio);
+    background: rgb(255 255 255 / 0.05);
+  }
+  .ap-cargando span:first-child {
+    height: 4.5rem;
+  }
+
+  .ap-caja {
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+  }
+  .agenda-propia-lima .ap-caja {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+
+  .ap-eleccion {
+    display: grid;
+    gap: 2rem;
+  }
+  .ap-eleccion[hidden] {
+    display: none;
+  }
+  @media (width >= 900px) {
+    .ap-eleccion {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+  }
+  .ap-columna {
+    min-width: 0;
+  }
+  .ap-paso {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-display);
+    font-size: var(--step-0);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .ap-paso span {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid color-mix(in srgb, var(--ap-acento) 60%, transparent);
+    border-radius: 999px;
+    color: var(--ap-acento-texto);
+    font-size: 0.8125rem;
+  }
+
+  /* Días: tira deslizable con los días que tienen horas libres. */
+  .ap-dias {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-bottom: 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+  .ap-dias :global(.ap-dia) {
+    display: grid;
+    justify-items: center;
+    flex: 0 0 4.25rem;
+    gap: 0.125rem;
+    padding: 0.625rem 0.25rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--ap-radio);
+    background: rgb(255 255 255 / 0.02);
+    color: var(--color-soft);
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition:
+      border-color var(--dur-micro) var(--ease),
+      background-color var(--dur-micro) var(--ease);
+  }
+  .ap-dias :global(.ap-dia:hover) {
+    border-color: color-mix(in srgb, var(--ap-acento) 50%, var(--color-line));
+  }
+  .ap-dias :global(.ap-dia-semana),
+  .ap-dias :global(.ap-dia-mes) {
+    font-size: 0.75rem;
+    text-transform: capitalize;
+  }
+  .ap-dias :global(.ap-dia-numero) {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--color-ink);
+  }
+  .ap-dias :global(.ap-dia[aria-pressed="true"]) {
+    border-color: var(--ap-acento);
+    background: var(--ap-acento);
+    color: var(--ap-sobre-acento);
+  }
+  .ap-dias :global(.ap-dia[aria-pressed="true"] .ap-dia-numero) {
+    color: var(--ap-sobre-acento);
+  }
+
+  .ap-zona {
+    display: grid;
+    gap: 0.375rem;
+    margin-top: 1.25rem;
+    font-size: var(--step--1);
+    color: var(--color-soft);
+  }
+  .ap-zona select {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--ap-radio);
+    background: var(--color-navy-2);
+    color: var(--color-ink);
+    font-size: 0.9375rem;
+  }
+
+  .ap-dia-elegido {
+    margin-top: 1rem;
+    min-height: 1.5em;
+    font-size: var(--step--1);
+    color: var(--color-soft);
+  }
+  .ap-horas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    max-height: 19rem;
+    overflow-y: auto;
+  }
+  .ap-horas :global(.ap-hora) {
+    min-height: 2.75rem;
+    border: 1px solid color-mix(in srgb, var(--ap-acento) 35%, var(--color-line));
+    border-radius: var(--ap-radio);
+    background: transparent;
+    color: var(--color-ink);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition:
+      border-color var(--dur-micro) var(--ease),
+      background-color var(--dur-micro) var(--ease);
+  }
+  .ap-horas :global(.ap-hora:hover) {
+    border-color: var(--ap-acento);
+    background: color-mix(in srgb, var(--ap-acento) 12%, transparent);
+  }
+  .ap-horas :global(.ap-hora[aria-pressed="true"]) {
+    border-color: var(--ap-acento);
+    background: var(--ap-acento);
+    color: var(--ap-sobre-acento);
+  }
+  .ap-dias :global(.ap-dia:focus-visible),
+  .ap-horas :global(.ap-hora:focus-visible),
+  .ap-cambiar:focus-visible {
+    outline: 3px solid var(--ap-acento-texto);
+    outline-offset: 2px;
+  }
+  .ap-vacio {
+    margin-top: 1rem;
+    color: var(--color-soft);
+  }
+  .ap-vacio a,
+  .ap-legal a {
+    color: var(--ap-acento-texto);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Paso 3: datos. */
+  .ap-form[hidden],
+  .ap-exito[hidden] {
+    display: none;
+  }
+  .ap-form-cabecera {
+    display: grid;
+    gap: 0.875rem;
+  }
+  .ap-resumen {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--ap-acento) 40%, var(--color-line));
+    border-radius: var(--ap-radio);
+    background: color-mix(in srgb, var(--ap-acento) 8%, transparent);
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .ap-resumen :global(svg) {
+    color: var(--ap-acento-texto);
+    flex-shrink: 0;
+  }
+  .ap-resumen span {
+    flex: 1 1 14rem;
+  }
+  .ap-cambiar {
+    min-height: 2.75rem;
+    padding: 0 0.25rem;
+    border: 0;
+    background: none;
+    color: var(--ap-acento-texto);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .ap-campos {
+    display: grid;
+    gap: 1rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+  @media (width >= 640px) {
+    .ap-campos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .ap-campo-ancho {
+      grid-column: 1 / -1;
+    }
+  }
+  .ap-campo {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+  .ap-campo span {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .ap-campo em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+  .ap-campo input,
+  .ap-campo textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--ap-radio);
+    background: rgb(7 9 13 / 0.6);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+  }
+  .ap-campo textarea {
+    resize: vertical;
+  }
+  .ap-campo input:focus,
+  .ap-campo textarea:focus {
+    outline: none;
+    border-color: var(--ap-acento);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ap-acento) 25%, transparent);
+  }
+  .ap-campo input[aria-invalid="true"] {
+    border-color: var(--acento-coral, #fb7185);
+  }
+  .ap-trampa {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .ap-legal {
+    margin-top: 1.25rem;
+    max-width: 70ch;
+    font-size: var(--step--1);
+    color: var(--color-muted);
+  }
+  .ap-error {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--acento-coral, #fb7185) 45%, transparent);
+    border-radius: var(--ap-radio);
+    background: color-mix(in srgb, var(--acento-coral, #fb7185) 10%, transparent);
+    color: var(--color-ink);
+  }
+  .ap-enviar {
+    margin-top: 1.5rem;
+    width: 100%;
+  }
+  .ap-enviar:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  @media (width >= 640px) {
+    .ap-enviar {
+      width: auto;
+    }
+  }
+
+  /* Confirmación. */
+  .ap-exito {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 0.5rem;
+    text-align: center;
+  }
+  .ap-exito:focus {
+    outline: none;
+  }
+  .ap-exito-icono {
+    display: grid;
+    place-items: center;
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: 999px;
+    background: var(--ap-acento);
+    color: var(--ap-sobre-acento);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--ap-acento) 15%, transparent);
+  }
+  .ap-exito-titulo {
+    margin-top: 0.5rem;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .ap-exito-cuando {
+    color: var(--ap-acento-texto);
+    font-weight: 700;
+  }
+  .ap-exito-texto {
+    max-width: 52ch;
+    color: var(--color-soft);
+  }
+</style>

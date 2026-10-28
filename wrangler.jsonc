@@ -28,6 +28,13 @@
       "name": "LIMITE_CHAT",
       "namespace_id": "2710",
       "simple": { "limit": 8, "period": 60 }
+    },
+    // Agenda propia (AGENDA.md): consultas de horas y reservas, 10 por
+    // minuto por IP. Cada tipo cuenta por separado.
+    {
+      "name": "LIMITE_AGENDA",
+      "namespace_id": "2711",
+      "simple": { "limit": 10, "period": 60 }
     }
   ],
   // Modelo del asistente. Va aquí y no en el panel porque cada publicación
@@ -39,5 +46,7 @@
   // Registros del Worker (solo tokens y errores, nunca las conversaciones).
   "observability": { "enabled": true }
   // La clave ANTHROPIC_API_KEY NO va aquí: es un secreto del Worker en el
-  // panel de Cloudflare (Configuración → Variables y secretos).
+  // panel de Cloudflare (Configuración → Variables y secretos). Lo mismo las
+  // tres claves de Google de la agenda (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+  // y GOOGLE_REFRESH_TOKEN, ver AGENDA.md).
 }

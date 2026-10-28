@@ -1,7 +1,8 @@
 ---
 /**
- * Agenda de Calendly dentro de la página. Se usa en /contacto y en
- * /diagnostico.
+ * Agenda de Calendly dentro de la página. Desde el 28/10/2026 es el respaldo
+ * de la agenda propia (Agenda.astro): solo se usa si Google Calendar no está
+ * conectado o el servidor falla.
  *
  * El iframe se crea cuando la persona lo pide (este botón o cualquier enlace
  * con data-abrir-agenda), así no se carga contenido de terceros antes de
@@ -69,6 +70,9 @@ const colores =
 
   const cargar = () => {
     if (!caja || !aviso || cargada) return;
+    // Mientras la agenda propia esté activa (o comprobando), Calendly no se carga.
+    const propia = caja.closest<HTMLElement>("[data-agenda-propia]");
+    if (propia && propia.dataset.estado !== "respaldo") return;
     cargada = true;
     const url = new URL(caja.dataset.url ?? "");
     url.searchParams.set("embed_domain", location.hostname);

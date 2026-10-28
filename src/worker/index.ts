@@ -5,6 +5,9 @@
  * directamente y este código no se ejecuta para ellos. Solo /api/* pasa por
  * aquí (run_worker_first en wrangler.jsonc).
  *
+ * GET y POST /api/agenda: la agenda propia conectada a Google Calendar
+ * (agenda.ts, ver AGENDA.md).
+ *
  * POST /api/chat: el asistente de IA de la web. Manda la conversación a
  * Claude con las instrucciones (instrucciones.ts) y la base de conocimiento
  * (/agente/conocimiento.txt, generada en el build).
@@ -19,8 +22,9 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { INSTRUCCIONES } from "./instrucciones";
+import { agenda, type EnvAgenda } from "./agenda";
 
-interface Env {
+interface Env extends EnvAgenda {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** Secreto del Worker, en el panel de Cloudflare. Ver AGENTE.md. */
   ANTHROPIC_API_KEY?: string;
@@ -202,6 +206,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url);
     if (pathname === "/api/chat") return chat(request, env);
+    if (pathname === "/api/agenda") return agenda(request, env, json, origenPermitido);
     if (pathname.startsWith("/api/")) return json({ error: "no-existe" }, 404);
     // Cualquier otra ruta: los archivos de la web (y su página 404).
     return env.ASSETS.fetch(request);

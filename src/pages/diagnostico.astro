@@ -26,7 +26,7 @@
 import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import CintasLuz from "../components/CintasLuz.astro";
-import AgendaCalendly from "../components/AgendaCalendly.astro";
+import Agenda from "../components/Agenda.astro";
 import Icono from "../components/Icono.astro";
 import { SITIO, AREA_SERVIDA } from "../data/servicios";
 import { faqPlana } from "../data/home";
@@ -282,7 +282,7 @@ const schema = [
         </div>
         <div class="lp-placa">
           <div class="lp-placa-fondo" aria-hidden="true"></div>
-          <AgendaCalendly formId="calendly-diagnostico-landing" variante="lima" />
+          <Agenda formId="calendly-diagnostico-landing" variante="lima" />
         </div>
       </div>
     </section>
