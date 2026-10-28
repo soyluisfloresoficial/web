@@ -369,13 +369,29 @@ const sugerencias = [
     };
 
     // ------------------------------------------------------------ Apertura
+    // Botones de fuera que también abren el asistente (el de la barra del
+    // celular). Al cerrar, el foco vuelve al botón con el que se abrió.
+    const externos = [...document.querySelectorAll<HTMLButtonElement>("[data-abrir-chat]")];
+    let origen: HTMLElement | null = null;
+    externos.forEach((b) => {
+      b.hidden = false;
+      b.addEventListener("click", () => {
+        origen = b;
+        estado(panel.hidden);
+      });
+    });
+
     const estado = (abierto: boolean) => {
       raiz.toggleAttribute("data-abierto", abierto);
       abrir.setAttribute("aria-expanded", String(abierto));
+      externos.forEach((b) => b.setAttribute("aria-expanded", String(abierto)));
       etiqueta.textContent = abierto ? "Cerrar el asistente" : "Abrir el asistente";
       panel.hidden = !abierto;
       if (abierto) requestAnimationFrame(() => input.focus());
-      else abrir.focus();
+      else {
+        (origen ?? abrir).focus();
+        origen = null;
+      }
     };
 
     abrir.addEventListener("click", () => estado(panel.hidden));
@@ -416,6 +432,17 @@ const sugerencias = [
   @media (width < 1024px) {
     .chat {
       bottom: calc(5.25rem + env(safe-area-inset-bottom));
+    }
+    /* Con la barra del celular, el botón del chat va dentro de ella: aquí
+       solo queda el panel, que se abre justo encima de la barra. */
+    :global(body:has(.barra-movil)) .chat-boton {
+      display: none;
+    }
+    :global(body:has(.barra-movil)) .chat {
+      bottom: calc(7rem + env(safe-area-inset-bottom));
+    }
+    :global(body:has(.barra-movil)) .chat-panel {
+      bottom: 0;
     }
   }
   /* Mientras el banner de cookies está abierto, el chat se aparta: en
