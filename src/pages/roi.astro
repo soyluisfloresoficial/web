@@ -122,21 +122,49 @@ const schema = [
 
           <button class="cta boton-calcular mt-8" type="submit">
             <Icono nombre="tendencia" tamano={18} />
-            Calcular mi estimación
+            Ver mi estimación
           </button>
         </form>
 
-        <div class="resultado card" aria-live="polite">
+        <div class="resultado card" id="roi-resultado" tabindex="-1">
           <div class="bloque-cabecera">
             <span class="numero-circulo" aria-hidden="true">2</span>
             <h2 class="card-title">Tu estimación</h2>
           </div>
 
           <p class="pista mt-3" data-roi-vacio>
-            Completa tus números y haz clic en «Calcular mi estimación».
+            Escribe tus números: el resultado se actualiza mientras escribes.
           </p>
 
-          <dl class="salidas mt-4" data-roi-salida hidden>
+          <div class="destacado mt-5" data-roi-salida hidden>
+            <p class="destacado-etiqueta">Beneficio estimado al mes</p>
+            <p class="destacado-cifra" data-roi="total-grande">0</p>
+
+            <div class="reparto mt-4" aria-hidden="true">
+              <span class="reparto-ahorro" data-roi-barra="ahorro"></span>
+              <span class="reparto-ventas" data-roi-barra="ventas"></span>
+            </div>
+            <ul class="leyenda mt-3" aria-hidden="true">
+              <li><span class="punto punto-ahorro"></span> Ahorro en costos</li>
+              <li><span class="punto punto-ventas"></span> Ventas extra</li>
+            </ul>
+
+            <div class="anual mt-6" data-roi-anual hidden aria-hidden="true">
+              <p class="destacado-etiqueta">En 12 meses</p>
+              <div class="anual-fila mt-3">
+                <span>Inversión</span>
+                <span class="anual-pista"><span class="anual-barra anual-inversion" data-roi-barra="inversion"></span></span>
+                <span class="anual-valor" data-roi="inversion">0</span>
+              </div>
+              <div class="anual-fila mt-2">
+                <span>Beneficio</span>
+                <span class="anual-pista"><span class="anual-barra anual-beneficio" data-roi-barra="anual"></span></span>
+                <span class="anual-valor" data-roi="anual">0</span>
+              </div>
+            </div>
+          </div>
+
+          <dl class="salidas mt-5" data-roi-salida hidden>
             <div>
               <dt>Horas liberadas al mes</dt>
               <dd data-roi="horas">—</dd>
@@ -225,8 +253,10 @@ const schema = [
 
 <script>
   const form = document.querySelector<HTMLFormElement>("[data-roi-form]");
-  const salida = document.querySelector<HTMLElement>("[data-roi-salida]");
+  const salidas = [...document.querySelectorAll<HTMLElement>("[data-roi-salida]")];
   const vacio = document.querySelector<HTMLElement>("[data-roi-vacio]");
+  const anual = document.querySelector<HTMLElement>("[data-roi-anual]");
+  const resultado = document.querySelector<HTMLElement>("#roi-resultado");
 
   // Porcentaje de la carga manual que se asume automatizada en cada escenario.
   const FACTOR: Record<string, number> = {
@@ -239,7 +269,9 @@ const schema = [
 
   // Sin símbolo de moneda: la web es para Latinoamérica y España, y cada
   // persona escribe las cifras en la suya.
-  const eur = new Intl.NumberFormat("es", { maximumFractionDigits: 0 });
+  // useGrouping "always": en español el punto de miles se omite en cifras
+  // de cuatro dígitos (1299 frente a 12.990) y la columna se leía desigual.
+  const eur = new Intl.NumberFormat("es", { maximumFractionDigits: 0, useGrouping: "always" });
   const num = new Intl.NumberFormat("es", { maximumFractionDigits: 1 });
 
   function leer(nombre: string): number {
@@ -253,13 +285,37 @@ const schema = [
     if (el) el.textContent = texto;
   }
 
-  form?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    // Medición: alguien usó la calculadora (no se envía ninguna cifra).
+  // Las barras se dibujan con scaleX (de 0 a 1): solo transform, sin
+  // recalcular el diseño de la página.
+  function barra(clave: string, proporcion: number) {
+    const el = document.querySelector<HTMLElement>(`[data-roi-barra="${clave}"]`);
+    if (el) el.style.transform = `scaleX(${Math.max(0, Math.min(1, proporcion))})`;
+  }
+
+  function hayDatos(): boolean {
+    return [...(form?.querySelectorAll<HTMLInputElement>("input[type=number]") ?? [])].some(
+      (i) => i.value.trim() !== "",
+    );
+  }
+
+  // Medición: alguien usó la calculadora (una vez por visita, sin cifras).
+  let medido = false;
+  function medir() {
+    if (medido) return;
+    medido = true;
     (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({
       event: "roi_calculator_use",
       page_path: location.pathname,
     });
+  }
+
+  function calcular() {
+    if (!form) return;
+    if (!hayDatos()) {
+      salidas.forEach((s) => (s.hidden = true));
+      if (vacio) vacio.hidden = false;
+      return;
+    }
 
     const leads = leer("leads");
     const ticket = leer("ticket");
@@ -287,6 +343,22 @@ const schema = [
     escribir("ahorro", eur.format(ahorro));
     escribir("ingresos", eur.format(ingresos));
     escribir("total", eur.format(total));
+    escribir("total-grande", eur.format(total));
+
+    barra("ahorro", total > 0 ? ahorro / total : 0);
+    barra("ventas", total > 0 ? ingresos / total : 0);
+
+    // Con el beneficio redondeado, como se ve en pantalla: así 12 × la cifra
+    // de arriba da exactamente el total anual.
+    const anualTotal = Math.round(total) * 12;
+    const tope = Math.max(inversion, anualTotal);
+    if (anual) anual.hidden = !(inversion > 0 && tope > 0);
+    if (tope > 0) {
+      barra("inversion", inversion / tope);
+      barra("anual", anualTotal / tope);
+      escribir("inversion", eur.format(inversion));
+      escribir("anual", eur.format(anualTotal));
+    }
 
     if (inversion > 0 && total > 0) {
       const meses = inversion / total;
@@ -302,7 +374,23 @@ const schema = [
     }
 
     if (vacio) vacio.hidden = true;
-    if (salida) salida.hidden = false;
+    salidas.forEach((s) => (s.hidden = false));
+  }
+
+  form?.addEventListener("input", () => {
+    calcular();
+    if (hayDatos()) medir();
+  });
+  form?.addEventListener("change", calcular);
+
+  // El botón sigue para quien lo busque: calcula y lleva al resultado
+  // (útil en celular, donde queda debajo del formulario).
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    calcular();
+    medir();
+    resultado?.scrollIntoView({ block: "start" });
+    resultado?.focus({ preventScroll: true });
   });
 </script>
 
@@ -518,6 +606,116 @@ const schema = [
   .salidas > div:nth-child(6) dd {
     color: var(--acento-texto);
     font-size: var(--step-2);
+  }
+
+  .resultado:focus {
+    outline: none;
+  }
+  .destacado[hidden] {
+    display: none;
+  }
+  .destacado-etiqueta {
+    color: var(--color-soft);
+    font-size: var(--step--1);
+    font-weight: 600;
+  }
+  .destacado-cifra {
+    margin-top: 0.25rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--acento-texto);
+    overflow-wrap: anywhere;
+  }
+  /* Reparto del beneficio: ahorro (turquesa) desde la izquierda y ventas
+     extra (ámbar) desde la derecha. Las dos piezas suman el 100%. */
+  .reparto,
+  .anual-pista {
+    position: relative;
+    height: 0.75rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.06);
+  }
+  .reparto span,
+  .anual-barra {
+    position: absolute;
+    inset: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease);
+  }
+  .reparto-ahorro,
+  .punto-ahorro {
+    background: var(--color-teal);
+  }
+  .reparto-ventas,
+  .punto-ventas {
+    background: var(--acento-ambar);
+  }
+  .reparto .reparto-ventas {
+    transform-origin: right;
+  }
+  .leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-soft);
+    font-size: var(--step--1);
+  }
+  .leyenda li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .punto {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 999px;
+  }
+  .anual {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .anual[hidden] {
+    display: none;
+  }
+  .anual-fila {
+    display: grid;
+    grid-template-columns: 4.75rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-soft);
+    font-size: var(--step--1);
+  }
+  .anual-pista {
+    height: 0.625rem;
+  }
+  .anual-inversion {
+    background: rgb(255 255 255 / 0.45);
+  }
+  .anual-beneficio {
+    background: var(--acento);
+  }
+  .anual-valor {
+    min-width: 5ch;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+    text-align: right;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reparto span,
+    .anual-barra {
+      transition: none;
+    }
   }
 
   /* --------------------------------------------------------- Hipótesis */
