@@ -37,6 +37,11 @@
       "simple": { "limit": 10, "period": 60 }
     }
   ],
+  // Horario de la agenda que se edita desde el panel (AGENDA.md). Manda
+  // sobre los valores de src/data/agenda.ts.
+  "kv_namespaces": [
+    { "binding": "AGENDA_CONFIG", "id": "3daee978984e4ad4a73d76d1e4e8d4fb" }
+  ],
   // Modelo del asistente. Va aquí y no en el panel porque cada publicación
   // reescribe las variables normales del panel con las de este archivo.
   // Para gastar menos: "claude-haiku-5-5" (ver AGENTE.md).

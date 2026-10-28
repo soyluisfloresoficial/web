@@ -2,6 +2,7 @@
 // Uso: node tools/probar-agenda.mjs
 import assert from "node:assert/strict";
 import { calcularHuecos, deZona, enZona, estaLibre } from "../src/worker/agenda-huecos.ts";
+import { aplicarCambios } from "../src/worker/agenda-config.ts";
 
 const cfg = {
   zona: "Europe/Madrid",
@@ -75,6 +76,52 @@ prueba("estaLibre respeta el margen exacto", () => {
 prueba("sin horario un día, ese día no sale", () => {
   const h = calcularHuecos({ ...cfg, dias: 7 }, ahora, []);
   assert.ok(h.every((t) => [1, 5].includes(enZona(t, cfg.zona).semana)));
+});
+
+// ------------------------------------------- Horario abierto y panel
+
+const abierto = {
+  ...cfg,
+  titulo: "Llamada",
+  horario: Object.fromEntries([0, 1, 2, 3, 4, 5, 6].map((d) => [d, ["00:00-24:00"]])),
+};
+
+prueba("horario abierto: 48 huecos por día, el último a las 23:30", () => {
+  const h = calcularHuecos({ ...abierto, dias: 3, antelacion: 0 }, Date.parse("2026-11-01T23:00:00Z"), []);
+  const martes = h.filter((t) => enZona(t, cfg.zona).dia === 3);
+  assert.equal(martes.length, 48);
+  assert.equal(iso(martes.at(-1)), "2026-11-03T22:30:00.000Z");
+});
+
+prueba("el panel cambia solo lo que manda", () => {
+  const r = aplicarCambios(abierto, { duracion: 45, horario: { 1: ["09:00-13:00"], 3: [] } });
+  assert.ok(r.ok);
+  assert.equal(r.config.duracion, 45);
+  assert.equal(r.config.paso, 30);
+  assert.deepEqual(r.config.horario, { 1: ["09:00-13:00"] });
+});
+
+prueba("el panel no puede guardar un horario roto", () => {
+  const malos = [
+    { horario: { 1: ["9:00-13:00"] } },
+    { horario: { 1: ["14:00-10:00"] } },
+    { horario: { 1: ["09:00-12:00", "11:00-13:00"] } },
+    { horario: { 7: ["09:00-12:00"] } },
+    { horario: { 1: ["09:00-25:00"] } },
+    { duracion: 5 },
+    { paso: 30.5 },
+    { zona: "Marte/Base" },
+    { titulo: "" },
+    [],
+    null,
+  ];
+  for (const m of malos) assert.equal(aplicarCambios(abierto, m).ok, false, JSON.stringify(m));
+});
+
+prueba("tramo hasta medianoche y zona de Latinoamérica", () => {
+  const r = aplicarCambios(abierto, { zona: "America/Lima", horario: { 5: ["18:00-24:00"] } });
+  assert.ok(r.ok);
+  assert.equal(r.config.zona, "America/Lima");
 });
 
 console.log(`\n${pruebas} pruebas superadas.`);

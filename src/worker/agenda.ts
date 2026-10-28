@@ -2,6 +2,9 @@
  * Agenda propia conectada a Google Calendar (28/10/2026). Ver AGENDA.md.
  *
  * GET  /api/agenda  → huecos libres de los próximos días.
+ * /api/agenda/config  → el panel lee y cambia el horario (clave de
+ *                     administrador). Se guarda en el KV AGENDA_CONFIG y
+ *                     manda sobre los valores de src/data/agenda.ts.
  * POST /api/agenda  → reserva un hueco: crea el evento en el calendario con
  *                     enlace de Google Meet y Google le manda la invitación
  *                     al cliente.
@@ -15,6 +18,13 @@
  */
 import { AGENDA } from "../data/agenda";
 import { calcularHuecos, estaLibre, type Tramo } from "./agenda-huecos";
+import { aplicarCambios, type ConfigAgenda } from "./agenda-config";
+
+interface KV {
+  get(clave: string, tipo: "json"): Promise<unknown>;
+  put(clave: string, valor: string): Promise<void>;
+  delete(clave: string): Promise<void>;
+}
 
 export interface EnvAgenda {
   /** Secretos del Worker, en el panel de Cloudflare. Ver AGENDA.md. */
@@ -24,6 +34,12 @@ export interface EnvAgenda {
   /** Opcional: otro calendario que no sea el principal. */
   GOOGLE_CALENDARIO_ID?: string;
   LIMITE_AGENDA?: { limit(opciones: { key: string }): Promise<{ success: boolean }> };
+  /** Horario guardado por el panel (wrangler.jsonc). */
+  AGENDA_CONFIG?: KV;
+  /** Secreto: clave con la que el panel cambia el horario. Mínimo 32 caracteres. */
+  AGENDA_ADMIN_TOKEN?: string;
+  /** Webs del panel que pueden llamar desde el navegador, separadas por comas. */
+  PANEL_ORIGENES?: string;
 }
 
 const MINUTO = 60_000;
@@ -86,9 +102,40 @@ async function ocupados(env: EnvAgenda, desde: number, hasta: number): Promise<T
   return (cal.busy ?? []).map((b) => ({ inicio: Date.parse(b.start), fin: Date.parse(b.end) }));
 }
 
-async function huecosLibres(env: EnvAgenda, ahora: number): Promise<number[]> {
-  const hasta = ahora + (AGENDA.dias + 1) * 24 * 60 * MINUTO;
-  return calcularHuecos(AGENDA, ahora, await ocupados(env, ahora, hasta));
+// ---------------------------------------------------- Horario del panel
+
+const CLAVE_CONFIG = "config";
+// Cada instancia guarda el horario un minuto: un cambio del panel tarda como
+// mucho eso en verse en la web.
+let enMemoria: { config: ConfigAgenda; desdePanel: boolean; hasta: number } | null = null;
+
+async function leerConfig(env: EnvAgenda): Promise<{ config: ConfigAgenda; desdePanel: boolean }> {
+  if (enMemoria && enMemoria.hasta > Date.now()) return enMemoria;
+  let config: ConfigAgenda = AGENDA;
+  let desdePanel = false;
+  if (env.AGENDA_CONFIG) {
+    try {
+      const guardada = await env.AGENDA_CONFIG.get(CLAVE_CONFIG, "json");
+      if (guardada) {
+        const r = aplicarCambios(AGENDA, guardada);
+        if (r.ok) {
+          config = r.config;
+          desdePanel = true;
+        } else {
+          console.error(JSON.stringify({ agenda: "config-invalida" }));
+        }
+      }
+    } catch {
+      console.error(JSON.stringify({ agenda: "config-lectura" }));
+    }
+  }
+  enMemoria = { config, desdePanel, hasta: Date.now() + MINUTO };
+  return enMemoria;
+}
+
+async function huecosLibres(env: EnvAgenda, cfg: ConfigAgenda, ahora: number): Promise<number[]> {
+  const hasta = ahora + (cfg.dias + 1) * 24 * 60 * MINUTO;
+  return calcularHuecos(cfg, ahora, await ocupados(env, ahora, hasta));
 }
 
 // ------------------------------------------------------------- Validación
@@ -161,8 +208,8 @@ function horaLegible(ms: number, zona: string): string {
   }).format(ms);
 }
 
-async function crearEvento(env: EnvAgenda, r: Reserva): Promise<{ meet: string | null }> {
-  const fin = r.inicio + AGENDA.duracion * MINUTO;
+async function crearEvento(env: EnvAgenda, cfg: ConfigAgenda, r: Reserva): Promise<{ meet: string | null }> {
+  const fin = r.inicio + cfg.duracion * MINUTO;
   const descripcion = [
     "Reserva hecha desde soyluisflores.es.",
     "",
@@ -187,10 +234,10 @@ async function crearEvento(env: EnvAgenda, r: Reserva): Promise<{ meet: string |
     method: "POST",
     headers: { Authorization: `Bearer ${await tokenAcceso(env)}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      summary: `${AGENDA.titulo} · ${r.nombre}`,
+      summary: `${cfg.titulo} · ${r.nombre}`,
       description: descripcion,
-      start: { dateTime: new Date(r.inicio).toISOString(), timeZone: AGENDA.zona },
-      end: { dateTime: new Date(fin).toISOString(), timeZone: AGENDA.zona },
+      start: { dateTime: new Date(r.inicio).toISOString(), timeZone: cfg.zona },
+      end: { dateTime: new Date(fin).toISOString(), timeZone: cfg.zona },
       attendees: [{ email: r.correo, displayName: r.nombre }],
       guestsCanInviteOthers: false,
       guestsCanSeeOtherGuests: false,
@@ -229,12 +276,13 @@ export async function agenda(
   }
 
   try {
+    const { config: cfg } = await leerConfig(env);
     if (request.method === "GET") {
       if (!(await limite(env, request, "huecos"))) return json({ error: "limite" }, 429);
-      const huecos = await huecosLibres(env, Date.now());
+      const huecos = await huecosLibres(env, cfg, Date.now());
       return json({
-        zona: AGENDA.zona,
-        duracion: AGENDA.duracion,
+        zona: cfg.zona,
+        duracion: cfg.duracion,
         huecos: huecos.map((t) => new Date(t).toISOString()),
       });
     }
@@ -254,16 +302,16 @@ export async function agenda(
 
     // El hueco tiene que ser uno de los ofrecidos y seguir libre ahora mismo.
     const ahora = Date.now();
-    const disponibles = await huecosLibres(env, ahora);
+    const disponibles = await huecosLibres(env, cfg, ahora);
     if (!disponibles.includes(reserva.inicio)) return json({ error: "ocupado" }, 409);
-    const fin = reserva.inicio + AGENDA.duracion * MINUTO;
-    const margen = AGENDA.margen * MINUTO;
+    const fin = reserva.inicio + cfg.duracion * MINUTO;
+    const margen = cfg.margen * MINUTO;
     const justoAhora = await ocupados(env, reserva.inicio - margen, fin + margen);
-    if (!estaLibre(reserva.inicio, AGENDA, justoAhora)) return json({ error: "ocupado" }, 409);
+    if (!estaLibre(reserva.inicio, cfg, justoAhora)) return json({ error: "ocupado" }, 409);
 
-    const { meet } = await crearEvento(env, reserva);
+    const { meet } = await crearEvento(env, cfg, reserva);
     console.log(JSON.stringify({ agenda: "reserva-ok", con_meet: Boolean(meet) }));
-    return json({ ok: true, inicio: new Date(reserva.inicio).toISOString(), duracion: AGENDA.duracion, meet });
+    return json({ ok: true, inicio: new Date(reserva.inicio).toISOString(), duracion: cfg.duracion, meet });
   } catch (error) {
     if (error instanceof ErrorGoogle) {
       console.error(JSON.stringify({ agenda: error.paso, estado: error.estado }));
@@ -277,4 +325,91 @@ export async function agenda(
     }
     return json({ error: "fallo" }, 502);
   }
+}
+
+// ------------------------------------------------------ Para el panel
+
+/** Compara la clave sin delatar por el tiempo de respuesta cuánto acertó. */
+async function esAdmin(request: Request, env: EnvAgenda): Promise<boolean> {
+  const secreto = env.AGENDA_ADMIN_TOKEN ?? "";
+  if (secreto.length < 32) return false;
+  const cabecera = request.headers.get("Authorization") ?? "";
+  const dada = cabecera.startsWith("Bearer ") ? cabecera.slice(7) : "";
+  const codificar = new TextEncoder();
+  const [a, b] = await Promise.all([
+    crypto.subtle.digest("SHA-256", codificar.encode(dada)),
+    crypto.subtle.digest("SHA-256", codificar.encode(secreto)),
+  ]);
+  const x = new Uint8Array(a);
+  const y = new Uint8Array(b);
+  let diferencia = 0;
+  for (let i = 0; i < x.length; i++) diferencia |= x[i] ^ y[i];
+  return diferencia === 0;
+}
+
+/** Permisos para que el panel llame desde el navegador (CORS). */
+function cabecerasPanel(request: Request, env: EnvAgenda): Record<string, string> {
+  const origen = request.headers.get("Origin");
+  if (!origen) return {};
+  const permitidos = (env.PANEL_ORIGENES ?? "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+  const local = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origen);
+  if (!permitidos.includes(origen) && !local) return {};
+  return {
+    "Access-Control-Allow-Origin": origen,
+    "Access-Control-Allow-Methods": "GET, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+    "Access-Control-Max-Age": "600",
+    Vary: "Origin",
+  };
+}
+
+/**
+ * /api/agenda/config, solo para el panel (Authorization: Bearer <clave>).
+ * GET    → el horario que se usa ahora y si viene del panel.
+ * PUT    → cambia lo que venga (cambios parciales) y lo guarda.
+ * DELETE → borra lo guardado y vuelve a los valores de src/data/agenda.ts.
+ */
+export async function configAgenda(request: Request, env: EnvAgenda, json: Responder): Promise<Response> {
+  const cors = cabecerasPanel(request, env);
+  const responder = (cuerpo: unknown, estado = 200) => {
+    const r = json(cuerpo, estado);
+    for (const [k, v] of Object.entries(cors)) r.headers.set(k, v);
+    return r;
+  };
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+  if (!["GET", "PUT", "DELETE"].includes(request.method)) return responder({ error: "metodo" }, 405);
+  if (!(await limite(env, request, "config"))) return responder({ error: "limite" }, 429);
+  if (!(await esAdmin(request, env))) return responder({ error: "no-autorizado" }, 401);
+  if (!env.AGENDA_CONFIG) return responder({ error: "sin-almacen" }, 503);
+
+  if (request.method === "GET") {
+    enMemoria = null;
+    const { config, desdePanel } = await leerConfig(env);
+    return responder({ config, desdePanel });
+  }
+
+  if (request.method === "DELETE") {
+    await env.AGENDA_CONFIG.delete(CLAVE_CONFIG);
+    enMemoria = null;
+    console.log(JSON.stringify({ agenda: "config-borrada" }));
+    return responder({ ok: true, config: AGENDA, desdePanel: false });
+  }
+
+  let cambios: unknown;
+  try {
+    cambios = await request.json();
+  } catch {
+    return responder({ error: "invalido", detalle: "El cuerpo tiene que ser JSON." }, 400);
+  }
+  enMemoria = null;
+  const { config: actual } = await leerConfig(env);
+  const r = aplicarCambios(actual, cambios);
+  if (!r.ok) return responder({ error: "invalido", detalle: r.error }, 400);
+  await env.AGENDA_CONFIG.put(CLAVE_CONFIG, JSON.stringify(r.config));
+  enMemoria = null;
+  console.log(JSON.stringify({ agenda: "config-guardada" }));
+  return responder({ ok: true, config: r.config, desdePanel: true });
 }

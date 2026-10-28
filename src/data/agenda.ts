@@ -1,11 +1,13 @@
 /**
  * Agenda propia de la llamada de diagnóstico (28/10/2026). Ver AGENDA.md.
  *
- * Aquí se decide cuándo se puede reservar. Las horas libres salen de cruzar
- * este horario con tu Google Calendar: si tienes algo en el calendario, esa
- * hora no aparece en la web.
+ * Valores por defecto de la agenda. Las horas libres salen de cruzar este
+ * horario con tu Google Calendar: si tienes algo en el calendario, esa hora
+ * no aparece en la web.
  *
- * Al cambiar algo aquí, compila y sube como cualquier otro cambio.
+ * Desde el 28/10/2026 el horario se edita en el panel (lo pidió el titular):
+ * lo que guarde el panel en Cloudflare manda sobre lo de aquí. Esto solo se
+ * usa mientras el panel no haya guardado nada, o si se borra lo guardado.
  */
 export const AGENDA = {
   /** Zona horaria en la que está escrito el horario de abajo. */
@@ -24,15 +26,17 @@ export const AGENDA = {
    * Horario por día de la semana, en la zona de arriba.
    * 1 = lunes … 5 = viernes, 6 = sábado, 0 = domingo. Sin la clave, ese día
    * no se atiende.
-   * [VERIFICAR con el titular: es un horario de partida. La tarde de Madrid
-   * es la mañana en Latinoamérica.]
+   * Abierto todos los días a todas horas, a pedido del titular (28/10/2026):
+   * el horario real lo pone él desde el panel.
    */
   horario: {
-    1: ["10:00-14:00", "16:00-20:00"],
-    2: ["10:00-14:00", "16:00-20:00"],
-    3: ["10:00-14:00", "16:00-20:00"],
-    4: ["10:00-14:00", "16:00-20:00"],
-    5: ["10:00-14:00"],
+    0: ["00:00-24:00"],
+    1: ["00:00-24:00"],
+    2: ["00:00-24:00"],
+    3: ["00:00-24:00"],
+    4: ["00:00-24:00"],
+    5: ["00:00-24:00"],
+    6: ["00:00-24:00"],
   } as Record<number, string[]>,
   /** Título del evento en tu calendario. Se le añade el nombre del cliente. */
   titulo: "Llamada de diagnóstico",

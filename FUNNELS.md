@@ -126,8 +126,8 @@ crea el activador **Evento - generate_lead**.
 
 ## Pendiente
 
-- [VERIFICAR con el titular] El horario de la agenda (`src/data/agenda.ts`).
-  Con el de partida, en Perú o Colombia las primeras horas salen a las 4:00.
+- El horario de la agenda se edita desde el panel (`AGENDA.md`). Hasta
+  entonces está abierto todos los días a todas las horas.
 - La agenda propia funciona cuando estén las claves de Google en Cloudflare
   (`AGENDA.md`). Hasta entonces, los funnels muestran Calendly.
 - Las imágenes para compartir de cada funnel: `node tools/generar-og.mjs`

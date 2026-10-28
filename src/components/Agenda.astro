@@ -137,7 +137,8 @@ const { formId, variante = "marca" } = Astro.props;
   const enviarTexto = $("[data-ap-enviar-texto]");
   const exito = $("[data-ap-exito]");
   const formId = raiz?.dataset.formId ?? "agenda";
-  const duracion = Number(raiz?.dataset.duracion ?? 30);
+  // La duración real llega con las horas libres (el panel puede cambiarla).
+  let duracion = Number(raiz?.dataset.duracion ?? 30);
   const w = window as unknown as { dataLayer?: unknown[] };
 
   // Zonas más habituales de quien reserva. La del navegador va primero.
@@ -353,7 +354,8 @@ const { formId, variante = "marca" } = Astro.props;
     try {
       const r = await fetch("/api/agenda", { headers: { Accept: "application/json" } });
       if (r.ok) {
-        const d = (await r.json()) as { huecos?: string[] };
+        const d = (await r.json()) as { huecos?: string[]; duracion?: number };
+        if (d.duracion) duracion = d.duracion;
         cargarHuecos(d.huecos ?? []);
         return true;
       }

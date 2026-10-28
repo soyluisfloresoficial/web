@@ -19,7 +19,8 @@ antes. La web nunca se queda sin agenda.
 
 | Qué | Dónde |
 |---|---|
-| Horario, duración, margen, antelación, días visibles | `src/data/agenda.ts` |
+| Horario, duración, margen, antelación, días visibles | Desde el panel (KV `web-agenda`). Valores por defecto en `src/data/agenda.ts` |
+| Validación de lo que guarda el panel | `src/worker/agenda-config.ts` |
 | Cálculo de horas libres | `src/worker/agenda-huecos.ts` (pruebas: `node tools/probar-agenda.mjs`) |
 | Conexión con Google | `src/worker/agenda.ts` |
 | La agenda que ve el cliente | `src/components/Agenda.astro` |
@@ -105,12 +106,76 @@ quieres recibir las citas.
    tu Google Calendar con el enlace de Meet y que llegue la invitación a ese
    correo. Después borra el evento de tu calendario.
 
-## Cambiar el horario
+## Editar el horario desde el panel
 
-Edita `src/data/agenda.ts`: días, tramos de horas, duración, margen entre
-citas, antelación mínima y cuántos días se ven. El horario se escribe en hora
-de Madrid; el cliente lo ve en la suya. Si un día te bloqueas en Google
-Calendar, esas horas desaparecen solas de la web.
+Desde el 28/10/2026 el horario se cambia desde el panel, sin tocar el código.
+Lo que guarda el panel queda en Cloudflare (KV `web-agenda`, enlazado como
+`AGENDA_CONFIG` en `wrangler.jsonc`) y manda sobre `src/data/agenda.ts`.
+
+Mientras el panel no guarde nada, la agenda está **abierta todos los días a
+todas las horas** (hora de Madrid), con 12 horas de antelación mínima. Lo
+pidió el titular. Si un día te bloqueas en Google Calendar, esas horas
+desaparecen solas de la web.
+
+### La clave del panel (una sola vez)
+
+1. Genera una clave larga. En la terminal del proyecto:
+
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
+   ```
+
+2. Cloudflare → Worker **web** → **Configuración** → **Variables y secretos** →
+   **Añadir** → tipo **Secreto**, nombre `AGENDA_ADMIN_TOKEN`, valor: la clave.
+   **Implementar**.
+3. Pon la misma clave en la configuración secreta del panel (su `.env` o sus
+   secretos). Nunca en el código del panel que llega al navegador.
+4. Si el panel llama desde el navegador, añade en Cloudflare la variable
+   `PANEL_ORIGENES` con su dirección, por ejemplo
+   `https://panel-soyluisflores.web.app` (varias, separadas por comas). Si
+   llama desde su servidor, no hace falta.
+
+### Cómo lo usa el panel
+
+Dirección: `https://soyluisflores.es/api/agenda/config`, siempre con la
+cabecera `Authorization: Bearer <AGENDA_ADMIN_TOKEN>`.
+
+| Método | Qué hace |
+|---|---|
+| `GET` | Devuelve `{ config, desdePanel }`: el horario que se usa ahora |
+| `PUT` | Cambia lo que venga en el cuerpo (JSON). Lo que no venga se queda igual |
+| `DELETE` | Borra lo guardado y vuelve al horario abierto de `src/data/agenda.ts` |
+
+Ejemplo de cuerpo para `PUT` (todo opcional):
+
+```json
+{
+  "zona": "Europe/Madrid",
+  "duracion": 30,
+  "paso": 30,
+  "margen": 15,
+  "antelacion": 12,
+  "dias": 21,
+  "titulo": "Llamada de diagnóstico",
+  "horario": {
+    "1": ["10:00-14:00", "16:00-20:00"],
+    "2": ["10:00-14:00", "16:00-20:00"],
+    "5": ["10:00-14:00"]
+  }
+}
+```
+
+- `horario`: días `0` (domingo) a `6` (sábado), con tramos `HH:MM-HH:MM` en la
+  zona de `zona` (hasta `24:00`). Un día que no aparece, o con `[]`, queda
+  cerrado. Si mandas `horario`, sustituye al anterior entero.
+- Límites: `duracion` 15 a 180 minutos, `paso` 5 a 120, `margen` 0 a 120,
+  `antelacion` 0 a 336 horas, `dias` 1 a 90.
+- Si algo no vale, responde `400` con `detalle`, un texto en español que el
+  panel puede enseñar tal cual (por ejemplo «Los tramos del día 1 se pisan»).
+  No se guarda nada.
+- Un cambio tarda como mucho un minuto en verse en la web.
+- Respuestas: `401` clave incorrecta, `429` demasiados intentos, `503` falta
+  el KV.
 
 ## Si algo falla
 
@@ -124,7 +189,8 @@ Calendar, esas horas desaparecen solas de la web.
 
 ## Pendiente
 
-- [VERIFICAR con el titular] El horario de `src/data/agenda.ts` es de partida.
+- La pantalla del panel para editar el horario (repositorio `panel`), con la
+  dirección de arriba.
 - Cuando la agenda nueva esté funcionando, hay que cambiar en la política de
   privacidad, el aviso para Latinoamérica y la política de cookies las
   menciones a Calendly por Google (Google LLC trata los datos de la cita).

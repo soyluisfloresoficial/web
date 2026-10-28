@@ -22,7 +22,7 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { INSTRUCCIONES } from "./instrucciones";
-import { agenda, type EnvAgenda } from "./agenda";
+import { agenda, configAgenda, type EnvAgenda } from "./agenda";
 
 interface Env extends EnvAgenda {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -207,6 +207,7 @@ export default {
     const { pathname } = new URL(request.url);
     if (pathname === "/api/chat") return chat(request, env);
     if (pathname === "/api/agenda") return agenda(request, env, json, origenPermitido);
+    if (pathname === "/api/agenda/config") return configAgenda(request, env, json);
     if (pathname.startsWith("/api/")) return json({ error: "no-existe" }, 404);
     // Cualquier otra ruta: los archivos de la web (y su página 404).
     return env.ASSETS.fetch(request);
