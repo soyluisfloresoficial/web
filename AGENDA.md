@@ -178,9 +178,15 @@ Por qué el paso 3 es imprescindible: tu dominio tiene DMARC en `p=reject`, así
 que los correos que digan venir de `@soyluisflores.es` sin la firma de Resend
 (el registro `resend._domainkey`) los rechazan Gmail, Outlook y los demás.
 
-Opcional, en **Variables** (no secretas) del Worker: `CORREO_AVISOS` para
-recibir los avisos en otra dirección y `CORREO_REMITENTE` para otro
-remitente, por ejemplo `Luis Flores <agenda@soyluisflores.es>`.
+Opcional, como **Secreto** del Worker (ver el aviso de abajo):
+`CORREO_AVISOS` para recibir los avisos en otra dirección y
+`CORREO_REMITENTE` para otro remitente, por ejemplo
+`Luis Flores <agenda@soyluisflores.es>`.
+
+> **Importante:** en Cloudflare, añade siempre estos valores como tipo
+> **Secreto**, también los que no son secretos (direcciones, correos). Cada
+> publicación desde GitHub borra las variables de tipo **Texto** que no estén
+> en `wrangler.jsonc`; los secretos se conservan.
 
 ## Conectar con el panel (panel.soyluisflores.es)
 
@@ -195,34 +201,36 @@ Si el mismo correo reserva varias veces, el panel no duplica la ficha: la
 actualiza. Si el panel no responde, la reserva no se pierde (está en tu
 Google Calendar y en el aviso por correo).
 
-### Paso 6. Enviar las reservas al panel (cuando el panel esté publicado)
+### Paso 6. Enviar las reservas al panel (un solo comando)
 
-Antes tiene que estar desplegado el panel (`DESPLIEGUE.md` del repositorio
-`panel`, apartados 1 a 6).
+Antes tiene que estar publicado el panel en Firebase (`DESPLIEGUE.md` del
+repositorio `panel`, apartados 1 a 6). Después:
 
-1. Genera una clave larga en la terminal:
-
-   ```bash
-   node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
-   ```
-
-2. En la carpeta del panel, guárdala en Firebase (te pide el valor):
+1. Inicia sesión en las dos cuentas (cada una abre el navegador para que
+   entres tú):
 
    ```bash
-   npx firebase functions:secrets:set SECRETO_FORMULARIO
+   cd ../panel && npx firebase login
    ```
 
-   y vuelve a desplegar las funciones del panel (`DESPLIEGUE.md`, apartado 6).
-3. En Cloudflare → Worker **web** → **Configuración** → **Variables y secretos**:
-   - **Añadir** → tipo **Texto**, nombre `PANEL_WEBHOOK_URL`, valor
-     `https://europe-west1-<id-del-proyecto>.cloudfunctions.net/webhookFormulario`
-     (con el id del proyecto de Firebase del panel).
-   - **Añadir** → tipo **Secreto**, nombre `PANEL_SECRETO`, valor: la misma
-     clave del punto 1.
-   - **Implementar**.
-4. Haz una reserva de prueba: tiene que aparecer en el panel, en **Leads**,
-   con fuente «web». En Cloudflare → Worker web → Registros verás
-   `panel: lead, estado: 200`.
+   ```bash
+   cd ../soyluisflores-web && npx wrangler login
+   ```
+
+2. En la carpeta de la web ejecuta:
+
+   ```bash
+   node tools/conectar-panel.mjs
+   ```
+
+   Hace todo solo: inventa la clave compartida, la guarda en Firebase
+   (`SECRETO_FORMULARIO`) y en Cloudflare (`PANEL_SECRETO`) sin mostrarla,
+   publica `webhookFormulario`, guarda la dirección (`PANEL_WEBHOOK_URL`) y
+   manda un lead de prueba. Si algo falla, te dice qué y no deja nada a medias
+   sin avisarte.
+3. Comprueba en el panel, en **Leads**, que está «Prueba de conexión» y
+   bórralo. Desde ahí, cada reserva entra sola con fuente «web». En
+   Cloudflare → Worker web → Registros verás `panel: lead, estado: 200`.
 
 ## Editar el horario desde el panel
 
@@ -248,7 +256,7 @@ desaparecen solas de la web.
    **Implementar**.
 3. Pon la misma clave en la configuración secreta del panel (su `.env` o sus
    secretos). Nunca en el código del panel que llega al navegador.
-4. Si el panel llama desde el navegador, añade en Cloudflare la variable
+4. Si el panel llama desde el navegador, añade en Cloudflare el secreto
    `PANEL_ORIGENES` con su dirección, por ejemplo
    `https://panel-soyluisflores.web.app` (varias, separadas por comas). Si
    llama desde su servidor, no hace falta.
