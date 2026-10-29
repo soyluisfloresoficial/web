@@ -8,42 +8,27 @@
  * con data-abrir-agenda), así no se carga contenido de terceros antes de
  * tiempo. Calendly avisa por postMessage al elegir hora y al confirmar la
  * reserva: ahí salen form_start y generate_lead con el form_id indicado.
- *
- * variante «lima»: colores de la identidad de /diagnostico (Calendly solo los
- * aplica en sus planes de pago; si no, muestra los suyos).
  */
 import Icono from "./Icono.astro";
 import { SITIO } from "../data/servicios";
 
 interface Props {
   formId: string;
-  variante?: "marca" | "lima";
 }
 
-const { formId, variante = "marca" } = Astro.props;
-const colores =
-  variante === "lima" ? { fondo: "0d0d0d", texto: "f2f2f0", principal: "c6ff3d" } : null;
+const { formId } = Astro.props;
 ---
 
 <div
-  class={`card agenda agenda-${variante}`}
+  class="card agenda"
   data-agenda
   data-url={SITIO.calendly}
   data-form-id={formId}
-  data-colores={colores ? JSON.stringify(colores) : undefined}
 >
   <div class="agenda-aviso" data-agenda-aviso>
-    {
-      variante === "lima" ? (
-        <span class="agenda-icono" aria-hidden="true">
-          <Icono nombre="calendario" tamano={22} grosor={1.6} />
-        </span>
-      ) : (
-        <span class="anillo-degradado anillo-grande" aria-hidden="true">
-          <Icono nombre="calendario" tamano={24} grosor={1.6} degradado />
-        </span>
-      )
-    }
+    <span class="anillo-degradado anillo-grande" aria-hidden="true">
+      <Icono nombre="calendario" tamano={24} grosor={1.6} degradado />
+    </span>
     <p class="agenda-texto">
       La agenda la gestiona Calendly. Al abrirla se carga su servicio, que trata
       tus datos según la <a href="/politica-de-privacidad">política de privacidad</a>.
@@ -79,12 +64,6 @@ const colores =
     url.searchParams.set("embed_type", "Inline");
     url.searchParams.set("hide_gdpr_banner", "1");
     url.searchParams.set("locale", "es");
-    if (caja.dataset.colores) {
-      const c = JSON.parse(caja.dataset.colores) as { fondo: string; texto: string; principal: string };
-      url.searchParams.set("background_color", c.fondo);
-      url.searchParams.set("text_color", c.texto);
-      url.searchParams.set("primary_color", c.principal);
-    }
     const marco = document.createElement("iframe");
     marco.src = url.toString();
     marco.title = "Agenda de Calendly para la llamada de diagnóstico";
@@ -156,39 +135,4 @@ const colores =
     font-weight: 600;
   }
 
-  /* ---------------------------------------------------- Variante lima */
-  .agenda-lima {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: var(--surface);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
-  }
-  .agenda-lima .agenda-texto {
-    color: var(--muted);
-  }
-  .agenda-lima .agenda-texto a,
-  .agenda-lima .agenda-externa {
-    color: var(--text);
-    text-decoration-color: var(--line-strong);
-  }
-  .agenda-lima .agenda-externa {
-    font-size: 0.875rem;
-  }
-  .agenda-lima :global(.agenda-marco) {
-    background: var(--surface);
-  }
-  .agenda-lima .agenda-exito {
-    border-top-color: var(--line);
-    color: var(--lime);
-  }
-  .agenda-icono {
-    display: grid;
-    place-items: center;
-    width: 3.5rem;
-    height: 3.5rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background: var(--surface-2);
-    color: var(--text);
-  }
 </style>

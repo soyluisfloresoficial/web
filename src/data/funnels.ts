@@ -1,20 +1,23 @@
 /**
  * Funnels de captación para campañas (28/10/2026). Ver FUNNELS.md.
  *
- * Una landing por servicio en /diagnostico/[servicio], con la identidad lima
- * de /diagnostico, para usar como destino de anuncios en Meta Ads y Google
- * Ads. El objetivo de todas es el mismo: agendar la llamada de diagnóstico
- * gratis de 30 minutos.
+ * Una landing por servicio en /diagnostico/[servicio], para usar como
+ * destino de anuncios en Meta Ads y Google Ads. Todas empujan a lo mismo:
+ * agendar la llamada de diagnóstico gratis de 30 minutos.
+ *
+ * Desde el 29/10/2026 usan los colores de la web (lo pidió el titular) y
+ * cada una tiene su gráfico animado en el hero (EscenaFunnel.astro).
  *
  * Aquí va solo lo propio de cada funnel: el gancho, los problemas que
- * reconoce el cliente y lo que se lleva de la llamada. Lo que incluye el
- * servicio, lo que cambia, para quién es y sus preguntas salen de
- * servicios-detalle.ts, para que la web diga lo mismo en todas partes.
+ * reconoce el cliente, lo que se lleva de la llamada y sus herramientas. Lo
+ * que incluye el servicio, lo que cambia, para quién es y sus preguntas
+ * salen de servicios-detalle.ts, para que la web diga lo mismo en todas
+ * partes.
  *
  * Sin cifras, casos ni promesas nuevas.
  */
 
-interface Bloque {
+export interface Bloque {
   titulo: string;
   texto: string;
 }
@@ -22,16 +25,18 @@ interface Bloque {
 export interface Funnel {
   /** Descripción para buscadores y vista previa al compartir. */
   description: string;
-  /** Texto corto tras «Diagnóstico gratis ·» en la etiqueta del hero. */
+  /** Nombre corto en la etiqueta del hero. */
   etiqueta: string;
+  /** Titular: la primera parte va en blanco y «destacado» en degradado. */
   titulo: string;
+  destacado: string;
   entrada: string;
-  ventana: string;
-  etapas: [string, string, string];
   dolores: [Bloque, Bloque, Bloque];
   llevas: [Bloque, Bloque, Bloque];
-  /** Título de la sección «Qué implemento». */
+  /** Título de la sección «Lo que implemento». */
   solucion: string;
+  /** Herramientas de src/data/logos.ts que se muestran en la franja. */
+  herramientas: string[];
 }
 
 export const funnels: Record<string, Funnel> = {
@@ -39,11 +44,10 @@ export const funnels: Record<string, Funnel> = {
     description:
       "Videollamada gratis de 30 minutos para ver cómo un agente de IA puede atender a tus clientes por WhatsApp, chat o teléfono y agendar sus citas.",
     etiqueta: "Agentes de IA",
-    titulo: "Descubre en 30 minutos cómo un agente de IA puede atender y agendar a tus clientes.",
+    titulo: "Que ningún cliente se quede sin respuesta,",
+    destacado: "aunque te escriba a medianoche.",
     entrada:
-      "Me cuentas por dónde te escriben, qué te preguntan y cómo agendas hoy. Te digo qué puede llevar un agente de IA, en qué canal conviene empezar y qué necesitarías, trabajes conmigo o no.",
-    ventana: "agente-ia",
-    etapas: ["Cómo te llegan los clientes", "Qué puede atender el agente", "Tu plan para empezar"],
+      "En 30 minutos vemos qué te preguntan, por dónde te escriben y cómo agendas hoy. Sales con un plan claro para que un agente de IA conteste al momento y deje la cita en tu calendario.",
     dolores: [
       {
         titulo: "Mensajes fuera de horario",
@@ -73,17 +77,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Un agente que contesta al momento y deja la cita en tu calendario.",
+    herramientas: ["WhatsApp", "ManyChat", "Claude", "ChatGPT", "GoHighLevel"],
   },
 
   "funnels-conversion": {
     description:
       "Videollamada gratis de 30 minutos para ver en qué paso se te escapan los clientes y qué embudo de ventas armaría para tu negocio.",
     etiqueta: "Funnels de conversión",
-    titulo: "Descubre en 30 minutos dónde se te escapan los clientes en tu proceso de venta.",
+    titulo: "Deja de perder clientes",
+    destacado: "entre el primer mensaje y la venta.",
     entrada:
-      "Me cuentas cómo te llegan los contactos y qué pasa después. Te digo en qué paso se enfrían, qué embudo armaría y cómo lo mediríamos, trabajes conmigo o no.",
-    ventana: "funnel",
-    etapas: ["Cómo captas hoy", "Dónde se enfrían", "Tu embudo paso a paso"],
+      "En 30 minutos revisamos cómo te llegan los contactos y qué pasa después. Te digo en qué paso se enfrían, qué embudo armaría y cómo lo mediríamos, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Contactos sin seguimiento",
@@ -113,17 +117,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Un embudo que capta, da seguimiento y te muestra cada paso.",
+    herramientas: ["GoHighLevel", "ActiveCampaign", "WhatsApp", "Meta Ads", "Google Ads"],
   },
 
   automatizacion: {
     description:
       "Videollamada gratis de 30 minutos para ver qué tareas repetitivas de tu negocio se pueden automatizar primero y con qué herramienta.",
     etiqueta: "Automatización",
-    titulo: "Descubre en 30 minutos qué tareas de tu negocio se pueden hacer solas.",
+    titulo: "Recupera las horas que hoy",
+    destacado: "se van en tareas repetidas.",
     entrada:
-      "Me cuentas qué haces a mano cada semana y con qué herramientas trabajas. Te digo qué automatizaría primero, con qué herramienta y qué cambia en tu día, trabajes conmigo o no.",
-    ventana: "automatizacion",
-    etapas: ["Tus tareas repetidas", "Qué se puede automatizar", "Por dónde empezar"],
+      "En 30 minutos repasamos lo que haces a mano cada semana y las herramientas que usas. Te digo qué automatizaría primero, con qué herramienta y qué cambia en tu día, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Copiar y pegar datos",
@@ -153,17 +157,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Flujos confiables que hacen el trabajo repetitivo por ti.",
+    herramientas: ["Make", "n8n", "Zapier", "Airtable", "Stripe"],
   },
 
   "crm-seguimiento-leads": {
     description:
       "Videollamada gratis de 30 minutos para ordenar tus contactos en un CRM, con etapas claras y recordatorios que salen solos.",
     etiqueta: "CRM y seguimiento",
-    titulo: "Descubre en 30 minutos cómo ordenar tus contactos para que no se te pierda ninguno.",
+    titulo: "Cada contacto en su lugar",
+    destacado: "y ningún seguimiento olvidado.",
     entrada:
-      "Me cuentas por dónde te llegan los contactos y dónde los anotas hoy. Te digo cómo armaría tu CRM, qué etapas tendría y qué recordatorios saldrían solos, trabajes conmigo o no.",
-    ventana: "crm",
-    etapas: ["Dónde están tus contactos", "Las etapas de tu venta", "Tu CRM ordenado"],
+      "En 30 minutos vemos por dónde te llegan los contactos y dónde los anotas hoy. Te digo cómo armaría tu CRM, qué etapas tendría y qué recordatorios saldrían solos, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Contactos repartidos",
@@ -193,17 +197,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Un CRM donde cada contacto tiene su etapa y su siguiente paso.",
+    herramientas: ["GoHighLevel", "ActiveCampaign", "Airtable", "WhatsApp"],
   },
 
   "email-marketing": {
     description:
       "Videollamada gratis de 30 minutos para ver qué secuencias de correo automáticas armaría primero para tu negocio y cómo medirlas.",
     etiqueta: "Email marketing",
-    titulo: "Descubre en 30 minutos qué correos automáticos te ayudarían a vender.",
+    titulo: "Correos que siguen vendiendo",
+    destacado: "mientras tú atiendes tu negocio.",
     entrada:
-      "Me cuentas a quién le escribes hoy y qué pasa después de que alguien te deja su correo. Te digo qué secuencia armaría primero y cómo sabríamos si funciona, trabajes conmigo o no.",
-    ventana: "email",
-    etapas: ["Tu lista y tus correos", "Qué secuencia falta", "Tu plan de envíos"],
+      "En 30 minutos vemos a quién le escribes hoy y qué pasa después de que alguien te deja su correo. Te digo qué secuencia armaría primero y cómo sabríamos si funciona, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Contactos que nunca reciben nada",
@@ -233,17 +237,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Secuencias que escriben en el momento justo y se envían solas.",
+    herramientas: ["ActiveCampaign", "GoHighLevel", "Make", "Zapier"],
   },
 
   "paneles-de-metricas": {
     description:
       "Videollamada gratis de 30 minutos para ver qué cifras de tu negocio conviene juntar en un panel que se actualice solo.",
     etiqueta: "Paneles de métricas",
-    titulo: "Descubre en 30 minutos qué números necesitas ver para decidir mejor.",
+    titulo: "Tus números en una sola pantalla,",
+    destacado: "sin armar informes a mano.",
     entrada:
-      "Me cuentas dónde están hoy tus datos y cuánto te cuesta juntarlos. Te digo qué panel armaría, qué fuentes conectaría y qué cifras pondría primero, trabajes conmigo o no.",
-    ventana: "metricas",
-    etapas: ["Dónde están tus datos", "Qué cifras importan", "Tu panel en una pantalla"],
+      "En 30 minutos vemos dónde están hoy tus datos y cuánto te cuesta juntarlos. Te digo qué panel armaría, qué fuentes conectaría y qué cifras pondría primero, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Datos repartidos",
@@ -273,17 +277,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Un panel que se actualiza solo y muestra lo que importa.",
+    herramientas: ["Airtable", "Make", "Stripe", "Meta Ads", "Google Ads"],
   },
 
   "webs-ia": {
     description:
       "Videollamada gratis de 30 minutos para revisar tu web y ver qué cambiar primero para que te traiga contactos y clientes.",
     etiqueta: "Páginas web",
-    titulo: "Descubre en 30 minutos qué necesita tu web para traerte clientes.",
+    titulo: "Convierte tu web en la mejor",
+    destacado: "vendedora de tu negocio.",
     entrada:
-      "Me cuentas para qué usas hoy tu web y cómo te llegan los clientes. Te digo qué cambiaría primero, qué páginas harían falta y cómo mediríamos los resultados, trabajes conmigo o no.",
-    ventana: "web",
-    etapas: ["Cómo está tu web hoy", "Qué le falta para vender", "Tu plan de páginas"],
+      "En 30 minutos revisamos para qué usas hoy tu web y cómo te llegan los clientes. Te digo qué cambiaría primero, qué páginas harían falta y cómo mediríamos los resultados, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Una web que no trae contactos",
@@ -313,17 +317,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Una web rápida, clara y con un objetivo en cada página.",
+    herramientas: ["Claude", "ChatGPT", "WhatsApp", "Make"],
   },
 
   "trafico-de-pago": {
     description:
       "Videollamada gratis de 30 minutos para revisar tu publicidad en Meta Ads y Google Ads y dejar la medición bien puesta antes de invertir más.",
     etiqueta: "Meta Ads y Google Ads",
-    titulo: "Descubre en 30 minutos cómo invertir en Meta Ads y Google Ads sin apostar a ciegas.",
+    titulo: "Invierte en anuncios",
+    destacado: "sabiendo cuáles te traen clientes.",
     entrada:
-      "Me cuentas qué vendes, si ya hiciste anuncios y cómo mides hoy los resultados. Te digo qué revisaría primero, por dónde empezaría y qué mediríamos desde el primer día, trabajes conmigo o no.",
-    ventana: "anuncios",
-    etapas: ["Qué vendes y a quién", "Cómo se mide hoy", "Tu plan de campañas"],
+      "En 30 minutos vemos qué vendes, si ya hiciste anuncios y cómo mides hoy los resultados. Te digo qué revisaría primero, por dónde empezaría y qué mediríamos desde el primer día, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Gastas sin saber qué vuelve",
@@ -353,17 +357,17 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Campañas medidas desde el primer día.",
+    herramientas: ["Meta Ads", "Google Ads", "GoHighLevel", "WhatsApp"],
   },
 
   "consultoria-ia": {
     description:
       "Videollamada gratis de 30 minutos para ver por dónde empezar con la IA en tu negocio, con qué herramienta y qué resultado esperar.",
     etiqueta: "Consultoría de IA",
-    titulo: "Descubre en 30 minutos por dónde empezar con la IA en tu negocio.",
+    titulo: "Empieza con la IA",
+    destacado: "por donde más te conviene.",
     entrada:
-      "Me cuentas cómo trabajas hoy y qué te gustaría resolver. Te digo dónde la IA te ahorraría más tiempo, con qué herramienta empezaría y qué puedes esperar, trabajes conmigo o no.",
-    ventana: "consultoria",
-    etapas: ["Cómo trabajas hoy", "Dónde ayuda la IA", "Tus prioridades"],
+      "En 30 minutos vemos cómo trabajas hoy y qué te gustaría resolver. Te digo dónde la IA te ahorraría más tiempo, con qué herramienta empezaría y qué puedes esperar, trabajes conmigo o no.",
     dolores: [
       {
         titulo: "Demasiadas herramientas",
@@ -393,6 +397,7 @@ export const funnels: Record<string, Funnel> = {
       },
     ],
     solucion: "Un plan ordenado para usar la IA donde más te conviene.",
+    herramientas: ["Claude", "ChatGPT", "Make", "n8n", "Airtable"],
   },
 };
 

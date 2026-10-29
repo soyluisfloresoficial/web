@@ -3,7 +3,8 @@
  * Funnels de campaña por servicio (28/10/2026): /diagnostico/agentes-ia,
  * /diagnostico/automatizacion, etc. Ver FUNNELS.md.
  *
- * Misma plantilla e identidad que /diagnostico. Van con «noindex, follow»,
+ * Misma plantilla que /diagnostico, con los colores de la web y el color
+ * de cada servicio (29/10/2026). Van con «noindex, follow»,
  * canónica hacia la página del servicio y fuera del sitemap: son destinos de
  * anuncios y no deben competir con /servicios/[slug] en los buscadores.
  *
@@ -83,14 +84,15 @@ const schema = [
   schema={schema}
   canonicalDe={`/servicios/${s.slug}`}
   formId={`funnel-${s.slug}`}
-  etiqueta={`Diagnóstico gratis · ${f.etiqueta} · 30 min`}
+  acento={s.color}
+  escena={s.slug}
+  etiqueta={f.etiqueta}
   titulo={f.titulo}
+  destacado={f.destacado}
   entrada={f.entrada}
-  ventana={f.ventana}
-  etapas={f.etapas}
+  herramientas={f.herramientas}
   dolores={f.dolores}
   solucion={{
-    etiqueta: "Lo que implemento",
     titulo: f.solucion,
     incluye: d.queIncluye,
     cambia: d.resultado,

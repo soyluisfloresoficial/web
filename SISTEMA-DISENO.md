@@ -114,6 +114,19 @@ Espaciado entre secciones: de 72 a 120 px. Contenedor: 1240 px.
 
 Micro movimiento añadido: filete del antetítulo que se dibuja al entrar en pantalla, respuesta al pulsar los botones (`scale: 0.97`), botón principal que sube 2 px, entrada encadenada del hero (botones, garantías, foto y etiqueta) y realce del borde de las herramientas.
 
+## Landings de campaña (29/10/2026)
+
+`/diagnostico` y los funnels `/diagnostico/[servicio]` usan los tokens de este documento (antes tenían una identidad lima propia, que ya no existe). Plantilla en `src/components/LandingDiagnostico.astro`; cada funnel pasa el color de su servicio (`--svc-*`) como acento del hero, de «Lo que implemento» y de su escena.
+
+| Efecto | Dónde | Cómo |
+|---|---|---|
+| Escena del hero | Una por servicio (`EscenaFunnel.astro`) | La ventana entra inclinada y se endereza, como en el video piloto; después cada pieza aparece en orden (mensajes, filas, barras, tarjeta que cambia de columna, trazo de la gráfica) y al final sale la etiqueta del resultado. Se reproduce **una sola vez**: todo arranca en pausa y corre al tener `.is-visible`. Sin JavaScript o con movimiento reducido se ve el estado final |
+| Línea de los pasos | «Cómo funciona» | `scaleX` con línea de tiempo de vista. En Firefox se ve completa |
+| Barra de reserva | Celular | Aparece al pasar los botones del hero y se esconde al llegar a la agenda (`translateY` + `visibility`) |
+| Cintas de fondo | Todas | Las de la home (`CintasLuz.astro`) |
+
+El cierre usa el degradado de marca un tono más oscuro (`#0059c9 → #4f46e5 → #6d28d9`): con el normal, el texto blanco pequeño se quedaba en 4:1 y no llegaba al 4,5:1 de AA.
+
 ## Piezas compartidas de las páginas interiores (21/10/2026)
 
 | Pieza | Para qué |

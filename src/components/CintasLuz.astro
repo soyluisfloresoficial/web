@@ -13,16 +13,11 @@
  *   batería. Se para cuando la pestaña no está visible.
  * - Movimiento reducido: se dibuja una sola vez, quieta.
  * - Es decorativa: aria-hidden y sin eventos de puntero.
- * - paleta «lima»: la de /diagnostico (verde lima sobre negro).
  */
-interface Props {
-  paleta?: "marca" | "lima";
-}
-const { paleta = "marca" } = Astro.props;
 ---
 
 <div class="cintas" aria-hidden="true">
-  <canvas class="cintas-lienzo" data-cintas data-paleta={paleta}></canvas>
+  <canvas class="cintas-lienzo" data-cintas></canvas>
 </div>
 
 <script>
@@ -35,11 +30,8 @@ const { paleta = "marca" } = Astro.props;
     const HILOS = movil ? 40 : 90;
     const PUNTOS = movil ? 46 : 84;
     const FPS = movil ? 30 : 60;
-    const lima = lienzo.dataset.paleta === "lima";
-    const COLORES = lima
-      ? ["#7fbf1a", "#a6e22e", "#c6ff3d", "#e4ffa0"]
-      : ["#007bff", "#4f7dff", "#6366f1", "#8b5cf6"];
-    const MOTA = lima ? "#efffcc" : "#cfe3ff";
+    const COLORES = ["#007bff", "#4f7dff", "#6366f1", "#8b5cf6"];
+    const MOTA = "#cfe3ff";
 
     let w = 0;
     let h = 0;

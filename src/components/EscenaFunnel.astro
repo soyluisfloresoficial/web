@@ -1,0 +1,912 @@
+---
+/**
+ * Gráfico animado del hero de los funnels (29/10/2026). Una escena por
+ * servicio, con el mismo lenguaje que el video de la portada: la ventana
+ * entra inclinada y se endereza, y después cada pieza aparece en orden.
+ *
+ * - Se reproduce una sola vez, al entrar en pantalla (.reveal → .is-visible,
+ *   script de Base.astro), y queda quieta. Ninguna animación se repite.
+ * - Solo transform, opacity y el trazo de la gráfica.
+ * - Sin JavaScript o con movimiento reducido se ve el estado final.
+ * - Es una maqueta de ejemplo: aria-hidden, sin cifras ni clientes reales.
+ *   El color sale de --ef-acento (el del servicio).
+ */
+import Icono from "./Icono.astro";
+
+interface Props {
+  /** Slug del servicio o «general» para /diagnostico. */
+  tipo: string;
+}
+const { tipo } = Astro.props;
+
+const cabeceras: Record<string, { titulo: string; dato: string; resultado: string; pasos: number }> = {
+  general: { titulo: "Llamada de diagnóstico", dato: "30:00", resultado: "Plan listo", pasos: 4.6 },
+  "agentes-ia": { titulo: "WhatsApp · Agente de IA", dato: "22:14", resultado: "Cita en tu calendario: jueves 16:30", pasos: 5.4 },
+  "funnels-conversion": { titulo: "Embudo de ventas", dato: "Medido", resultado: "Sabes en qué paso se va cada cliente", pasos: 5.6 },
+  automatizacion: { titulo: "Flujo · Nuevo contacto", dato: "Automático", resultado: "Hecho solo, sin copiar y pegar", pasos: 5 },
+  "crm-seguimiento-leads": { titulo: "CRM · Oportunidades", dato: "Hoy", resultado: "Ningún seguimiento olvidado", pasos: 5.8 },
+  "email-marketing": { titulo: "Secuencia · Bienvenida", dato: "Automática", resultado: "Cada correo sale en su momento", pasos: 4 },
+  "paneles-de-metricas": { titulo: "Panel · Esta semana", dato: "Actualizado", resultado: "Se actualiza solo", pasos: 4 },
+  "webs-ia": { titulo: "Tu web", dato: "Celular y computadora", resultado: "Rápida y con un objetivo claro", pasos: 4 },
+  "trafico-de-pago": { titulo: "Campaña · Medición", dato: "Meta y Google", resultado: "Sabes qué anuncio trae clientes", pasos: 5 },
+  "consultoria-ia": { titulo: "Plan de IA · Prioridades", dato: "Tu negocio", resultado: "Un plan en orden", pasos: 4 },
+};
+const c = cabeceras[tipo] ?? cabeceras.general;
+const i = (n: number) => `--i:${n}`;
+
+const etapas = ["Me cuentas tu caso", "Vemos qué conviene hacer", "Te llevas un plan"];
+const embudo: [string, number][] = [
+  ["Visitas a tu página", 1],
+  ["Dejan sus datos", 0.74],
+  ["Reciben seguimiento", 0.74],
+  ["Agendan una llamada", 0.48],
+  ["Se vuelven clientes", 0.32],
+];
+const flujo: [string, string][] = [
+  ["Llega un contacto desde la web", "Web"],
+  ["Se guarda en tu CRM", "CRM"],
+  ["Recibe el correo de bienvenida", "Correo"],
+  ["Tu equipo recibe el aviso", "Aviso"],
+  ["Queda agendado el seguimiento", "Agenda"],
+];
+const correos: [string, string, string][] = [
+  ["Día 0", "Gracias por escribirnos", "Enviado"],
+  ["Día 2", "Lo que suelen preguntarme antes de empezar", "Abierto"],
+  ["Día 5", "¿Agendamos una llamada?", "Clic en el enlace"],
+];
+const prioridades: [string, string, number][] = [
+  ["Responder mensajes con un agente", "Primero", 2],
+  ["Automatizar el seguimiento", "Después", 0],
+  ["Armar tu panel de métricas", "Más adelante", -2],
+];
+const linea = "M0 78 L40 66 L80 70 L120 52 L160 56 L200 38 L240 32 L300 12";
+---
+
+<div class={`escena escena-${tipo} reveal`} aria-hidden="true">
+  <div class="ef-brillo"></div>
+  <div class="ef-ventana">
+    <div class="ef-barra">
+      <span class="ef-puntos"><span></span><span></span><span></span></span>
+      <p class="ef-titulo">{c.titulo}</p>
+      <p class="ef-dato">{c.dato}</p>
+    </div>
+
+    <div class="ef-cuerpo">
+      {
+        tipo === "agentes-ia" && (
+          <div class="ef-chat">
+            <p class="ef-burbuja ef-cliente ef-p" style={i(0)}>Hola, ¿tienen hora esta semana?</p>
+            <div class="ef-turno">
+              <p class="ef-escribiendo ef-fugaz" style={i(1)}>
+                <span /><span /><span />
+              </p>
+              <p class="ef-burbuja ef-agente ef-p" style={i(2.4)}>
+                ¡Hola! Sí, el jueves a las 10:00 o a las 16:30. ¿Cuál te agendo?
+              </p>
+            </div>
+            <p class="ef-burbuja ef-cliente ef-p" style={i(3.4)}>A las 16:30, por favor.</p>
+            <p class="ef-burbuja ef-agente ef-p" style={i(4.4)}>
+              Listo, te agendé el jueves a las 16:30. Te lo recuerdo un día antes.
+            </p>
+          </div>
+        )
+      }
+
+      {
+        tipo === "funnels-conversion" && (
+          <ul class="ef-lista ef-embudo">
+            {embudo.map(([texto, ancho], n) => (
+              <li class="ef-p" style={i(n)}>
+                <span class="ef-etq">{texto}</span>
+                <span class="ef-pista">
+                  <i class="ef-crece" style={`--w:${ancho};${i(n)}`} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        tipo === "automatizacion" && (
+          <ul class="ef-lista ef-flujo">
+            {flujo.map(([texto, etiqueta], n) => (
+              <li class="ef-p" style={i(n)}>
+                <span class="ef-icono">
+                  <span class="ef-hecho ef-pop" style={i(n)}>
+                    <Icono nombre="check" tamano={12} grosor={2.6} />
+                  </span>
+                </span>
+                <span class="ef-etq">{texto}</span>
+                <span class="ef-tag">{etiqueta}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        tipo === "crm-seguimiento-leads" && (
+          <>
+            <div class="ef-kanban">
+              {["Nuevo", "En conversación", "Propuesta"].map((col) => (
+                <div class="ef-col">
+                  <p class="ef-col-titulo">{col}</p>
+                  <span class="ef-gris" />
+                  <span class="ef-gris ef-gris-corta" />
+                </div>
+              ))}
+              <div class="ef-movil">
+                <p class="ef-movil-titulo">Nuevo contacto</p>
+                <p class="ef-movil-sub">
+                  <Icono nombre="whatsapp" tamano={11} /> Llegó por WhatsApp
+                </p>
+              </div>
+            </div>
+            <p class="ef-aviso ef-p" style={i(4.8)}>
+              <Icono nombre="reloj" tamano={14} grosor={1.8} /> Recordatorio: escribirle mañana a las 10:00
+            </p>
+          </>
+        )
+      }
+
+      {
+        tipo === "email-marketing" && (
+          <ul class="ef-lista ef-correos">
+            {correos.map(([dia, asunto, estado], n) => (
+              <li class="ef-p" style={i(n)}>
+                <span class="ef-dia">{dia}</span>
+                <span class="ef-etq">
+                  <Icono nombre="email" tamano={13} grosor={1.8} /> {asunto}
+                </span>
+                <span class="ef-tag ef-pop" style={i(n + 0.6)}>
+                  {estado}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {
+        tipo === "paneles-de-metricas" && (
+          <>
+            <div class="ef-kpis">
+              {["Contactos", "Citas", "Ventas"].map((k, n) => (
+                <div class="ef-kpi ef-p" style={i(n * 0.5)}>
+                  <p>{k}</p>
+                  <span class="ef-pista">
+                    <i class="ef-crece" style={`--w:${[0.82, 0.58, 0.42][n]};${i(n * 0.5)}`} />
+                  </span>
+                </div>
+              ))}
+            </div>
+            <svg class="ef-grafica" viewBox="0 0 300 90" preserveAspectRatio="none">
+              <path class="ef-area ef-p" style={i(2)} d={`${linea} L300 90 L0 90 Z`} />
+              <path class="ef-trazo" style={i(1.5)} pathLength="1" d={linea} />
+            </svg>
+          </>
+        )
+      }
+
+      {
+        tipo === "webs-ia" && (
+          <div class="ef-web">
+            <p class="ef-url">
+              <Icono nombre="globo" tamano={12} /> tunegocio.com
+            </p>
+            <div class="ef-web-hero ef-p" style={i(0)}>
+              <span class="ef-renglon ef-renglon-largo" />
+              <span class="ef-renglon" />
+              <span class="ef-boton-web ef-pop" style={i(1)}>
+                Agenda tu cita
+              </span>
+            </div>
+            <div class="ef-web-tarjetas">
+              {[0, 1, 2].map((n) => (
+                <span class="ef-web-tarjeta ef-p" style={i(2 + n * 0.4)}>
+                  <span class="ef-renglon" />
+                  <span class="ef-renglon ef-renglon-corto" />
+                </span>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      {
+        tipo === "trafico-de-pago" && (
+          <div class="ef-recorrido">
+            <div class="ef-etapa-ad ef-p" style={i(0)}>
+              <p class="ef-mini">
+                <Icono nombre="megafono" tamano={12} /> Anuncio
+              </p>
+              <span class="ef-imagen" />
+              <span class="ef-boton-web ef-boton-chico">Más información</span>
+            </div>
+            <span class="ef-flecha ef-p" style={i(1)}>
+              <Icono nombre="flecha" tamano={16} />
+            </span>
+            <div class="ef-etapa-ad ef-p" style={i(2)}>
+              <p class="ef-mini">
+                <Icono nombre="web" tamano={12} /> Tu página
+              </p>
+              <span class="ef-renglon" />
+              <span class="ef-renglon ef-renglon-corto" />
+              <span class="ef-boton-web ef-boton-chico">Agendar</span>
+            </div>
+            <span class="ef-flecha ef-p" style={i(3)}>
+              <Icono nombre="flecha" tamano={16} />
+            </span>
+            <div class="ef-etapa-ad ef-etapa-lead ef-p" style={i(4)}>
+              <span class="ef-ok-grande">
+                <Icono nombre="check" tamano={16} grosor={2.6} />
+              </span>
+              <p class="ef-lead-titulo">Contacto registrado</p>
+              <p class="ef-lead-sub">Conversión enviada a Meta y Google</p>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        tipo === "consultoria-ia" && (
+          <ol class="ef-lista ef-prioridades">
+            {prioridades.map(([texto, cuando, desde], n) => (
+              <li class="ef-reordena" style={`--desde:${desde};${i(n * 0.3)}`}>
+                <span class="ef-num">{n + 1}</span>
+                <span class="ef-etq">{texto}</span>
+                <span class="ef-tag ef-pop" style={i(2 + n * 0.4)}>
+                  {cuando}
+                </span>
+              </li>
+            ))}
+          </ol>
+        )
+      }
+
+      {
+        !["agentes-ia", "funnels-conversion", "automatizacion", "crm-seguimiento-leads", "email-marketing", "paneles-de-metricas", "webs-ia", "trafico-de-pago", "consultoria-ia"].includes(tipo) && (
+          <>
+            <ol class="ef-lista ef-etapas">
+              {etapas.map((e, n) => (
+                <li class="ef-p" style={i(n)}>
+                  <span class="ef-icono">
+                    <span class="ef-hecho ef-pop" style={i(n + 0.5)}>
+                      <Icono nombre="check" tamano={12} grosor={2.6} />
+                    </span>
+                  </span>
+                  <span class="ef-num-mono">0{n + 1}</span>
+                  <span class="ef-etq">{e}</span>
+                </li>
+              ))}
+            </ol>
+            <span class="ef-pista ef-progreso">
+              <i class="ef-crece ef-lento" style={i(0)} />
+            </span>
+          </>
+        )
+      }
+    </div>
+  </div>
+
+  <p class="ef-resultado ef-pop" style={i(c.pasos)}>
+    <span class="ef-resultado-icono"><Icono nombre="check" tamano={14} grosor={2.6} /></span>
+    {c.resultado}
+  </p>
+</div>
+
+<style>
+  .escena {
+    --ef: var(--ef-acento, var(--acento-azul));
+    position: relative;
+    width: 100%;
+    max-width: 31rem;
+    margin-inline: auto;
+    padding: 1.5rem 0 2.25rem;
+  }
+  /* Brillo quieto detrás del cristal, en el color del servicio y el violeta. */
+  .ef-brillo {
+    position: absolute;
+    inset: 6% -6% 0 4%;
+    border-radius: 2rem;
+    background:
+      radial-gradient(55% 60% at 30% 30%, color-mix(in srgb, var(--ef) 38%, transparent), transparent 70%),
+      radial-gradient(50% 55% at 80% 80%, rgb(139 92 246 / 0.35), transparent 70%);
+    filter: blur(36px);
+  }
+  .ef-ventana {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 1.125rem;
+    background: rgb(16 21 34 / 0.86);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      var(--shadow-3);
+    backdrop-filter: blur(14px);
+  }
+  .ef-barra {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+    font-size: 0.75rem;
+  }
+  .ef-puntos {
+    display: flex;
+    gap: 0.3rem;
+  }
+  .ef-puntos span {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.14);
+  }
+  .ef-titulo {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 600;
+    color: var(--color-ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ef-dato {
+    flex-shrink: 0;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ef) 14%, transparent);
+    color: var(--ef);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+  }
+  .ef-cuerpo {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1.125rem 1rem 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--color-soft);
+  }
+  .ef-lista {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ef-lista > li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    background: rgb(255 255 255 / 0.025);
+  }
+  .ef-etq {
+    flex: 1;
+    min-width: 0;
+    color: var(--color-ink);
+  }
+  .ef-tag {
+    flex-shrink: 0;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ef) 16%, transparent);
+    color: var(--ef);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .ef-icono {
+    position: relative;
+    flex-shrink: 0;
+    width: 1.375rem;
+    height: 1.375rem;
+    border: 1.5px dashed color-mix(in srgb, var(--ef) 55%, transparent);
+    border-radius: 999px;
+  }
+  .ef-hecho {
+    position: absolute;
+    inset: -1.5px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--ef);
+    color: var(--color-navy);
+  }
+  .ef-num-mono {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-muted);
+  }
+
+  /* Barras que crecen (embudo, panel y progreso). */
+  .ef-pista {
+    position: relative;
+    display: block;
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.06);
+  }
+  .ef-crece {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--ef), #8b5cf6);
+    transform: scaleX(var(--w, 1));
+    transform-origin: left;
+  }
+  .ef-embudo > li {
+    display: grid;
+    grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr);
+  }
+  .ef-progreso {
+    margin-top: 0.25rem;
+  }
+
+  /* Chat del agente. */
+  .ef-chat {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .ef-burbuja {
+    max-width: 84%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.875rem;
+    line-height: 1.4;
+  }
+  .ef-cliente {
+    justify-self: end;
+    border-bottom-right-radius: 0.25rem;
+    background: rgb(255 255 255 / 0.08);
+    color: var(--color-ink);
+  }
+  .ef-agente {
+    justify-self: start;
+    border-bottom-left-radius: 0.25rem;
+    background: color-mix(in srgb, var(--ef) 22%, rgb(16 21 34));
+    color: var(--color-ink);
+  }
+  .ef-turno {
+    display: grid;
+  }
+  .ef-turno > * {
+    grid-area: 1 / 1;
+  }
+  .ef-escribiendo {
+    display: flex;
+    gap: 0.25rem;
+    justify-self: start;
+    align-self: start;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.875rem;
+    background: color-mix(in srgb, var(--ef) 22%, rgb(16 21 34));
+    opacity: 0;
+  }
+  .ef-escribiendo span {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 999px;
+    background: var(--color-ink);
+    opacity: 0.7;
+  }
+
+  /* CRM: la tarjeta pasa de columna en columna. */
+  .ef-kanban {
+    --hueco: 0.5rem;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hueco);
+  }
+  .ef-col {
+    display: grid;
+    align-content: start;
+    gap: 0.375rem;
+    min-height: 8.25rem;
+    padding: 0.5rem;
+    border-radius: 0.625rem;
+    background: rgb(255 255 255 / 0.03);
+  }
+  .ef-col-titulo {
+    overflow: hidden;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--color-soft);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ef-gris {
+    height: 1.5rem;
+    border-radius: 0.375rem;
+    background: rgb(255 255 255 / 0.06);
+  }
+  .ef-gris-corta {
+    width: 70%;
+  }
+  .ef-movil {
+    position: absolute;
+    left: 0;
+    bottom: 0.5rem;
+    width: calc((100% - 2 * var(--hueco)) / 3);
+    padding: 0.375rem 0.5rem;
+    border: 1px solid var(--ef);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--ef) 18%, rgb(16 21 34));
+    box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--ef) 60%, transparent);
+    transform: translateX(calc(200% + 2 * var(--hueco)));
+  }
+  .ef-movil-titulo {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .ef-movil-sub {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.625rem;
+    color: var(--color-soft);
+  }
+  .ef-aviso {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--ef) 12%, transparent);
+    color: var(--color-ink);
+  }
+  .ef-aviso :global(svg) {
+    color: var(--ef);
+    flex-shrink: 0;
+  }
+
+  /* Correos. */
+  .ef-correos > li {
+    flex-wrap: wrap;
+  }
+  .ef-dia {
+    flex-shrink: 0;
+    width: 2.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ef);
+  }
+  .ef-correos .ef-etq {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .ef-correos .ef-etq :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-muted);
+  }
+
+  /* Panel de métricas. */
+  .ef-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .ef-kpi {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.625rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    background: rgb(255 255 255 / 0.025);
+    font-size: 0.6875rem;
+  }
+  .ef-grafica {
+    width: 100%;
+    height: 6.5rem;
+    overflow: visible;
+  }
+  .ef-area {
+    fill: color-mix(in srgb, var(--ef) 18%, transparent);
+  }
+  .ef-trazo {
+    fill: none;
+    stroke: var(--ef);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  /* Web. */
+  .ef-web {
+    display: grid;
+    gap: 0.625rem;
+  }
+  .ef-url {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.05);
+    font-size: 0.6875rem;
+  }
+  .ef-web-hero {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background:
+      radial-gradient(80% 100% at 80% 0%, color-mix(in srgb, var(--ef) 22%, transparent), transparent 70%),
+      rgb(255 255 255 / 0.03);
+  }
+  .ef-renglon {
+    display: block;
+    width: 60%;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.14);
+  }
+  .ef-renglon-largo {
+    width: 85%;
+    height: 0.75rem;
+    background: rgb(255 255 255 / 0.3);
+  }
+  .ef-renglon-corto {
+    width: 40%;
+  }
+  .ef-boton-web {
+    justify-self: start;
+    margin-top: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 999px;
+    background: var(--grad-cta);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    box-shadow: 0 8px 20px -10px #6366f1;
+  }
+  .ef-boton-chico {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.625rem;
+  }
+  .ef-web-tarjetas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .ef-web-tarjeta {
+    display: grid;
+    gap: 0.375rem;
+    padding: 0.625rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.625rem;
+  }
+  .ef-web-tarjeta .ef-renglon {
+    width: 100%;
+  }
+
+  /* Recorrido del anuncio. */
+  .ef-recorrido {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .ef-etapa-ad {
+    display: grid;
+    gap: 0.375rem;
+    min-height: 8.5rem;
+    align-content: start;
+    padding: 0.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    background: rgb(255 255 255 / 0.03);
+  }
+  .ef-etapa-ad .ef-renglon {
+    width: 100%;
+  }
+  .ef-mini {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .ef-imagen {
+    height: 2.75rem;
+    border-radius: 0.375rem;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--ef) 45%, transparent), rgb(139 92 246 / 0.45));
+  }
+  .ef-flecha {
+    color: var(--ef);
+  }
+  .ef-etapa-lead {
+    justify-items: center;
+    align-content: center;
+    border-color: var(--ef);
+    background: color-mix(in srgb, var(--ef) 12%, transparent);
+    text-align: center;
+  }
+  .ef-ok-grande {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--ef);
+    color: var(--color-navy);
+  }
+  .ef-lead-titulo {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .ef-lead-sub {
+    font-size: 0.5625rem;
+    line-height: 1.3;
+  }
+
+  /* Prioridades que se ordenan. */
+  .ef-prioridades {
+    --hueco: 0.5rem;
+    gap: var(--hueco);
+  }
+  .ef-num {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: var(--grad-cta);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+  }
+
+  /* Resultado final: se apoya en el borde de la ventana. */
+  .ef-resultado {
+    position: absolute;
+    right: -0.5rem;
+    bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 85%;
+    padding: 0.5rem 0.875rem 0.5rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--ef) 50%, transparent);
+    border-radius: 999px;
+    background: rgb(10 14 26 / 0.94);
+    box-shadow: var(--shadow-2);
+    color: var(--color-ink);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .ef-resultado-icono {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: var(--ef);
+    color: var(--color-navy);
+  }
+  @media (width < 480px) {
+    .ef-resultado {
+      right: 0;
+    }
+    .ef-embudo > li {
+      grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr);
+    }
+  }
+
+  /* --------------------------------------------------------- Movimiento
+     Todo arranca en pausa y corre cuando la escena entra en pantalla. Con
+     «both», en pausa se ve el primer fotograma y al terminar queda el
+     último: la escena final es la misma que sin animación. */
+  @media (prefers-reduced-motion: no-preference) {
+    /* El retraso se calcula en cada pieza, con su propio --i. Declarado en
+       .escena, todas heredaban el mismo valor y aparecían a la vez. */
+    .escena * {
+      --ef-t: calc(0.8s + var(--i, 0) * 0.45s);
+    }
+    :global(.js) .escena .ef-ventana {
+      animation: ef-ventana 0.95s var(--ease) both paused;
+    }
+    :global(.js) .escena .ef-p {
+      animation: ef-aparece 0.5s var(--ease) var(--ef-t) both paused;
+    }
+    :global(.js) .escena .ef-pop {
+      animation: ef-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--ef-t) + 0.25s) both paused;
+    }
+    :global(.js) .escena .ef-crece {
+      animation: ef-crece 0.8s var(--ease) calc(var(--ef-t) + 0.15s) both paused;
+    }
+    :global(.js) .escena .ef-lento {
+      animation-duration: 2.2s;
+    }
+    :global(.js) .escena .ef-fugaz {
+      animation: ef-fugaz 0.7s linear var(--ef-t) both paused;
+    }
+    :global(.js) .escena .ef-trazo {
+      animation: ef-dibuja 1.4s var(--ease) var(--ef-t) both paused;
+    }
+    :global(.js) .escena .ef-movil {
+      animation: ef-columnas 2.2s var(--ease) 1s both paused;
+    }
+    :global(.js) .escena .ef-reordena {
+      animation: ef-reordena 0.9s var(--ease) calc(1.2s + var(--i, 0) * 0.45s) both paused;
+    }
+    :global(.js) .escena.is-visible :is(.ef-ventana, .ef-p, .ef-pop, .ef-crece, .ef-fugaz, .ef-trazo, .ef-movil, .ef-reordena) {
+      animation-play-state: running;
+    }
+  }
+
+  @keyframes ef-ventana {
+    from {
+      opacity: 0;
+      transform: perspective(1400px) rotateX(10deg) rotateY(-14deg) translateY(28px) scale(0.96);
+    }
+  }
+  @keyframes ef-aparece {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  @keyframes ef-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+  @keyframes ef-crece {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes ef-fugaz {
+    0% {
+      opacity: 0;
+    }
+    15%,
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes ef-dibuja {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+  @keyframes ef-columnas {
+    0%,
+    10% {
+      transform: translateX(0);
+    }
+    40%,
+    55% {
+      transform: translateX(calc(100% + var(--hueco)));
+    }
+    85%,
+    100% {
+      transform: translateX(calc(200% + 2 * var(--hueco)));
+    }
+  }
+  @keyframes ef-reordena {
+    from {
+      transform: translateY(calc(var(--desde) * (100% + var(--hueco))));
+    }
+  }
+</style>

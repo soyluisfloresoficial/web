@@ -93,8 +93,9 @@ CONTENIDO
 - Textos legales: no los toques. Si ves un hueco, anótalo para un abogado.
 - El NIE/NIF solo en /aviso-legal. Nunca en el pie, el JSON-LD ni llms.txt.
   Domicilio público: solo "Manresa, Barcelona, España".
-- /diagnostico tiene identidad propia (lima #C6FF3D sobre negro, sin cabecera
-  ni pie). No la extiendas al resto de la web ni metas la azul/violeta en ella.
+- /diagnostico y los funnels /diagnostico/[servicio] son landings de campaña:
+  colores de la web (desde el 29/10/2026), sin cabecera ni pie completos y con
+  noindex. Ver la sección «Landings de campaña» de CLAUDE.md.
 
 TÉCNICA
 - Un commit por cambio, mensaje claro en español. Nunca `--force`.

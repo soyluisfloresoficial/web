@@ -1,7 +1,8 @@
 ---
 /**
- * /diagnostico: landing de la llamada de diagnóstico, con identidad propia
- * (lima sobre negro). Pedida por el titular el 22/10/2026 para campañas.
+ * /diagnostico: landing general de la llamada de diagnóstico, para campañas.
+ * Pedida por el titular el 22/10/2026. Desde el 29/10/2026 usa los colores
+ * de la web, igual que los funnels de cada servicio.
  *
  * Indexación (26/10/2026): la página repite la agenda y las preguntas de
  * /contacto, así que va con «noindex, follow», canónica hacia /contacto y
@@ -39,9 +40,6 @@ const llevas = [
   },
 ];
 
-
-// Etapas de la ventana del hero: lo que se ve en la llamada, en orden.
-const etapas = ["Me cuentas tu caso", "Vemos qué automatizar", "Te llevas un plan"];
 
 const encaja = [
   "Tienes un negocio o pyme en marcha y ya recibes clientes o consultas.",
@@ -103,11 +101,12 @@ const schema = [
   schema={schema}
   canonicalDe="/contacto"
   formId="calendly-diagnostico-landing"
-  etiqueta="Llamada de diagnóstico · 30 min · Gratis"
-  titulo="Descubre en 30 minutos qué automatizar primero en tu negocio."
-  entrada="Me cuentas cómo trabajas hoy y dónde se te van el tiempo y los clientes. Te digo qué haría primero, con qué herramienta y qué puedes esperar, trabajes conmigo o no."
-  ventana="diagnostico"
-  etapas={etapas}
+  escena="general"
+  etiqueta="IA y automatización"
+  titulo="Descubre qué automatizar primero"
+  destacado="para recuperar tiempo y clientes."
+  entrada="En 30 minutos me cuentas cómo trabajas hoy y dónde se te van el tiempo y los clientes. Te digo qué haría primero, con qué herramienta y qué puedes esperar, trabajes conmigo o no."
+  herramientas={["Make", "n8n", "GoHighLevel", "ActiveCampaign", "WhatsApp", "Claude", "ChatGPT"]}
   llevas={llevas}
   encaja={encaja}
   todaviaNo={todaviaNo}

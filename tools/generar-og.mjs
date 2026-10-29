@@ -88,17 +88,8 @@ const retratos = fs
   .map((n) => `/_astro/${n}`);
 const retrato = retratos.sort((a, b) => fs.statSync(path.join(dist, b)).size - fs.statSync(path.join(dist, a)).size)[0];
 
-function plantilla({ antetitulo, titulo, color, lima = false }) {
+function plantilla({ antetitulo, titulo, color }) {
   const tamano = titulo.length > 70 ? 54 : titulo.length > 48 ? 62 : 72;
-  // Identidad propia de /diagnostico: lima sobre negro y Space Grotesk.
-  const ext = lima
-    ? `@font-face{font-family:"Space Grotesk";font-weight:600;src:url(/fonts/space-grotesk-latin-600-normal.woff2)}
-body,.lienzo{background:#050505!important}
-.lienzo{background:radial-gradient(560px 420px at 70% 60%,rgb(198 255 61/.12),transparent 70%),#050505!important}
-h1{font:600 ${tamano}px/1.05 "Space Grotesk"!important;letter-spacing:-.02em!important}
-.ante{font-family:ui-monospace,monospace!important;letter-spacing:.08em!important}
-.barra{background:#c6ff3d!important}`
-    : "";
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><base href="${origen}/">
 <style>
 @font-face{font-family:Manrope;font-weight:800;src:url(/fonts/manrope-latin-800-normal.woff2)}
@@ -123,7 +114,6 @@ h1{margin-top:22px;font:800 ${tamano}px/1.06 Manrope;letter-spacing:-.025em}
 .foto img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
 .foto:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgb(7 9 13/.55),transparent 35%)}
 .barra{position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,#007bff,${color},#8b5cf6)}
-${ext}
 </style></head><body><div class="lienzo"><div class="reticula"></div>
 <div class="marca"><img src="/logo/nombre-360.webp" alt=""></div>
 <div class="texto"><p class="ante">${antetitulo}</p><h1>${titulo}</h1></div>
@@ -142,14 +132,16 @@ for (const { ruta, fichero } of paginas(dist)) {
   const html = fs.readFileSync(fichero, "utf8");
   const h1 = limpiar(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? "");
   if (!h1) continue;
-  const ante = limpiar(html.match(/<p class="eyebrow[^"]*"[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? "") || "Luis Flores";
-  // Color: el del servicio de la página, o el del servicio del artículo.
+  // Las landings de campaña usan su etiqueta del hero («Diagnóstico gratis · …»);
+  // el resto, el primer antetítulo de la página.
+  const etiqueta = limpiar(html.match(/<p class="lc-etiqueta[^"]*"[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? "");
+  const ante = etiqueta || limpiar(html.match(/<p class="eyebrow[^"]*"[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? "") || "Luis Flores";
+  // Color: el del servicio de la página (o de su funnel), o el del servicio del artículo.
   const slug =
-    ruta.match(/^\/servicios\/([a-z-]+)/)?.[1] ??
+    ruta.match(/^\/(?:servicios|diagnostico)\/([a-z-]+)/)?.[1] ??
     html.match(/class="etiqueta-servicio[^"]*"[^>]*href="\/servicios\/([a-z-]+)"|href="\/servicios\/([a-z-]+)"[^>]*class="etiqueta-servicio/)?.slice(1).find(Boolean);
-  const lima = ruta === "/diagnostico";
-  const color = lima ? "#c6ff3d" : colores[slug] ?? "#3d9bff";
-  await pag.setContent(plantilla({ antetitulo: lima ? "Llamada de diagnóstico · Gratis" : ruta === "/" ? "IA aplicada a negocios" : ruta.startsWith("/blog/") ? "Blog" : ante, titulo: h1, color, lima }), { waitUntil: "load" });
+  const color = colores[slug] ?? "#3d9bff";
+  await pag.setContent(plantilla({ antetitulo: ruta === "/" ? "IA aplicada a negocios" : ruta.startsWith("/blog/") ? "Blog" : ante, titulo: h1, color }), { waitUntil: "load" });
   // Espera a las fuentes y a que la foto esté decodificada antes de capturar.
   await pag.evaluate(async () => {
     await document.fonts.ready;

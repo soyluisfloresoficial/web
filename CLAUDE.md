@@ -47,11 +47,15 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 - `/aviso-de-privacidad-latinoamerica` es un aviso estándar para Latinoamérica que pidió el titular (21/10/2026). Los textos de España (aviso legal, privacidad, cookies) se mantienen. Ambos están pendientes de revisión por un abogado.
 - Tono de quien implementa: directo, sin promesas garantizadas ni urgencia artificial. Nada que suene a principiante («unos tres años», «empecé como freelance») en los textos de presentación.
 
-## Página con identidad propia
+## Landings de campaña
 
-`/diagnostico` (22/10/2026) es la landing de la llamada de diagnóstico, con identidad propia: lima `#C6FF3D` sobre negro `#050505`, Space Grotesk, Inter y JetBrains Mono, sin la cabecera ni el pie de la web (`Base.astro` con `identidad="lima"`). El lima es solo para la cinta, los estados activos y el botón principal. No uses esa identidad en el resto de la web ni la azul/violeta en esa página. Desde la auditoría del 26/10/2026 va con `noindex, follow`, canónica hacia `/contacto` y fuera del sitemap, porque repite su contenido; sigue enlazada desde el pie y desde `llms.txt`, y es la página que se usa en campañas.
+`/diagnostico` (22/10/2026) y los funnels por servicio en `/diagnostico/[servicio]` (28/10/2026, por ejemplo `/diagnostico/agentes-ia`) son las landings para anuncios en Meta Ads y Google Ads. Su único objetivo es agendar la llamada de diagnóstico.
 
-Desde el 28/10/2026 hay además un funnel por servicio en `/diagnostico/[servicio]` (por ejemplo `/diagnostico/agentes-ia`), con la misma identidad y plantilla (`src/components/LandingDiagnostico.astro`), `noindex, follow`, canónica hacia `/servicios/[servicio]` y fuera del sitemap. Textos en `src/data/funnels.ts`; enlaces, parámetros de campaña y conversiones en `FUNNELS.md`.
+- **Identidad (decisión del titular, 29/10/2026):** los mismos colores, fuentes y piezas de la web (navy, degradado azul → violeta, Manrope e Inter). Cada funnel toma además el color de su servicio, igual que su página de servicio. La identidad lima anterior ya no existe: no la recuperes.
+- **Estructura:** sin la cabecera ni el pie de la web (`Base.astro` con `identidad="campana"`), con cabecera mínima, barra fija de reserva en celular y pie legal. Plantilla: `src/components/LandingDiagnostico.astro`.
+- **Gráfico animado del hero:** uno por servicio en `src/components/EscenaFunnel.astro`. Se reproduce una vez al entrar en pantalla y queda quieto; sin JavaScript o con movimiento reducido se ve terminado. Son maquetas de ejemplo: sin cifras ni clientes reales.
+- **Indexación:** `noindex, follow`, canónica hacia `/contacto` (la general) o `/servicios/[servicio]`, y fuera del sitemap, porque repiten contenido. `/diagnostico` sigue enlazada desde el pie y desde `llms.txt`.
+- **Textos** en `src/data/funnels.ts`; enlaces, parámetros de campaña y conversiones en `FUNNELS.md`.
 
 ## Imágenes para compartir
 

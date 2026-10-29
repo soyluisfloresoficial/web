@@ -36,11 +36,12 @@ interface Props {
    */
   canonicalDe?: string;
   /**
-   * «lima»: página con identidad propia (por ejemplo /diagnostico). No lleva
-   * la cabecera, el pie, la barra del celular ni el chat de la web: la
-   * página pinta los suyos. Precarga sus propias fuentes.
+   * «campana»: landings de anuncios (/diagnostico y sus funnels). Mismos
+   * colores y fuentes que la web, pero sin la cabecera, el pie, la barra del
+   * celular ni el chat: la página pinta los suyos, con un único objetivo.
+   * Sustituye el 29/10/2026 a la identidad «lima», a pedido del titular.
    */
-  identidad?: "marca" | "lima";
+  identidad?: "marca" | "campana";
 }
 
 const {
@@ -56,7 +57,7 @@ const {
   canonicalDe,
   identidad = "marca",
 } = Astro.props;
-const lima = identidad === "lima";
+const campana = identidad === "campana";
 
 // trailingSlash: "never". La raíz es la excepción y conserva su barra.
 const ruta = Astro.url.pathname.replace(/\/+$/, "");
@@ -151,7 +152,7 @@ const grafo = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content={lima ? "#050505" : "#07090d"} />
+    <meta name="theme-color" content="#07090d" />
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -159,7 +160,7 @@ const grafo = {
 
     <link
       rel="preload"
-      href={lima ? "/fonts/space-grotesk-latin-600-normal.woff2" : "/fonts/manrope-latin-800-normal.woff2"}
+      href="/fonts/manrope-latin-800-normal.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -239,7 +240,7 @@ const grafo = {
     </script>
   </head>
 
-  <body class={lima ? "identidad-lima" : undefined}>
+  <body class={campana ? "identidad-campana" : undefined}>
     {/* Degradado de los iconos de trazo (Icono.astro con degradado). Una sola
         definición por página. */}
     <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
@@ -250,12 +251,12 @@ const grafo = {
         </linearGradient>
       </defs>
     </svg>
-    {!lima && <Header />}
+    {!campana && <Header />}
     <div id="contenido">
       <slot />
     </div>
     {
-      !lima && (
+      !campana && (
         <>
           <Footer />
           <BarraMovil />

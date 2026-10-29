@@ -1,9 +1,15 @@
 # Funnels de captación para anuncios
 
 Desde el 28/10/2026 hay una landing por servicio para usar como destino de
-anuncios en Meta Ads y Google Ads. Todas tienen la identidad lima de
-`/diagnostico` y un único objetivo: agendar la llamada de diagnóstico gratis
-de 30 minutos, con la agenda propia (ver `AGENDA.md`).
+anuncios en Meta Ads y Google Ads, más la general `/diagnostico`. Todas
+tienen un único objetivo: agendar la llamada de diagnóstico gratis de 30
+minutos, con la agenda propia (ver `AGENDA.md`).
+
+Desde el 29/10/2026 usan los colores de la web (navy y degradado azul →
+violeta), cada una con el color de su servicio, y llevan un gráfico animado
+propio en el hero (`src/components/EscenaFunnel.astro`): un chat que agenda
+una cita, un flujo que se completa, una tarjeta que avanza en el CRM, una
+gráfica que se dibuja… Se reproduce una vez al aparecer y queda quieto.
 
 ## Enlaces de cada funnel
 
@@ -20,10 +26,11 @@ de 30 minutos, con la agenda propia (ver `AGENDA.md`).
 | Meta Ads y Google Ads | https://soyluisflores.es/diagnostico/trafico-de-pago | `funnel-trafico-de-pago` |
 | Consultoría de IA | https://soyluisflores.es/diagnostico/consultoria-ia | `funnel-consultoria-ia` |
 
-Cada página sigue este orden: gancho → «¿Te suena?» (tres problemas) → qué
-implemento y qué cambia → qué te llevas de la llamada → cómo funciona → para
-quién es → agenda → quién te atiende → preguntas → cierre. En celular, el
-botón «Elegir día y hora» queda siempre fijo abajo.
+Cada página sigue este orden: gancho con gráfico animado → herramientas con
+las que trabajo → «¿Te suena?» (tres problemas) → qué implemento y qué cambia
+→ qué te llevas de la llamada → cómo funciona → para quién es → agenda → quién
+te atiende → preguntas → cierre. En celular, el botón «Elegir día y hora»
+aparece fijo abajo al pasar el del hero y se esconde al llegar a la agenda.
 
 Van con «noindex, follow», canónica hacia la página del servicio y fuera del
 sitemap: son para anuncios y no compiten con `/servicios/...` en Google. Eso
@@ -31,7 +38,8 @@ no afecta a los anuncios.
 
 | Qué | Dónde |
 |---|---|
-| Textos propios de cada funnel (gancho, problemas, qué te llevas) | `src/data/funnels.ts` |
+| Textos propios de cada funnel (gancho, frase destacada, problemas, qué te llevas, herramientas) | `src/data/funnels.ts` |
+| Gráfico animado de cada funnel | `src/components/EscenaFunnel.astro` |
 | Qué incluye, qué cambia, para quién y preguntas | `src/data/servicios-detalle.ts` (los mismos de la web) |
 | Diseño de todas las landings | `src/components/LandingDiagnostico.astro` |
 | Página de cada funnel | `src/pages/diagnostico/[servicio].astro` |

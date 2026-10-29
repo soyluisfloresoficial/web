@@ -20,14 +20,13 @@ import { AGENDA } from "../data/agenda";
 
 interface Props {
   formId: string;
-  variante?: "marca" | "lima";
 }
 
-const { formId, variante = "marca" } = Astro.props;
+const { formId } = Astro.props;
 ---
 
 <div
-  class={`agenda-propia agenda-propia-${variante}`}
+  class="agenda-propia"
   data-agenda-propia
   data-estado="comprobando"
   data-form-id={formId}
@@ -115,7 +114,7 @@ const { formId, variante = "marca" } = Astro.props;
   </div>
 
   <div class="agenda-respaldo" data-agenda-respaldo>
-    <AgendaCalendly formId={formId} variante={variante} />
+    <AgendaCalendly formId={formId} />
   </div>
 </div>
 
@@ -495,12 +494,6 @@ const { formId, variante = "marca" } = Astro.props;
     --ap-sobre-acento: #fff;
     --ap-radio: 14px;
   }
-  .agenda-propia-lima {
-    --ap-acento: var(--lime);
-    --ap-acento-texto: var(--lime);
-    --ap-sobre-acento: var(--lime-ink);
-    --ap-radio: 10px;
-  }
 
   /* Estados. Sin JavaScript solo se ve Calendly. */
   .ap-cargando,
@@ -534,11 +527,6 @@ const { formId, variante = "marca" } = Astro.props;
 
   .ap-caja {
     padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
-  }
-  .agenda-propia-lima .ap-caja {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: var(--surface);
   }
 
   .ap-eleccion {
