@@ -1,11 +1,17 @@
 ---
 # REVISAR CON ABOGADO: aviso estándar pedido por el titular (21/10/2026).
 # 27/10/2026: añadido el asistente de IA de la web (apartados 2, 3, 4 y 6).
+# 29/10/2026: la agenda es propia (Google Calendar y Google Meet) y sus
+# correos salen con Resend; fuera Calendly, a pedido del titular.
+# VERIFICAR: si la cuenta de Google del calendario es de Google Workspace
+# (Google Ireland Limited, con acuerdo de tratamiento de datos) o una cuenta
+# gratuita de Gmail, que no lo incluye; la entidad de Resend (Plus Five
+# Five, Inc.), su DPA y el mecanismo de transferencia a EE. UU.
 title: "Aviso de privacidad para Latinoamérica"
 metaTitle: "Aviso de privacidad para Latinoamérica | Luis Flores"
 description: "Cómo se tratan los datos de quienes contactan desde Latinoamérica: qué datos se piden, para qué, con quién se comparten y cómo ejercer tus derechos."
 ---
-Última actualización: 27 de octubre de 2026
+Última actualización: 29 de octubre de 2026
 
 Este aviso explica cómo se tratan los datos personales de las personas que visitan soyluisflores.es o contactan desde un país de Latinoamérica. Se redactó teniendo en cuenta los principios comunes de las leyes de protección de datos de la región, como la Ley Federal de Protección de Datos Personales en Posesión de los Particulares en México, la Ley 1581 de 2012 en Colombia, la Ley 25.326 en Argentina, la Ley 29733 en Perú o la Ley 19.628 en Chile.
 
@@ -22,7 +28,7 @@ Los datos identificativos completos están en el [Aviso legal](/aviso-legal).
 ## 2. Qué datos se recaban
 
 - **Datos de contacto** que tú facilitas al escribir por correo o por WhatsApp: nombre, correo electrónico, número de teléfono y el contenido de tus mensajes.
-- **Datos para agendar una llamada** a través de Calendly: nombre, correo electrónico, zona horaria y la información que quieras añadir.
+- **Datos para agendar una llamada** en la agenda de la web: nombre, correo electrónico, zona horaria y, si los escribes, tu negocio y lo que quieres resolver. Si llegaste desde un anuncio, también de qué campaña, a partir de la dirección de la página y sin cookies.
 - **Lo que escribas en el asistente de IA** de la web (el chat de la esquina inferior).
 - **Datos de navegación**, solo si aceptas las cookies de analítica o de marketing. El detalle está en la [Política de cookies](/politica-de-cookies).
 
@@ -33,7 +39,7 @@ No se piden datos sensibles, como información de salud, origen étnico, creenci
 **Finalidades necesarias** para atender tu solicitud:
 
 - Responder tus consultas, también en el asistente de IA de la web. Antes del primer mensaje, el chat avisa de que hablas con una IA.
-- Agendar y realizar la llamada de diagnóstico.
+- Agendar y realizar la llamada de diagnóstico, y enviarte por correo la confirmación, los recordatorios y un enlace para cancelarla.
 - Preparar y enviarte una propuesta, si la pides.
 - Prestar los servicios contratados y gestionar la relación comercial.
 
@@ -51,7 +57,8 @@ No se toman decisiones automatizadas que produzcan efectos jurídicos sobre ti.
 Tus datos no se venden ni se ceden a terceros para sus propios fines. Para prestar el servicio se usan proveedores que los tratan por cuenta del responsable y con garantías contractuales de protección:
 
 - Cloudflare, Inc.: alojamiento de la web.
-- Calendly LLC: agenda de llamadas.
+- Google (Google Calendar y Google Meet): agenda y videollamadas.
+- Resend (Plus Five Five, Inc.): envío de los correos de la agenda.
 - Google (Google Tag Manager y herramientas de medición), solo si aceptas las cookies correspondientes.
 - WhatsApp, de Meta, si eliges escribir por ese canal.
 - Anthropic (proveedor del modelo de IA Claude), si usas el asistente de la web: procesa el texto de la conversación para generar la respuesta.
@@ -77,6 +84,7 @@ Si no quedas conforme con la respuesta, puedes acudir a la autoridad de protecci
 ## 6. Cuánto tiempo se guardan
 
 - Consultas: el tiempo necesario para responderlas y, como máximo, un año después del último contacto si no se inicia una relación comercial.
+- Citas agendadas en la web: hasta un año después de la llamada si no se inicia una relación comercial. Si cancelas, se borran del calendario.
 - Clientes: mientras dure la relación y, después, durante los plazos que exijan las obligaciones legales, fiscales o contables.
 - Datos de navegación: según los plazos de la [Política de cookies](/politica-de-cookies).
 - Conversaciones del asistente de IA: la web no las guarda. Anthropic las conserva durante el tiempo limitado que establecen sus condiciones.

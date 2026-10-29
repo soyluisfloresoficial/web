@@ -1,0 +1,210 @@
+---
+/**
+ * /agenda/cambiar (29/10/2026): página del enlace «cambiar mi llamada» de
+ * los correos de la agenda (AGENDA.md).
+ *
+ * Lee la cita con el enlace firmado (?e=evento&f=firma) y deja cancelarla
+ * con un botón. Cancelar nunca ocurre solo al abrir el enlace: algunos
+ * programas de correo abren los enlaces para revisarlos y la cancelarían.
+ * Después lleva a la agenda para elegir otra hora.
+ *
+ * noindex y fuera del sitemap: solo sirve con un enlace personal.
+ */
+import Base from "../../layouts/Base.astro";
+import CabeceraPagina from "../../components/CabeceraPagina.astro";
+import Icono from "../../components/Icono.astro";
+import { SITIO } from "../../data/servicios";
+---
+
+<Base
+  title="Cambiar o cancelar tu llamada | Luis Flores"
+  description="Revisa, cambia o cancela la llamada de diagnóstico que agendaste en soyluisflores.es."
+  noindex
+>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Tu llamada" }]}
+      antetitulo="Tu llamada"
+      titulo="Cambiar o cancelar"
+      destacado="tu llamada"
+      entradilla="Si el horario ya no te viene bien, cancélala aquí y elige otro en la agenda. El hueco queda libre al momento."
+    />
+
+    <section class="section seccion-cita" aria-live="polite">
+      <div class="container-lf">
+        <div class="card cita" data-cita data-estado="cargando">
+          <p class="cita-estado" data-cita-cargando>Buscando tu llamada…</p>
+
+          <div data-cita-activa hidden>
+            <span class="anillo-degradado anillo-grande" aria-hidden="true">
+              <Icono nombre="calendarioOk" tamano={24} grosor={1.6} degradado />
+            </span>
+            <p class="cita-etiqueta mt-5">Tu llamada de diagnóstico</p>
+            <p class="cita-cuando" data-cita-cuando></p>
+            <p class="cita-texto mt-3">Hora en tu zona horaria. Si quieres cambiarla, primero cancélala y después elige otra.</p>
+            <p class="cita-error mt-4" data-cita-error role="alert" hidden></p>
+            <div class="botones botones-centro mt-8">
+              <button type="button" class="cta" data-cita-cancelar>
+                <span data-cita-cancelar-texto>Cancelar esta llamada</span>
+              </button>
+              <a class="boton-secundario" href="/">Mantenerla</a>
+            </div>
+          </div>
+
+          <div data-cita-cancelada hidden>
+            <span class="anillo-degradado anillo-grande" aria-hidden="true">
+              <Icono nombre="check" tamano={24} grosor={2.2} degradado />
+            </span>
+            <p class="cita-cuando mt-5">Listo, cancelé tu llamada</p>
+            <p class="cita-texto mt-3">Te llegará la confirmación por correo. Si quieres, elige otro momento:</p>
+            <div class="botones botones-centro mt-8">
+              <a class="cta" href="/contacto#agenda">
+                <Icono nombre="calendario" tamano={18} />
+                Elegir otra hora <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+
+          <div data-cita-aviso hidden>
+            <p class="cita-cuando" data-cita-aviso-titulo></p>
+            <p class="cita-texto mt-3" data-cita-aviso-texto></p>
+            <div class="botones botones-centro mt-8">
+              <a class="cta" href="/contacto#agenda">Ir a la agenda <span aria-hidden="true">→</span></a>
+              <a class="boton-secundario" href={SITIO.whatsapp} rel="noopener">
+                <Icono nombre="whatsapp" tamano={18} />
+                Escribir por WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  const caja = document.querySelector<HTMLElement>("[data-cita]");
+  const $ = <T extends HTMLElement>(s: string) => caja?.querySelector<T>(s) ?? null;
+  const q = new URLSearchParams(location.search);
+  const e = q.get("e") ?? "";
+  const f = q.get("f") ?? "";
+
+  function mostrar(parte: "activa" | "cancelada" | "aviso") {
+    $("[data-cita-cargando]")!.hidden = true;
+    for (const p of ["activa", "cancelada", "aviso"]) $(`[data-cita-${p}]`)!.hidden = p !== parte;
+    if (caja) caja.dataset.estado = parte;
+  }
+
+  function aviso(titulo: string, texto: string) {
+    $("[data-cita-aviso-titulo]")!.textContent = titulo;
+    $("[data-cita-aviso-texto]")!.textContent = texto;
+    mostrar("aviso");
+  }
+
+  function fecha(iso: string): string {
+    const ms = Date.parse(iso);
+    const dia = new Intl.DateTimeFormat("es", { weekday: "long", day: "numeric", month: "long" }).format(ms);
+    const hora = new Intl.DateTimeFormat("es", { hour: "2-digit", minute: "2-digit" }).format(ms);
+    return `${dia.charAt(0).toUpperCase()}${dia.slice(1)}, a las ${hora}`;
+  }
+
+  const AVISOS: Record<number, [string, string]> = {
+    403: ["Este enlace no es válido", "Puede que esté incompleto. Ábrelo de nuevo desde el correo de tu llamada o escríbeme."],
+    404: ["Esta llamada ya no existe", "Puede que ya la hayas cancelado. Si quieres, agenda otra."],
+    410: ["Esta llamada ya pasó", "Si quieres hablar otra vez, elige un nuevo horario en la agenda."],
+    503: ["La agenda no está disponible ahora", "Escríbeme por WhatsApp y lo resolvemos."],
+  };
+
+  async function cargar() {
+    if (!e || !f) return aviso(...AVISOS[403]);
+    try {
+      const r = await fetch(`/api/agenda/cita?e=${encodeURIComponent(e)}&f=${encodeURIComponent(f)}`);
+      if (import.meta.env.DEV && r.status === 404 && !r.headers.get("content-type")?.includes("json")) {
+        // Vista previa sin el servidor de Cloudflare: una cita de ejemplo.
+        $("[data-cita-cuando]")!.textContent = fecha(new Date(Date.now() + 2 * 86_400_000).toISOString());
+        return mostrar("activa");
+      }
+      if (!r.ok) return aviso(...(AVISOS[r.status] ?? ["No pude cargar tu llamada", "Inténtalo de nuevo en un momento o escríbeme por WhatsApp."]));
+      const d = (await r.json()) as { inicio: string };
+      $("[data-cita-cuando]")!.textContent = fecha(d.inicio);
+      mostrar("activa");
+    } catch {
+      aviso("No hay conexión", "Revisa tu internet y vuelve a abrir el enlace.");
+    }
+  }
+
+  $("[data-cita-cancelar]")?.addEventListener("click", async (ev) => {
+    const boton = ev.currentTarget as HTMLButtonElement;
+    const texto = $("[data-cita-cancelar-texto]");
+    const error = $("[data-cita-error]");
+    boton.disabled = true;
+    if (texto) texto.textContent = "Cancelando…";
+    try {
+      const r = import.meta.env.DEV
+        ? new Response("{}", { status: 200 })
+        : await fetch("/api/agenda/cancelar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ e, f }),
+          });
+      if (r.ok) return mostrar("cancelada");
+      if (AVISOS[r.status]) return aviso(...AVISOS[r.status]);
+      if (error) {
+        error.textContent = "No pude cancelarla. Inténtalo de nuevo o escríbeme por WhatsApp.";
+        error.hidden = false;
+      }
+    } catch {
+      if (error) {
+        error.textContent = "No hay conexión. Revisa tu internet y vuelve a intentarlo.";
+        error.hidden = false;
+      }
+    } finally {
+      boton.disabled = false;
+      if (texto) texto.textContent = "Cancelar esta llamada";
+    }
+  });
+
+  cargar();
+</script>
+
+<style>
+  .cita {
+    max-width: 40rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) 1.5rem;
+    text-align: center;
+  }
+  .cita > div {
+    display: grid;
+    justify-items: center;
+  }
+  .cita-estado,
+  .cita-texto {
+    max-width: 46ch;
+    margin-inline: auto;
+    color: var(--color-soft);
+  }
+  .cita-etiqueta {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--acento-texto);
+  }
+  .cita-cuando {
+    margin-top: 0.5rem;
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 800;
+    line-height: var(--leading-seccion);
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  .cita-error {
+    padding: 0.75rem 1rem;
+    border: 1px solid rgb(251 113 133 / 0.45);
+    border-radius: 12px;
+    background: rgb(251 113 133 / 0.1);
+    color: var(--color-ink);
+  }
+</style>

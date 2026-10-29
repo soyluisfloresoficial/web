@@ -1,6 +1,12 @@
 # Plantillas de correo
 
-Textos listos para pegar en Calendly, GoHighLevel o ActiveCampaign (28/10/2026).
+Textos listos para pegar en GoHighLevel o ActiveCampaign (28/10/2026).
+
+**Desde el 29/10/2026 la web envía sola las plantillas 1, 2 y 3**
+(confirmación y recordatorios), con tu marca, más el aviso de nueva llamada
+y el de cancelación. Su versión en código está en
+`src/worker/correo-plantillas.ts`: si cambias aquí uno de esos textos,
+cámbialo también allí. Ver «Correos automáticos» en `AGENDA.md`.
 Están escritos con tu voz: directa, cercana, sin presionar. No llevan precios,
 cifras ni promesas, porque la web tampoco los tiene.
 
@@ -17,16 +23,16 @@ cualquier persona que responda a estos mensajes te escribe de verdad.
 **Variables.** En las plantillas aparecen entre corchetes. Cámbialas por la
 variable de cada herramienta:
 
-| En la plantilla | GoHighLevel | ActiveCampaign | Calendly |
-|---|---|---|---|
-| `[NOMBRE]` | `{{contact.first_name}}` | `%FIRSTNAME%` | botón «Insertar variable» |
-| `[DÍA Y HORA]` | fecha de la cita | fecha de la cita | botón «Insertar variable» |
-| `[ENLACE DE LA VIDEOLLAMADA]` | enlace de la cita | enlace de la cita | botón «Insertar variable» |
-| `[ENLACE PARA CAMBIAR LA CITA]` | enlace de la cita | enlace de la cita | botón «Insertar variable» |
-| `[DARSE DE BAJA]` | enlace de baja de la herramienta | `%UNSUBSCRIBELINK%` | no hace falta |
+| En la plantilla | GoHighLevel | ActiveCampaign |
+|---|---|---|
+| `[NOMBRE]` | `{{contact.first_name}}` | `%FIRSTNAME%` |
+| `[DÍA Y HORA]` | fecha de la cita | fecha de la cita |
+| `[ENLACE DE LA VIDEOLLAMADA]` | enlace de la cita | enlace de la cita |
+| `[ENLACE PARA CAMBIAR LA CITA]` | enlace de la cita | enlace de la cita |
+| `[DARSE DE BAJA]` | enlace de baja de la herramienta | `%UNSUBSCRIBELINK%` |
 
-Las variables de Calendly y de las citas de GoHighLevel se escogen con el
-botón de variables de cada editor, porque su nombre exacto cambia según la
+Las variables de las citas de GoHighLevel se escogen con el botón de
+variables de cada editor, porque su nombre exacto cambia según la
 versión. Usa siempre ese botón en lugar de escribirlas a mano.
 
 **Un solo objetivo por correo.** Cada plantilla pide una sola cosa. No añadas
@@ -237,5 +243,5 @@ rechazan. El 28/10/2026 busqué la firma DKIM de Mailgun y de GoHighLevel con
 los nombres habituales y no encontré ninguna. No es concluyente, porque cada
 herramienta usa nombres propios. Antes de enviar desde `hola@soyluisflores.es`
 con GoHighLevel o ActiveCampaign, hay que confirmar que su DKIM está puesto en
-el DNS de Cloudflare. Los correos de Calendly salen de Calendly y no dependen
-de esto.
+el DNS de Cloudflare. Los correos que envía la web salen con Resend, que
+firma con tu dominio (registro `resend._domainkey`, ver `AGENDA.md`).

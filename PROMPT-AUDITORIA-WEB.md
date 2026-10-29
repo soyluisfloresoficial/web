@@ -171,7 +171,7 @@ FASE 1 · Auditoría (SOLO LECTURA, cero cambios en src/)
    Repite en producción las mismas páginas y anota la diferencia.
 6. Conversión: prueba cada formulario (validación, estados de carga, error
    y éxito, envío real, antispam), los enlaces de WhatsApp y la agenda
-   Calendly. Confirma que un envío de prueba LLEGA a destino; si no puedes
+   propia (reserva, correos y enlace para cancelar). Confirma que un envío de prueba LLEGA a destino; si no puedes
    comprobarlo, dilo, no lo supongas.
 7. Privacidad (AEPD, RGPD, LOPDGDD), comprobado en producción:
    el banner debe bloquear analítica y marketing hasta aceptar, rechazar

@@ -217,7 +217,6 @@ export const SITIO = {
   email: CORREO,
   /** mailto: con asunto y mensaje de partida. Para texto plano, SITIO.email. */
   correoEnlace: `mailto:${CORREO}?subject=${encodeURIComponent(ASUNTO_CORREO)}&body=${encodeURIComponent(MENSAJE_CORREO)}`,
-  calendly: "https://calendly.com/soyluisfloresoficial/nueva-reunion",
   // ID de Google Tag Manager, desde la variable de entorno PUBLIC_GTM_ID
   // (por ejemplo en Cloudflare Pages → Settings → Environment variables).
   // [COMPLETAR: el ID real. Mientras esté vacío no se carga GTM ni se

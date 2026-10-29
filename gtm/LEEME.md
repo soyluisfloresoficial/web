@@ -9,12 +9,12 @@
 | `whatsapp_click` | **GA4 - Evento whatsapp_click** | **Evento - whatsapp_click** | `cta_location`, `cta_text`, `page_path` | `Medicion.astro` |
 | `email_click` | **GA4 - Evento email_click** | **Evento - email_click** | `cta_location`, `cta_text`, `page_path` | `Medicion.astro` |
 | `roi_calculator_use` | **GA4 - Evento roi_calculator_use** | **Evento - roi_calculator_use** | `page_path` | `src/pages/roi.astro` |
-| `form_start` | **GA4 - Evento form_start** | **Evento - form_start** | `form_id`, `page_path` | `src/pages/contacto.astro` (al elegir hora en Calendly) |
-| `generate_lead` | **GA4 - Evento generate_lead** | **Evento - generate_lead** | `form_id`, `method`, `page_path` | `contacto.astro` (al confirmar la reserva en Calendly) |
+| `form_start` | **GA4 - Evento form_start** | **Evento - form_start** | `form_id`, `page_path` | `src/components/Agenda.astro` (al elegir hora en la agenda) |
+| `generate_lead` | **GA4 - Evento generate_lead** | **Evento - generate_lead** | `form_id`, `method`, `page_path` | `Agenda.astro` (al confirmar la reserva) |
 
 Variables: **GA4 - ID de medición** (**[COMPLETAR: viene con `G-XXXXXXXXXX`]**) y **DLV - cta_location**, **DLV - cta_text**, **DLV - page_path**, **DLV - form_id**, **DLV - method** (variables de capa de datos, versión 2).
 
-Valores de `cta_location`: `hero`, `header`, `servicios`, `faq`, `footer`, `cierre`, `barra-movil`, `contacto-tarjeta`, o el id de la sección si es otra. `form_id` dice de qué página llega la reserva: `calendly-diagnostico` (/contacto), `calendly-diagnostico-landing` (/diagnostico) o `funnel-<servicio>` (los funnels de anuncios, ver `FUNNELS.md`). `method` es `agenda-propia` con la agenda conectada a Google Calendar y `calendly` con la de respaldo. Las conversiones de Meta Ads y Google Ads están en `FUNNELS.md`.
+Valores de `cta_location`: `hero`, `header`, `servicios`, `faq`, `footer`, `cierre`, `barra-movil`, `contacto-tarjeta`, o el id de la sección si es otra. `form_id` dice de qué página llega la reserva: `agenda-contacto` (/contacto), `agenda-diagnostico` (/diagnostico) o `funnel-<servicio>` (los funnels de anuncios, ver `FUNNELS.md`). Hasta el 29/10/2026 los dos primeros se llamaban `calendly-diagnostico` y `calendly-diagnostico-landing`. `method` es siempre `agenda-propia`. Las conversiones de Meta Ads y Google Ads están en `FUNNELS.md`.
 
 GTM solo se carga si la persona acepta las cookies de analítica o de marketing en el banner. Antes de cargarlo, Consent Mode v2 queda en `denied` para todo (`analytics_storage`, `ad_storage`, `ad_user_data`, `ad_personalization`).
 
@@ -36,7 +36,7 @@ GTM solo se carga si la persona acepta las cookies de analítica o de marketing 
 2. En la pestaña de la web que se abre, acepta las cookies.
 3. Pulsa «Agenda tu llamada gratis» en la portada, el botón de WhatsApp del cierre y tu correo del pie.
 4. Ve a `/roi`, completa los números y pulsa «Calcular mi estimación».
-5. Ve a `/contacto`, pulsa «Ver horarios disponibles» y elige una hora. Si quieres probar `generate_lead`, confirma una reserva de prueba y cancélala después desde Calendly.
+5. Ve a `/contacto` y elige un día y una hora. Si quieres probar `generate_lead`, confirma una reserva de prueba con otro correo tuyo y cancélala después con el enlace «cambiar mi llamada» del correo.
 6. En la ventana de Tag Assistant, cada acción aparece a la izquierda con su nombre (`cta_click`, `whatsapp_click`…). Haz clic en ella: en **Tags Fired** debe salir su etiqueta «GA4 - Evento …», y en **Variables** los valores de `cta_location`, `page_path`, etc.
 
 **En DebugView de GA4**

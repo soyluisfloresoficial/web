@@ -15,7 +15,7 @@ gráfica que se dibuja… Se reproduce una vez al aparecer y queda quieto.
 
 | Servicio | Enlace del anuncio | `form_id` en la medición |
 |---|---|---|
-| General (todos los servicios) | https://soyluisflores.es/diagnostico | `calendly-diagnostico-landing` |
+| General (todos los servicios) | https://soyluisflores.es/diagnostico | `agenda-diagnostico` |
 | Agentes de IA | https://soyluisflores.es/diagnostico/agentes-ia | `funnel-agentes-ia` |
 | Funnels de conversión | https://soyluisflores.es/diagnostico/funnels-conversion | `funnel-funnels-conversion` |
 | Automatización de procesos | https://soyluisflores.es/diagnostico/automatizacion | `funnel-automatizacion` |
@@ -137,6 +137,8 @@ crea el activador **Evento - generate_lead**.
 - El horario de la agenda se edita desde el panel (`AGENDA.md`). Hasta
   entonces está abierto todos los días a todas las horas.
 - La agenda propia funciona cuando estén las claves de Google en Cloudflare
-  (`AGENDA.md`). Hasta entonces, los funnels muestran Calendly.
+  (`AGENDA.md`). Hasta entonces, en lugar de la agenda sale «Agenda tu
+  llamada por WhatsApp o por correo». Antes de lanzar anuncios, conecta Google
+  y Resend para que se pueda reservar directamente.
 - Las imágenes para compartir de cada funnel: `node tools/generar-og.mjs`
   (necesita Edge o Chrome).

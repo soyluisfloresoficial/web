@@ -13,8 +13,9 @@
  *   contacto-tarjeta u otra sección. cta_text: texto del botón.
  * - whatsapp_click y email_click: enlaces a WhatsApp y al correo.
  * - roi_calculator_use: al calcular en /roi (lo envía roi.astro).
- * - form_start y generate_lead: agenda de Calendly en /contacto (los envía
- *   contacto.astro con form_id "calendly-diagnostico").
+ * - form_start y generate_lead: la agenda propia (Agenda.astro), con el
+ *   form_id de cada página: agenda-contacto, agenda-diagnostico o
+ *   funnel-<servicio>.
  * Todos llevan page_path.
  */
 ---
@@ -44,7 +45,7 @@
         const href = enlace.getAttribute("href") ?? "";
         const esAgenda =
           enlace.matches("a.cta, a.cta-cabecera") &&
-          (href === "/contacto" || href === "#agenda" || href.includes("calendly.com"));
+          (href === "/contacto" || href === "#agenda");
         const evento = href.includes("wa.me/")
           ? "whatsapp_click"
           : href.startsWith("mailto:")

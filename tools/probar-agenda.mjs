@@ -3,6 +3,9 @@
 import assert from "node:assert/strict";
 import { calcularHuecos, deZona, enZona, estaLibre } from "../src/worker/agenda-huecos.ts";
 import { aplicarCambios } from "../src/worker/agenda-config.ts";
+import { recordatorioPendiente } from "../src/worker/agenda-recordatorios.ts";
+import * as correos from "../src/worker/correo-plantillas.ts";
+import fs from "node:fs";
 
 const cfg = {
   zona: "Europe/Madrid",
@@ -123,5 +126,72 @@ prueba("tramo hasta medianoche y zona de Latinoamérica", () => {
   assert.ok(r.ok);
   assert.equal(r.config.zona, "America/Lima");
 });
+
+// ------------------------------------------------- Recordatorios y correos
+
+const H = 3_600_000;
+const T = Date.parse("2026-11-05T15:30:00Z");
+
+prueba("recordatorio de 24 h solo si se agendó con más de 26 h", () => {
+  assert.equal(recordatorioPendiente({ inicio: T, creado: T - 72 * H, enviado24: false, enviado1: false }, T - 23.9 * H), "24h");
+  assert.equal(recordatorioPendiente({ inicio: T, creado: T - 20 * H, enviado24: false, enviado1: false }, T - 19 * H), null);
+  assert.equal(recordatorioPendiente({ inicio: T, creado: T - 72 * H, enviado24: true, enviado1: false }, T - 23 * H), null);
+  assert.equal(recordatorioPendiente({ inicio: T, creado: T - 72 * H, enviado24: false, enviado1: false }, T - 25 * H), null);
+});
+
+prueba("recordatorio de 1 h, una sola vez y nunca después de empezar", () => {
+  assert.equal(recordatorioPendiente({ inicio: T, creado: T - 13 * H, enviado24: false, enviado1: false }, T - 65 * 60_000), "1h");
+  assert.equal(recordatorioPendiente({ inicio: T, creado: T - 13 * H, enviado24: false, enviado1: true }, T - 30 * 60_000), null);
+  assert.equal(recordatorioPendiente({ inicio: T, creado: T - 13 * H, enviado24: false, enviado1: false }, T + 60_000), null);
+});
+
+const cita = {
+  nombre: "Ana <script>alert(1)</script> Pérez",
+  inicio: T,
+  duracion: 30,
+  zona: "America/Lima",
+  meet: "https://meet.google.com/abc-defg-hij",
+  cambiar: "https://soyluisflores.es/agenda/cambiar?e=x&f=y",
+};
+
+prueba("la hora sale en la zona del cliente", () => {
+  const texto = correos.cuando(T, "America/Lima");
+  assert.match(texto, /jueves, 5 de noviembre, a las 10:30/);
+});
+
+prueba("confirmación: escapa lo que escribe el cliente y lleva Meet y el enlace de cambio", () => {
+  const c = correos.confirmacion(cita);
+  assert.ok(!c.html.includes("<script>"), "no debe colarse HTML del cliente");
+  assert.ok(c.html.includes("Hola, Ana:"));
+  assert.ok(c.html.includes(cita.meet) && c.texto.includes(cita.meet));
+  assert.ok(c.html.includes("agenda/cambiar?e=x&amp;f=y"));
+  assert.match(c.asunto, /^Tu llamada con Luis: jueves/);
+  assert.ok(!/—/.test(c.html + c.texto), "sin rayas largas");
+});
+
+prueba("recordatorios, cancelación y aviso se arman sin errores", () => {
+  for (const c of [correos.recordatorio24(cita), correos.recordatorio1(cita), correos.cancelacion(cita)]) {
+    assert.ok(c.asunto && c.html.startsWith("<!doctype html>") && c.texto.length > 40);
+  }
+  const aviso = correos.avisoTitular(
+    { ...cita, correo: "ana@example.com", empresa: "Clínica", mensaje: "Quiero <b>más</b> citas", zonaCliente: "America/Lima", origen: "funnel-agentes-ia · source=facebook", zona: "Europe/Madrid", evento: null },
+    "nueva",
+  );
+  assert.ok(aviso.html.includes("Quiero &lt;b&gt;más&lt;/b&gt; citas"));
+  assert.match(aviso.asunto, /^Nueva llamada: /);
+});
+
+// Vista previa de los correos para revisarlos en el navegador.
+if (process.env.VISTA_CORREOS) {
+  fs.mkdirSync(process.env.VISTA_CORREOS, { recursive: true });
+  const limpia = { ...cita, nombre: "Ana Pérez" };
+  const lista = {
+    confirmacion: correos.confirmacion(limpia),
+    "recordatorio-24h": correos.recordatorio24(limpia),
+    "recordatorio-1h": correos.recordatorio1(limpia),
+    cancelacion: correos.cancelacion(limpia),
+  };
+  for (const [n, c] of Object.entries(lista)) fs.writeFileSync(`${process.env.VISTA_CORREOS}/${n}.html`, c.html);
+}
 
 console.log(`\n${pruebas} pruebas superadas.`);

@@ -48,10 +48,13 @@
   "vars": {
     "MODELO_CHAT": "claude-opus-5-5"
   },
+  // Cada 10 minutos el Worker revisa las citas y manda los recordatorios de
+  // la agenda por correo (AGENDA.md).
+  "triggers": { "crons": ["*/10 * * * *"] },
   // Registros del Worker (solo tokens y errores, nunca las conversaciones).
   "observability": { "enabled": true }
   // La clave ANTHROPIC_API_KEY NO va aquí: es un secreto del Worker en el
   // panel de Cloudflare (Configuración → Variables y secretos). Lo mismo las
   // tres claves de Google de la agenda (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-  // y GOOGLE_REFRESH_TOKEN, ver AGENDA.md).
+  // y GOOGLE_REFRESH_TOKEN, ver AGENDA.md), y la de los correos, RESEND_API_KEY.
 }

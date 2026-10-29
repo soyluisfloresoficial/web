@@ -28,9 +28,10 @@ Si el build o la auditoría fallan, **no subas nada** y explica qué ha pasado.
 | Configuración de la publicación | `wrangler.jsonc` y `DESPLIEGUE.md` |
 | Variables de compilación (`PUBLIC_GTM_ID`) | Panel de Cloudflare → Worker `web` → Configuración → Compilación. **No** están en el repositorio |
 | Clave del asistente de IA (`ANTHROPIC_API_KEY`) | Panel de Cloudflare → Worker `web` → Configuración → Variables y secretos (tiempo de ejecución, tipo **Secreto**). **No** está en el repositorio. Ver `AGENTE.md` |
-| Agenda propia (Google Calendar): horario, servidor y guía | `src/data/agenda.ts`, `src/worker/agenda.ts` y `AGENDA.md`. Claves `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` y `GOOGLE_REFRESH_TOKEN`: panel de Cloudflare, tipo **Secreto**. Sin ellas la web muestra Calendly. El horario lo edita el panel (KV `web-agenda`, clave `AGENDA_ADMIN_TOKEN`) |
+| Agenda propia (Google Calendar): horario, servidor y guía | `src/data/agenda.ts`, `src/worker/agenda.ts` y `AGENDA.md`. Claves `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` y `GOOGLE_REFRESH_TOKEN`: panel de Cloudflare, tipo **Secreto**. Sin ellas la web ofrece WhatsApp y correo (Calendly se quitó el 29/10/2026). El horario lo edita el panel (KV `web-agenda`, clave `AGENDA_ADMIN_TOKEN`) |
+| Correos automáticos de la agenda (confirmación, aviso, recordatorios, cancelación) | `src/worker/correo-plantillas.ts` y `src/worker/correo.ts`, con Resend. Clave `RESEND_API_KEY`: panel de Cloudflare, tipo **Secreto**. Pasos en `AGENDA.md` |
 | Asistente de IA: instrucciones y servidor | `src/worker/` y `AGENTE.md`. Lo que sabe se genera solo desde `src/data` y el blog |
-| Plantillas de los correos (confirmación, recordatorios, seguimiento) | `correos/PLANTILLAS.md`. Se pegan a mano en Calendly, GoHighLevel o ActiveCampaign |
+| Plantillas de los correos (confirmación, recordatorios, seguimiento) | `correos/PLANTILLAS.md`. Las 1 a 3 ya las envía la web sola; el resto se pegan a mano en GoHighLevel o ActiveCampaign |
 | Contenedor de Google Tag Manager | `gtm/` (ficheros de apoyo; el contenedor real está en tagmanager.google.com) |
 | Reglas de trabajo y preferencias | Este fichero y la memoria de Claude del proyecto |
 

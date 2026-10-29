@@ -123,10 +123,9 @@ const schema = [
 
     {/* ------------------------------------------------------------- Agenda */}
     {/*
-      Agenda propia conectada a Google Calendar (Agenda.astro, AGENDA.md), con
-      Calendly de respaldo. form_start al elegir hora y generate_lead al
-      confirmar (form_id "calendly-diagnostico", el de siempre, para no romper
-      los informes).
+      Agenda propia conectada a Google Calendar (Agenda.astro, AGENDA.md). Si
+      no está disponible, ofrece WhatsApp y correo. form_start al elegir hora
+      y generate_lead al confirmar (form_id "agenda-contacto").
     */}
     <section class="section seccion-agenda" id="agenda" aria-labelledby="agenda-titulo" data-acento="azul">
       <div class="container-lf">
@@ -141,7 +140,7 @@ const schema = [
           </p>
         </div>
         <div class="mt-10">
-          <Agenda formId="calendly-diagnostico" />
+          <Agenda formId="agenda-contacto" />
         </div>
       </div>
     </section>

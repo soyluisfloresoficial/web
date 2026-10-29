@@ -119,7 +119,8 @@ export default defineConfig({
       // /contacto, va con «noindex, follow» y canónica hacia /contacto, así
       // que fuera del sitemap (26/10/2026). Igual los funnels de campaña por
       // servicio, /diagnostico/[servicio] (28/10/2026, FUNNELS.md).
-      filter: (pagina) => !/^https:\/\/soyluisflores\.es\/diagnostico(\/|$)/.test(pagina),
+      // /agenda/cambiar solo sirve con el enlace personal de un correo.
+      filter: (pagina) => !/^https:\/\/soyluisflores\.es\/(diagnostico(\/|$)|agenda\/)/.test(pagina),
       serialize(item) {
         const fecha = lastmod.get(item.url.replace(/\/$/, ""));
         if (fecha) item.lastmod = fecha;

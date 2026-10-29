@@ -7,11 +7,17 @@
 # (Anthropic, PBC o la filial europea) según las condiciones de la cuenta,
 # el mecanismo de transferencia internacional que figura en su acuerdo de
 # tratamiento de datos (DPA) y el plazo de conservación de la API.
+# 29/10/2026: la agenda es propia (Google Calendar y Google Meet) y sus
+# correos salen con Resend; fuera Calendly, a pedido del titular.
+# VERIFICAR: si la cuenta de Google del calendario es de Google Workspace
+# (Google Ireland Limited, con acuerdo de tratamiento de datos) o una cuenta
+# gratuita de Gmail, que no lo incluye; la entidad de Resend (Plus Five
+# Five, Inc.), su DPA y el mecanismo de transferencia a EE. UU.
 title: "Política de privacidad"
 metaTitle: "Política de privacidad y protección de datos | Luis Flores"
 description: "Cómo trato tus datos personales en soyluisflores.es según el RGPD y la LOPDGDD: responsable, finalidades, base jurídica, conservación y tus derechos."
 ---
-Última actualización: 27 de octubre de 2026
+Última actualización: 29 de octubre de 2026
 
 Esta política explica cómo se tratan los datos personales que facilitas a través de este sitio web, conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
 
@@ -24,7 +30,7 @@ Esta política explica cómo se tratan los datos personales que facilitas a trav
 ## 2. Qué datos tratamos
 
 - Datos de contacto que nos facilitas: nombre, email y el contenido de tu mensaje.
-- Datos que facilitas al reservar una llamada a través de Calendly: nombre, email y la información que añadas.
+- Datos que facilitas al reservar una llamada en la agenda de la web: nombre, correo electrónico, zona horaria y, si los escribes, tu negocio y lo que quieres resolver.
 - Lo que escribas en el asistente de IA de la web (el chat de la esquina inferior).
 - Datos de navegación, solo si aceptas las cookies de analítica o marketing (ver la [Política de cookies](/politica-de-cookies)).
 
@@ -34,7 +40,7 @@ No se solicitan categorías especiales de datos. Te pedimos que no las incluyas 
 
 Cada tratamiento tiene su propia finalidad, su base jurídica y su plazo. Los plazos se detallan en el apartado 5.
 
-**a) Reservar la llamada de diagnóstico.** Cuando eliges día y hora en la agenda de Calendly se tratan tu nombre, tu correo electrónico, tu zona horaria y lo que escribas al reservar. Sirve para agendar la videollamada, enviarte la confirmación y el recordatorio, y atenderte. La base jurídica es la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Se conservan según el apartado 5.
+**a) Reservar la llamada de diagnóstico.** Cuando eliges día y hora en la agenda de la web se tratan tu nombre, tu correo electrónico, tu zona horaria y, si los escribes, tu negocio y lo que quieres resolver. Si llegaste desde un anuncio o un enlace de campaña, también se anota de cuál, a partir de la dirección de la página (por ejemplo, el parámetro utm_source) y sin usar cookies. Con esos datos se crea la cita en el calendario de Google del responsable, con su enlace de Google Meet, y se te envían por correo la invitación, la confirmación, un recordatorio un día antes y otro una hora antes. Cada correo incluye un enlace personal para cancelar la cita. Sirve para agendar la videollamada y atenderte. La base jurídica es la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Se conservan según el apartado 5.
 
 **b) Responder tus consultas por correo electrónico o WhatsApp.** Se tratan los datos que tú incluyas en el mensaje: nombre, correo, teléfono y el contenido de la consulta. Sirve para contestarte y, si lo pides, prepararte una propuesta. La base jurídica es la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD) y, cuando la consulta no busca contratar, el interés legítimo en atender a quien escribe (art. 6.1.f del RGPD). Se conservan según el apartado 5.
 
@@ -55,7 +61,8 @@ No se toman decisiones automatizadas ni se elaboran perfiles con efectos jurídi
 No se ceden datos a terceros salvo obligación legal. Para prestar el servicio se recurre a proveedores que actúan como encargados del tratamiento, con los que existen contratos que garantizan la protección de tus datos:
 
 - Alojamiento de la web: Cloudflare, Inc.
-- Agenda de las llamadas: Calendly LLC.
+- Agenda y videollamadas: Google (Google Calendar y Google Meet), donde se guarda la cita.
+- Envío de los correos de la agenda (confirmación, recordatorios y cancelación): Resend (Plus Five Five, Inc.).
 - Mensajes por WhatsApp, si eliges ese canal: WhatsApp Ireland Limited (grupo Meta).
 - Asistente de IA de la web, si lo usas: Anthropic (proveedor del modelo Claude), que procesa el texto de la conversación para generar la respuesta.
 - Google Ireland Ltd. (Google Tag Manager y herramientas de medición), solo si aceptas las cookies correspondientes.
@@ -65,6 +72,7 @@ Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Eu
 ## 5. Plazo de conservación
 
 - Consultas: el tiempo necesario para responderlas y, como máximo, un año después del último contacto si no se inicia una relación comercial.
+- Citas agendadas en la web: en el calendario, hasta un año después de la llamada si no se inicia una relación comercial. Si cancelas, la cita se borra del calendario.
 - Clientes: mientras dure la relación y, después, durante los plazos legales de conservación (por ejemplo, obligaciones fiscales y mercantiles).
 - Datos de analítica: según los plazos indicados en la [Política de cookies](/politica-de-cookies).
 - Conversaciones del asistente de IA: la web no las guarda. Anthropic las conserva durante el tiempo limitado que establecen sus condiciones para el servicio de API.

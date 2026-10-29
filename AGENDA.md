@@ -1,7 +1,9 @@
 # Agenda propia con Google Calendar
 
 Desde el 28/10/2026, la llamada de diagnóstico se reserva en la propia web
-(`/contacto` y `/diagnostico`) con el diseño de la web, sin Calendly.
+(`/contacto`, `/diagnostico` y los funnels) con el diseño de la web. Desde
+el 29/10/2026 envía sola los correos de la cita y Calendly ya no existe en la
+web.
 
 ## Cómo funciona
 
@@ -13,9 +15,16 @@ Desde el 28/10/2026, la llamada de diagnóstico se reserva en la propia web
 4. El servidor vuelve a comprobar que la hora sigue libre y crea el evento en
    tu calendario, con enlace de Google Meet. Google le manda la invitación al
    cliente, que puede añadirla a su calendario o rechazarla.
+5. Salen los correos con tu marca (ver «Correos automáticos»): la
+   confirmación al cliente y el aviso para ti. Después, los recordatorios un
+   día antes y una hora antes.
+6. Cada correo lleva un enlace personal para cambiar la cita
+   (`/agenda/cambiar`). Ahí el cliente la cancela con un botón y elige otra
+   hora; el hueco queda libre al momento y a ti te llega el aviso.
 
-Mientras Google no esté conectado (o si falla), la web muestra Calendly como
-antes. La web nunca se queda sin agenda.
+Mientras Google no esté conectado (o si falla), en el lugar de la agenda sale
+«Agenda tu llamada por WhatsApp o por correo», con los dos botones. La web
+nunca se queda sin forma de pedir la llamada.
 
 | Qué | Dónde |
 |---|---|
@@ -24,11 +33,15 @@ antes. La web nunca se queda sin agenda.
 | Cálculo de horas libres | `src/worker/agenda-huecos.ts` (pruebas: `node tools/probar-agenda.mjs`) |
 | Conexión con Google | `src/worker/agenda.ts` |
 | La agenda que ve el cliente | `src/components/Agenda.astro` |
-| Calendly de respaldo | `src/components/AgendaCalendly.astro` |
-| Claves de Google | Panel de Cloudflare, como **Secreto**. Nunca en el repositorio |
+| Página para cambiar o cancelar | `src/pages/agenda/cambiar.astro` |
+| Textos y diseño de los correos | `src/worker/correo-plantillas.ts` (salen de `correos/PLANTILLAS.md`) |
+| Envío de los correos | `src/worker/correo.ts` (Resend) |
+| Cuándo toca cada recordatorio | `src/worker/agenda-recordatorios.ts`, con el cron de `wrangler.jsonc` |
+| Claves de Google y de Resend | Panel de Cloudflare, como **Secreto**. Nunca en el repositorio |
 
-Medición: `form_start` al elegir hora y `generate_lead` al confirmar, con el
-mismo `form_id` que tenía Calendly y `method: "agenda-propia"`.
+Medición: `form_start` al elegir hora y `generate_lead` al confirmar, con
+`method: "agenda-propia"` y el `form_id` de cada página: `agenda-contacto`
+(/contacto), `agenda-diagnostico` (/diagnostico) o `funnel-<servicio>`.
 
 ## Conectar tu Google Calendar (una sola vez)
 
@@ -53,7 +66,7 @@ quieres recibir las citas.
 5. En el menú de la izquierda, entra en **Público** (Audience) y toca
    **Publicar app** → **Confirmar**. Así el estado queda en «En producción».
    **Importante:** si se queda en «Prueba», Google corta la conexión a los
-   7 días y la web vuelve a Calendly.
+   7 días y la agenda deja de funcionar (la web ofrece WhatsApp y correo).
 6. En el menú de la izquierda, entra en **Clientes** → **Crear cliente**:
    - Tipo de aplicación: **App de escritorio**
    - Nombre: `Agenda web`
@@ -100,11 +113,74 @@ quieres recibir las citas.
 1. Abre https://soyluisflores.es/api/agenda. Tiene que salir una lista de
    horas (`"huecos": [...]`). Si sale `sin-google`, revisa los nombres de los
    tres secretos.
-2. Abre https://soyluisflores.es/contacto: ya no sale Calendly, sale la agenda
-   nueva.
+2. Abre https://soyluisflores.es/contacto: sale la agenda con días y horas,
+   en lugar del aviso de WhatsApp y correo.
 3. Haz una reserva de prueba con **otro** correo tuyo. Mira que aparezca en
    tu Google Calendar con el enlace de Meet y que llegue la invitación a ese
-   correo. Después borra el evento de tu calendario.
+   correo. Si ya hiciste el paso 5, también la confirmación y el aviso.
+4. Abre el enlace «cambiar mi llamada» del correo y cancélala: tiene que
+   desaparecer de tu calendario.
+
+## Correos automáticos
+
+Salen solos desde la web, con tu marca (cabecera «LUIS FLORES», degradado
+azul a violeta) y tus textos de `correos/PLANTILLAS.md`. Llegan desde
+`hola@soyluisflores.es` y, si alguien responde, te llega a ti.
+
+| Correo | A quién | Cuándo |
+|---|---|---|
+| Confirmación (fecha en su hora, botón de Meet, qué tener a mano, enlace para cambiarla) | Cliente | Al reservar |
+| Nueva llamada (sus datos, su mensaje, de qué anuncio llegó) | Tú, en `hola@` | Al reservar |
+| «Mañana hablamos» | Cliente | Un día antes, si agendó con más de 26 horas |
+| «En una hora» | Cliente | Una hora antes |
+| Llamada cancelada | Cliente y tú | Al cancelar desde su enlace |
+
+- Los recordatorios los revisa el servidor cada 10 minutos (`triggers` en
+  `wrangler.jsonc`) y cada uno sale una sola vez. Si el cliente rechaza la
+  invitación de Google, no se le insiste.
+- «Después de la llamada» y «Si no se conectó» (plantillas 4 y 5) siguen
+  siendo manuales: dependen de cómo fue cada llamada.
+- Sin la clave de Resend no se envía nada de esto, pero la reserva funciona
+  igual y Google manda su invitación con el enlace de Meet.
+
+### Paso 5. Conectar el envío de correos (Resend, una sola vez)
+
+Resend es gratis hasta 3.000 correos al mes. Necesitas unos 10 minutos.
+
+1. Entra en https://resend.com y crea tu cuenta con tu correo.
+2. Menú de la izquierda → **Domains** → **Add Domain**:
+   - Domain: `soyluisflores.es`
+   - Region: **Ireland (eu-west-1)**, la más cercana a España.
+   - Toca **Add**.
+3. Resend te enseña unos registros DNS. Si sale el botón **Sign in to
+   Cloudflare** (o «Auto configure»), tócalo y acepta: los añade solo. Si no:
+   1. Abre https://dash.cloudflare.com → `soyluisflores.es` → **DNS** →
+      **Registros** → **Añadir registro**.
+   2. Copia cada registro de Resend tal cual (tipo, nombre y valor). Son un
+      `TXT` para `resend._domainkey` y un `MX` y un `TXT` para `send`.
+   3. En los de tipo `TXT` y `MX` deja **Solo DNS** (nube gris).
+   No toques tu SPF ni tu DMARC actuales: los de Resend van en el subdominio
+   `send` y no chocan con ellos.
+4. Vuelve a Resend y toca **Verify DNS Records**. Puede tardar unos minutos;
+   cuando el dominio diga **Verified**, sigue.
+5. Menú de la izquierda → **API Keys** → **Create API Key**:
+   - Name: `Web soyluisflores`
+   - Permission: **Sending access**
+   - Domain: `soyluisflores.es`
+   - Toca **Add** y copia la clave (empieza por `re_`). Solo se ve una vez.
+6. En Cloudflare → Worker **web** → **Configuración** → **Variables y
+   secretos** → **Añadir** → tipo **Secreto**, nombre `RESEND_API_KEY`,
+   valor: la clave. **Implementar**.
+7. Haz otra reserva de prueba con otro correo tuyo: tiene que llegar la
+   confirmación y, a `hola@`, el aviso de nueva llamada.
+
+Por qué el paso 3 es imprescindible: tu dominio tiene DMARC en `p=reject`, así
+que los correos que digan venir de `@soyluisflores.es` sin la firma de Resend
+(el registro `resend._domainkey`) los rechazan Gmail, Outlook y los demás.
+
+Opcional, en **Variables** (no secretas) del Worker: `CORREO_AVISOS` para
+recibir los avisos en otra dirección y `CORREO_REMITENTE` para otro
+remitente, por ejemplo `Luis Flores <agenda@soyluisflores.es>`.
 
 ## Editar el horario desde el panel
 
@@ -179,21 +255,24 @@ Ejemplo de cuerpo para `PUT` (todo opcional):
 
 ## Si algo falla
 
-- **La web vuelve a mostrar Calendly:** Google rechazó las claves. Lo más
-  común es que la app se quedara en «Prueba» (paso 1.5) o que alguien quitara
-  el permiso en https://myaccount.google.com/permissions. Repite el paso 2 y
-  cambia solo `GOOGLE_REFRESH_TOKEN` en Cloudflare.
+- **En lugar de la agenda sale «Agenda tu llamada por WhatsApp o por
+  correo»:** Google rechazó las claves. Lo más común es que la app se quedara
+  en «Prueba» (paso 1.5) o que alguien quitara el permiso en
+  https://myaccount.google.com/permissions. Repite el paso 2 y cambia solo
+  `GOOGLE_REFRESH_TOKEN` en Cloudflare.
+- **No llegan los correos:** en Resend → **Emails** se ve cada envío y su
+  estado. Si dice «bounced» o no aparece nada, revisa que el dominio siga
+  **Verified** (paso 5.4) y el nombre del secreto `RESEND_API_KEY`.
 - **Registros:** Cloudflare → Worker web → Registros. Solo guardan el
-  resultado (`reserva-ok`) y los códigos de error, nunca los datos del
-  cliente.
+  resultado (`reserva-ok`, `correo: enviado`) y los códigos de error, nunca
+  los datos del cliente.
 
 ## Pendiente
 
 - La pantalla del panel para editar el horario (repositorio `panel`), con la
   dirección de arriba.
-- Cuando la agenda nueva esté funcionando, hay que cambiar en la política de
-  privacidad, el aviso para Latinoamérica y la política de cookies las
-  menciones a Calendly por Google (Google LLC trata los datos de la cita).
-  Pendiente de que el titular lo pida y de revisión por un abogado.
-- Los correos de `correos/PLANTILLAS.md` estaban pensados para Calendly. Con
-  la agenda nueva, la confirmación es la invitación de Google Calendar.
+- Privacidad, aviso para Latinoamérica y cookies ya hablan de Google y de
+  Resend (29/10/2026). Pendientes de revisión por un abogado: si la cuenta de
+  Google es de Workspace o gratuita y el acuerdo de tratamiento de Resend.
+- Si en tu cuenta de Calendly quedan citas o un enlace publicado en otro
+  sitio (redes, firmas de correo), cámbialo por https://soyluisflores.es/contacto.

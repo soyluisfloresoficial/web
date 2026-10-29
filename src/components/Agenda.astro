@@ -6,14 +6,13 @@
  * Pide las horas libres a /api/agenda (que las saca de Google Calendar) y
  * reserva ahí mismo, sin salir de la web ni cargar servicios de terceros.
  *
- * Si el servidor responde que Google no está conectado, o falla, se muestra
- * la agenda de Calendly de siempre (AgendaCalendly). Sin JavaScript también
- * se ve Calendly. La web nunca se queda sin forma de reservar.
+ * Si el servidor responde que Google no está conectado, o falla, se ofrece
+ * agendar por WhatsApp o por correo. Sin JavaScript, igual. La web nunca se
+ * queda sin forma de pedir la llamada. Calendly se quitó el 29/10/2026.
  *
  * Medición: form_start al elegir hora y generate_lead al confirmar, con el
- * mismo form_id que tenía Calendly y method "agenda-propia".
+ * form_id de cada página y method "agenda-propia".
  */
-import AgendaCalendly from "./AgendaCalendly.astro";
 import Icono from "./Icono.astro";
 import { SITIO } from "../data/servicios";
 import { AGENDA } from "../data/agenda";
@@ -113,8 +112,26 @@ const { formId } = Astro.props;
     </div>
   </div>
 
-  <div class="agenda-respaldo" data-agenda-respaldo>
-    <AgendaCalendly formId={formId} />
+  {/* Respaldo: Google sin conectar, sin JavaScript o el servidor falla. */}
+  <div class="card agenda-respaldo" data-agenda-respaldo>
+    <span class="anillo-degradado anillo-grande" aria-hidden="true">
+      <Icono nombre="calendario" tamano={24} grosor={1.6} degradado />
+    </span>
+    <p class="respaldo-titulo">Agenda tu llamada por WhatsApp o por correo</p>
+    <p class="respaldo-texto">
+      La agenda en línea no está disponible en este momento. Escríbeme y te
+      propongo horarios en tu zona horaria.
+    </p>
+    <div class="botones botones-centro respaldo-botones">
+      <a class="cta" href={SITIO.whatsapp} rel="noopener">
+        <Icono nombre="whatsapp" tamano={18} />
+        Escribir por WhatsApp
+      </a>
+      <a class="boton-secundario" href={SITIO.correoEnlace}>
+        <Icono nombre="email" tamano={18} />
+        Escribir un correo
+      </a>
+    </div>
   </div>
 </div>
 
@@ -311,29 +328,20 @@ const { formId } = Astro.props;
   function aRespaldo() {
     if (!raiz) return;
     raiz.dataset.estado = "respaldo";
-    // Quien llegó con #agenda o pidió la agenda ve Calendly abierto, como antes.
-    if (location.hash === "#agenda") raiz.querySelector<HTMLButtonElement>("[data-agenda-cargar]")?.click();
   }
 
   // De dónde llega la visita (funnel y campaña), para anotarlo en la cita.
-  // Se guarda la primera campaña de la sesión, aunque la persona navegue.
+  // Se lee de la dirección al reservar y no se guarda en el navegador: así no
+  // hace falta pedir permiso de cookies para esto.
   function origenVisita(): string {
-    let campana = "";
-    try {
-      const p = new URLSearchParams(location.search);
-      const partes = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]
-        .filter((k) => p.get(k))
-        .map((k) => `${k.replace("utm_", "")}=${p.get(k)!.slice(0, 60)}`);
-      if (p.has("gclid")) partes.push("clic de Google Ads");
-      if (p.has("fbclid")) partes.push("clic de Meta");
-      if (partes.length && !sessionStorage.getItem("lf-origen")) sessionStorage.setItem("lf-origen", partes.join(" · "));
-      campana = sessionStorage.getItem("lf-origen") ?? "";
-    } catch {
-      /* sin almacenamiento: solo el funnel */
-    }
-    return [formId, campana].filter(Boolean).join(" · ").slice(0, 300);
+    const p = new URLSearchParams(location.search);
+    const partes = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]
+      .filter((k) => p.get(k))
+      .map((k) => `${k.replace("utm_", "")}=${p.get(k)!.slice(0, 60)}`);
+    if (p.has("gclid")) partes.push("clic de Google Ads");
+    if (p.has("fbclid")) partes.push("clic de Meta");
+    return [formId, ...partes].join(" · ").slice(0, 300);
   }
-  origenVisita();
 
   // ----------------------------------------------------- Conexión con /api
 
@@ -363,7 +371,7 @@ const { formId } = Astro.props;
         return true;
       }
     } catch {
-      /* sin red o servidor caído: Calendly */
+      /* sin red o servidor caído: WhatsApp y correo */
     }
     return false;
   }
@@ -495,7 +503,7 @@ const { formId } = Astro.props;
     --ap-radio: 14px;
   }
 
-  /* Estados. Sin JavaScript solo se ve Calendly. */
+  /* Estados. Sin JavaScript solo se ve el respaldo (WhatsApp y correo). */
   .ap-cargando,
   .ap-caja {
     display: none;
@@ -506,6 +514,26 @@ const { formId } = Astro.props;
   }
   :global(.js) .agenda-propia:not([data-estado="respaldo"]) .agenda-respaldo {
     display: none;
+  }
+  .agenda-respaldo {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) 1.5rem;
+    text-align: center;
+  }
+  .respaldo-titulo {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .respaldo-texto {
+    max-width: 46ch;
+    color: var(--color-soft);
+  }
+  .respaldo-botones {
+    margin-top: 0.5rem;
   }
 
   .ap-cargando {
