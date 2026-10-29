@@ -182,6 +182,48 @@ Opcional, en **Variables** (no secretas) del Worker: `CORREO_AVISOS` para
 recibir los avisos en otra dirección y `CORREO_REMITENTE` para otro
 remitente, por ejemplo `Luis Flores <agenda@soyluisflores.es>`.
 
+## Conectar con el panel (panel.soyluisflores.es)
+
+La web y el panel se hablan en los dos sentidos:
+
+| Sentido | Qué viaja | Cómo |
+|---|---|---|
+| Web → panel | Cada reserva entra como **lead** (marca soyluisflores, fuente web), con la fecha de la llamada, el negocio, lo que quiere resolver y de qué anuncio llegó | El servidor de la web llama al webhook `webhookFormulario` del panel (`src/worker/panel.ts`) |
+| Panel → web | El horario de la agenda | El panel llama a `/api/agenda/config` (apartado siguiente) |
+
+Si el mismo correo reserva varias veces, el panel no duplica la ficha: la
+actualiza. Si el panel no responde, la reserva no se pierde (está en tu
+Google Calendar y en el aviso por correo).
+
+### Paso 6. Enviar las reservas al panel (cuando el panel esté publicado)
+
+Antes tiene que estar desplegado el panel (`DESPLIEGUE.md` del repositorio
+`panel`, apartados 1 a 6).
+
+1. Genera una clave larga en la terminal:
+
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
+   ```
+
+2. En la carpeta del panel, guárdala en Firebase (te pide el valor):
+
+   ```bash
+   npx firebase functions:secrets:set SECRETO_FORMULARIO
+   ```
+
+   y vuelve a desplegar las funciones del panel (`DESPLIEGUE.md`, apartado 6).
+3. En Cloudflare → Worker **web** → **Configuración** → **Variables y secretos**:
+   - **Añadir** → tipo **Texto**, nombre `PANEL_WEBHOOK_URL`, valor
+     `https://europe-west1-<id-del-proyecto>.cloudfunctions.net/webhookFormulario`
+     (con el id del proyecto de Firebase del panel).
+   - **Añadir** → tipo **Secreto**, nombre `PANEL_SECRETO`, valor: la misma
+     clave del punto 1.
+   - **Implementar**.
+4. Haz una reserva de prueba: tiene que aparecer en el panel, en **Leads**,
+   con fuente «web». En Cloudflare → Worker web → Registros verás
+   `panel: lead, estado: 200`.
+
 ## Editar el horario desde el panel
 
 Desde el 28/10/2026 el horario se cambia desde el panel, sin tocar el código.

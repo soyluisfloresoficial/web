@@ -16,6 +16,7 @@
  *
  * Correos (correo.ts, con Resend): confirmación y aviso al titular al
  * reservar, recordatorios 24 h y 1 h antes y aviso de cancelación.
+ * Cada reserva entra además en el panel como lead (panel.ts).
  *
  * - Sin las tres claves de Google responde 503 {error:"sin-google"} y la web
  *   ofrece agendar por WhatsApp o por correo. Nunca se queda sin contacto.
@@ -29,7 +30,8 @@ import { calcularHuecos, estaLibre, type Tramo } from "./agenda-huecos";
 import { aplicarCambios, type ConfigAgenda } from "./agenda-config";
 import { recordatorioPendiente } from "./agenda-recordatorios";
 import { enviar, correoAvisos, type EnvCorreo } from "./correo";
-import { avisoTitular, cancelacion, confirmacion, recordatorio1, recordatorio24, CONTACTO } from "./correo-plantillas";
+import { avisoTitular, cancelacion, confirmacion, cuando, recordatorio1, recordatorio24, CONTACTO } from "./correo-plantillas";
+import { enviarAlPanel, type EnvPanel } from "./panel";
 
 interface KV {
   get(clave: string, tipo: "json"): Promise<unknown>;
@@ -37,7 +39,7 @@ interface KV {
   delete(clave: string): Promise<void>;
 }
 
-export interface EnvAgenda extends EnvCorreo {
+export interface EnvAgenda extends EnvCorreo, EnvPanel {
   /** Secretos del Worker, en el panel de Cloudflare. Ver AGENDA.md. */
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
@@ -430,6 +432,18 @@ export async function agenda(
             avisoTitular({ ...reserva, duracion: cfg.duracion, zona: cfg.zona, meet, evento: enlace }, "nueva"),
             "aviso-reserva",
           ),
+          enviarAlPanel(env, {
+            nombre: reserva.nombre,
+            correo: reserva.correo,
+            mensaje: [
+              `Llamada de diagnóstico agendada desde la web: ${cuando(reserva.inicio, cfg.zona)}.`,
+              reserva.empresa ? `Negocio: ${reserva.empresa}` : "",
+              reserva.mensaje ? `Lo que quiere resolver: ${reserva.mensaje}` : "",
+              reserva.origen ? `Llegó desde: ${reserva.origen}` : "",
+            ]
+              .filter(Boolean)
+              .join("\n"),
+          }),
         ]);
       })(),
     );
