@@ -1460,6 +1460,19 @@ main > .section.banda + .section.banda {
     display: none;
   }
 }
+/* En celular la tarjeta de abajo tapaba media imagen (29/10/2026): pasa a ir
+   debajo, montada solo sobre el borde inferior. */
+@media (width < 768px) {
+  .info-flotante.info-abajo {
+    position: relative;
+    inset: auto;
+    margin: -1.75rem 1rem 0;
+  }
+  .info-flotante.info-abajo.info-derecha {
+    margin-left: auto;
+    width: fit-content;
+  }
+}
 @media (width >= 768px) {
   .info-abajo {
     left: -1rem;

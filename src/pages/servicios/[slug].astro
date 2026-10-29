@@ -372,12 +372,34 @@ const schema = [
     aspect-ratio: 4 / 3;
     object-fit: cover;
   }
+  /* El marco ya lo pone .visual-marco: sin esto se veía un recuadro dentro
+     de otro, con un hueco arriba. */
   .visual-marco :global(.ilustracion) {
     aspect-ratio: 4 / 3;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
   .visual .info-flotante {
     z-index: 2;
     max-width: 17rem;
+  }
+  /* La tarjeta va debajo de la imagen y solo se monta sobre su borde, igual
+     en todos los servicios aunque el texto sea más largo (29/10/2026). En
+     escritorio sale un poco por la izquierda. */
+  .visual {
+    padding-bottom: 0;
+  }
+  .visual .info-flotante.info-abajo {
+    position: relative;
+    inset: auto;
+    margin: -1.75rem 1rem 0;
+  }
+  @media (width >= 768px) {
+    .visual .info-flotante.info-abajo {
+      margin-left: -1rem;
+    }
   }
 
   /* ----------------------------------------------------------- Rejillas */
