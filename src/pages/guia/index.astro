@@ -1,0 +1,107 @@
+---
+/**
+ * /guia (30/10/2026): página para pedir la guía gratis «Qué automatizar
+ * primero en tu negocio». Sirve para el blog, las redes y los anuncios de
+ * captación (EMAIL-MARKETING.md). Indexable: tiene contenido propio.
+ */
+import Base from "../../layouts/Base.astro";
+import CabeceraPagina from "../../components/CabeceraPagina.astro";
+import CapturaGuia from "../../components/CapturaGuia.astro";
+import { SITIO } from "../../data/servicios";
+
+const url = `${SITIO.url}/guia`;
+const title = "Guía gratis: qué automatizar primero en tu negocio | Luis Flores";
+const description =
+  "Descarga gratis la guía para elegir tu primera automatización: un criterio sencillo, una hoja para anotar tus tareas e ideas por área. Te llega por correo.";
+
+const serie = [
+  { dia: "Hoy", texto: "La guía, para usarla esta semana." },
+  { dia: "Día 2", texto: "Lo que pasa cuando respondes tarde a un cliente." },
+  { dia: "Día 4", texto: "Cómo lograr que tus herramientas se pasen los datos solas." },
+  { dia: "Día 7", texto: "Dónde se te escapan los contactos y cómo ordenarlos." },
+  { dia: "Día 10", texto: "Las pocas cifras que te sirven para decidir." },
+  { dia: "Día 14", texto: "Si quieres, lo vemos con tu caso en una llamada gratis." },
+];
+
+const schema = [
+  {
+    "@type": "WebPage",
+    "@id": `${url}#page`,
+    url,
+    name: title,
+    description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es",
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Guía gratis", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Guía gratis" }]}
+      antetitulo="Guía gratis"
+      titulo="Qué automatizar primero"
+      destacado="en tu negocio"
+      entradilla="Elegir mal la primera automatización es la forma más rápida de perder tiempo. Esta guía te da un criterio sencillo para acertar y una hoja para aplicarlo a tu caso."
+      acento="violeta"
+    />
+
+    <CapturaGuia ubicacion="pagina-guia" titulo="Recíbela gratis en tu correo" />
+
+    <section class="section banda" aria-labelledby="serie-titulo" data-acento="turquesa">
+      <div class="container-lf">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Qué te llega</p>
+            <h2 id="serie-titulo" class="subrayado mt-4">La guía y seis correos cortos en dos semanas</h2>
+          </div>
+          <p class="lead">Después la serie termina sola. Puedes darte de baja en cualquier momento.</p>
+        </div>
+        <ol class="serie mt-10">
+          {
+            serie.map((s) => (
+              <li class="card tarjeta">
+                <span class="serie-dia">{s.dia}</span>
+                <p class="card-text mt-3">{s.texto}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .serie {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 640px) {
+    .serie {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (width >= 1024px) {
+    .serie {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .serie-dia {
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--acento-texto);
+  }
+</style>

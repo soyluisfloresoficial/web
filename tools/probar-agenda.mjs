@@ -181,6 +181,41 @@ prueba("recordatorios, cancelación y aviso se arman sin errores", () => {
   assert.match(aviso.asunto, /^Nueva llamada: /);
 });
 
+// ----------------------------------------------------- Email marketing
+
+const { SECUENCIA, proximoEnvio, confirmarSuscripcion, TEXTO_CONSENTIMIENTO } = await import("../src/worker/secuencia.ts");
+const BAJA = "https://soyluisflores.es/correo/baja?e=ana%40example.com&f=abc";
+
+prueba("la secuencia: 6 correos en 14 días, en orden, y después termina", () => {
+  assert.equal(SECUENCIA.length, 6);
+  assert.deepEqual(SECUENCIA.map((p) => p.dia), [0, 2, 4, 7, 10, 14]);
+  const c = Date.parse("2026-11-01T10:00:00Z");
+  assert.equal(proximoEnvio(c, 0), c);
+  assert.equal(proximoEnvio(c, 5), c + 14 * 86_400_000);
+  assert.equal(proximoEnvio(c, 6), null);
+});
+
+prueba("cada correo de la serie lleva la baja, su campaña y un solo botón o enlace", () => {
+  for (const p of SECUENCIA) {
+    const c = p.crear({ nombre: "Ana <b>Pérez</b>", baja: BAJA });
+    assert.ok(c.html.includes("Darte de baja") && c.html.includes("correo/baja?e=ana%40example.com&amp;f=abc"), p.nombre);
+    assert.ok(c.texto.includes(BAJA), p.nombre);
+    assert.ok(c.html.includes("utm_campaign=guia-automatizar"), p.nombre);
+    assert.ok(!c.html.includes("<b>Pérez"), "escapa el nombre");
+    assert.ok(!/—/.test(c.html + c.texto + c.asunto), `sin rayas largas en ${p.nombre}`);
+  }
+});
+
+prueba("la confirmación de la suscripción lleva el botón de confirmar", () => {
+  const c = confirmarSuscripcion("", "https://soyluisflores.es/correo/confirmar?e=x&f=y");
+  assert.ok(c.html.includes("Hola:") && c.html.includes("correo/confirmar?e=x&amp;f=y"));
+});
+
+prueba("la casilla del formulario dice lo mismo que el consentimiento guardado", () => {
+  const html = fs.readFileSync(new URL("../src/components/CapturaGuia.astro", import.meta.url), "utf8").replace(/\s+/g, " ");
+  assert.ok(html.includes(TEXTO_CONSENTIMIENTO), "cambia los dos textos a la vez");
+});
+
 // Vista previa de los correos para revisarlos en el navegador.
 if (process.env.VISTA_CORREOS) {
   fs.mkdirSync(process.env.VISTA_CORREOS, { recursive: true });
@@ -191,6 +226,7 @@ if (process.env.VISTA_CORREOS) {
     "recordatorio-1h": correos.recordatorio1(limpia),
     cancelacion: correos.cancelacion(limpia),
   };
+  for (const p of SECUENCIA) lista[`secuencia-${p.nombre}`] = p.crear({ nombre: "Ana Pérez", baja: BAJA });
   for (const [n, c] of Object.entries(lista)) fs.writeFileSync(`${process.env.VISTA_CORREOS}/${n}.html`, c.html);
 }
 

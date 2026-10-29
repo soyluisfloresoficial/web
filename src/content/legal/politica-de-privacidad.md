@@ -13,11 +13,15 @@
 # (Google Ireland Limited, con acuerdo de tratamiento de datos) o una cuenta
 # gratuita de Gmail, que no lo incluye; la entidad de Resend (Plus Five
 # Five, Inc.), su DPA y el mecanismo de transferencia a EE. UU.
+# 30/10/2026: lista de correo de la guía gratis (consentimiento con doble
+# confirmación y baja en un clic) y el panel privado como destino de los
+# contactos. VERIFICAR: el panel (Firebase, Google) solo recibe datos cuando
+# se conecta con tools/conectar-panel.mjs; revisar su acuerdo de tratamiento.
 title: "Política de privacidad"
 metaTitle: "Política de privacidad y protección de datos | Luis Flores"
 description: "Cómo trato tus datos personales en soyluisflores.es según el RGPD y la LOPDGDD: responsable, finalidades, base jurídica, conservación y tus derechos."
 ---
-Última actualización: 29 de octubre de 2026
+Última actualización: 30 de octubre de 2026
 
 Esta política explica cómo se tratan los datos personales que facilitas a través de este sitio web, conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
 
@@ -31,6 +35,7 @@ Esta política explica cómo se tratan los datos personales que facilitas a trav
 
 - Datos de contacto que nos facilitas: nombre, email y el contenido de tu mensaje.
 - Datos que facilitas al reservar una llamada en la agenda de la web: nombre, correo electrónico, zona horaria y, si los escribes, tu negocio y lo que quieres resolver.
+- Si pides la guía gratis: tu nombre (si lo escribes), tu correo electrónico, la fecha y el texto exacto de tu consentimiento, y desde qué página o campaña la pediste.
 - Lo que escribas en el asistente de IA de la web (el chat de la esquina inferior).
 - Datos de navegación, solo si aceptas las cookies de analítica o marketing (ver la [Política de cookies](/politica-de-cookies)).
 
@@ -52,6 +57,8 @@ Cada tratamiento tiene su propia finalidad, su base jurídica y su plazo. Los pl
 
 **f) Responder en el asistente de IA de la web.** Si escribes en el chat, el texto de la conversación se envía a Anthropic, que genera la respuesta con su modelo de IA Claude. Antes del primer mensaje el chat avisa de que hablas con una IA. La web no guarda las conversaciones: solo existen en la pestaña del navegador mientras la tienes abierta. La base jurídica es el interés legítimo en atender a quien pregunta por los servicios (art. 6.1.f del RGPD) y, si la consulta busca contratar, la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Te pedimos que no escribas datos personales ni sensibles en el chat.
 
+**g) Enviarte la guía gratis y una serie de correos con consejos.** Solo si marcas la casilla del formulario y confirmas tu correo con el enlace que te enviamos (doble confirmación). Recibes la guía y una serie corta de correos durante unas dos semanas, que termina sola. En cada correo puedes darte de baja con un clic. La base jurídica es tu consentimiento (art. 6.1.a del RGPD), que puedes retirar cuando quieras desde el enlace de baja o escribiendo a [hola@soyluisflores.es](mailto:hola@soyluisflores.es).
+
 Retirar el consentimiento no afecta a la licitud del tratamiento realizado antes de retirarlo.
 
 No se toman decisiones automatizadas ni se elaboran perfiles con efectos jurídicos sobre ti.
@@ -62,7 +69,8 @@ No se ceden datos a terceros salvo obligación legal. Para prestar el servicio s
 
 - Alojamiento de la web: Cloudflare, Inc.
 - Agenda y videollamadas: Google (Google Calendar y Google Meet), donde se guarda la cita.
-- Envío de los correos de la agenda (confirmación, recordatorios y cancelación): Resend (Plus Five Five, Inc.).
+- Envío de los correos de la agenda y de la guía gratis: Resend (Plus Five Five, Inc.).
+- Gestión interna de contactos (el panel privado del responsable): Google (Google Cloud y Firebase), donde se guardan como contactos las reservas y las suscripciones confirmadas.
 - Mensajes por WhatsApp, si eliges ese canal: WhatsApp Ireland Limited (grupo Meta).
 - Asistente de IA de la web, si lo usas: Anthropic (proveedor del modelo Claude), que procesa el texto de la conversación para generar la respuesta.
 - Google Ireland Ltd. (Google Tag Manager y herramientas de medición), solo si aceptas las cookies correspondientes.
@@ -73,6 +81,7 @@ Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Eu
 
 - Consultas: el tiempo necesario para responderlas y, como máximo, un año después del último contacto si no se inicia una relación comercial.
 - Citas agendadas en la web: en el calendario, hasta un año después de la llamada si no se inicia una relación comercial. Si cancelas, la cita se borra del calendario.
+- Lista de la guía gratis: mientras sigas suscrito. Si no confirmas tu correo, los datos se borran solos a los 7 días. Si te das de baja, solo se guardan tu correo y la fecha de la baja, para no volver a escribirte.
 - Clientes: mientras dure la relación y, después, durante los plazos legales de conservación (por ejemplo, obligaciones fiscales y mercantiles).
 - Datos de analítica: según los plazos indicados en la [Política de cookies](/politica-de-cookies).
 - Conversaciones del asistente de IA: la web no las guarda. Anthropic las conserva durante el tiempo limitado que establecen sus condiciones para el servicio de API.

@@ -130,7 +130,15 @@ function bloqueTexto(b: Bloque): string {
 }
 
 /** Arma el correo completo con la marca. */
-export function maquetar(o: { asunto: string; previa: string; bloques: Bloque[]; firma: string[]; pie: string }): Correo {
+export function maquetar(o: {
+  asunto: string;
+  previa: string;
+  bloques: Bloque[];
+  firma: string[];
+  pie: string;
+  /** Enlace de baja: obligatorio en los correos de la lista (secuencia.ts). */
+  baja?: string;
+}): Correo {
   const cuerpo = o.bloques.map(bloqueHtml).join("\n");
   const firma = o.firma
     .map((l, i) => `<span style="${i === 0 ? "font-weight:700;" : ""}color:${i === 0 ? C.tinta : C.suave}">${escapar(l)}</span>`)
@@ -152,11 +160,12 @@ ${cuerpo}
 <p style="margin:8px 0 28px;${FUENTE};font-size:15px;line-height:1.6">${firma}</p>
 </td></tr>
 <tr><td style="padding:18px 32px 22px;background:#f8fafc;border-top:1px solid ${C.linea};${FUENTE};font-size:12px;line-height:1.6;color:${C.suave}">
-${escapar(o.pie)}<br>${escapar(CONTACTO.firma)} · <a href="${CONTACTO.web}" style="color:${C.suave}">soyluisflores.es</a>
+${escapar(o.pie)}${o.baja ? ` <a href="${escapar(o.baja)}" style="color:${C.suave};text-decoration:underline">Darte de baja</a>` : ""}<br>${escapar(CONTACTO.firma)} · <a href="${CONTACTO.web}" style="color:${C.suave}">soyluisflores.es</a>
 </td></tr>
 </table></td></tr></table></body></html>`;
 
-  const texto = [...o.bloques.map(bloqueTexto), "", ...o.firma, "", "--", o.pie, CONTACTO.firma].join("\n\n").replace(/\n{3,}/g, "\n\n");
+  const pie = o.baja ? `${o.pie} Darte de baja: ${o.baja}` : o.pie;
+  const texto = [...o.bloques.map(bloqueTexto), "", ...o.firma, "", "--", pie, CONTACTO.firma].join("\n\n").replace(/\n{3,}/g, "\n\n");
   return { asunto: o.asunto, html, texto };
 }
 

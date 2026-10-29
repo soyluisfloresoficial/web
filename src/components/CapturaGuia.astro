@@ -1,0 +1,298 @@
+---
+/**
+ * Formulario de la guía gratis «Qué automatizar primero en tu negocio»
+ * (30/10/2026). Ver EMAIL-MARKETING.md.
+ *
+ * Manda nombre y correo a /api/suscribir con el consentimiento marcado. La
+ * persona recibe un correo para confirmar (doble confirmación) y, al
+ * confirmar, la guía y la secuencia de correos.
+ *
+ * La casilla dice lo mismo que TEXTO_CONSENTIMIENTO en
+ * src/worker/suscripciones.ts: si cambias una, cambia la otra.
+ *
+ * Medición: sign_up con method "guia-automatizar" al pedirla. Va en el blog
+ * (cada artículo y el índice) y en /guia.
+ */
+import Icono from "./Icono.astro";
+import { SITIO } from "../data/servicios";
+
+interface Props {
+  /** Dónde está el formulario: se anota con la suscripción. */
+  ubicacion: string;
+  /** Sin la sección envolvente, para usarlo dentro de otra (/guia). */
+  suelto?: boolean;
+  titulo?: string;
+}
+
+const { ubicacion, suelto = false, titulo = "Qué automatizar primero en tu negocio" } = Astro.props;
+const incluye = [
+  "El criterio de las tres condiciones para elegir bien",
+  "Una hoja para anotar las tareas de una semana",
+  "Ideas de primeras automatizaciones por área",
+  "Un plan de cinco pasos para empezar sin complicarte",
+];
+const id = `guia-${ubicacion}`;
+---
+
+<section class:list={["captura", { "section": !suelto }]} aria-labelledby={`${id}-titulo`} data-acento="violeta">
+  <div class:list={[{ "container-lf": !suelto }]}>
+    <div class="card captura-caja">
+      <div class="captura-texto">
+        <p class="eyebrow">Guía gratis</p>
+        <h2 id={`${id}-titulo`} class="captura-titulo mt-4">{titulo}</h2>
+        <p class="card-text mt-4">
+          Una guía práctica para elegir tu primera automatización con un criterio
+          sencillo. Te la mando por correo y, después, algunos consejos para
+          aplicarla.
+        </p>
+        <ul class="lista-check mt-6">{incluye.map((i) => <li>{i}</li>)}</ul>
+      </div>
+
+      <form class="captura-form" data-captura data-ubicacion={ubicacion} data-whatsapp={SITIO.whatsapp} novalidate>
+        <div data-captura-campos>
+          <label class="captura-campo">
+            <span>Tu nombre</span>
+            <input name="nombre" autocomplete="given-name" maxlength="80" />
+          </label>
+          <label class="captura-campo mt-4">
+            <span>Tu correo</span>
+            <input name="correo" type="email" autocomplete="email" inputmode="email" required maxlength="120" />
+          </label>
+          <div class="captura-trampa" aria-hidden="true">
+            <label>Web <input name="web" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <label class="captura-acepto mt-5">
+            <input type="checkbox" name="acepto" required />
+            <span>
+              Quiero recibir la guía y los correos con consejos de Luis Flores. Puedo
+              darme de baja cuando quiera. Más información en la
+              <a href="/politica-de-privacidad">política de privacidad</a>.
+            </span>
+          </label>
+          <p class="captura-error mt-4" data-captura-error role="alert" hidden></p>
+          <button class="cta captura-boton mt-6" type="submit" data-captura-enviar>
+            <Icono nombre="email" tamano={18} />
+            <span data-captura-enviar-texto>Enviarme la guía</span>
+          </button>
+          <p class="captura-nota mt-3">Sin spam. Una serie corta de correos y termina sola.</p>
+        </div>
+
+        <div class="captura-exito" data-captura-exito hidden tabindex="-1">
+          <span class="anillo-degradado anillo-grande" aria-hidden="true">
+            <Icono nombre="email" tamano={24} grosor={1.6} degradado />
+          </span>
+          <p class="captura-exito-titulo">Revisa tu correo</p>
+          <p class="card-text">
+            Te mandé un enlace para confirmar. Al confirmarlo te llega la guía. Si no
+            lo ves en unos minutos, mira en spam o en promociones.
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const w = window as unknown as { dataLayer?: unknown[] };
+  for (const form of document.querySelectorAll<HTMLFormElement>("[data-captura]")) {
+    const $ = <T extends HTMLElement>(s: string) => form.querySelector<T>(s)!;
+    const error = $("[data-captura-error]");
+    const boton = $<HTMLButtonElement>("[data-captura-enviar]");
+    const textoBoton = $("[data-captura-enviar-texto]");
+
+    const mostrarError = (html: string) => {
+      error.innerHTML = html;
+      error.hidden = !html;
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const datos = new FormData(form);
+      const correo = String(datos.get("correo") ?? "").trim();
+      const correoInput = form.querySelector<HTMLInputElement>('[name="correo"]')!;
+      const acepto = form.querySelector<HTMLInputElement>('[name="acepto"]')!;
+      correoInput.removeAttribute("aria-invalid");
+      if (!correoInput.checkValidity() || !correo) {
+        correoInput.setAttribute("aria-invalid", "true");
+        correoInput.focus();
+        return mostrarError("Escribe tu correo: ahí te llega la guía.");
+      }
+      if (!acepto.checked) {
+        acepto.focus();
+        return mostrarError("Marca la casilla para que pueda enviarte la guía.");
+      }
+      mostrarError("");
+      boton.disabled = true;
+      textoBoton.textContent = "Enviando…";
+
+      // De dónde llega (página y campaña), sin guardar nada en el navegador.
+      const p = new URLSearchParams(location.search);
+      const origen = [form.dataset.ubicacion, location.pathname, p.get("utm_source") && `source=${p.get("utm_source")}`, p.get("utm_campaign") && `campaign=${p.get("utm_campaign")}`]
+        .filter(Boolean)
+        .join(" · ")
+        .slice(0, 300);
+
+      try {
+        const r = import.meta.env.DEV
+          ? new Response("{}", { status: 200 })
+          : await fetch("/api/suscribir", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                nombre: String(datos.get("nombre") ?? ""),
+                correo,
+                acepto: true,
+                web: String(datos.get("web") ?? ""),
+                origen,
+              }),
+            });
+        if (r.ok) {
+          w.dataLayer?.push({ event: "sign_up", method: "guia-automatizar", page_path: location.pathname });
+          $("[data-captura-campos]").hidden = true;
+          const exito = $("[data-captura-exito]");
+          exito.hidden = false;
+          exito.focus({ preventScroll: true });
+          return;
+        }
+        if (r.status === 429) return mostrarError("Hubo demasiados intentos seguidos. Espera un minuto y vuelve a probar.");
+        if (r.status === 400) return mostrarError("Revisa tu correo: no se pudo leer bien.");
+        mostrarError(
+          `Ahora mismo no puedo enviarte la guía. Escríbeme por <a href="${form.dataset.whatsapp}" rel="noopener">WhatsApp</a> y te la paso.`,
+        );
+      } catch {
+        mostrarError("No hay conexión. Revisa tu internet y vuelve a probar.");
+      } finally {
+        boton.disabled = false;
+        textoBoton.textContent = "Enviarme la guía";
+      }
+    });
+  }
+</script>
+
+<style>
+  .captura-caja {
+    display: grid;
+    gap: 2rem;
+    padding: clamp(1.5rem, 1rem + 2.5vw, 3rem);
+    border-color: color-mix(in srgb, var(--acento) 40%, var(--color-line));
+    background:
+      radial-gradient(80% 70% at 100% 0%, rgb(139 92 246 / 0.16), transparent 70%),
+      radial-gradient(60% 60% at 0% 100%, rgb(0 123 255 / 0.12), transparent 70%),
+      var(--color-surface);
+  }
+  @media (width >= 900px) {
+    .captura-caja {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 3rem;
+      align-items: center;
+    }
+  }
+  .captura-titulo {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 800;
+    line-height: var(--leading-seccion);
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  .captura-form {
+    padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    border: 1px solid var(--color-line);
+    border-radius: 1rem;
+    background: rgb(7 9 13 / 0.55);
+  }
+  .captura-campo {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .captura-campo span {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .captura-campo input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-navy);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+  }
+  .captura-campo input:focus {
+    outline: none;
+    border-color: var(--acento);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--acento) 25%, transparent);
+  }
+  .captura-campo input[aria-invalid="true"] {
+    border-color: var(--acento-coral);
+  }
+  .captura-acepto {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--color-soft);
+    cursor: pointer;
+  }
+  .captura-acepto input {
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.15rem;
+    accent-color: var(--acento);
+  }
+  .captura-acepto a,
+  .captura-error :global(a) {
+    color: var(--acento-texto);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .captura-trampa {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .captura-boton {
+    width: 100%;
+  }
+  .captura-nota {
+    color: var(--color-muted);
+    font-size: var(--step--1);
+    text-align: center;
+  }
+  .captura-error {
+    padding: 0.75rem 1rem;
+    border: 1px solid rgb(251 113 133 / 0.45);
+    border-radius: 12px;
+    background: rgb(251 113 133 / 0.1);
+    color: var(--color-ink);
+    font-size: var(--step--1);
+  }
+  .captura-exito {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    text-align: center;
+  }
+  .captura-exito[hidden],
+  [data-captura-campos][hidden] {
+    display: none;
+  }
+  .captura-exito:focus {
+    outline: none;
+  }
+  .captura-exito-titulo {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+</style>

@@ -12,6 +12,8 @@
 | `form_start` | **GA4 - Evento form_start** | **Evento - form_start** | `form_id`, `page_path` | `src/components/Agenda.astro` (al elegir hora en la agenda) |
 | `generate_lead` | **GA4 - Evento generate_lead** | **Evento - generate_lead** | `form_id`, `method`, `page_path` | `Agenda.astro` (al confirmar la reserva) |
 
+Desde el 30/10/2026 la web también envía `sign_up` (`method: "guia-automatizar"`, `page_path`) cuando alguien pide la guía gratis (`src/components/CapturaGuia.astro`). Este contenedor todavía no trae su etiqueta: créala igual que la de `generate_lead` (ver `EMAIL-MARKETING.md`).
+
 Variables: **GA4 - ID de medición** (**[COMPLETAR: viene con `G-XXXXXXXXXX`]**) y **DLV - cta_location**, **DLV - cta_text**, **DLV - page_path**, **DLV - form_id**, **DLV - method** (variables de capa de datos, versión 2).
 
 Valores de `cta_location`: `hero`, `header`, `servicios`, `faq`, `footer`, `cierre`, `barra-movil`, `contacto-tarjeta`, o el id de la sección si es otra. `form_id` dice de qué página llega la reserva: `agenda-contacto` (/contacto), `agenda-diagnostico` (/diagnostico) o `funnel-<servicio>` (los funnels de anuncios, ver `FUNNELS.md`). Hasta el 29/10/2026 los dos primeros se llamaban `calendly-diagnostico` y `calendly-diagnostico-landing`. `method` es siempre `agenda-propia`. Las conversiones de Meta Ads y Google Ads están en `FUNNELS.md`.

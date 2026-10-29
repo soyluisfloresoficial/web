@@ -40,7 +40,9 @@
   // Horario de la agenda que se edita desde el panel (AGENDA.md). Manda
   // sobre los valores de src/data/agenda.ts.
   "kv_namespaces": [
-    { "binding": "AGENDA_CONFIG", "id": "3daee978984e4ad4a73d76d1e4e8d4fb" }
+    { "binding": "AGENDA_CONFIG", "id": "3daee978984e4ad4a73d76d1e4e8d4fb" },
+    // Lista de correo de la guía gratis (EMAIL-MARKETING.md).
+    { "binding": "SUSCRIPTORES", "id": "d8b54a898c4d4986920bf82df71ecb08" }
   ],
   // Modelo del asistente. Va aquí y no en el panel porque cada publicación
   // reescribe las variables normales del panel con las de este archivo.
@@ -49,7 +51,8 @@
     "MODELO_CHAT": "claude-opus-5-5"
   },
   // Cada 10 minutos el Worker revisa las citas y manda los recordatorios de
-  // la agenda por correo (AGENDA.md).
+  // la agenda por correo (AGENDA.md) y los correos de la secuencia de la guía
+  // (EMAIL-MARKETING.md).
   "triggers": { "crons": ["*/10 * * * *"] },
   // Registros del Worker (solo tokens y errores, nunca las conversaciones).
   "observability": { "enabled": true }

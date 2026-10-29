@@ -1,0 +1,166 @@
+---
+/**
+ * /correo/confirmar y /correo/baja (30/10/2026): las páginas de los enlaces
+ * de los correos de la lista (EMAIL-MARKETING.md).
+ *
+ * Las dos piden pulsar un botón: algunos programas de correo abren los
+ * enlaces para revisarlos y, si bastara con abrirlos, confirmarían o darían
+ * de baja a la persona sin que ella lo decida. (El botón «darse de baja» de
+ * Gmail y Outlook no pasa por aquí: llama directo a /api/correo/baja.)
+ *
+ * noindex y fuera del sitemap: solo sirven con un enlace personal.
+ */
+import Base from "../../layouts/Base.astro";
+import CabeceraPagina from "../../components/CabeceraPagina.astro";
+import Icono from "../../components/Icono.astro";
+
+export function getStaticPaths() {
+  return [{ params: { accion: "confirmar" } }, { params: { accion: "baja" } }];
+}
+
+const { accion } = Astro.params;
+const confirmar = accion === "confirmar";
+const t = confirmar
+  ? {
+      title: "Confirma tu correo | Luis Flores",
+      descripcion: "Confirma tu correo para recibir gratis la guía «Qué automatizar primero en tu negocio» de Luis Flores y sus consejos.",
+      antetitulo: "Guía gratis",
+      titulo: "Confirma tu correo",
+      destacado: "y te mando la guía",
+      entradilla: "Un clic y te llega «Qué automatizar primero en tu negocio».",
+      boton: "Confirmar y recibir la guía",
+      listo: "Listo, ya está confirmado",
+      listoTexto: "Te acabo de mandar la guía por correo. También puedes abrirla ahora:",
+      listoEnlace: { texto: "Abrir la guía", href: "/guia/que-automatizar-primero" },
+      api: "/api/suscribir/confirmar",
+    }
+  : {
+      title: "Darte de baja | Luis Flores",
+      descripcion: "Date de baja de los correos de la guía gratis de Luis Flores. Con un clic dejas de recibirlos y no te escribo más.",
+      antetitulo: "Correos",
+      titulo: "Darte de baja",
+      destacado: "de mis correos",
+      entradilla: "Si ya no quieres recibir los correos de la guía, confirma aquí y no te escribo más.",
+      boton: "Darme de baja",
+      listo: "Listo, ya no te escribo más",
+      listoTexto: "Te diste de baja de la lista. Si algún día quieres hablar de tu negocio, aquí estoy:",
+      listoEnlace: { texto: "Ir a la web", href: "/" },
+      api: "/api/correo/baja",
+    };
+---
+
+<Base title={t.title} description={t.descripcion} noindex>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: t.titulo }]}
+      antetitulo={t.antetitulo}
+      titulo={t.titulo}
+      destacado={t.destacado}
+      entradilla={t.entradilla}
+      acento="violeta"
+    />
+    <section class="section" aria-live="polite">
+      <div class="container-lf">
+        <div class="card accion" data-accion={accion} data-api={t.api}>
+          <div data-paso="inicio">
+            <button type="button" class="cta" data-boton>
+              <span data-boton-texto>{t.boton}</span>
+            </button>
+            <p class="accion-error mt-4" data-error role="alert" hidden></p>
+          </div>
+          <div data-paso="listo" hidden>
+            <span class="anillo-degradado anillo-grande" aria-hidden="true">
+              <Icono nombre="check" tamano={24} grosor={2.2} degradado />
+            </span>
+            <p class="accion-titulo mt-5">{t.listo}</p>
+            <p class="accion-texto mt-3">{t.listoTexto}</p>
+            <a class="cta mt-6" href={t.listoEnlace.href}>{t.listoEnlace.texto} <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  const caja = document.querySelector<HTMLElement>("[data-accion]")!;
+  const boton = caja.querySelector<HTMLButtonElement>("[data-boton]")!;
+  const texto = caja.querySelector<HTMLElement>("[data-boton-texto]")!;
+  const error = caja.querySelector<HTMLElement>("[data-error]")!;
+  const original = texto.textContent;
+  const q = new URLSearchParams(location.search);
+  const e = q.get("e") ?? "";
+  const f = q.get("f") ?? "";
+  const confirmar = caja.dataset.accion === "confirmar";
+
+  const fallo = (mensaje: string) => {
+    error.textContent = mensaje;
+    error.hidden = false;
+  };
+
+  if (!e || !f) {
+    boton.disabled = true;
+    fallo("Este enlace está incompleto. Ábrelo de nuevo desde el correo.");
+  }
+
+  boton.addEventListener("click", async () => {
+    boton.disabled = true;
+    texto.textContent = "Un momento…";
+    error.hidden = true;
+    try {
+      const api = caja.dataset.api!;
+      const r = import.meta.env.DEV
+        ? new Response("{}", { status: 200 })
+        : confirmar
+          ? await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ e, f }) })
+          : await fetch(`${api}?e=${encodeURIComponent(e)}&f=${encodeURIComponent(f)}`, { method: "POST" });
+      if (r.ok) {
+        caja.querySelector<HTMLElement>('[data-paso="inicio"]')!.hidden = true;
+        caja.querySelector<HTMLElement>('[data-paso="listo"]')!.hidden = false;
+        return;
+      }
+      if (r.status === 403) return fallo("Este enlace no es válido. Ábrelo de nuevo desde el correo.");
+      if (r.status === 410) return fallo("Este enlace caducó. Pide la guía otra vez desde la web.");
+      fallo("No se pudo completar. Inténtalo de nuevo en un momento.");
+    } catch {
+      fallo("No hay conexión. Revisa tu internet y vuelve a intentarlo.");
+    } finally {
+      boton.disabled = !e || !f;
+      texto.textContent = original;
+    }
+  });
+</script>
+
+<style>
+  .accion {
+    display: grid;
+    max-width: 36rem;
+    margin-inline: auto;
+    padding: clamp(2rem, 1.5rem + 3vw, 3.5rem) 1.5rem;
+    text-align: center;
+  }
+  .accion > div {
+    display: grid;
+    justify-items: center;
+  }
+  .accion > div[hidden] {
+    display: none;
+  }
+  .accion-titulo {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .accion-texto {
+    max-width: 44ch;
+    color: var(--color-soft);
+  }
+  .accion-error {
+    padding: 0.75rem 1rem;
+    border: 1px solid rgb(251 113 133 / 0.45);
+    border-radius: 12px;
+    background: rgb(251 113 133 / 0.1);
+    color: var(--color-ink);
+  }
+</style>

@@ -4,6 +4,7 @@ import Base from "../../layouts/Base.astro";
 import CabeceraPagina from "../../components/CabeceraPagina.astro";
 import TarjetaArticulo from "../../components/TarjetaArticulo.astro";
 import Cierre from "../../components/Cierre.astro";
+import CapturaGuia from "../../components/CapturaGuia.astro";
 import { servicios, SITIO } from "../../data/servicios";
 import { minutosLectura } from "../../data/lectura";
 
@@ -142,6 +143,8 @@ const schema = [
         <p class="sin-resultados mt-8" data-vacio hidden>No hay más guías de este tema por ahora.</p>
       </div>
     </section>
+
+    <CapturaGuia ubicacion="blog-indice" />
 
     <Cierre
       titulo="¿Lo aplicamos a tu negocio?"

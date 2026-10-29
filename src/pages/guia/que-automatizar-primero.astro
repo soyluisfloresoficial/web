@@ -1,0 +1,378 @@
+---
+/**
+ * La guía gratis (30/10/2026): «Qué automatizar primero en tu negocio».
+ * Llega por correo al confirmar la suscripción (EMAIL-MARKETING.md).
+ *
+ * El contenido sale del artículo /blog/que-automatizar-primero (su criterio
+ * de tres condiciones y su plan de cinco pasos), puesto en forma de
+ * herramienta: hoja para anotar, ideas por área y señales de alto. Sin cifras
+ * ni casos.
+ *
+ * noindex y fuera del sitemap: repite el artículo y es para quien la pidió.
+ * Se puede guardar en PDF (botón de imprimir, con estilos de impresión).
+ */
+import Base from "../../layouts/Base.astro";
+import Icono from "../../components/Icono.astro";
+
+const condiciones = [
+  {
+    titulo: "Se repite seguido",
+    texto: "Si pasa una vez al mes, casi nunca compensa armarla y mantenerla. Si pasa varias veces al día, cada minuto que ahorras se multiplica.",
+    pregunta: "¿Cuántas veces por semana la haces y cuántos minutos te toma cada vez?",
+  },
+  {
+    titulo: "Sigue reglas claras",
+    texto: "Siempre entra lo mismo y siempre sale lo mismo: confirmar una cita, registrar un contacto, mandar un recordatorio. Lo que necesita criterio humano se queda en tu equipo.",
+    pregunta: "¿Se resuelve siempre igual o depende de cada caso?",
+  },
+  {
+    titulo: "Afecta a tus clientes",
+    texto: "Contestar tarde a un cliente potencial tiene un costo directo. Por eso la atención y el seguimiento suelen ser el mejor primer paso.",
+    pregunta: "Si esta tarea se retrasa, ¿lo nota un cliente?",
+  },
+];
+
+const areas = [
+  {
+    nombre: "Atención",
+    icono: "chat",
+    ideas: ["Responder preguntas frecuentes con la información que tú apruebas", "Confirmar y recordar citas", "Avisar a una persona cuando la consulta lo necesita"],
+  },
+  {
+    nombre: "Ventas",
+    icono: "embudo",
+    ideas: ["Registrar cada contacto nuevo en el CRM, con su origen", "Hacer seguimiento de presupuestos que no tuvieron respuesta", "Mandar la información que pidió un cliente potencial"],
+  },
+  {
+    nombre: "Administración",
+    icono: "flujo",
+    ideas: ["Pasar los datos de un formulario a tus herramientas", "Avisar de pagos recibidos o pendientes", "Ordenar documentos que llegan por correo"],
+  },
+  {
+    nombre: "Equipo",
+    icono: "usuarios",
+    ideas: ["Avisar al responsable cuando entra un contacto importante", "Repartir tareas nuevas según reglas fijas", "Un resumen semanal con las cifras que importan"],
+  },
+] as const;
+
+const pasos = [
+  "Anota las tareas repetitivas de una semana normal en la hoja de abajo.",
+  "Marca las que cumplen las tres condiciones.",
+  "Elige una sola y mide cuánto tiempo te toma hoy.",
+  "Automatízala y vuelve a medir a las dos o tres semanas.",
+  "Recién ahí pasa a la siguiente.",
+];
+
+const alto = [
+  "Pasa una vez al mes o menos.",
+  "Cada vez se resuelve distinto y necesita criterio humano: negociar, evaluar un caso complicado o dar una mala noticia.",
+  "Todavía no tienes claro cómo debería hacerse a mano. Primero ordena el proceso; después se automatiza.",
+];
+---
+
+<Base
+  title="Guía: qué automatizar primero en tu negocio | Luis Flores"
+  description="Guía práctica para elegir tu primera automatización: el criterio de las tres condiciones, una hoja para anotar tus tareas e ideas por área."
+  noindex
+>
+  <main class="guia">
+    <header class="section guia-portada">
+      <div class="container-lf guia-estrecha">
+        <p class="eyebrow">Guía práctica · Luis Flores</p>
+        <h1 class="guia-h1 mt-4">Qué automatizar primero <span class="gradient-text">en tu negocio</span></h1>
+        <p class="lead mt-5">
+          Elegir bien la primera automatización es lo que hace que funcione y que tu
+          equipo le tenga confianza. Esta guía te da un criterio sencillo y una hoja
+          para aplicarlo a tu caso en una semana.
+        </p>
+        <div class="botones mt-8 no-imprimir">
+          <button type="button" class="cta" data-imprimir>
+            Guardar en PDF o imprimir
+          </button>
+          <a class="boton-secundario" href="/blog/que-automatizar-primero">Leer el artículo completo</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="section banda" aria-labelledby="g-criterio" data-acento="violeta">
+      <div class="container-lf guia-estrecha">
+        <p class="eyebrow">1 · El criterio</p>
+        <h2 id="g-criterio" class="subrayado mt-4">Una buena primera tarea cumple tres condiciones</h2>
+        <ol class="guia-condiciones mt-10">
+          {
+            condiciones.map((c, n) => (
+              <li class="card tarjeta">
+                <span class="guia-num" aria-hidden="true">0{n + 1}</span>
+                <h3 class="card-title mt-4">{c.titulo}</h3>
+                <p class="card-text mt-3">{c.texto}</p>
+                <p class="guia-pregunta mt-4">{c.pregunta}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="g-hoja" data-acento="turquesa">
+      <div class="container-lf guia-estrecha">
+        <p class="eyebrow">2 · Tu hoja de la semana</p>
+        <h2 id="g-hoja" class="subrayado mt-4">Anota tus tareas repetidas</h2>
+        <p class="lead mt-5">
+          No hace falta precisión: alcanza con una idea aproximada. Al final de la
+          semana, la que tenga más marcas y más minutos suele ser tu primera
+          candidata.
+        </p>
+        <div class="guia-tabla mt-8">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Tarea</th>
+                <th scope="col">Veces por semana</th>
+                <th scope="col">Minutos cada vez</th>
+                <th scope="col">¿Reglas claras?</th>
+                <th scope="col">¿Afecta al cliente?</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 6 }, () => (
+                <tr>
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section banda" aria-labelledby="g-ideas" data-acento="cian">
+      <div class="container-lf guia-estrecha">
+        <p class="eyebrow">3 · Ideas para empezar</p>
+        <h2 id="g-ideas" class="subrayado mt-4">Primeras automatizaciones que suelen cumplir las tres</h2>
+        <div class="guia-areas mt-10">
+          {
+            areas.map((a) => (
+              <div class="card tarjeta">
+                <span class="icono-caja" aria-hidden="true">
+                  <Icono nombre={a.icono} tamano={22} grosor={1.6} />
+                </span>
+                <h3 class="card-title mt-4">{a.nombre}</h3>
+                <ul class="lista-check mt-4">{a.ideas.map((i) => <li>{i}</li>)}</ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="g-plan" data-acento="ambar">
+      <div class="container-lf guia-estrecha guia-dos">
+        <div>
+          <p class="eyebrow">4 · El plan</p>
+          <h2 id="g-plan" class="subrayado mt-4">Cinco pasos, de una en una</h2>
+          <ol class="guia-pasos mt-8">{pasos.map((p) => <li>{p}</li>)}</ol>
+          <p class="card-text mt-6">
+            Ir de una en una parece lento, pero es lo que hace que funcione de verdad.
+            En mi propio negocio lo hice exactamente así.
+          </p>
+        </div>
+        <div class="card tarjeta">
+          <p class="eyebrow">Señales de alto</p>
+          <h3 class="card-title mt-4">Todavía no conviene automatizarla si…</h3>
+          <ul class="lista-cruz mt-5">{alto.map((a) => <li>{a}</li>)}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section banda no-imprimir" aria-labelledby="g-llamada" data-acento="violeta">
+      <div class="container-lf guia-estrecha guia-cierre">
+        <h2 id="g-llamada" class="guia-cierre-titulo">¿Prefieres verlo con tu caso?</h2>
+        <p class="lead mt-4">
+          En una llamada gratis de 30 minutos me cuentas cómo trabajas y te digo qué
+          automatizaría primero, con qué herramienta y qué puedes esperar.
+        </p>
+        <div class="botones botones-centro mt-8">
+          <a class="cta" href="/diagnostico?utm_source=guia&utm_medium=web&utm_campaign=guia-automatizar">
+            <Icono nombre="calendario" tamano={18} />
+            Elegir día y hora <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  document.querySelector("[data-imprimir]")?.addEventListener("click", () => window.print());
+</script>
+
+<style>
+  .guia-estrecha {
+    max-width: 62rem;
+  }
+  .guia-portada {
+    padding-top: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+  .guia-h1 {
+    max-width: 20ch;
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    font-weight: 800;
+    line-height: var(--leading-titular);
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  .guia-condiciones,
+  .guia-areas {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 768px) {
+    .guia-condiciones {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .guia-areas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .guia-num {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    background: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .guia-pregunta {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--acento);
+    border-radius: 0 10px 10px 0;
+    background: color-mix(in srgb, var(--acento) 10%, transparent);
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .guia-tabla {
+    overflow-x: auto;
+    border: 1px solid var(--color-line);
+    border-radius: 1rem;
+  }
+  .guia-tabla table {
+    width: 100%;
+    min-width: 40rem;
+    border-collapse: collapse;
+  }
+  .guia-tabla th,
+  .guia-tabla td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-line);
+    text-align: left;
+  }
+  .guia-tabla th {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+  }
+  .guia-tabla td {
+    height: 3rem;
+  }
+  .guia-tabla td + td,
+  .guia-tabla th + th {
+    border-left: 1px solid var(--color-line);
+  }
+  .guia-dos {
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (width >= 900px) {
+    .guia-dos {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      align-items: start;
+    }
+  }
+  .guia-pasos {
+    display: grid;
+    gap: 0.875rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: paso;
+  }
+  .guia-pasos li {
+    position: relative;
+    padding-left: 3rem;
+    color: var(--color-soft);
+    counter-increment: paso;
+  }
+  .guia-pasos li::before {
+    content: counter(paso);
+    position: absolute;
+    left: 0;
+    top: -0.1rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--grad-cta);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+  }
+  .guia-cierre {
+    text-align: center;
+  }
+  .guia-cierre .lead {
+    margin-inline: auto;
+  }
+  .guia-cierre-titulo {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+
+  /* Al imprimir o guardar en PDF: fondo blanco, texto oscuro y sin botones. */
+  @media print {
+    :global(body) {
+      background: #fff !important;
+      color: #111 !important;
+    }
+    :global(header.cabecera),
+    :global(footer),
+    :global(.barra-movil),
+    :global(.chat),
+    :global(.cintas),
+    .no-imprimir {
+      display: none !important;
+    }
+    .guia :global(*) {
+      color: #111 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      -webkit-text-fill-color: #111 !important;
+    }
+    .guia :global(.card),
+    .guia-tabla,
+    .guia-tabla th,
+    .guia-tabla td {
+      border-color: #bbb !important;
+    }
+    .guia :global(.section) {
+      padding-block: 1.25rem !important;
+    }
+    .guia :global(.card) {
+      break-inside: avoid;
+    }
+  }
+</style>

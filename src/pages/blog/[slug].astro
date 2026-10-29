@@ -8,6 +8,7 @@ import TarjetaArticulo from "../../components/TarjetaArticulo.astro";
 import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import { ilustraciones } from "../../data/ilustraciones";
 import Cierre from "../../components/Cierre.astro";
+import CapturaGuia from "../../components/CapturaGuia.astro";
 import Icono from "../../components/Icono.astro";
 import { minutosLectura, palabras } from "../../data/lectura";
 import { imagenOg } from "../../data/og";
@@ -203,6 +204,9 @@ const schema = [
         </div>
       </aside>
     </article>
+
+    {/* Guía gratis: quien termina de leer ya mostró interés (EMAIL-MARKETING.md). */}
+    <CapturaGuia ubicacion="blog-articulo" />
 
     {
       relacionados.length > 0 && (

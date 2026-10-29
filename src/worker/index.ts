@@ -23,8 +23,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { INSTRUCCIONES } from "./instrucciones";
 import { agenda, citaAgenda, configAgenda, recordatorios, type EnvAgenda } from "./agenda";
+import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
 
-interface Env extends EnvAgenda {
+interface Env extends EnvAgenda, EnvSuscripciones {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** Secreto del Worker, en el panel de Cloudflare. Ver AGENTE.md. */
   ANTHROPIC_API_KEY?: string;
@@ -210,15 +211,19 @@ export default {
     if (pathname === "/api/agenda/cita" || pathname === "/api/agenda/cancelar") {
       return citaAgenda(request, env, json, origenPermitido, ctx);
     }
+    if (pathname === "/api/suscribir" || pathname === "/api/suscribir/confirmar" || pathname === "/api/correo/baja") {
+      return suscripciones(request, env, json, origenPermitido, ctx);
+    }
     if (pathname === "/api/agenda/config") return configAgenda(request, env, json);
     if (pathname.startsWith("/api/")) return json({ error: "no-existe" }, 404);
     // Cualquier otra ruta: los archivos de la web (y su página 404).
     return env.ASSETS.fetch(request);
   },
 
-  // Cron cada 10 minutos (wrangler.jsonc): recordatorios de la agenda.
+  // Cron cada 10 minutos (wrangler.jsonc): recordatorios de la agenda y
+  // correos de la secuencia de la guía.
   async scheduled(_evento: unknown, env: Env, ctx: ExecutionContext): Promise<void> {
-    ctx.waitUntil(recordatorios(env));
+    ctx.waitUntil(Promise.all([recordatorios(env), secuencia(env)]));
   },
 };
 

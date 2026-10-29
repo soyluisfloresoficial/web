@@ -23,7 +23,14 @@ export function correoAvisos(env: EnvCorreo): string {
   return env.CORREO_AVISOS || CONTACTO.correo;
 }
 
-export async function enviar(env: EnvCorreo, para: string, correo: Correo, tipo: string): Promise<boolean> {
+export async function enviar(
+  env: EnvCorreo,
+  para: string,
+  correo: Correo,
+  tipo: string,
+  /** Solo en los correos de la lista: baja en un clic (Gmail y Outlook la exigen). */
+  baja?: string,
+): Promise<boolean> {
   if (!env.RESEND_API_KEY) {
     console.log(JSON.stringify({ correo: tipo, estado: "sin-clave" }));
     return false;
@@ -40,6 +47,9 @@ export async function enviar(env: EnvCorreo, para: string, correo: Correo, tipo:
         html: correo.html,
         text: correo.texto,
         tags: [{ name: "tipo", value: tipo }],
+        ...(baja
+          ? { headers: { "List-Unsubscribe": `<${baja}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } }
+          : {}),
       }),
     });
     console.log(JSON.stringify({ correo: tipo, estado: r.ok ? "enviado" : r.status }));
