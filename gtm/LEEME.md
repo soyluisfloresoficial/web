@@ -59,6 +59,61 @@ En GA4 → **Administrar** → **Eventos** (o **Eventos clave**), marca como eve
 
 Para ver `cta_location` y `form_id` en los informes, créalos como **dimensiones personalizadas** (Administrar → Definiciones personalizadas → Crear dimensión personalizada, ámbito «Evento», con el mismo nombre del parámetro).
 
+## Segundo contenedor: conversiones de los anuncios (30/10/2026)
+
+`contenedor-anuncios.json` añade lo necesario para medir los anuncios. Se
+genera con `node tools/generar-contenedor-anuncios.mjs`.
+
+| Etiqueta | Cuándo se dispara |
+|---|---|
+| **Meta - Píxel base** | En todas las páginas |
+| **Meta - Lead (llamada agendada)** | `generate_lead`: alguien agendó la llamada |
+| **Meta - CompleteRegistration (guía gratis)** | `sign_up`: alguien pidió la guía |
+| **Google Ads - Vinculador de conversiones** | En todas las páginas |
+| **Google Ads - Llamada de diagnóstico** | `generate_lead` |
+| **Google Ads - Guía gratis** | `sign_up` |
+| **GA4 - Evento sign_up** | `sign_up` |
+
+Todas las de Meta y Google Ads piden el consentimiento `ad_storage`: solo
+funcionan si la persona acepta las cookies de marketing.
+
+### Cómo importarlo (después del de GA4)
+
+1. Consigue tus números:
+   - **Meta:** https://business.facebook.com → **Administrador de eventos** →
+     **Conectar orígenes de datos** → **Web** → crea el píxel y copia su **ID**
+     (solo números).
+   - **Google Ads:** https://ads.google.com → **Objetivos** → **Conversiones** →
+     **Nueva acción de conversión** → **Sitio web** → escribe `soyluisflores.es`
+     → **Añadir una acción de conversión manualmente**. Crea dos:
+     «Llamada de diagnóstico» (categoría **Reservar cita**) y «Guía gratis»
+     (categoría **Registro**). Al guardar cada una, elige **Usar Google Tag
+     Manager** y apunta el **ID de conversión** (el mismo en las dos) y la
+     **Etiqueta de conversión** de cada una.
+2. En https://tagmanager.google.com abre el contenedor `GTM-NHS23ZRB` →
+   **Administrar** → **Importar contenedor** → elige
+   `gtm/contenedor-anuncios.json`.
+3. Espacio de trabajo: **Existente** → *Default Workspace*. Opción:
+   **Combinar** → **Sobrescribir las etiquetas, activadores y variables en
+   conflicto**. Solo coinciden tres variables (`DLV - form_id`,
+   `DLV - method`, `DLV - page_path`) y el activador **Evento -
+   generate_lead**, que son iguales, así que no se pierde nada.
+4. Toca **Confirmar**.
+5. Ve a **Variables** y rellena las cuatro que dicen «(pegar aquí)»:
+   - **Meta - ID del píxel**: el ID del píxel.
+   - **Google Ads - ID de conversión**: solo los números (sin «AW-»).
+   - **Google Ads - Etiqueta llamada** y **Google Ads - Etiqueta guía**: la
+     etiqueta de cada conversión.
+6. **Vista previa** → abre `https://soyluisflores.es/guia`, acepta las cookies
+   y pide la guía con otro correo tuyo: en Tag Assistant, en el evento
+   `sign_up`, deben salir **Meta - CompleteRegistration**, **Google Ads - Guía
+   gratis** y **GA4 - Evento sign_up**. Con una reserva de prueba, en
+   `generate_lead`, las dos de la llamada.
+7. **Enviar** → **Publicar**.
+
+Las cookies que ponen (`_fbp` y `_gcl_au`) ya están en la política de
+cookies, y sus dominios, en la CSP de `public/_headers`.
+
 ## Aviso
 
-Este fichero sigue el formato de exportación de GTM, pero **no he podido probar la importación**: no tengo acceso a tu cuenta. Si GTM da un error al importarlo, crea las mismas piezas a mano con los nombres de la tabla de arriba.
+Estos ficheros siguen el formato de exportación de GTM, pero **no he podido probar la importación**: no tengo acceso a tu cuenta. Si GTM da un error al importarlos, crea las mismas piezas a mano con los nombres de las tablas de arriba.

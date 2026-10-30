@@ -7,11 +7,13 @@
 # cargarse), añadir sus cookies _ga y _ga_<ID> a la tabla con su duración real.
 # 29/10/2026: fuera __cf_bm y _cfuvid, que ponía Calendly. La agenda propia
 # no guarda nada en el navegador.
+# 30/10/2026: añadidas _fbp (píxel de Meta) y _gcl_au (Google Ads), de
+# gtm/contenedor-anuncios.json. VERIFICAR la duración real al activarlas.
 title: "Política de cookies"
 metaTitle: "Política de cookies de soyluisflores.es | Luis Flores"
 description: "Qué cookies usa soyluisflores.es, para qué sirven, cuánto duran y cómo aceptarlas, rechazarlas o cambiar tu elección en cualquier momento desde el panel."
 ---
-Última actualización: 29 de octubre de 2026
+Última actualización: 30 de octubre de 2026
 
 ## 1. Qué son las cookies
 
@@ -34,6 +36,8 @@ Esta es la lista completa de lo que se guarda hoy en tu navegador al visitar el 
 <tr><td><code>cf_clearance</code></td><td>Cloudflare, Inc.</td><td>Seguridad del sitio</td><td>1 año</td><td>Necesaria</td></tr>
 <tr><td><code>lf-consent-v1</code></td><td>soyluisflores.es</td><td>Recuerda tu elección de cookies</td><td>12 meses</td><td>Necesaria</td></tr>
 <tr><td><code>gtm.js</code></td><td>Google Ireland Ltd.</td><td>Carga las etiquetas de medición</td><td>No guarda cookies</td><td>Analítica y marketing</td></tr>
+<tr><td><code>_fbp</code></td><td>Meta Platforms Ireland Ltd.</td><td>Mide qué anuncios de Meta (Facebook e Instagram) traen visitas y reservas</td><td>3 meses</td><td>Marketing</td></tr>
+<tr><td><code>_gcl_au</code></td><td>Google Ireland Ltd.</td><td>Mide qué anuncios de Google traen reservas</td><td>3 meses</td><td>Marketing</td></tr>
 </tbody>
 </table>
 </div>
@@ -42,7 +46,9 @@ Esta es la lista completa de lo que se guarda hoy en tu navegador al visitar el 
 
 **Si rechazas.** Google Tag Manager no se descarga y no se guarda nada más que `cf_clearance` y tu elección.
 
-**Más adelante.** Las herramientas de analítica y marketing que se carguen a través de Google Tag Manager pueden guardar sus propias cookies. Cuando se activen, se añadirán a esta tabla con su nombre y su duración.
+**Cookies de marketing.** `_fbp` y `_gcl_au` solo se guardan si aceptas las cookies de marketing: sirven para saber qué anuncio te trajo a la web y si llegaste a agendar una llamada o pedir la guía.
+
+**Más adelante.** Otras herramientas de analítica que se carguen a través de Google Tag Manager pueden guardar sus propias cookies. Cuando se activen, se añadirán a esta tabla con su nombre y su duración.
 
 ## 4. Cómo aceptar, rechazar o cambiar tu elección
 

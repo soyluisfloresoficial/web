@@ -70,6 +70,11 @@ La reserva confirmada envía el evento `generate_lead` con su `form_id`. Ese
 evento es la conversión de los anuncios. Tag Manager solo se carga si la
 persona acepta las cookies de marketing, como manda la ley.
 
+**La forma rápida (30/10/2026):** importa `gtm/contenedor-anuncios.json`, que
+ya trae el píxel de Meta, las conversiones de Google Ads y la de la guía
+gratis. Solo tienes que pegar tus números. Pasos en `gtm/LEEME.md`, «Segundo
+contenedor». Lo de abajo es la forma manual, por si prefieres crearlas a mano.
+
 Antes, importa el contenedor de `gtm/` si no lo hiciste (ver `gtm/LEEME.md`):
 crea el activador **Evento - generate_lead**.
 

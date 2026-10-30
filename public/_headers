@@ -11,6 +11,9 @@
 # - 'unsafe-inline' en script-src: Astro deja los scripts de la web dentro del
 #   HTML, y Google Tag Manager también los inyecta así.
 # - googletagmanager y google-analytics: solo se cargan tras aceptar cookies.
+# - facebook.com, connect.facebook.net, googleadservices y googleads: el
+#   píxel de Meta y las conversiones de Google Ads (gtm/contenedor-anuncios.json),
+#   solo tras aceptar las cookies de marketing (30/10/2026).
 # - cloudflareinsights y /cdn-cgi: los añade Cloudflare por su cuenta.
 # - frame-src: solo Google Tag Manager y Google Ads (marco de conversiones).
 #   Calendly se quitó el 29/10/2026: la agenda es propia y no usa marcos.
@@ -32,7 +35,7 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: accelerometer=(), autoplay=(self), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), browsing-topics=()
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net; font-src 'self'; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net https://static.cloudflareinsights.com; frame-src https://www.googletagmanager.com https://td.doubleclick.net; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com https://connect.facebook.net https://www.googleadservices.com https://googleads.g.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.g.doubleclick.net https://www.facebook.com https://www.google.com https://www.googleadservices.com; font-src 'self'; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net https://static.cloudflareinsights.com https://www.facebook.com https://connect.facebook.net https://www.google.com; frame-src https://www.googletagmanager.com https://td.doubleclick.net; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'
 
 # Base de conocimiento del asistente de IA: es pública (solo repite lo que
 # dice la web), pero no tiene que salir en los buscadores.
