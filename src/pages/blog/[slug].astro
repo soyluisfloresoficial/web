@@ -176,9 +176,18 @@ const schema = [
             <p class="eyebrow">Servicio relacionado</p>
             <h2 class="mt-2">{servicio.nombre}</h2>
             <p class="card-text mt-2">{servicio.definicion}</p>
-            <a class="card-link mt-3 inline-block" href={`/servicios/${servicio.slug}`}>
-              Ver el servicio <span aria-hidden="true">→</span>
-            </a>
+            <div class="servicio-rel-acciones mt-4">
+              {/* Al funnel del servicio, con la campaña marcada (FUNNELS.md). */}
+              <a
+                class="cta"
+                href={`/diagnostico/${servicio.slug}?utm_source=blog&utm_medium=articulo&utm_campaign=${post.id}`}
+              >
+                Hablemos de tu caso <span aria-hidden="true">→</span>
+              </a>
+              <a class="card-link" href={`/servicios/${servicio.slug}`}>
+                Ver el servicio <span aria-hidden="true">→</span>
+              </a>
+            </div>
           </aside>
         )
       }
@@ -330,6 +339,12 @@ const schema = [
     border-radius: 12px;
     background: color-mix(in srgb, var(--svc) 10%, transparent);
     color: var(--svc);
+  }
+  .servicio-rel-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
   }
   .rejilla-relacionados {
     display: grid;

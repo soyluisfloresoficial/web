@@ -529,6 +529,7 @@ const lista: Guia[] = [
         "Nadie da seguimiento a los contactos que ya llegan.",
       ],
     },
+    articulo: { texto: "Qué revisar en tu web", href: "/blog/que-revisar-en-tu-web" },
   },
 
   {
@@ -598,6 +599,7 @@ const lista: Guia[] = [
         "No tienes tiempo de atender a quien escribe.",
       ],
     },
+    articulo: { texto: "Antes de pagar anuncios en Meta o Google", href: "/blog/antes-de-pagar-anuncios" },
   },
 
   {
