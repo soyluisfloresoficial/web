@@ -16,7 +16,8 @@
  */
 import { enviar, type EnvCorreo } from "./correo";
 import { CONTACTO } from "./correo-plantillas";
-import { confirmarSuscripcion, proximoEnvio, SECUENCIA, TEXTO_CONSENTIMIENTO } from "./secuencia";
+import { confirmarSuscripcion, guiaPedida, proximoEnvio, SECUENCIA, TEXTO_CONSENTIMIENTO } from "./secuencia";
+import { tituloGuia } from "../data/guias";
 import { enviarAlPanel, type EnvPanel } from "./panel";
 
 interface KV {
@@ -44,6 +45,8 @@ interface Suscriptor {
   /** Texto exacto que aceptó y cuándo: prueba del consentimiento. */
   consentimiento: { texto: string; fecha: number };
   origen: string;
+  /** Guía que pidió (src/data/guias.ts). */
+  guia?: string;
   confirmado?: number;
   paso: number;
   proximo?: number;
@@ -128,7 +131,7 @@ async function enviarPaso(env: EnvSuscripciones, s: Suscriptor): Promise<void> {
   const ok = await enviar(
     env,
     s.correo,
-    paso.crear({ nombre: s.nombre, baja: baja.pagina }),
+    paso.crear({ nombre: s.nombre, baja: baja.pagina, guia: guiaPedida(s.guia) }),
     `secuencia-${paso.nombre}`,
     baja.servidor,
   );
@@ -209,7 +212,7 @@ export async function suscripciones(
           nombre: s.nombre,
           correo: s.correo,
           mensaje: [
-            "Se suscribió a la guía «Qué automatizar primero en tu negocio» desde la web.",
+            `Se suscribió a la guía «${tituloGuia(guiaPedida(s.guia))}» desde la web.`,
             s.origen ? `Llegó desde: ${s.origen}` : "",
           ]
             .filter(Boolean)
@@ -226,12 +229,20 @@ export async function suscripciones(
   const nombre = texto(datos.nombre, 80);
   const correo = (texto(datos.correo, 120) ?? "").toLowerCase();
   const origen = texto(datos.origen, 300) ?? "";
+  const guia = guiaPedida(typeof datos.guia === "string" ? datos.guia : undefined);
   if (nombre === null || !correo || !CORREO.test(correo)) return json({ error: "invalido" }, 400);
   if (datos.acepto !== true) return json({ error: "consentimiento" }, 400);
 
   const existente = await leer(env, correo);
-  // Ya está dentro: no se le vuelve a escribir ni se dice nada a quien prueba.
-  if (existente && (existente.estado === "activo" || existente.estado === "terminado")) return json({ ok: true });
+  // Ya está dentro (confirmó antes): se le manda directamente la guía que
+  // pide ahora, sin volver a empezar la serie.
+  if (existente && (existente.estado === "activo" || existente.estado === "terminado")) {
+    const baja = await enlacesBaja(env, correo);
+    ctx.waitUntil(
+      enviar(env, correo, SECUENCIA[0].crear({ nombre: existente.nombre, baja: baja.pagina, guia }), "guia-extra", baja.servidor),
+    );
+    return json({ ok: true });
+  }
 
   const s: Suscriptor = {
     correo,
@@ -240,11 +251,12 @@ export async function suscripciones(
     alta: Date.now(),
     consentimiento: { texto: TEXTO_CONSENTIMIENTO, fecha: Date.now() },
     origen,
+    guia: guia.slug,
     paso: 0,
   };
   await guardar(env, s, SIETE_DIAS);
   const confirmar = await enlaceFirmado(env, "/correo/confirmar", "confirmar", correo);
-  const ok = await enviar(env, correo, confirmarSuscripcion(nombre, confirmar), "confirmar-suscripcion");
+  const ok = await enviar(env, correo, confirmarSuscripcion(nombre, confirmar, guia), "confirmar-suscripcion");
   console.log(JSON.stringify({ lista: "alta", correo_enviado: ok }));
   return ok ? json({ ok: true }) : json({ error: "fallo" }, 502);
 }

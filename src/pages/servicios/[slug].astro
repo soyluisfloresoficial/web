@@ -6,6 +6,8 @@ import Cierre from "../../components/Cierre.astro";
 import Icono from "../../components/Icono.astro";
 import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import PruebaSocial from "../../components/PruebaSocial.astro";
+import CapturaGuia from "../../components/CapturaGuia.astro";
+import { guiaDeServicio } from "../../data/guias";
 import { servicios, SITIO, AREA_SERVIDA } from "../../data/servicios";
 import { detalles, metas } from "../../data/servicios-detalle";
 import { ilustraciones } from "../../data/ilustraciones";
@@ -288,6 +290,9 @@ const schema = [
         </ul>
       </div>
     </section>
+
+    {/* La guía gratis de este servicio, para quien todavía no está listo para la llamada. */}
+    <CapturaGuia ubicacion={`servicio-${servicio.slug}`} guia={guiaDeServicio(servicio.slug).slug} />
 
     <Cierre
       titulo="¿Este servicio es para tu negocio?"

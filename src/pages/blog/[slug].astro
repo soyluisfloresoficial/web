@@ -9,6 +9,7 @@ import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import { ilustraciones } from "../../data/ilustraciones";
 import Cierre from "../../components/Cierre.astro";
 import CapturaGuia from "../../components/CapturaGuia.astro";
+import { guiaDeServicio } from "../../data/guias";
 import Icono from "../../components/Icono.astro";
 import { minutosLectura, palabras } from "../../data/lectura";
 import { imagenOg } from "../../data/og";
@@ -206,7 +207,7 @@ const schema = [
     </article>
 
     {/* Guía gratis: quien termina de leer ya mostró interés (EMAIL-MARKETING.md). */}
-    <CapturaGuia ubicacion="blog-articulo" />
+    <CapturaGuia ubicacion="blog-articulo" guia={guiaDeServicio(post.data.servicio).slug} />
 
     {
       relacionados.length > 0 && (

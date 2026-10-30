@@ -13,6 +13,12 @@
  */
 // Con extensión .ts para que tools/probar-agenda.mjs lo pueda cargar con Node.
 import { CONTACTO, maquetar, type Correo } from "./correo-plantillas.ts";
+import { GUIAS, GUIA_GENERAL, tituloGuia, type Guia } from "../data/guias.ts";
+
+/** La guía de un suscriptor; si el dato no existe, la general. */
+export function guiaPedida(slug: string | undefined): Guia {
+  return (slug && GUIAS[slug]) || GUIAS[GUIA_GENERAL];
+}
 
 /** Lo que dice la casilla del formulario (CapturaGuia.astro). Si cambia allí, cambia aquí. */
 export const TEXTO_CONSENTIMIENTO =
@@ -41,16 +47,19 @@ interface DatosCorreo {
   nombre: string;
   /** Enlace firmado de baja (el de la cabecera List-Unsubscribe es el mismo). */
   baja: string;
+  /** La guía que pidió: la entrega el primer correo y el último invita desde su servicio. */
+  guia: Guia;
 }
 
 /** Doble confirmación: lo primero que recibe, antes de entrar en la lista. */
-export function confirmarSuscripcion(nombre: string, confirmar: string): Correo {
+export function confirmarSuscripcion(nombre: string, confirmar: string, guia: Guia = guiaPedida(undefined)): Correo {
+  const titulo = tituloGuia(guia);
   return maquetar({
     asunto: "Confirma tu correo y te mando la guía",
-    previa: "Un clic y te llega «Qué automatizar primero en tu negocio».",
+    previa: `Un clic y te llega «${titulo}».`,
     bloques: [
       { p: hola(nombre) },
-      { p: "Pediste la guía «Qué automatizar primero en tu negocio». Para mandártela, confirma que este correo es tuyo:" },
+      { p: `Pediste la guía «${titulo}». Para mandártela, confirma que este correo es tuyo:` },
       { boton: { texto: "Confirmar y recibir la guía", url: confirmar } },
       { p: "Si no fuiste tú, ignora este mensaje: sin confirmar no te llega nada más y tus datos se borran solos en unos días." },
     ],
@@ -72,15 +81,15 @@ export const SECUENCIA: PasoSecuencia[] = [
     nombre: "guia",
     crear: (d) =>
       maquetar({
-        asunto: "Tu guía: qué automatizar primero",
-        previa: "Aquí la tienes, con una hoja para anotar tus tareas.",
+        asunto: `Tu guía: ${tituloGuia(d.guia)}`,
+        previa: "Aquí la tienes, con una hoja para aplicarla a tu caso.",
         baja: d.baja,
         bloques: [
           { p: hola(d.nombre) },
-          { p: "Gracias por confirmar. Aquí tienes la guía:" },
-          { boton: { texto: "Abrir la guía", url: enlace("/guia/que-automatizar-primero", "guia") } },
+          { p: `Gracias por confirmar. Aquí tienes «${tituloGuia(d.guia)}»:` },
+          { boton: { texto: "Abrir la guía", url: enlace(`/guia/${d.guia.slug}`, "guia") } },
           {
-            p: "Te propongo usarla así: esta semana anota las tareas que repites, con cuántas veces las haces y cuánto te toman. Con esa lista, la guía te ayuda a elegir una sola para empezar.",
+            p: `Te propongo usarla así: esta semana completa la hoja de la parte 2, «${d.guia.hoja.titulo}». Con eso, el resto de la guía te ayuda a elegir por dónde empezar.`,
           },
           { p: "En unos días te escribo con lo que suele pasar en la atención a clientes, que es por donde más conviene empezar." },
         ],
@@ -187,10 +196,10 @@ export const SECUENCIA: PasoSecuencia[] = [
         bloques: [
           { p: hola(d.nombre) },
           {
-            p: "Estos días te conté por dónde suele convenir empezar. Si quieres verlo con tu caso, en una llamada de 30 minutos me cuentas cómo trabajas y te digo qué automatizaría primero, con qué herramienta y qué puedes esperar.",
+            p: "Estos días te conté por dónde suele convenir empezar. Si quieres verlo con tu caso, en una llamada de 30 minutos me cuentas cómo trabajas y te digo qué haría primero, con qué herramienta y qué puedes esperar.",
           },
           { p: "Es gratis, por videollamada y sin compromiso. Si no tiene sentido trabajar juntos, te lo digo." },
-          { boton: { texto: "Elegir día y hora", url: enlace("/diagnostico", "llamada") } },
+          { boton: { texto: "Elegir día y hora", url: enlace(`/diagnostico/${d.guia.servicio}`, "llamada") } },
           { p: "Si ahora no es el momento, no pasa nada. Este es el último correo de la serie." },
         ],
         firma: ["Luis"],

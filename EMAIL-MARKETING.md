@@ -6,9 +6,11 @@ de diagnóstico.
 
 ## Cómo funciona
 
-1. **El gancho:** la guía «Qué automatizar primero en tu negocio». El
-   formulario está al final de cada artículo del blog, en el índice del blog
-   y en https://soyluisflores.es/guia (página pensada para redes y anuncios).
+1. **El gancho:** una guía gratis por servicio (ver la tabla de abajo). La
+   general, «Qué automatizar primero en tu negocio», está en el índice del
+   blog y en https://soyluisflores.es/guia (página para redes y anuncios).
+   Cada página de servicio ofrece la suya, y cada artículo del blog, la de
+   su servicio.
 2. **Consentimiento:** la persona escribe su correo (el nombre es opcional)
    y marca la casilla. Sin casilla no se envía nada.
 3. **Doble confirmación:** le llega un correo con el botón «Confirmar y
@@ -24,12 +26,35 @@ de diagnóstico.
 | Día | Asunto | Qué dice | A dónde lleva |
 |---|---|---|---|
 | 0 | Confirma tu correo y te mando la guía | Botón para confirmar | `/correo/confirmar` |
-| 0 | Tu guía: qué automatizar primero | La guía y cómo usarla esta semana | `/guia/que-automatizar-primero` |
+| 0 | Tu guía: (la que pidió) | La guía y cómo usarla esta semana | `/guia/<guía>` |
 | 2 | Lo que pasa cuando respondes tarde | Atención y agentes de IA que no inventan | Artículo de agentes de IA |
 | 4 | Herramientas que no se hablan | Automatizar sin que nada se rompa | Artículo de conectar herramientas |
 | 7 | Dónde se te escapan los contactos | Ordenarlos en un CRM | Artículo de CRM |
 | 10 | Qué mirar para decidir | Las pocas cifras que importan | Artículo de métricas |
-| 14 | ¿Lo vemos en tu negocio? | Invitación a la llamada; es el último | `/diagnostico` |
+| 14 | ¿Lo vemos en tu negocio? | Invitación a la llamada; es el último | `/diagnostico/<servicio de la guía>` |
+
+Los correos de los días 2 a 10 son los mismos para todas las guías. Si
+alguien que ya está en la lista pide otra guía, le llega directamente, sin
+volver a empezar la serie.
+
+## Las guías
+
+| Servicio | Guía | Dirección |
+|---|---|---|
+| Automatización (la general) | Qué automatizar primero en tu negocio | `/guia/que-automatizar-primero` |
+| Agentes de IA | Prepara tu negocio para un agente de IA | `/guia/preparar-un-agente-de-ia` |
+| Funnels de conversión | Tu embudo de ventas, paso a paso | `/guia/embudo-de-ventas-paso-a-paso` |
+| CRM y seguimiento | Ordena tus contactos en un CRM | `/guia/ordenar-tus-contactos-en-un-crm` |
+| Email marketing | Tu primera secuencia de correos | `/guia/tu-primera-secuencia-de-correos` |
+| Paneles de métricas | Las cifras de tu negocio en una sola pantalla | `/guia/las-cifras-de-tu-negocio` |
+| Páginas web | Una web que te trae clientes | `/guia/una-web-que-trae-clientes` |
+| Meta Ads y Google Ads | Antes de invertir en anuncios | `/guia/antes-de-invertir-en-anuncios` |
+| Consultoría de IA | Por dónde empezar con la IA en tu negocio | `/guia/por-donde-empezar-con-ia` |
+
+Todas tienen las mismas partes: el criterio (tres condiciones con su
+pregunta), una hoja para rellenar, ideas por área, un plan de cinco pasos con
+sus señales de alto y la invitación a la llamada. El contenido está en
+`src/data/guias.ts` y sale de las fichas de cada servicio y del blog.
 
 - Mismo diseño que los correos de la agenda: cabecera «LUIS FLORES»,
   degradado azul a violeta, un solo botón o enlace por correo.
@@ -47,7 +72,7 @@ de diagnóstico.
 | Diseño de los correos | `maquetar()` en `src/worker/correo-plantillas.ts` |
 | Alta, confirmación, baja y envío programado | `src/worker/suscripciones.ts` (cron de `wrangler.jsonc`, cada 10 minutos) |
 | Formulario | `src/components/CapturaGuia.astro` |
-| La guía | `src/pages/guia/que-automatizar-primero.astro` |
+| Las guías | Contenido en `src/data/guias.ts`; diseño en `src/pages/guia/[slug].astro` |
 | Página para pedirla | `src/pages/guia/index.astro` |
 | Confirmar y darse de baja | `src/pages/correo/[accion].astro` |
 | Lista de suscriptores | KV de Cloudflare `web-suscriptores` (enlace `SUSCRIPTORES`) |
@@ -71,7 +96,8 @@ nuevo.
 ## Medición
 
 Al pedir la guía, la web envía a Tag Manager el evento `sign_up` con
-`method: "guia-automatizar"`. En GA4 márcalo como evento clave. Para
+`method: "guia-<guía>"` (por ejemplo `guia-preparar-un-agente-de-ia`), así
+ves qué guía capta más. En GA4 márcalo como evento clave. Para
 anuncios de captación (por ejemplo en Meta, objetivo «clientes potenciales»)
 crea con ese evento la conversión, igual que `generate_lead` en
 `FUNNELS.md`.

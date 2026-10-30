@@ -10,27 +10,28 @@
  * La casilla dice lo mismo que TEXTO_CONSENTIMIENTO en
  * src/worker/suscripciones.ts: si cambias una, cambia la otra.
  *
- * Medición: sign_up con method "guia-automatizar" al pedirla. Va en el blog
- * (cada artículo y el índice) y en /guia.
+ * Medición: sign_up con method "guia-<guía>" al pedirla. Va en el blog (cada
+ * artículo con la guía de su servicio, el índice con la general), en cada
+ * página de servicio con la suya y en /guia.
  */
 import Icono from "./Icono.astro";
 import { SITIO } from "../data/servicios";
+import { GUIAS, GUIA_GENERAL, tituloGuia } from "../data/guias";
 
 interface Props {
   /** Dónde está el formulario: se anota con la suscripción. */
   ubicacion: string;
   /** Sin la sección envolvente, para usarlo dentro de otra (/guia). */
   suelto?: boolean;
+  /** Guía que se entrega (src/data/guias.ts). Por defecto, la general. */
+  guia?: string;
+  /** Para cambiar el titular, por ejemplo en /guia. */
   titulo?: string;
 }
 
-const { ubicacion, suelto = false, titulo = "Qué automatizar primero en tu negocio" } = Astro.props;
-const incluye = [
-  "El criterio de las tres condiciones para elegir bien",
-  "Una hoja para anotar las tareas de una semana",
-  "Ideas de primeras automatizaciones por área",
-  "Un plan de cinco pasos para empezar sin complicarte",
-];
+const { ubicacion, suelto = false, guia = GUIA_GENERAL } = Astro.props;
+const g = GUIAS[guia] ?? GUIAS[GUIA_GENERAL];
+const titulo = Astro.props.titulo ?? tituloGuia(g);
 const id = `guia-${ubicacion}`;
 ---
 
@@ -41,14 +42,13 @@ const id = `guia-${ubicacion}`;
         <p class="eyebrow">Guía gratis</p>
         <h2 id={`${id}-titulo`} class="captura-titulo mt-4">{titulo}</h2>
         <p class="card-text mt-4">
-          Una guía práctica para elegir tu primera automatización con un criterio
-          sencillo. Te la mando por correo y, después, algunos consejos para
+          {g.resumen} Te la mando por correo y, después, algunos consejos para
           aplicarla.
         </p>
-        <ul class="lista-check mt-6">{incluye.map((i) => <li>{i}</li>)}</ul>
+        <ul class="lista-check mt-6">{g.incluye.map((i) => <li>{i}</li>)}</ul>
       </div>
 
-      <form class="captura-form" data-captura data-ubicacion={ubicacion} data-whatsapp={SITIO.whatsapp} novalidate>
+      <form class="captura-form" data-captura data-ubicacion={ubicacion} data-whatsapp={SITIO.whatsapp} data-guia={g.slug} novalidate>
         <div data-captura-campos>
           <label class="captura-campo">
             <span>Tu nombre</span>
@@ -142,12 +142,13 @@ const id = `guia-${ubicacion}`;
                 nombre: String(datos.get("nombre") ?? ""),
                 correo,
                 acepto: true,
+                guia: form.dataset.guia,
                 web: String(datos.get("web") ?? ""),
                 origen,
               }),
             });
         if (r.ok) {
-          w.dataLayer?.push({ event: "sign_up", method: "guia-automatizar", page_path: location.pathname });
+          w.dataLayer?.push({ event: "sign_up", method: `guia-${form.dataset.guia}`, page_path: location.pathname });
           $("[data-captura-campos]").hidden = true;
           const exito = $("[data-captura-exito]");
           exito.hidden = false;

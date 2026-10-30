@@ -12,7 +12,7 @@
 | `form_start` | **GA4 - Evento form_start** | **Evento - form_start** | `form_id`, `page_path` | `src/components/Agenda.astro` (al elegir hora en la agenda) |
 | `generate_lead` | **GA4 - Evento generate_lead** | **Evento - generate_lead** | `form_id`, `method`, `page_path` | `Agenda.astro` (al confirmar la reserva) |
 
-Desde el 30/10/2026 la web también envía `sign_up` (`method: "guia-automatizar"`, `page_path`) cuando alguien pide la guía gratis (`src/components/CapturaGuia.astro`). Este contenedor todavía no trae su etiqueta: créala igual que la de `generate_lead` (ver `EMAIL-MARKETING.md`).
+Desde el 30/10/2026 la web también envía `sign_up` (`method: "guia-<guía>"`, `page_path`) cuando alguien pide una guía gratis (`src/components/CapturaGuia.astro`). Este contenedor todavía no trae su etiqueta: créala igual que la de `generate_lead` (ver `EMAIL-MARKETING.md`).
 
 Variables: **GA4 - ID de medición** (**[COMPLETAR: viene con `G-XXXXXXXXXX`]**) y **DLV - cta_location**, **DLV - cta_text**, **DLV - page_path**, **DLV - form_id**, **DLV - method** (variables de capa de datos, versión 2).
 

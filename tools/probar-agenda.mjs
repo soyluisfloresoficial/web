@@ -183,7 +183,9 @@ prueba("recordatorios, cancelación y aviso se arman sin errores", () => {
 
 // ----------------------------------------------------- Email marketing
 
-const { SECUENCIA, proximoEnvio, confirmarSuscripcion, TEXTO_CONSENTIMIENTO } = await import("../src/worker/secuencia.ts");
+const { SECUENCIA, proximoEnvio, confirmarSuscripcion, TEXTO_CONSENTIMIENTO, guiaPedida } = await import("../src/worker/secuencia.ts");
+const { GUIAS, guiaDeServicio } = await import("../src/data/guias.ts");
+const GENERAL = guiaPedida(undefined);
 const BAJA = "https://soyluisflores.es/correo/baja?e=ana%40example.com&f=abc";
 
 prueba("la secuencia: 6 correos en 14 días, en orden, y después termina", () => {
@@ -197,13 +199,38 @@ prueba("la secuencia: 6 correos en 14 días, en orden, y después termina", () =
 
 prueba("cada correo de la serie lleva la baja, su campaña y un solo botón o enlace", () => {
   for (const p of SECUENCIA) {
-    const c = p.crear({ nombre: "Ana <b>Pérez</b>", baja: BAJA });
+    const c = p.crear({ nombre: "Ana <b>Pérez</b>", baja: BAJA, guia: GENERAL });
     assert.ok(c.html.includes("Darte de baja") && c.html.includes("correo/baja?e=ana%40example.com&amp;f=abc"), p.nombre);
     assert.ok(c.texto.includes(BAJA), p.nombre);
     assert.ok(c.html.includes("utm_campaign=guia-automatizar"), p.nombre);
     assert.ok(!c.html.includes("<b>Pérez"), "escapa el nombre");
     assert.ok(!/—/.test(c.html + c.texto + c.asunto), `sin rayas largas en ${p.nombre}`);
   }
+});
+
+prueba("hay una guía completa por cada servicio", () => {
+  const slugs = ["agentes-ia", "funnels-conversion", "automatizacion", "crm-seguimiento-leads", "email-marketing", "paneles-de-metricas", "webs-ia", "trafico-de-pago", "consultoria-ia"];
+  for (const s of slugs) {
+    const g = guiaDeServicio(s);
+    assert.equal(g.servicio, s, `falta la guía de ${s}`);
+    assert.equal(g.incluye.length, 4);
+    assert.equal(g.criterio.puntos.length, 3);
+    assert.ok(g.hoja.columnas.length >= 3 && g.hoja.filas > 0);
+    assert.ok(g.ideas.grupos.length === 4 && g.plan.pasos.length === 5 && g.alto.items.length >= 3);
+    assert.ok(!/—/.test(JSON.stringify(g)), `sin rayas largas en ${g.slug}`);
+  }
+  assert.equal(Object.keys(GUIAS).length, 9);
+});
+
+prueba("cada guía se entrega a sí misma y el último correo va al funnel de su servicio", () => {
+  for (const g of Object.values(GUIAS)) {
+    const primero = SECUENCIA[0].crear({ nombre: "Ana", baja: BAJA, guia: g });
+    const ultimo = SECUENCIA.at(-1).crear({ nombre: "Ana", baja: BAJA, guia: g });
+    assert.ok(primero.html.includes(`/guia/${g.slug}?`), g.slug);
+    assert.ok(primero.asunto.includes(g.destacado), g.slug);
+    assert.ok(ultimo.html.includes(`/diagnostico/${g.servicio}?`), g.slug);
+  }
+  assert.equal(guiaPedida("no-existe").slug, GENERAL.slug);
 });
 
 prueba("la confirmación de la suscripción lleva el botón de confirmar", () => {
@@ -226,7 +253,7 @@ if (process.env.VISTA_CORREOS) {
     "recordatorio-1h": correos.recordatorio1(limpia),
     cancelacion: correos.cancelacion(limpia),
   };
-  for (const p of SECUENCIA) lista[`secuencia-${p.nombre}`] = p.crear({ nombre: "Ana Pérez", baja: BAJA });
+  for (const p of SECUENCIA) lista[`secuencia-${p.nombre}`] = p.crear({ nombre: "Ana Pérez", baja: BAJA, guia: GENERAL });
   for (const [n, c] of Object.entries(lista)) fs.writeFileSync(`${process.env.VISTA_CORREOS}/${n}.html`, c.html);
 }
 

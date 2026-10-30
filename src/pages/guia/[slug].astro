@@ -1,95 +1,40 @@
 ---
 /**
- * La guía gratis (30/10/2026): «Qué automatizar primero en tu negocio».
- * Llega por correo al confirmar la suscripción (EMAIL-MARKETING.md).
+ * Las guías gratis (30/10/2026), una por servicio: /guia/<slug>. Llegan por
+ * correo al confirmar la suscripción (EMAIL-MARKETING.md). El contenido está
+ * en src/data/guias.ts; aquí solo el diseño, igual para todas.
  *
- * El contenido sale del artículo /blog/que-automatizar-primero (su criterio
- * de tres condiciones y su plan de cinco pasos), puesto en forma de
- * herramienta: hoja para anotar, ideas por área y señales de alto. Sin cifras
- * ni casos.
+ * Partes: el criterio (tres condiciones con su pregunta), una hoja para
+ * rellenar, ideas por área, el plan de cinco pasos con sus señales de alto y
+ * la invitación a la llamada desde el funnel del servicio.
  *
- * noindex y fuera del sitemap: repite el artículo y es para quien la pidió.
- * Se puede guardar en PDF (botón de imprimir, con estilos de impresión).
+ * noindex y fuera del sitemap: son para quien las pidió y se apoyan en los
+ * artículos del blog. Se pueden guardar en PDF (estilos de impresión).
  */
 import Base from "../../layouts/Base.astro";
 import Icono from "../../components/Icono.astro";
+import { GUIAS, type Guia } from "../../data/guias";
 
-const condiciones = [
-  {
-    titulo: "Se repite seguido",
-    texto: "Si pasa una vez al mes, casi nunca compensa armarla y mantenerla. Si pasa varias veces al día, cada minuto que ahorras se multiplica.",
-    pregunta: "¿Cuántas veces por semana la haces y cuántos minutos te toma cada vez?",
-  },
-  {
-    titulo: "Sigue reglas claras",
-    texto: "Siempre entra lo mismo y siempre sale lo mismo: confirmar una cita, registrar un contacto, mandar un recordatorio. Lo que necesita criterio humano se queda en tu equipo.",
-    pregunta: "¿Se resuelve siempre igual o depende de cada caso?",
-  },
-  {
-    titulo: "Afecta a tus clientes",
-    texto: "Contestar tarde a un cliente potencial tiene un costo directo. Por eso la atención y el seguimiento suelen ser el mejor primer paso.",
-    pregunta: "Si esta tarea se retrasa, ¿lo nota un cliente?",
-  },
-];
+export function getStaticPaths() {
+  return Object.values(GUIAS).map((g) => ({ params: { slug: g.slug }, props: { g } }));
+}
 
-const areas = [
-  {
-    nombre: "Atención",
-    icono: "chat",
-    ideas: ["Responder preguntas frecuentes con la información que tú apruebas", "Confirmar y recordar citas", "Avisar a una persona cuando la consulta lo necesita"],
-  },
-  {
-    nombre: "Ventas",
-    icono: "embudo",
-    ideas: ["Registrar cada contacto nuevo en el CRM, con su origen", "Hacer seguimiento de presupuestos que no tuvieron respuesta", "Mandar la información que pidió un cliente potencial"],
-  },
-  {
-    nombre: "Administración",
-    icono: "flujo",
-    ideas: ["Pasar los datos de un formulario a tus herramientas", "Avisar de pagos recibidos o pendientes", "Ordenar documentos que llegan por correo"],
-  },
-  {
-    nombre: "Equipo",
-    icono: "usuarios",
-    ideas: ["Avisar al responsable cuando entra un contacto importante", "Repartir tareas nuevas según reglas fijas", "Un resumen semanal con las cifras que importan"],
-  },
-] as const;
-
-const pasos = [
-  "Anota las tareas repetitivas de una semana normal en la hoja de abajo.",
-  "Marca las que cumplen las tres condiciones.",
-  "Elige una sola y mide cuánto tiempo te toma hoy.",
-  "Automatízala y vuelve a medir a las dos o tres semanas.",
-  "Recién ahí pasa a la siguiente.",
-];
-
-const alto = [
-  "Pasa una vez al mes o menos.",
-  "Cada vez se resuelve distinto y necesita criterio humano: negociar, evaluar un caso complicado o dar una mala noticia.",
-  "Todavía no tienes claro cómo debería hacerse a mano. Primero ordena el proceso; después se automatiza.",
-];
+const { g } = Astro.props as { g: Guia };
+const llamada = `/diagnostico/${g.servicio}?utm_source=guia&utm_medium=web&utm_campaign=${g.slug}`;
 ---
 
-<Base
-  title="Guía: qué automatizar primero en tu negocio | Luis Flores"
-  description="Guía práctica para elegir tu primera automatización: el criterio de las tres condiciones, una hoja para anotar tus tareas e ideas por área."
-  noindex
->
+<Base title={`Guía: ${g.titulo} ${g.destacado} | Luis Flores`} description={g.resumen} noindex>
   <main class="guia">
     <header class="section guia-portada">
       <div class="container-lf guia-estrecha">
         <p class="eyebrow">Guía práctica · Luis Flores</p>
-        <h1 class="guia-h1 mt-4">Qué automatizar primero <span class="gradient-text">en tu negocio</span></h1>
-        <p class="lead mt-5">
-          Elegir bien la primera automatización es lo que hace que funcione y que tu
-          equipo le tenga confianza. Esta guía te da un criterio sencillo y una hoja
-          para aplicarlo a tu caso en una semana.
-        </p>
+        <h1 class="guia-h1 mt-4">{g.titulo} <span class="gradient-text">{g.destacado}</span></h1>
+        <p class="lead mt-5">{g.entrada}</p>
         <div class="botones mt-8 no-imprimir">
           <button type="button" class="cta" data-imprimir>
             Guardar en PDF o imprimir
           </button>
-          <a class="boton-secundario" href="/blog/que-automatizar-primero">Leer el artículo completo</a>
+          {g.articulo && <a class="boton-secundario" href={g.articulo.href}>{g.articulo.texto}</a>}
         </div>
       </div>
     </header>
@@ -97,10 +42,10 @@ const alto = [
     <section class="section banda" aria-labelledby="g-criterio" data-acento="violeta">
       <div class="container-lf guia-estrecha">
         <p class="eyebrow">1 · El criterio</p>
-        <h2 id="g-criterio" class="subrayado mt-4">Una buena primera tarea cumple tres condiciones</h2>
+        <h2 id="g-criterio" class="subrayado mt-4">{g.criterio.titulo}</h2>
         <ol class="guia-condiciones mt-10">
           {
-            condiciones.map((c, n) => (
+            g.criterio.puntos.map((c, n) => (
               <li class="card tarjeta">
                 <span class="guia-num" aria-hidden="true">0{n + 1}</span>
                 <h3 class="card-title mt-4">{c.titulo}</h3>
@@ -115,33 +60,17 @@ const alto = [
 
     <section class="section" aria-labelledby="g-hoja" data-acento="turquesa">
       <div class="container-lf guia-estrecha">
-        <p class="eyebrow">2 · Tu hoja de la semana</p>
-        <h2 id="g-hoja" class="subrayado mt-4">Anota tus tareas repetidas</h2>
-        <p class="lead mt-5">
-          No hace falta precisión: alcanza con una idea aproximada. Al final de la
-          semana, la que tenga más marcas y más minutos suele ser tu primera
-          candidata.
-        </p>
+        <p class="eyebrow">2 · Tu hoja</p>
+        <h2 id="g-hoja" class="subrayado mt-4">{g.hoja.titulo}</h2>
+        <p class="lead mt-5">{g.hoja.texto}</p>
         <div class="guia-tabla mt-8">
           <table>
             <thead>
-              <tr>
-                <th scope="col">Tarea</th>
-                <th scope="col">Veces por semana</th>
-                <th scope="col">Minutos cada vez</th>
-                <th scope="col">¿Reglas claras?</th>
-                <th scope="col">¿Afecta al cliente?</th>
-              </tr>
+              <tr>{g.hoja.columnas.map((c) => <th scope="col">{c}</th>)}</tr>
             </thead>
             <tbody>
-              {Array.from({ length: 6 }, () => (
-                <tr>
-                  <td />
-                  <td />
-                  <td />
-                  <td />
-                  <td />
-                </tr>
+              {Array.from({ length: g.hoja.filas }, () => (
+                <tr>{g.hoja.columnas.map(() => <td />)}</tr>
               ))}
             </tbody>
           </table>
@@ -152,16 +81,16 @@ const alto = [
     <section class="section banda" aria-labelledby="g-ideas" data-acento="cian">
       <div class="container-lf guia-estrecha">
         <p class="eyebrow">3 · Ideas para empezar</p>
-        <h2 id="g-ideas" class="subrayado mt-4">Primeras automatizaciones que suelen cumplir las tres</h2>
+        <h2 id="g-ideas" class="subrayado mt-4">{g.ideas.titulo}</h2>
         <div class="guia-areas mt-10">
           {
-            areas.map((a) => (
+            g.ideas.grupos.map((a) => (
               <div class="card tarjeta">
                 <span class="icono-caja" aria-hidden="true">
-                  <Icono nombre={a.icono} tamano={22} grosor={1.6} />
+                  <Icono nombre={a.icono as never} tamano={22} grosor={1.6} />
                 </span>
                 <h3 class="card-title mt-4">{a.nombre}</h3>
-                <ul class="lista-check mt-4">{a.ideas.map((i) => <li>{i}</li>)}</ul>
+                <ul class="lista-check mt-4">{a.items.map((i) => <li>{i}</li>)}</ul>
               </div>
             ))
           }
@@ -173,17 +102,14 @@ const alto = [
       <div class="container-lf guia-estrecha guia-dos">
         <div>
           <p class="eyebrow">4 · El plan</p>
-          <h2 id="g-plan" class="subrayado mt-4">Cinco pasos, de una en una</h2>
-          <ol class="guia-pasos mt-8">{pasos.map((p) => <li>{p}</li>)}</ol>
-          <p class="card-text mt-6">
-            Ir de una en una parece lento, pero es lo que hace que funcione de verdad.
-            En mi propio negocio lo hice exactamente así.
-          </p>
+          <h2 id="g-plan" class="subrayado mt-4">{g.plan.titulo}</h2>
+          <ol class="guia-pasos mt-8">{g.plan.pasos.map((p) => <li>{p}</li>)}</ol>
+          {g.plan.cierre && <p class="card-text mt-6">{g.plan.cierre}</p>}
         </div>
         <div class="card tarjeta">
           <p class="eyebrow">Señales de alto</p>
-          <h3 class="card-title mt-4">Todavía no conviene automatizarla si…</h3>
-          <ul class="lista-cruz mt-5">{alto.map((a) => <li>{a}</li>)}</ul>
+          <h3 class="card-title mt-4">{g.alto.titulo}</h3>
+          <ul class="lista-cruz mt-5">{g.alto.items.map((a) => <li>{a}</li>)}</ul>
         </div>
       </div>
     </section>
@@ -193,10 +119,10 @@ const alto = [
         <h2 id="g-llamada" class="guia-cierre-titulo">¿Prefieres verlo con tu caso?</h2>
         <p class="lead mt-4">
           En una llamada gratis de 30 minutos me cuentas cómo trabajas y te digo qué
-          automatizaría primero, con qué herramienta y qué puedes esperar.
+          haría primero, con qué herramienta y qué puedes esperar.
         </p>
         <div class="botones botones-centro mt-8">
-          <a class="cta" href="/diagnostico?utm_source=guia&utm_medium=web&utm_campaign=guia-automatizar">
+          <a class="cta" href={llamada}>
             <Icono nombre="calendario" tamano={18} />
             Elegir día y hora <span aria-hidden="true">→</span>
           </a>
