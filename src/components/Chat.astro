@@ -302,6 +302,52 @@ const sugerencias = [
       registro.scrollTop = caja.offsetTop - registro.offsetTop - 12;
     };
 
+    // Respuestas rápidas: el asistente cierra algunas respuestas con una línea
+    // «Opciones: A | B | C» (ver instrucciones.ts). Esa línea no se muestra:
+    // se convierte en botones que contestan con un toque.
+    const separarOpciones = (respuesta: string) => {
+      const m = /\n\s*Opciones:\s*(.+)\s*$/i.exec(respuesta);
+      if (!m) return { texto: respuesta, opciones: [] as string[] };
+      const opciones = m[1]
+        .split("|")
+        .map((o) => o.trim().replace(/[.«»"]/g, ""))
+        .filter((o) => o && o.length <= 40 && !/https?:|@/.test(o))
+        .slice(0, 4);
+      return { texto: respuesta.slice(0, m.index).trim(), opciones };
+    };
+
+    const pintarOpciones = (opciones: string[]) => {
+      if (!opciones.length) return;
+      const caja = document.createElement("div");
+      caja.className = "sugerencias respuestas-rapidas";
+      caja.dataset.chatSugerencias = "";
+      for (const texto of opciones) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "sugerencia";
+        b.textContent = texto;
+        b.addEventListener("click", () => {
+          if (/agendar/i.test(texto)) {
+            location.href = "/contacto";
+          } else if (/^otr[oa]s?\b/i.test(texto)) {
+            // «Otro sector»: mejor que lo escriba con sus palabras.
+            caja.remove();
+            input.placeholder = "Cuéntamelo con tus palabras…";
+            input.focus();
+          } else {
+            void preguntar(texto);
+          }
+        });
+        caja.append(b);
+      }
+      registro.append(caja);
+      // Que se vean los botones sin perder el principio de la respuesta.
+      const mensaje = caja.previousElementSibling as HTMLElement | null;
+      const inicio = (mensaje ?? caja).offsetTop - registro.offsetTop - 12;
+      const fin = caja.offsetTop - registro.offsetTop + caja.offsetHeight + 12 - registro.clientHeight;
+      registro.scrollTop = Math.min(inicio, Math.max(registro.scrollTop, fin));
+    };
+
     // ------------------------------------------------------------ IA
     type Turno = { rol: "usuario" | "asistente"; texto: string };
     const historial: Turno[] = [];
@@ -373,7 +419,8 @@ const sugerencias = [
     const preguntar = async (texto: string) => {
       const t = texto.trim().slice(0, 800);
       if (!t || esperando) return;
-      raiz.querySelector("[data-chat-sugerencias]")?.remove();
+      raiz.querySelectorAll("[data-chat-sugerencias]").forEach((s) => s.remove());
+      input.placeholder = "Escribe tu pregunta…";
       pintar("usuario", [t]);
 
       if (sinIA) return respuestaLocal(t);
@@ -390,8 +437,11 @@ const sugerencias = [
       input.focus();
 
       if (respuesta) {
+        // El historial guarda la línea de opciones: así el asistente sabe qué ofreció.
         historial.push({ rol: "asistente", texto: respuesta });
-        pintarRespuesta(respuesta);
+        const { texto, opciones } = separarOpciones(respuesta);
+        pintarRespuesta(texto);
+        pintarOpciones(opciones);
       } else {
         // La pregunta se queda sin turno de respuesta: se quita para que el
         // historial siga alternando si la IA vuelve en el siguiente mensaje.
@@ -728,12 +778,14 @@ const sugerencias = [
     text-underline-offset: 2px;
   }
 
-  .sugerencias {
+  /* :global porque las respuestas rápidas se crean desde el script y no
+     llevan el atributo de estilos de Astro. */
+  .chat-registro :global(.sugerencias) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  .sugerencia {
+  .chat-registro :global(.sugerencia) {
     min-height: 2.75rem;
     padding: 0.4rem 0.875rem;
     border: 1px solid var(--color-line);
@@ -745,7 +797,18 @@ const sugerencias = [
     text-align: left;
     cursor: pointer;
   }
-  .sugerencia:hover {
+  /* Las que propone el asistente van pegadas a su mensaje y en azul: se ve
+     que son respuestas a su pregunta. */
+  .chat-registro :global(.respuestas-rapidas) {
+    margin-top: -0.25rem;
+  }
+  .chat-registro :global(.respuestas-rapidas .sugerencia) {
+    min-height: 2.5rem;
+    border-color: rgb(0 123 255 / 0.4);
+    background: rgb(0 123 255 / 0.08);
+    color: var(--color-ink);
+  }
+  .chat-registro :global(.sugerencia:hover) {
     border-color: rgb(0 123 255 / 0.5);
     color: var(--color-ink);
   }
