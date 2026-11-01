@@ -36,7 +36,7 @@ interface Env extends EnvAgenda, EnvSuscripciones {
   LIMITE_CHAT?: { limit(opciones: { key: string }): Promise<{ success: boolean }> };
 }
 
-const MODELO = "claude-opus-5-5";
+const MODELO = "claude-sonnet-5-5";
 // Modelos que aceptan el reintento automático en otro modelo si Claude
 // rechaza una petición por seguridad (fallbacks: "default").
 const CON_RESPALDO = new Set(["claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"]);
@@ -145,7 +145,7 @@ async function chat(request: Request, env: Env): Promise<Response> {
     const respuesta = await client.beta.messages.create({
       model: modelo,
       // Las respuestas son cortas; el margen es para el razonamiento interno.
-      max_tokens: 4096,
+      max_tokens: 2048,
       output_config: { effort: "low" },
       // Instrucciones y conocimiento son iguales en todas las peticiones de
       // una misma publicación: van en caché y se cobran a una décima parte.

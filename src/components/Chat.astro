@@ -33,8 +33,8 @@ const documentos = [
 
 const sugerencias = [
   "¿Qué se puede automatizar en mi negocio?",
-  "¿Cómo es la primera llamada?",
-  "¿Qué herramientas usas?",
+  "¿Cuánto cuesta?",
+  "¿Cómo es la llamada gratis?",
 ];
 ---
 
@@ -65,9 +65,10 @@ const sugerencias = [
   >
     <header class="chat-cabecera">
       <div>
-        <p id="chat-titulo" class="chat-titulo">Asistente de Luis Flores</p>
-        <p class="chat-sub" data-chat-sub>Asistente de IA · responde con la información de la web</p>
+        <p id="chat-titulo" class="chat-titulo">Asistente de Luis</p>
+        <p class="chat-sub" data-chat-sub>IA · responde en segundos</p>
       </div>
+      <a class="chat-agendar" href="/contacto">Agendar<span class="chat-agendar-largo">&nbsp;llamada</span></a>
       <button type="button" class="chat-cerrar" data-chat-cerrar>
         <span class="sr-only">Cerrar</span>
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -87,10 +88,10 @@ const sugerencias = [
         </span>
       </p>
       <div class="mensaje mensaje-bot">
+        <p>Hola, soy el asistente de la web de Luis.</p>
         <p>
-          Hola, soy el asistente de la web de Luis. Pregúntame por los servicios, cómo
-          trabaja, precios o plazos, o cuéntame a qué se dedica tu negocio y te digo qué
-          se podría automatizar primero.
+          Cuéntame a qué se dedica tu negocio y te digo qué se podría automatizar
+          primero, o elige una pregunta:
         </p>
       </div>
       <div class="sugerencias" data-chat-sugerencias>
@@ -270,6 +271,37 @@ const sugerencias = [
       return partes;
     };
 
+    // La respuesta de la IA llega en texto plano: los párrafos van separados
+    // por una línea en blanco y las listas son líneas que empiezan por «- ».
+    // Se pinta en bloques para que se lea fácil en el celular.
+    const pintarRespuesta = (texto: string) => {
+      const caja = document.createElement("div");
+      caja.className = "mensaje mensaje-bot";
+      for (const bloque of texto.split(/\n\s*\n/)) {
+        const lineas = bloque.split("\n").map((l) => l.trim()).filter(Boolean);
+        let lista: HTMLUListElement | null = null;
+        let parrafo: HTMLParagraphElement | null = null;
+        for (const linea of lineas) {
+          const item = /^[-•*]\s+(.*)$/.exec(linea);
+          if (item) {
+            parrafo = null;
+            if (!lista) caja.append((lista = document.createElement("ul")));
+            const li = document.createElement("li");
+            li.append(...conEnlaces(item[1]));
+            lista.append(li);
+          } else {
+            lista = null;
+            if (parrafo) parrafo.append(" ");
+            else caja.append((parrafo = document.createElement("p")));
+            parrafo.append(...conEnlaces(linea));
+          }
+        }
+      }
+      registro.append(caja);
+      // Se ve el principio de la respuesta, no el final: así se lee de arriba abajo.
+      registro.scrollTop = caja.offsetTop - registro.offsetTop - 12;
+    };
+
     // ------------------------------------------------------------ IA
     type Turno = { rol: "usuario" | "asistente"; texto: string };
     const historial: Turno[] = [];
@@ -359,7 +391,7 @@ const sugerencias = [
 
       if (respuesta) {
         historial.push({ rol: "asistente", texto: respuesta });
-        pintar("bot", conEnlaces(respuesta));
+        pintarRespuesta(respuesta);
       } else {
         // La pregunta se queda sin turno de respuesta: se quita para que el
         // historial siga alternando si la IA vuelve en el siguiente mensaje.
@@ -542,6 +574,39 @@ const sugerencias = [
     font-size: 0.75rem;
     color: var(--color-soft);
   }
+  .chat-cabecera > div {
+    flex: 1;
+    min-width: 0;
+  }
+  .chat-cabecera > div p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* El siguiente paso, siempre a mano sin tener que pedirlo. */
+  .chat-agendar {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    background: var(--grad-cta);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  @media (width < 420px) {
+    .chat-agendar-largo {
+      display: none;
+    }
+  }
+  .chat-agendar:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
   .chat-cerrar {
     display: grid;
     place-items: center;
@@ -586,6 +651,18 @@ const sugerencias = [
     border-bottom-right-radius: 4px;
     background: rgb(0 123 255 / 0.16);
     color: var(--color-ink);
+  }
+  .chat-registro :global(.mensaje > * + *) {
+    margin-top: 0.5rem;
+  }
+  .chat-registro :global(.mensaje ul) {
+    display: grid;
+    gap: 0.25rem;
+    padding-left: 1.1rem;
+    list-style: disc;
+  }
+  .chat-registro :global(.mensaje li::marker) {
+    color: var(--color-electric-soft);
   }
   .chat-registro :global(.mensaje a) {
     color: var(--color-electric-soft);

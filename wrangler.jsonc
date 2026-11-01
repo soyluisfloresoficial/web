@@ -46,9 +46,11 @@
   ],
   // Modelo del asistente. Va aquí y no en el panel porque cada publicación
   // reescribe las variables normales del panel con las de este archivo.
-  // Para gastar menos: "claude-haiku-5-5" (ver AGENTE.md).
+  // Sonnet 5.5 (2/11/2026): la mitad de costo que Opus, estable y con
+  // respaldo automático si rechaza algo. Para gastar aún menos:
+  // "claude-haiku-5-5" (ver AGENTE.md).
   "vars": {
-    "MODELO_CHAT": "claude-opus-5-5"
+    "MODELO_CHAT": "claude-sonnet-5-5"
   },
   // Cada 10 minutos el Worker revisa las citas y manda los recordatorios de
   // la agenda por correo (AGENDA.md) y los correos de la secuencia de la guía
