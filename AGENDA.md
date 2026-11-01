@@ -259,25 +259,26 @@ tamaños de equipo está en `src/components/Agenda.astro` y en
 listados en el apartado 3.a) de la política de privacidad (pendiente de
 revisión por un abogado).
 
-### La clave del panel (una sola vez)
+### La pantalla del panel y su clave (una sola vez)
 
-1. Genera una clave larga. En la terminal del proyecto:
+Desde el 04/11/2026 el panel tiene la pantalla **Ajustes → Horario de la
+agenda** (solo para el titular). No llama a la web desde el navegador: lo hace
+la Cloud Function `agendaHorario` del panel, que guarda la clave en Secret
+Manager. Así la clave nunca llega al navegador y no hace falta `PANEL_ORIGENES`.
 
-   ```bash
-   node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
-   ```
+Para conectarlo, con sesión iniciada en las dos cuentas (`npx firebase login` en
+la carpeta del panel y `npx wrangler login` en la de la web):
 
-2. Cloudflare → Worker **web** → **Configuración** → **Variables y secretos** →
-   **Añadir** → tipo **Secreto**, nombre `AGENDA_ADMIN_TOKEN`, valor: la clave.
-   **Implementar**.
-3. Pon la misma clave en la configuración secreta del panel (su `.env` o sus
-   secretos). Nunca en el código del panel que llega al navegador.
-4. Si el panel llama desde el navegador, añade en Cloudflare el secreto
-   `PANEL_ORIGENES` con su dirección, por ejemplo
-   `https://panel-soyluisflores.web.app` (varias, separadas por comas). Si
-   llama desde su servidor, no hace falta.
+```bash
+node tools/conectar-agenda.mjs
+```
 
-### Cómo lo usa el panel
+Inventa una clave al azar, la guarda en Firebase y en Cloudflare
+(`AGENDA_ADMIN_TOKEN`) sin mostrarla, compila y publica el panel, y comprueba
+que la web responde. Si falla, dice qué pasó. Repetirlo cambia la clave en los
+dos sitios.
+
+### Cómo lo usa el panel (la function `agendaHorario`)
 
 Dirección: `https://soyluisflores.es/api/agenda/config`, siempre con la
 cabecera `Authorization: Bearer <AGENDA_ADMIN_TOKEN>`.
