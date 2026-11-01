@@ -86,9 +86,11 @@ if (!enCloudflare.ok) parar(`Cloudflare no guardó la clave.\n${enCloudflare.sal
 console.log("   Guardada en Cloudflare como secreto del Worker web.");
 
 paso(3, "Compilo el panel y publico la función y la pantalla (tarda unos minutos)…");
-const compilacion = ejecutar("npm run build", panel);
+// Con el modo de su proyecto: sin modo, el panel sale apuntando al emulador local.
+const modo = proyecto.endsWith("-pruebas") ? "build:staging" : "build:prod";
+const compilacion = ejecutar(`npm run ${modo}`, panel);
 if (!compilacion.ok) parar(`el panel no compiló.\n${compilacion.salida.slice(-1200)}`);
-const despliegue = ejecutar(`npx firebase deploy --only functions:agendaHorario,hosting --project ${proyecto} --force`, panel);
+const despliegue = ejecutar(`npx firebase deploy --only functions:agendaHorario,functions:avisoLeadNuevo,hosting --project ${proyecto} --force`, panel);
 if (!despliegue.ok) {
   parar(`Firebase no publicó. Lo más común: el proyecto no está en el plan Blaze (DESPLIEGUE.md del panel).\n${despliegue.salida.slice(-1200)}`);
 }
