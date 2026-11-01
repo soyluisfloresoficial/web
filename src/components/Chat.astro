@@ -161,6 +161,20 @@ const sugerencias = [
     const sub = raiz.querySelector<HTMLElement>("[data-chat-sub]")!;
     const nota = raiz.querySelector<HTMLElement>("[data-chat-nota]")!;
 
+    // Medición (ver Medicion.astro y gtm/LEEME.md). Solo existe dataLayer si
+    // hay Tag Manager, y GTM solo carga si la persona aceptó las cookies.
+    // Nunca se manda lo que escribe la persona: solo qué hizo.
+    const medir = (event: string, extra: Record<string, string> = {}) =>
+      (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({ event, ...extra, page_path: location.pathname });
+
+    // Zona horaria del visitante: el asistente le habla en su hora.
+    let zona = "Europe/Madrid";
+    try {
+      zona = Intl.DateTimeFormat().resolvedOptions().timeZone || zona;
+    } catch {
+      /* navegador sin zona: se queda Madrid */
+    }
+
     // ------------------------------------------------------------ Búsqueda
     const VACIAS = new Set(
       "a al algo como con cual cuales de del el en es esta este esto hay la las lo los me mi mis o para pero por puede puedo que se si sin su sus te tu tus un una uno y ya yo".split(
@@ -327,15 +341,16 @@ const sugerencias = [
         b.className = "sugerencia";
         b.textContent = texto;
         b.addEventListener("click", () => {
-          if (/agendar/i.test(texto)) {
+          medir("chat_quick_reply", { chat_option: texto.slice(0, 40) });
+          if (/formulario/i.test(texto)) {
             location.href = "/contacto";
-          } else if (/^otr[oa]s?\b/i.test(texto)) {
+          } else if (/^otro sector$/i.test(texto)) {
             // «Otro sector»: mejor que lo escriba con sus palabras.
             caja.remove();
             input.placeholder = "Cuéntamelo con tus palabras…";
             input.focus();
           } else {
-            void preguntar(texto);
+            void preguntar(texto, "respuesta_rapida");
           }
         });
         caja.append(b);
@@ -373,23 +388,176 @@ const sugerencias = [
       return caja;
     };
 
+    // ------------------------------------------------------------ Cita
+    // El asistente prepara la cita (src/worker/chat-agenda.ts) y aquí se
+    // pinta una tarjeta para revisarla. La reserva la hace la persona al
+    // confirmar, con la casilla de privacidad, por POST /api/agenda: la misma
+    // validación y los mismos correos que el formulario de /contacto.
+    type Cita = {
+      inicio: string;
+      nombre: string;
+      correo: string;
+      telefono: string;
+      empresa: string;
+      sitioWeb: string;
+      sector: string;
+      equipo: string;
+      servicio: string;
+      mensaje: string;
+    };
+
+    const ZONA_MADRID = "Europe/Madrid";
+    const fechaCita = (ms: number, zonaHora: string, conDia = true) =>
+      new Intl.DateTimeFormat("es", {
+        timeZone: zonaHora,
+        ...(conDia ? { weekday: "long", day: "numeric", month: "long" } : {}),
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(ms);
+    const cuandoCita = (ms: number) =>
+      zona === ZONA_MADRID ? fechaCita(ms, zona) : `${fechaCita(ms, zona)} (${fechaCita(ms, ZONA_MADRID, false)} en Madrid)`;
+
+    const el = <K extends keyof HTMLElementTagNameMap>(tag: K, clase = "", texto = "") => {
+      const n = document.createElement(tag);
+      if (clase) n.className = clase;
+      if (texto) n.textContent = texto;
+      return n;
+    };
+
+    const pintarCita = (cita: Cita) => {
+      // Solo una tarjeta por confirmar: si el asistente corrige un dato, la nueva sustituye a la anterior.
+      raiz.querySelectorAll("[data-chat-cita]:not([data-confirmada])").forEach((t) => t.remove());
+      const ms = Date.parse(cita.inicio);
+      const tarjeta = el("div", "cita-tarjeta");
+      tarjeta.dataset.chatCita = "";
+      tarjeta.append(el("p", "cita-titulo", "Tu llamada de diagnóstico (30 min, Google Meet)"));
+
+      const lista = el("dl", "cita-datos");
+      const filas: [string, string][] = [
+        ["Cuándo", cuandoCita(ms)],
+        ["Nombre", cita.nombre],
+        ["Correo", cita.correo],
+        ["WhatsApp", cita.telefono],
+        ["Negocio", [cita.empresa, cita.sector].filter(Boolean).join(" · ")],
+        ["Web", cita.sitioWeb],
+        ["Te interesa", cita.servicio],
+      ];
+      for (const [k, v] of filas) {
+        if (!v) continue;
+        const fila = el("div");
+        fila.append(el("dt", "", k), el("dd", "", v));
+        lista.append(fila);
+      }
+      tarjeta.append(lista);
+
+      const permiso = el("label", "cita-permiso");
+      const casilla = el("input");
+      casilla.type = "checkbox";
+      const textoPermiso = el("span");
+      textoPermiso.append(
+        "Acepto que se traten estos datos solo para agendar y preparar la llamada. Puedo pedir que se borren en hola@soyluisflores.es. Más en la ",
+        Object.assign(enlace("política de privacidad", "/politica-de-privacidad"), { target: "_blank", rel: "noopener" }),
+        " y el ",
+        Object.assign(enlace("aviso para Latinoamérica", "/aviso-de-privacidad-latinoamerica"), { target: "_blank", rel: "noopener" }),
+        ".",
+      );
+      permiso.append(casilla, textoPermiso);
+      tarjeta.append(permiso);
+
+      const aviso = el("p", "cita-error");
+      aviso.setAttribute("role", "alert");
+      aviso.hidden = true;
+      const boton = el("button", "cita-confirmar", "Confirmar llamada");
+      boton.type = "button";
+      tarjeta.append(aviso, boton);
+
+      const error = (t: string) => {
+        aviso.textContent = t;
+        aviso.hidden = !t;
+      };
+
+      boton.addEventListener("click", async () => {
+        if (!casilla.checked) {
+          error("Marca la casilla de privacidad para poder agendar la llamada.");
+          casilla.focus();
+          return;
+        }
+        error("");
+        boton.disabled = true;
+        boton.textContent = "Agendando…";
+        let estadoHttp = 0;
+        let meet: string | null = null;
+        try {
+          const r = await fetch("/api/agenda", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...cita, acepto: true, web: "", zona, origen: `chat-asistente · ${location.pathname}` }),
+          });
+          estadoHttp = r.status;
+          meet = ((await r.json().catch(() => ({}))) as { meet?: string | null }).meet ?? null;
+        } catch {
+          estadoHttp = 0;
+        }
+
+        if (estadoHttp === 200) {
+          medir("generate_lead", { form_id: "chat-asistente", method: "asistente-ia" });
+          tarjeta.dataset.confirmada = "";
+          raiz.querySelectorAll("[data-chat-sugerencias]").forEach((s) => s.remove());
+          tarjeta.replaceChildren(
+            el("p", "cita-titulo", "Listo, tu llamada quedó agendada"),
+            el("p", "", cuandoCita(ms)),
+            el(
+              "p",
+              "",
+              `Te envié la invitación a ${cita.correo}${meet ? " con el enlace de Google Meet" : ""}. Si no la ves en unos minutos, revisa spam o promociones.`,
+            ),
+          );
+          // Que el asistente sepa que ya está agendada si la conversación sigue.
+          const ultimo = historial[historial.length - 1];
+          if (ultimo?.rol === "asistente") {
+            ultimo.texto = `${ultimo.texto}\n\n(El visitante confirmó la cita: ${fechaCita(ms, zona)}.)`.slice(-1500);
+          }
+          registro.scrollTop = tarjeta.offsetTop - registro.offsetTop - 12;
+          return;
+        }
+
+        boton.disabled = false;
+        boton.textContent = "Confirmar llamada";
+        if (estadoHttp === 409) {
+          error("Esa hora se acaba de ocupar. Pídeme otra y te muestro las libres.");
+          pintarOpciones(["Muéstrame otras horas"]);
+        } else if (estadoHttp === 400) {
+          error("Algún dato no es válido (revisa el correo). Dime cuál cambiar y lo corrijo.");
+        } else if (estadoHttp === 429) {
+          error("Demasiados intentos seguidos. Espera un minuto y vuelve a confirmar.");
+        } else {
+          error("No pude agendar ahora. Puedes hacerlo en soyluisflores.es/contacto o por WhatsApp.");
+        }
+      });
+
+      registro.append(tarjeta);
+      medir("chat_booking_shown");
+      registro.scrollTop = tarjeta.offsetTop - registro.offsetTop - 12;
+    };
+
     /** Respuesta de la IA, o null si hay que usar el respaldo local. */
-    const preguntarIA = async (): Promise<string | null> => {
+    const preguntarIA = async (): Promise<{ respuesta: string; cita?: Cita } | null> => {
       try {
         const r = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mensajes: historial.slice(-12) }),
-          signal: AbortSignal.timeout(30_000),
+          body: JSON.stringify({ mensajes: historial.slice(-24), zona }),
+          // Más margen: si mira horarios o prepara la cita, tarda más.
+          signal: AbortSignal.timeout(60_000),
         });
-        const datos = (await r.json().catch(() => ({}))) as { respuesta?: string; error?: string };
-        if (r.ok && datos.respuesta) return datos.respuesta;
+        const datos = (await r.json().catch(() => ({}))) as { respuesta?: string; error?: string; cita?: Cita };
+        if (r.ok && datos.respuesta) return { respuesta: datos.respuesta, cita: datos.cita };
         if (datos.error === "sin-ia" || r.status === 404 || r.status === 405) {
           pasarASinIA();
           return null;
         }
         // Límite, saturación o fallo puntual: el Worker ya trae un mensaje.
-        return datos.respuesta ?? null;
+        return datos.respuesta ? { respuesta: datos.respuesta } : null;
       } catch {
         return null;
       }
@@ -416,9 +584,10 @@ const sugerencias = [
       }
     };
 
-    const preguntar = async (texto: string) => {
+    const preguntar = async (texto: string, via: "escrito" | "sugerencia" | "respuesta_rapida" = "escrito") => {
       const t = texto.trim().slice(0, 800);
       if (!t || esperando) return;
+      medir("chat_message", { chat_method: via, chat_turn: String(historial.length / 2 + 1) });
       raiz.querySelectorAll("[data-chat-sugerencias]").forEach((s) => s.remove());
       input.placeholder = "Escribe tu pregunta…";
       pintar("usuario", [t]);
@@ -430,18 +599,19 @@ const sugerencias = [
       input.disabled = true;
       enviar.disabled = true;
       const puntos = escribiendo();
-      const respuesta = await preguntarIA();
+      const ia = await preguntarIA();
       puntos.remove();
       esperando = false;
       input.disabled = false;
       input.focus();
 
-      if (respuesta) {
+      if (ia) {
         // El historial guarda la línea de opciones: así el asistente sabe qué ofreció.
-        historial.push({ rol: "asistente", texto: respuesta });
-        const { texto, opciones } = separarOpciones(respuesta);
+        historial.push({ rol: "asistente", texto: ia.respuesta });
+        const { texto, opciones } = separarOpciones(ia.respuesta);
         pintarRespuesta(texto);
-        pintarOpciones(opciones);
+        if (ia.cita) pintarCita(ia.cita);
+        else pintarOpciones(opciones);
       } else {
         // La pregunta se queda sin turno de respuesta: se quita para que el
         // historial siga alternando si la IA vuelve en el siguiente mensaje.
@@ -469,6 +639,7 @@ const sugerencias = [
       externos.forEach((b) => b.setAttribute("aria-expanded", String(abierto)));
       etiqueta.textContent = abierto ? "Cerrar el asistente" : "Abrir el asistente";
       panel.hidden = !abierto;
+      if (abierto) medir("chat_open", { chat_method: origen ? "barra-movil" : "boton" });
       if (abierto) requestAnimationFrame(() => input.focus());
       else {
         (origen ?? abrir).focus();
@@ -493,8 +664,9 @@ const sugerencias = [
       void preguntar(texto);
     });
     raiz.querySelectorAll<HTMLButtonElement>(".sugerencia").forEach((b) =>
-      b.addEventListener("click", () => void preguntar(b.textContent ?? "")),
+      b.addEventListener("click", () => void preguntar(b.textContent ?? "", "sugerencia")),
     );
+    raiz.querySelector(".chat-agendar")?.addEventListener("click", () => medir("chat_cta_click"));
 
     raiz.hidden = false;
   }
@@ -854,6 +1026,78 @@ const sugerencias = [
   .chat-enviar:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+  }
+
+  /* Tarjeta de la cita que prepara el asistente. :global porque se crea
+     desde el script. */
+  .chat-registro :global(.cita-tarjeta) {
+    display: grid;
+    gap: 0.625rem;
+    padding: 0.875rem;
+    border: 1px solid rgb(0 123 255 / 0.45);
+    border-radius: 14px;
+    background: linear-gradient(160deg, rgb(0 123 255 / 0.12), rgb(139 92 246 / 0.1));
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--color-soft);
+  }
+  .chat-registro :global(.cita-titulo) {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-ink);
+  }
+  .chat-registro :global(.cita-datos) {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .chat-registro :global(.cita-datos div) {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 0.5rem;
+  }
+  .chat-registro :global(.cita-datos dt) {
+    color: var(--color-muted);
+  }
+  .chat-registro :global(.cita-datos dd) {
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+  .chat-registro :global(.cita-permiso) {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .chat-registro :global(.cita-permiso input) {
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.1rem;
+    accent-color: var(--color-electric);
+  }
+  .chat-registro :global(.cita-permiso a) {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+  }
+  .chat-registro :global(.cita-error) {
+    color: #ffb4b4;
+    font-size: 0.78rem;
+  }
+  .chat-registro :global(.cita-confirmar) {
+    min-height: 2.75rem;
+    border: 0;
+    border-radius: 12px;
+    background: var(--grad-cta);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .chat-registro :global(.cita-confirmar:disabled) {
+    opacity: 0.6;
+    cursor: progress;
   }
 
   .chat-nota {

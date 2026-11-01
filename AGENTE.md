@@ -12,6 +12,8 @@ llamada de diagnóstico cuando hay un caso concreto.
 | Instrucciones (el «entrenamiento») | `src/worker/instrucciones.ts` | Quién es, qué puede y qué no, tono, cómo se defiende de la manipulación, ejemplos |
 | Base de conocimiento | `src/pages/agente/conocimiento.txt.ts` | Se genera en cada build desde `src/data` y el blog. Se publica en `/agente/conocimiento.txt` (sin indexar) |
 | Servidor | `src/worker/index.ts` | `POST /api/chat`. Valida, limita, llama a Claude y no guarda nada |
+| Agendar desde el chat (2/11/2026) | `src/worker/chat-agenda.ts` | Herramientas `ver_horarios` (horas libres reales de la agenda, en la hora del visitante y de Madrid) y `preparar_cita` (valida los datos). El chat pinta una tarjeta con los datos, la casilla de privacidad y «Confirmar llamada», que reserva con `POST /api/agenda`, igual que `/contacto`: mismos correos, mismo lead en el panel. La IA nunca reserva sola |
+| Medición | `Chat.astro` y `gtm/LEEME.md` | Eventos `chat_open`, `chat_message`, `chat_quick_reply`, `chat_booking_shown`, `chat_cta_click` y `generate_lead` (`form_id: chat-asistente`) al confirmar. Nunca lo que escribe la persona |
 | Configuración | `wrangler.jsonc` | Ruta `/api/*`, límite de 8 mensajes por minuto por IP y modelo (`MODELO_CHAT`) |
 | Prueba con preguntas reales | `tools/probar-agente.mjs` | 22 casos: precios, servicios, manipulación, fuera de tema, datos sensibles, estilo |
 

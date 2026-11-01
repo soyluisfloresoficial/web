@@ -22,7 +22,8 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { INSTRUCCIONES } from "./instrucciones";
-import { agenda, citaAgenda, configAgenda, recordatorios, type EnvAgenda } from "./agenda";
+import { agenda, citaAgenda, configAgenda, recordatorios, zonaValida, type EnvAgenda } from "./agenda";
+import { HERRAMIENTAS, usarHerramienta, type CitaPropuesta } from "./chat-agenda";
 import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
 
 interface Env extends EnvAgenda, EnvSuscripciones {
@@ -42,9 +43,14 @@ const MODELO = "claude-sonnet-5-5";
 const CON_RESPALDO = new Set(["claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"]);
 
 const ORIGENES = new Set(["https://soyluisflores.es", "https://www.soyluisflores.es"]);
-const MAX_MENSAJES = 12;
+// Una conversación que termina en cita tiene más turnos: nombre, correo, hora…
+const MAX_MENSAJES = 24;
 const MAX_CARACTERES = 800;
-const MAX_TOTAL = 8000;
+// Las respuestas del asistente llevan enlaces y la línea de opciones.
+const MAX_CARACTERES_ASISTENTE = 1500;
+const MAX_TOTAL = 14000;
+// Vueltas máximas de herramientas por mensaje (ver horarios, preparar cita).
+const MAX_VUELTAS = 4;
 
 const AVISO_FALLO =
   "Ahora mismo no puedo responder. Puedes agendar la llamada en https://soyluisflores.es/contacto o escribir a Luis por WhatsApp al +34 631 65 49 19.";
@@ -86,7 +92,7 @@ function aMensajes(datos: unknown): Anthropic.Beta.BetaMessageParam[] | null {
     const { rol, texto } = m as Partial<Mensaje>;
     if ((rol !== "usuario" && rol !== "asistente") || typeof texto !== "string") return null;
     const limpio = texto.trim();
-    if (!limpio || limpio.length > MAX_CARACTERES) return null;
+    if (!limpio || limpio.length > (rol === "asistente" ? MAX_CARACTERES_ASISTENTE : MAX_CARACTERES)) return null;
     validos.push({ rol, texto: limpio });
   }
   // La API exige empezar por el usuario y alternar; el último es la pregunta.
@@ -140,36 +146,75 @@ async function chat(request: Request, env: Env): Promise<Response> {
     timeout: 25_000,
   });
 
+  // Zona horaria del visitante (la manda el chat), para hablarle en su hora.
+  const zonaPedida = (datos as { zona?: unknown }).zona;
+  const zona = typeof zonaPedida === "string" && zonaPedida.length <= 64 && zonaValida(zonaPedida) ? zonaPedida : "Europe/Madrid";
+  const hoy = new Intl.DateTimeFormat("es", {
+    timeZone: zona,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(Date.now());
+
   try {
     const base = await leerConocimiento(env, request.url);
-    const respuesta = await client.beta.messages.create({
-      model: modelo,
-      // Las respuestas son cortas; el margen es para el razonamiento interno.
-      max_tokens: 2048,
-      output_config: { effort: "low" },
-      // Instrucciones y conocimiento son iguales en todas las peticiones de
-      // una misma publicación: van en caché y se cobran a una décima parte.
-      system: [
-        { type: "text", text: INSTRUCCIONES },
-        { type: "text", text: base, cache_control: { type: "ephemeral" } },
-      ],
-      messages,
-      ...(CON_RESPALDO.has(modelo)
-        ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const }
-        : {}),
-    });
+    let cita: CitaPropuesta | undefined;
+    let respuesta: Anthropic.Beta.BetaMessage | undefined;
 
-    const u = respuesta.usage;
-    console.log(
-      JSON.stringify({
-        chat: "ok",
-        modelo: respuesta.model,
-        entrada: u.input_tokens,
-        cache_leida: u.cache_read_input_tokens,
-        cache_escrita: u.cache_creation_input_tokens,
-        salida: u.output_tokens,
-      }),
-    );
+    // Bucle de herramientas: Claude puede mirar horarios y preparar la cita
+    // antes de contestar. Como mucho MAX_VUELTAS por mensaje.
+    for (let vuelta = 0; vuelta < MAX_VUELTAS; vuelta++) {
+      respuesta = await client.beta.messages.create({
+        model: modelo,
+        // Las respuestas son cortas; el margen es para el razonamiento interno.
+        max_tokens: 2048,
+        output_config: { effort: "low" },
+        // Instrucciones y conocimiento son iguales en todas las peticiones de
+        // una misma publicación: van en caché y se cobran a una décima parte.
+        // La fecha va detrás, fuera de la caché.
+        system: [
+          { type: "text", text: INSTRUCCIONES },
+          { type: "text", text: base, cache_control: { type: "ephemeral" } },
+          { type: "text", text: `Ahora para el visitante es ${hoy} (zona ${zona}).` },
+        ],
+        tools: HERRAMIENTAS,
+        messages,
+        ...(CON_RESPALDO.has(modelo)
+          ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const }
+          : {}),
+      });
+
+      const u = respuesta.usage;
+      console.log(
+        JSON.stringify({
+          chat: "ok",
+          vuelta,
+          modelo: respuesta.model,
+          entrada: u.input_tokens,
+          cache_leida: u.cache_read_input_tokens,
+          cache_escrita: u.cache_creation_input_tokens,
+          salida: u.output_tokens,
+        }),
+      );
+
+      if (respuesta.stop_reason !== "tool_use") break;
+      const usos = respuesta.content.filter((b): b is Anthropic.Beta.BetaToolUseBlock => b.type === "tool_use");
+      const resultados: Anthropic.Beta.BetaToolResultBlockParam[] = [];
+      for (const uso of usos) {
+        const r = await usarHerramienta(env, uso.name, uso.input, zona);
+        if (r.cita) cita = r.cita;
+        console.log(JSON.stringify({ chat: "herramienta", nombre: uso.name, error: Boolean(r.error) }));
+        resultados.push({ type: "tool_result", tool_use_id: uso.id, content: r.texto, ...(r.error ? { is_error: true } : {}) });
+      }
+      // Todo el contenido de vuelta tal cual (también el razonamiento) y
+      // todos los resultados en un solo mensaje.
+      messages.push({ role: "assistant", content: respuesta.content });
+      messages.push({ role: "user", content: resultados });
+    }
+    if (!respuesta) throw new Error("sin-respuesta");
 
     const texto = respuesta.content
       .filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === "text")
@@ -183,7 +228,7 @@ async function chat(request: Request, env: Env): Promise<Response> {
           "Eso no lo puedo responder aquí. Si tiene que ver con tu negocio, Luis lo ve contigo en la llamada: https://soyluisflores.es/contacto",
       });
     }
-    return json({ respuesta: texto });
+    return json({ respuesta: texto, ...(cita ? { cita } : {}) });
   } catch (error) {
     // Sin el contenido de la conversación: solo el tipo de fallo.
     if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError) {

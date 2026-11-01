@@ -73,6 +73,16 @@ genera con `node tools/generar-contenedor-anuncios.mjs`.
 | **Google Ads - Llamada de diagnóstico** | `generate_lead` |
 | **Google Ads - Guía gratis** | `sign_up` |
 | **GA4 - Evento sign_up** | `sign_up` |
+| **GA4 - Eventos del chat** (2/11/2026) | Cualquier `chat_*` del asistente: `chat_open`, `chat_message`, `chat_quick_reply`, `chat_booking_shown`, `chat_cta_click` |
+
+Cuando alguien confirma la cita desde el chat, la web envía `generate_lead`
+con `form_id: chat-asistente`: cuenta como llamada agendada en GA4, Meta y
+Google Ads, igual que el formulario.
+
+En GA4, para ver el embudo del chat: **Explorar** → **Exploración de
+embudo** con los pasos `chat_open` → `chat_message` → `chat_booking_shown` →
+`generate_lead` (filtrado por `form_id = chat-asistente`). Crea como
+dimensiones personalizadas `chat_method` y `chat_option` (ámbito «Evento»).
 
 Todas las de Meta y Google Ads piden el consentimiento `ad_storage`: solo
 funcionan si la persona acepta las cookies de marketing.

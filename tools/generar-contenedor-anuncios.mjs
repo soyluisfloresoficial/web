@@ -1,5 +1,6 @@
 // Genera gtm/contenedor-anuncios.json: las conversiones de Meta Ads y
-// Google Ads y el evento sign_up de GA4, listos para importar en Tag Manager
+// Google Ads, el evento sign_up de GA4 y los eventos del chat (chat_*),
+// listos para importar en Tag Manager
 // encima de gtm/contenedor-ga4.json (ver gtm/LEEME.md).
 //
 // Uso: node tools/generar-contenedor-anuncios.mjs
@@ -88,8 +89,24 @@ const contenedor = {
       capa("10", "DLV - form_id", "form_id"),
       capa("11", "DLV - method", "method"),
       capa("12", "DLV - page_path", "page_path"),
+      // Asistente del chat (Chat.astro).
+      capa("80", "DLV - chat_method", "chat_method"),
+      capa("81", "DLV - chat_option", "chat_option"),
+      capa("82", "DLV - chat_turn", "chat_turn"),
     ],
-    trigger: [evento("25", "Evento - generate_lead", "generate_lead"), evento("60", "Evento - sign_up", "sign_up")],
+    trigger: [
+      evento("25", "Evento - generate_lead", "generate_lead"),
+      evento("60", "Evento - sign_up", "sign_up"),
+      // Todos los chat_*: chat_open, chat_message, chat_quick_reply,
+      // chat_booking_shown y chat_cta_click.
+      {
+        ...base,
+        triggerId: "83",
+        name: "Evento - chat_*",
+        type: "CUSTOM_EVENT",
+        customEventFilter: [{ type: "MATCH_REGEX", parameter: [T("arg0", "{{_event}}"), T("arg1", "^chat_")] }],
+      },
+    ],
     tag: [
       html("50", "Meta - Píxel base", PIXEL, TODAS),
       html(
@@ -137,6 +154,30 @@ const contenedor = {
           },
         ],
         firingTriggerId: ["60"],
+        tagFiringOption: "ONCE_PER_EVENT",
+      },
+      {
+        ...base,
+        tagId: "84",
+        name: "GA4 - Eventos del chat",
+        type: "gaawe",
+        parameter: [
+          B("sendEcommerceData", false),
+          // El nombre del evento de GA4 es el mismo que llega (chat_open, …).
+          T("eventName", "{{Event}}"),
+          T("measurementIdOverride", "{{GA4 - ID de medición}}"),
+          {
+            type: "LIST",
+            key: "eventSettingsTable",
+            list: [
+              { type: "MAP", map: [T("parameter", "chat_method"), T("parameterValue", "{{DLV - chat_method}}")] },
+              { type: "MAP", map: [T("parameter", "chat_option"), T("parameterValue", "{{DLV - chat_option}}")] },
+              { type: "MAP", map: [T("parameter", "chat_turn"), T("parameterValue", "{{DLV - chat_turn}}")] },
+              { type: "MAP", map: [T("parameter", "page_path"), T("parameterValue", "{{DLV - page_path}}")] },
+            ],
+          },
+        ],
+        firingTriggerId: ["83"],
         tagFiringOption: "ONCE_PER_EVENT",
       },
     ],

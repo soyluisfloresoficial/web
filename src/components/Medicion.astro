@@ -16,6 +16,12 @@
  * - form_start y generate_lead: la agenda propia (Agenda.astro), con el
  *   form_id de cada página: agenda-contacto, agenda-diagnostico o
  *   funnel-<servicio>.
+ * - Asistente del chat (Chat.astro): chat_open (chat_method: boton o
+ *   barra-movil), chat_message (chat_method: escrito, sugerencia o
+ *   respuesta_rapida; chat_turn), chat_quick_reply (chat_option),
+ *   chat_booking_shown (tarjeta de la cita), chat_cta_click (botón «Agendar»)
+ *   y, al confirmar la cita, generate_lead con form_id chat-asistente.
+ *   Nunca llevan lo que escribe la persona.
  * Todos llevan page_path.
  */
 ---

@@ -190,7 +190,7 @@ async function huecosLibres(env: EnvAgenda, cfg: ConfigAgenda, ahora: number): P
 const CORREO = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 
 /** Opciones de «¿Qué te interesa más?». Lo que llegue fuera de la lista se descarta. */
-const SERVICIOS = [
+export const SERVICIOS = [
   "Agentes de IA",
   "Funnels y conversión",
   "Automatización de procesos",
@@ -202,7 +202,8 @@ const SERVICIOS = [
   "Consultoría de IA",
   "Aún no lo sé",
 ];
-const EQUIPOS = ["Solo yo", "2 a 5 personas", "6 a 20 personas", "Más de 20 personas"];
+export const EQUIPOS = ["Solo yo", "2 a 5 personas", "6 a 20 personas", "Más de 20 personas"];
+export { CORREO, zonaValida };
 
 interface Reserva {
   inicio: number;
@@ -503,6 +504,25 @@ export async function agenda(
       console.error(JSON.stringify({ agenda: "fallo", tipo: error instanceof Error ? error.name : "desconocido" }));
     }
     return json({ error: "fallo" }, 502);
+  }
+}
+
+// ------------------------------------------------------ Para el asistente
+
+/**
+ * Huecos libres para el asistente del chat (chat-agenda.ts), o null si la
+ * agenda no está conectada a Google. La reserva en sí no pasa por aquí: la
+ * hace la persona desde la tarjeta del chat con POST /api/agenda, con la
+ * misma validación y la casilla de privacidad que el formulario.
+ */
+export async function huecosParaChat(env: EnvAgenda): Promise<{ zona: string; duracion: number; huecos: number[] } | null> {
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.GOOGLE_REFRESH_TOKEN) return null;
+  try {
+    const { config: cfg } = await leerConfig(env);
+    return { zona: cfg.zona, duracion: cfg.duracion, huecos: await huecosLibres(env, cfg, Date.now()) };
+  } catch (error) {
+    console.error(JSON.stringify({ agenda: "chat-huecos", tipo: error instanceof Error ? error.name : "desconocido" }));
+    return null;
   }
 }
 
