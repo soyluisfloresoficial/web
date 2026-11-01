@@ -189,11 +189,31 @@ async function huecosLibres(env: EnvAgenda, cfg: ConfigAgenda, ahora: number): P
 
 const CORREO = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 
+/** Opciones de «¿Qué te interesa más?». Lo que llegue fuera de la lista se descarta. */
+const SERVICIOS = [
+  "Agentes de IA",
+  "Funnels y conversión",
+  "Automatización de procesos",
+  "CRM y seguimiento de leads",
+  "Email marketing",
+  "Paneles de métricas",
+  "Webs con IA",
+  "Tráfico de pago",
+  "Consultoría de IA",
+  "Aún no lo sé",
+];
+const EQUIPOS = ["Solo yo", "2 a 5 personas", "6 a 20 personas", "Más de 20 personas"];
+
 interface Reserva {
   inicio: number;
   nombre: string;
   correo: string;
+  telefono: string;
   empresa: string;
+  sitioWeb: string;
+  sector: string;
+  equipo: string;
+  servicio: string;
   mensaje: string;
   zonaCliente: string;
   /** Funnel y campaña de la que llegó (utm_*), si la hay. */
@@ -226,18 +246,31 @@ function aReserva(datos: unknown): Reserva | null {
   const inicio = typeof d.inicio === "string" ? Date.parse(d.inicio) : NaN;
   const nombre = texto(d.nombre, 80);
   const correo = texto(d.correo, 120);
+  const telefono = texto(d.telefono, 30);
   const empresa = texto(d.empresa, 120);
+  const sitioWeb = texto(d.sitioWeb, 200);
+  const sector = texto(d.sector, 80);
+  const equipo = texto(d.equipo, 40);
+  const servicio = texto(d.servicio, 60);
   const mensaje = texto(d.mensaje, 1000);
   const zonaCliente = texto(d.zona, 64);
   const origen = texto(d.origen, 300) ?? "";
+  // Sin la casilla marcada no se guarda nada: es el permiso para tratar los datos.
+  if (d.acepto !== true) return null;
   if (!Number.isFinite(inicio) || !nombre || nombre.length < 2) return null;
   if (!correo || !CORREO.test(correo)) return null;
-  if (empresa === null || mensaje === null || zonaCliente === null) return null;
+  if (telefono === null || empresa === null || sitioWeb === null || sector === null) return null;
+  if (equipo === null || servicio === null || mensaje === null || zonaCliente === null) return null;
   return {
     inicio,
     nombre,
     correo: correo.toLowerCase(),
+    telefono,
     empresa,
+    sitioWeb,
+    sector,
+    equipo: EQUIPOS.includes(equipo) ? equipo : "",
+    servicio: SERVICIOS.includes(servicio) ? servicio : "",
     mensaje,
     zonaCliente: zonaCliente && zonaValida(zonaCliente) ? zonaCliente : AGENDA.zona,
     origen,
@@ -266,7 +299,12 @@ async function crearEvento(
     "",
     `Nombre: ${r.nombre}`,
     `Correo: ${r.correo}`,
+    r.telefono ? `WhatsApp o teléfono: ${r.telefono}` : "",
     r.empresa ? `Negocio: ${r.empresa}` : "",
+    r.sitioWeb ? `Página web: ${r.sitioWeb}` : "",
+    r.sector ? `A qué se dedica: ${r.sector}` : "",
+    r.equipo ? `Equipo: ${r.equipo}` : "",
+    r.servicio ? `Le interesa: ${r.servicio}` : "",
     `Zona horaria del cliente: ${r.zonaCliente} (${horaLegible(r.inicio, r.zonaCliente)})`,
     r.origen ? `Llegó desde: ${r.origen}` : "",
     "",
@@ -437,7 +475,12 @@ export async function agenda(
             correo: reserva.correo,
             mensaje: [
               `Llamada de diagnóstico agendada desde la web: ${cuando(reserva.inicio, cfg.zona)}.`,
+              reserva.telefono ? `WhatsApp o teléfono: ${reserva.telefono}` : "",
               reserva.empresa ? `Negocio: ${reserva.empresa}` : "",
+              reserva.sitioWeb ? `Página web: ${reserva.sitioWeb}` : "",
+              reserva.sector ? `A qué se dedica: ${reserva.sector}` : "",
+              reserva.equipo ? `Equipo: ${reserva.equipo}` : "",
+              reserva.servicio ? `Le interesa: ${reserva.servicio}` : "",
               reserva.mensaje ? `Lo que quiere resolver: ${reserva.mensaje}` : "",
               reserva.origen ? `Llegó desde: ${reserva.origen}` : "",
             ]

@@ -262,6 +262,12 @@ export interface DatosAviso {
   correo: string;
   empresa: string;
   mensaje: string;
+  /** Lo que el cliente deja en el formulario nuevo (04/11/2026). Opcionales. */
+  telefono?: string;
+  sitioWeb?: string;
+  sector?: string;
+  equipo?: string;
+  servicio?: string;
   zonaCliente: string;
   origen: string;
   inicio: number;
@@ -280,7 +286,12 @@ export function avisoTitular(d: DatosAviso, tipo: "nueva" | "cancelada"): Correo
     ["Nombre", d.nombre],
     ["Correo", d.correo],
   ];
+  if (d.telefono) filas.push(["WhatsApp o teléfono", d.telefono]);
   if (d.empresa) filas.push(["Negocio", d.empresa]);
+  if (d.sitioWeb) filas.push(["Página web", d.sitioWeb]);
+  if (d.sector) filas.push(["A qué se dedica", d.sector]);
+  if (d.equipo) filas.push(["Equipo", d.equipo]);
+  if (d.servicio) filas.push(["Le interesa", d.servicio]);
   if (d.origen) filas.push(["Llegó desde", d.origen]);
   const bloques: Bloque[] = [
     { p: tipo === "nueva" ? "Alguien agendó la llamada de diagnóstico desde la web." : "El cliente canceló la llamada desde el enlace de su correo. El hueco ya está libre en la agenda." },

@@ -26,17 +26,16 @@ export const AGENDA = {
    * Horario por día de la semana, en la zona de arriba.
    * 1 = lunes … 5 = viernes, 6 = sábado, 0 = domingo. Sin la clave, ese día
    * no se atiende.
-   * Abierto todos los días a todas horas, a pedido del titular (28/10/2026):
-   * el horario real lo pone él desde el panel.
+   * Horario del titular (04/11/2026), siempre en hora de Madrid: lunes a
+   * viernes de 9:30 a 12:00 y de 14:30 a 19:00. La web convierte cada hora a
+   * la zona de quien reserva. Sábado y domingo no se atiende.
    */
   horario: {
-    0: ["00:00-24:00"],
-    1: ["00:00-24:00"],
-    2: ["00:00-24:00"],
-    3: ["00:00-24:00"],
-    4: ["00:00-24:00"],
-    5: ["00:00-24:00"],
-    6: ["00:00-24:00"],
+    1: ["09:30-12:00", "14:30-19:00"],
+    2: ["09:30-12:00", "14:30-19:00"],
+    3: ["09:30-12:00", "14:30-19:00"],
+    4: ["09:30-12:00", "14:30-19:00"],
+    5: ["09:30-12:00", "14:30-19:00"],
   } as Record<number, string[]>,
   /** Título del evento en tu calendario. Se le añade el nombre del cliente. */
   titulo: "Llamada de diagnóstico",

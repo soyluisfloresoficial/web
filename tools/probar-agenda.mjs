@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import { calcularHuecos, deZona, enZona, estaLibre } from "../src/worker/agenda-huecos.ts";
 import { aplicarCambios } from "../src/worker/agenda-config.ts";
+import { AGENDA } from "../src/data/agenda.ts";
 import { recordatorioPendiente } from "../src/worker/agenda-recordatorios.ts";
 import * as correos from "../src/worker/correo-plantillas.ts";
 import fs from "node:fs";
@@ -94,6 +95,21 @@ prueba("horario abierto: 48 huecos por día, el último a las 23:30", () => {
   const martes = h.filter((t) => enZona(t, cfg.zona).dia === 3);
   assert.equal(martes.length, 48);
   assert.equal(iso(martes.at(-1)), "2026-11-03T22:30:00.000Z");
+});
+
+prueba("el horario real: lunes a viernes, 9:30-12:00 y 14:30-19:00 de Madrid, sin fines de semana", () => {
+  const h = calcularHuecos({ ...AGENDA, antelacion: 0, dias: 14 }, Date.parse("2026-11-02T00:00:00Z"), []);
+  const lunes = h
+    .filter((t) => enZona(t, AGENDA.zona).dia === 2)
+    .map((t) => {
+      const z = enZona(t, AGENDA.zona);
+      return `${z.hora}:${String(z.minuto).padStart(2, "0")}`;
+    });
+  assert.deepEqual(lunes, ["9:30", "10:00", "10:30", "11:00", "11:30", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30"]);
+  assert.ok(h.every((t) => enZona(t, AGENDA.zona).semana >= 1 && enZona(t, AGENDA.zona).semana <= 5), "sale un sábado o domingo");
+  // Ciudad de México (UTC-6 en noviembre): las 9:30 de Madrid son las 2:30 allí.
+  const primero = enZona(h[0], "America/Mexico_City");
+  assert.deepEqual([primero.hora, primero.minuto], [2, 30]);
 });
 
 prueba("el panel cambia solo lo que manda", () => {

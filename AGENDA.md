@@ -238,10 +238,26 @@ Desde el 28/10/2026 el horario se cambia desde el panel, sin tocar el código.
 Lo que guarda el panel queda en Cloudflare (KV `web-agenda`, enlazado como
 `AGENDA_CONFIG` en `wrangler.jsonc`) y manda sobre `src/data/agenda.ts`.
 
-Mientras el panel no guarde nada, la agenda está **abierta todos los días a
-todas las horas** (hora de Madrid), con 12 horas de antelación mínima. Lo
-pidió el titular. Si un día te bloqueas en Google Calendar, esas horas
-desaparecen solas de la web.
+Mientras el panel no guarde nada, la agenda atiende **de lunes a viernes, de
+9:30 a 12:00 y de 14:30 a 19:00, hora de Madrid** (decisión del titular,
+04/11/2026), con llamadas de 30 minutos y 12 horas de antelación mínima. Las
+horas se guardan siempre en hora de Madrid y la web las convierte a la zona de
+quien reserva, mostrando también la hora de Madrid junto a cada una. Si un día
+te bloqueas en Google Calendar, esas horas desaparecen solas de la web.
+
+Si más adelante el panel guarda un horario propio, ese manda sobre este.
+
+### Datos que pide el formulario (04/11/2026)
+
+Obligatorios: nombre, correo y la casilla de privacidad. Opcionales: WhatsApp o
+teléfono, negocio, página web, a qué se dedica, tamaño del equipo, servicio que
+le interesa y qué quiere resolver. Todo llega a la descripción del evento de
+Google Calendar, al correo «Nueva llamada» y al lead del panel. El servidor
+rechaza la reserva si no llega `acepto: true`. La lista de servicios y de
+tamaños de equipo está en `src/components/Agenda.astro` y en
+`src/worker/agenda.ts`: si cambias una, cambia la otra. Los datos nuevos están
+listados en el apartado 3.a) de la política de privacidad (pendiente de
+revisión por un abogado).
 
 ### La clave del panel (una sola vez)
 
@@ -270,7 +286,7 @@ cabecera `Authorization: Bearer <AGENDA_ADMIN_TOKEN>`.
 |---|---|
 | `GET` | Devuelve `{ config, desdePanel }`: el horario que se usa ahora |
 | `PUT` | Cambia lo que venga en el cuerpo (JSON). Lo que no venga se queda igual |
-| `DELETE` | Borra lo guardado y vuelve al horario abierto de `src/data/agenda.ts` |
+| `DELETE` | Borra lo guardado y vuelve al horario de `src/data/agenda.ts` |
 
 Ejemplo de cuerpo para `PUT` (todo opcional):
 
