@@ -44,9 +44,9 @@ interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
 // Ahorro (2/11/2026): Haiku 5.5 cuesta 0,10 $ / 0,50 $ por millón de tokens,
 // veinte veces menos que Sonnet 5.5, y basta para orientar y agendar.
 const MODELO = "claude-haiku-5-5";
-// Respuestas de unas 60 palabras: 800 tokens es un techo de seguridad, no
-// el gasto normal.
-const MAX_SALIDA = 800;
+// Respuestas de unas 60 palabras más un razonamiento breve: 1.200 tokens es
+// un techo de seguridad, no el gasto normal.
+const MAX_SALIDA = 1200;
 // Si se pasa este número de mensajes con IA en un día (hora UTC), el chat
 // sigue con las preguntas frecuentes, sin IA, hasta el día siguiente.
 const LIMITE_DIARIO = 300;
@@ -206,10 +206,12 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
         model: modelo,
         max_tokens: MAX_SALIDA,
         output_config: { effort: "low" },
-        // Sin razonamiento interno: se cobra como salida y para respuestas de
-        // 60 palabras no hace falta. Haiku acepta «disabled»; Sonnet 5.5 lo
-        // rechaza y usa «between_tools» (solo piensa entre herramientas).
-        thinking: { type: modelo.startsWith("claude-haiku") ? "disabled" : "between_tools" },
+        // Haiku: razonamiento adaptativo con esfuerzo bajo, como recomienda
+        // Anthropic; con él sigue mejor las reglas (idioma, largo, no
+        // inventar) y a su precio cuesta una fracción de céntimo. En la prueba
+        // del 2/11 con el razonamiento apagado falló el idioma y el largo.
+        // Sonnet 5.5: «between_tools», solo piensa entre herramientas.
+        ...(modelo.startsWith("claude-haiku") ? {} : { thinking: { type: "between_tools" as const } }),
         // Instrucciones y conocimiento son iguales en todas las peticiones de
         // una misma publicación: van en caché y se cobran a una décima parte.
         // La fecha va detrás, fuera de la caché.

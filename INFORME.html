@@ -217,7 +217,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
   <p class="intro">Revisado en vivo el 02/11/2026.</p>
   <div class="rejilla">
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Web</h3><p>Publicada en soyluisflores.es desde GitHub (rama main) con Cloudflare.</p></div>
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Flora, la asistente del chat</h3><p>Responde con Claude Sonnet 5.5, da botones de respuesta rápida, agenda la llamada y desde el 02/11 escucha por micrófono y contesta en voz alta.</p></div>
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Flora, la asistente del chat</h3><p>Responde con Claude Haiku 5.5 (plan de ahorro), da botones de respuesta rápida, agenda la llamada, escucha por micrófono y contesta con voz propia latina.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Agenda propia</h3><p>Conectada a Google Calendar, con correos automáticos y el lead entrando en el panel.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Resumen semanal</h3><p>Cada lunes a las 8:00 (Madrid) llega a hola@ con las cifras del chat y de las citas.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Horario desde el panel</h3><p>Conectado el 02/11/2026. Se cambia en el panel → Ajustes → Horario de la agenda.</p></div>
@@ -388,7 +388,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <div class="hito"><div class="fecha">1 nov</div><strong>Agendador rediseñado</strong>
       <ul><li>Pasos claros, hora de Madrid y privacidad a la vista.</li><li>Script para conectar el horario con el panel.</li></ul></div>
     <div class="hito"><div class="fecha">2 nov</div><strong>Asistente que agenda y resumen semanal</strong>
-      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li><li>Cita de prueba completa y campana del panel funcionando.</li><li>Auditoría completa y contraste del agendador corregido.</li><li>Flora: el asistente tiene nombre y voz (fase 1).</li><li>Voz propia de Flora, latina y femenina, que ya suena en el celular.</li></ul></div>
+      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li><li>Cita de prueba completa y campana del panel funcionando.</li><li>Auditoría completa y contraste del agendador corregido.</li><li>Flora: el asistente tiene nombre y voz (fase 1).</li><li>Voz propia de Flora, latina y femenina, que ya suena en el celular.</li><li>Plan de ahorro: Haiku 5.5, topes de gasto y respuestas fijas sin IA.</li></ul></div>
   </div>
 </section>
 
@@ -533,7 +533,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
 
   <h3>Agentes</h3>
   <div class="rejilla">
-    <div class="tarjeta"><h3>Flora, la asistente de la web</h3><p>Claude Sonnet 5.5 dentro del chat de soyluisflores.es, por escrito o por voz.</p>
+    <div class="tarjeta"><h3>Flora, la asistente de la web</h3><p>Claude Haiku 5.5 dentro del chat de soyluisflores.es, por escrito o por voz.</p>
       <div class="si-no"><div class="si"><b>Sirve</b>Atender visitas y agendar.</div><div class="no"><b>No sirve</b>Para trabajar en tu código ni en tu panel.</div></div></div>
     <div class="tarjeta"><h3>Claude Code (esta sesión)</h3><p>Trabaja en la carpeta de la web: cambia, prueba y publica.</p>
       <div class="si-no"><div class="si"><b>Sirve</b>Cambios, revisiones, informes, guías.</div><div class="no"><b>No sirve</b>Crear cuentas, poner contraseñas o claves, borrar ramas.</div></div></div>
@@ -650,7 +650,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <thead><tr><th>Servicio</th><th>Costo</th><th>Cómo controlarlo</th></tr></thead>
     <tbody>
       <tr><td>Voz de Flora (Deepgram Aura-2 en Cloudflare)</td><td>Unos 0,03 $ por cada 1.000 caracteres leídos. Una respuesta normal ronda los 300: aproximadamente 1 céntimo de dólar.</td><td>Límite de 12 respuestas leídas por minuto por visitante. Solo suena si la persona enciende la voz o usa el micrófono.</td></tr>
-      <tr><td>Asistente (Claude Sonnet 5.5)</td><td>Por uso: 2 $ por cada millón de tokens (trozos de texto) que lee y 10 $ por cada millón que escribe. Con caché, la base de conocimiento sale más barata.</td><td>Pon un límite mensual en la consola de Anthropic. La opción más barata es Haiku 5.5 (se cambia en <code>wrangler.jsonc</code>).</td></tr>
+      <tr><td>Flora (Claude Haiku 5.5, desde el 02/11/2026)</td><td>0,10 $ por millón de tokens (trozos de texto) leídos y 0,50 $ por millón escritos: veinte veces menos que Sonnet 5.5. Una conversación entera ronda medio céntimo de dólar (estimación).</td><td>Topes: 8 mensajes por minuto por persona, 15 preguntas con IA por conversación y 300 mensajes con IA al día en toda la web. Las sugerencias del saludo no gastan IA. Pon además un límite mensual en la consola de Anthropic.</td></tr>
       <tr><td>Cloudflare</td><td>Según tu plan actual.</td><td>Panel de Cloudflare → Facturación.</td></tr>
       <tr><td>Resend</td><td>Según tu plan.</td><td>Panel de Resend.</td></tr>
       <tr><td>UptimeRobot</td><td>Gratis (hasta 50 monitores).</td><td>No toca la IA.</td></tr>

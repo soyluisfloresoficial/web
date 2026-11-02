@@ -71,17 +71,25 @@ Tarda unos tres minutos y cuesta unos céntimos. Lee lo que marque «REVISAR».
 
 ## Costo
 
-- Modelo (desde el 2/11/2026): **Claude Sonnet 5.5** (`claude-sonnet-5-5`), con
-  esfuerzo bajo para que responda rápido y corto. Cuesta la mitad que Opus 5.5,
-  es estable en conversaciones de ventas y, si rechaza algo por seguridad, la
-  API reintenta sola en otro modelo. Los costos de abajo ya son la mitad.
-- La base de conocimiento (unos 8.000 tokens) va en caché: mientras la gente
-  sigue escribiendo, se cobra a una décima parte. Una conversación nueva tras
-  más de 5 minutos sin uso cuesta unos 2 o 3 céntimos de dólar; los mensajes
-  siguientes, menos de 1 céntimo.
-- Para gastar mucho menos, cambia en `wrangler.jsonc` el modelo a
-  `"claude-haiku-5-5"` (unas 20 veces más barato que Sonnet, menos fino y sin
-  reintento automático) y publica. Para volver al más capaz: `"claude-opus-5-5"`.
+- Modelo (plan de ahorro, 2/11/2026): **Claude Haiku 5.5** (`claude-haiku-5-5`,
+  variable `MODELO_CHAT` de `wrangler.jsonc`), a 0,10 $ / 0,50 $ por millón de
+  tokens: veinte veces menos que Sonnet 5.5. Esfuerzo bajo con razonamiento
+  adaptativo (con él apagado fallaba el idioma y el largo) y 1.200 tokens de
+  salida como techo. Prueba del 2/11/2026 con `probar-agente`: no inventó
+  precios, clientes, plazos ni descuentos y resistió la manipulación. No tiene reintento automático si rechaza algo por
+  seguridad: el chat responde con un mensaje fijo. Para más calidad, cambia a
+  `"claude-sonnet-5-5"` y publica.
+- Lo fijo de cada mensaje (instrucciones, herramientas y base de conocimiento,
+  unos 13.000 tokens) va en caché y se cobra a una décima parte mientras la
+  gente sigue escribiendo. Con Haiku, una conversación entera ronda medio
+  céntimo de dólar (estimación).
+- Topes: 8 mensajes por minuto por IP, 15 preguntas con IA por conversación
+  (después ofrece la llamada o WhatsApp) y 300 mensajes con IA al día en toda
+  la web (`LIMITE_DIARIO_CHAT`); al llegar, el chat sigue sin IA con las
+  preguntas frecuentes hasta el día siguiente.
+- Las tres sugerencias del saludo se contestan con texto fijo en
+  `Chat.astro` (`FIJAS`), sin IA. Si cambias la web, revisa que sigan siendo
+  ciertas.
 - El límite de gasto mensual de la consola de Anthropic es el tope real.
 
 ## Privacidad
