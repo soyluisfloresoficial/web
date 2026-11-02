@@ -239,13 +239,13 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
 <!-- ============================================================ RESUMEN -->
 <section class="panel" id="p-resumen">
   <h2>Resumen en un vistazo</h2>
-  <p class="intro">La web está sana, segura y bien construida. Lo que más frena hoy es que <b>casi nadie la encuentra todavía</b> en Google ni en los buscadores con IA, y que la portada tarda en cargar en el celular. Los dos se arreglan con el plan de la pestaña «Plan paso a paso».</p>
+  <p class="intro">La web está sana, segura y bien construida. Lo que más frena hoy es que <b>casi nadie la encuentra todavía</b> en Google ni en los buscadores con IA. La velocidad de la portada en celular ya se arregló (paso B1). Lo que falta está en el plan de la pestaña «Plan paso a paso».</p>
 
   <div class="rejilla">
     <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>Seguridad</h3><p class="sub">Cabeceras de protección, APIs cerradas a otras webs, límites por IP, sin claves en el código ni librerías con fallos conocidos.</p></div>
     <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>SEO técnico</h3><p class="sub">55 páginas con título, descripción, canónica, un solo H1, datos estructurados y sitemap.</p></div>
     <div class="tarjeta"><span class="estado mal">Flojo</span><div class="nota">3<small>/10</small></div><div class="barra"><i style="width:30%"></i></div><h3>Presencia en buscadores</h3><p class="sub">Al buscar tu nombre o tu dominio no apareces todavía. Falta Search Console, Bing, perfil de Google y enlaces desde otras webs.</p></div>
-    <div class="tarjeta"><span class="estado aviso">Mejorable</span><div class="nota" data-nota-velocidad>5,5<small>/10</small></div><div class="barra"><i style="width:55%"></i></div><h3>Velocidad en celular</h3><p class="sub">Portada 58 y contacto 51 sobre 100: el contenido principal tarda unos 4 segundos. Las páginas de servicio sacan 92.</p></div>
+    <div class="tarjeta"><span class="estado ok">Bien</span><div class="nota" data-nota-velocidad>8,5<small>/10</small></div><div class="barra"><i style="width:85%"></i></div><h3>Velocidad en celular</h3><p class="sub">Tras el paso B1: portada de 58 a 85-91 y contacto de 51 a 82-89 sobre 100. Servicios, 92.</p></div>
     <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>Celular, tablet y computadora</h3><p class="sub">Sin desbordes ni imágenes rotas en 360, 768 y 1280 píxeles. Menú, chat y calculadora funcionan.</p></div>
     <div class="tarjeta"><span class="estado ok">Bien</span><div class="nota" data-nota-flora>8,5<small>/10</small></div><div class="barra"><i style="width:85%"></i></div><h3>Flora (IA)</h3><p class="sub">Responde rápido, no inventa precios ni clientes, agenda, habla y recuerda 30 días.</p></div>
     <div class="tarjeta"><span class="estado aviso">Pendiente</span><div class="nota">6<small>/10</small></div><div class="barra"><i style="width:60%"></i></div><h3>Textos legales</h3><p class="sub">Completos y al día con la memoria de Flora. Falta mencionar la voz y que los revise un abogado.</p></div>
@@ -269,7 +269,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <ol>
         <li><b>Que Google te conozca:</b> Search Console y sitemap (paso A1).</li>
         <li><b>Bots de IA contradictorios</b> en Cloudflare y en tu robots.txt (paso A3).</li>
-        <li><b>Velocidad de la portada</b> en celular (paso B1).</li>
+        <li><s>Velocidad de la portada en celular</s>: hecho (paso B1).</li>
         <li><b>Bot Fight Mode</b> de Cloudflare, que frena la web (paso A4).</li>
         <li><b>Privacidad:</b> falta explicar la voz de Flora (paso B4 y abogado).</li>
       </ol>
@@ -355,14 +355,20 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <details class="paso">
     <summary><span class="num">B1</span><span class="titulo"><strong>Hecho · Portada y contacto más rápidos en celular</strong><span><span class="quien claude">CLAUDE</span>Publicado el 02/11/2026 · cifras en la pestaña Auditoría</span></span></summary>
     <div class="cuerpo">
-      <p>Portada: 58 de 100, el contenido principal tarda 3,7 segundos. Contacto: 51 de 100, 4,0 segundos y casi 2 segundos de celular «bloqueado». La página de un servicio, en cambio, saca 92. En la portada, el titular con degradado es lo último en aparecer porque las animaciones de entrada lo esconden hasta que terminan, y el fondo animado da mucho trabajo al celular. En contacto pesa el agendador.</p>
+      <div class="tabla-envoltura"><table>
+        <thead><tr><th>Página (celular)</th><th>Antes</th><th>Después</th><th>Carga principal</th></tr></thead>
+        <tbody>
+          <tr><td>Portada</td><td>58</td><td><b>85 a 91</b></td><td>3,7 s → 2,2 a 3,2 s</td></tr>
+          <tr><td>Contacto</td><td>51</td><td><b>82 a 89</b></td><td>4,0 s → 2,2 a 2,9 s</td></tr>
+        </tbody>
+      </table></div>
+      <p>Qué se hizo, sin cambiar el diseño:</p>
       <ul>
-        <li>Mostrar el titular y el texto principal al instante y animar solo los detalles.</li>
-        <li>Aligerar el fondo animado del hero en el celular.</li>
-        <li>Cargar el agendador de contacto en partes, cuando la persona llega a él.</li>
-        <li>Volver a medir con Lighthouse y dejar las cifras en este informe.</li>
+        <li><b>Portada:</b> el navegador ya no calcula ni pinta las secciones de más abajo hasta que la persona se acerca. Antes gastaba casi 3 segundos en eso antes de mostrar nada.</li>
+        <li><b>Portada:</b> el párrafo principal entra deslizándose, sin fundido, y así cuenta como visible desde el principio.</li>
+        <li><b>Agendador</b> (contacto y funnels): reutiliza sus formatos de fecha. Antes creaba cientos al cargar.</li>
       </ul>
-      <p>Pídemelo así: <code>Haz el paso B1 del informe: portada más rápida sin cambiar el diseño.</code></p>
+      <p>Medido en vivo dos veces por página; las cifras varían unos puntos entre mediciones. Lo que queda (sobre todo «buenas prácticas» en 82) es el script de Cloudflare del paso A4.</p>
     </div>
   </details>
 
@@ -517,7 +523,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <li><input type="checkbox" id="k-a3" data-guardar><label for="k-a3">A3 · Decidido qué bots de IA entran</label></li>
       <li><input type="checkbox" id="k-a4" data-guardar><label for="k-a4">A4 · Bot Fight Mode apagado</label></li>
       <li><input type="checkbox" id="k-a5" data-guardar><label for="k-a5">A5 · Límite de gasto y prueba del correo del panel</label></li>
-      <li><input type="checkbox" id="k-b1" data-guardar><label for="k-b1">B1 · Portada más rápida</label></li>
+      <li><input type="checkbox" id="k-b1" checked disabled><label for="k-b1">B1 · Portada y contacto más rápidos (hecho 02/11)</label></li>
       <li><input type="checkbox" id="k-b2" data-guardar><label for="k-b2">B2 · Archivos sin uso limpiados</label></li>
       <li><input type="checkbox" id="k-b3" data-guardar><label for="k-b3">B3 · 404, security.txt y CSP</label></li>
       <li><input type="checkbox" id="k-b4" data-guardar><label for="k-b4">B4 · Voz de Flora en la privacidad</label></li>
@@ -573,8 +579,8 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <div class="tabla-envoltura"><table data-lighthouse>
     <thead><tr><th>Página</th><th>Rendimiento</th><th>Accesibilidad</th><th>Buenas prácticas</th><th>SEO</th><th>Carga principal (LCP)</th></tr></thead>
     <tbody>
-      <tr><td>Portada</td><td><span class="estado aviso">58</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>3,7 s</td></tr>
-      <tr><td>Contacto (agendador)</td><td><span class="estado aviso">51</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>4,0 s</td></tr>
+      <tr><td>Portada (tras el paso B1)</td><td><span class="estado ok">85 a 91</span> <small>(antes 58)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>2,2 a 3,2 s <small>(antes 3,7)</small></td></tr>
+      <tr><td>Contacto (tras el paso B1)</td><td><span class="estado ok">82 a 89</span> <small>(antes 51)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>2,2 a 2,9 s <small>(antes 4,0)</small></td></tr>
       <tr><td>Servicio Agentes de IA</td><td><span class="estado ok">92</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>2,6 s</td></tr>
     </tbody>
   </table></div>
@@ -618,7 +624,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <tr><td>Imágenes para compartir</td><td>47 páginas con su imagen propia. Las legales usan la general, lo cual está bien.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Perfiles enlazados (<code>sameAs</code>)</td><td>LinkedIn, Instagram, TikTok y smilbot.com.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Contenido</td><td>12 artículos de unas 800 palabras, 9 servicios y 9 guías. Buena base; conviene sumar dos artículos al mes (paso C3).</td><td><span class="estado aviso">Ampliar</span></td></tr>
-      <tr><td>Velocidad (Core Web Vitals)</td><td>Portada lenta en celular. Paso B1.</td><td><span class="estado aviso">Mejorable</span></td></tr>
+      <tr><td>Velocidad (Core Web Vitals)</td><td>Portada 85 a 91 y contacto 82 a 89 en celular tras el paso B1.</td><td><span class="estado ok">Bien</span></td></tr>
     </tbody>
   </table></div>
 
