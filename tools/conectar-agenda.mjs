@@ -7,6 +7,8 @@
 // Antes tienes que haber iniciado sesión, tú, en las dos cuentas:
 //   npx firebase login      (en la carpeta del panel)
 //   npx wrangler login      (en la carpeta de la web)
+// En PowerShell, si sale «la ejecución de scripts está deshabilitada», escribe
+// npx.cmd en lugar de npx.
 //
 // Qué hace:
 //   1. Comprueba las dos sesiones y el proyecto de Firebase del panel.
@@ -29,8 +31,12 @@ const web = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const panel = path.resolve(process.argv[2] ?? path.join(web, "..", "panel"));
 const DIRECCION = "https://soyluisflores.es/api/agenda/config";
 
+// Firebase da 10 s para leer las funciones antes de publicar y en este
+// ordenador no le alcanzaban (02/11/2026): se le dan 120.
+const entorno = { ...process.env, FUNCTIONS_DISCOVERY_TIMEOUT: "120" };
+
 function ejecutar(orden, carpeta, entrada) {
-  const r = spawnSync(orden, { cwd: carpeta, shell: true, encoding: "utf8", input: entrada, maxBuffer: 20 * 1024 * 1024 });
+  const r = spawnSync(orden, { cwd: carpeta, shell: true, encoding: "utf8", input: entrada, env: entorno, maxBuffer: 20 * 1024 * 1024 });
   return { ok: r.status === 0, salida: `${r.stdout ?? ""}${r.stderr ?? ""}` };
 }
 

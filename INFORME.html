@@ -218,7 +218,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Asistente de IA del chat</h3><p>Responde con Claude Sonnet 5.5, da botones de respuesta rápida y agenda la llamada.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Agenda propia</h3><p>Conectada a Google Calendar, con correos automáticos y el lead entrando en el panel.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Resumen semanal</h3><p>Cada lunes a las 8:00 (Madrid) llega a hola@ con las cifras del chat y de las citas.</p></div>
-    <div class="tarjeta"><span class="estado pendiente">Pendiente</span><h3>Horario desde el panel</h3><p>Falta crear la clave que une el panel con la agenda. Es el paso 1.</p></div>
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Horario desde el panel</h3><p>Conectado el 02/11/2026. Se cambia en el panel → Ajustes → Horario de la agenda.</p></div>
     <div class="tarjeta"><span class="estado pendiente">Pendiente</span><h3>Medición de anuncios</h3><p>El contenedor de Tag Manager está listo, falta importarlo y poner los IDs.</p></div>
     <div class="tarjeta"><span class="estado apagado">Apagado</span><h3>WhatsApp 1 hora antes</h3><p>Programado pero sin claves de Twilio. Tiene costo por mensaje.</p></div>
     <div class="tarjeta"><span class="estado ok">Sincronizado</span><h3>GitHub</h3><p>main y reconstruccion-oct-2026 en el mismo commit. Panel al día.</p></div>
@@ -230,24 +230,23 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
   <h2>Lo que sigue, paso a paso</h2>
   <p class="intro">En orden de prioridad. Toca cada paso para abrirlo.</p>
 
-  <details class="paso" open>
-    <summary><span class="numero">1</span><span class="titulo"><strong>Conectar el horario del panel con la web</strong><span>Urgente · unos 5 minutos · lo haces tú en PowerShell</span></span></summary>
+  <details class="paso">
+    <summary><span class="numero">✓</span><span class="titulo"><strong>Hecho: horario del panel conectado</strong><span>02/11/2026 · solo para repetirlo si cambias la clave</span></span></summary>
     <div class="cuerpo">
-      <p>Hoy la web contesta «no autorizado» al panel porque la clave aún no existe. Con esto podrás cambiar tu horario desde el panel.</p>
+      <p>Si algún día hay que repetirlo (por ejemplo, para cambiar la clave), en PowerShell:</p>
       <ol>
-        <li>Pulsa la tecla <b>Windows</b>, escribe <code>PowerShell</code> y pulsa <b>Enter</b>.</li>
-        <li>Pega y pulsa Enter: <pre>cd "C:\Users\Luis Carlos\Documents\panel"</pre></li>
-        <li>Pega y pulsa Enter: <pre>npx firebase login</pre> Si pregunta <b>Y/n</b>, escribe <code>n</code>. En el navegador elige tu cuenta de Google y pulsa <b>Permitir</b>. Si dice «Already logged in», sigue.</li>
-        <li>Pega y pulsa Enter: <pre>cd "C:\Users\Luis Carlos\Documents\soyluisflores-web"</pre></li>
-        <li>Pega y pulsa Enter: <pre>npx wrangler login</pre> En el navegador pulsa <b>Allow</b>.</li>
-        <li>Pega y pulsa Enter: <pre>node tools/conectar-agenda.mjs</pre> Tarda 2 o 3 minutos. Si sale un error, cópialo entero y pégalo en el chat con Claude.</li>
-        <li>Comprueba en <a href="https://panel.soyluisflores.es">panel.soyluisflores.es</a> → <b>Ajustes → Horario de la agenda</b> que sale tu horario.</li>
+        <li><pre>cd "C:\Users\Luis Carlos\Documents\panel"</pre></li>
+        <li><pre>npx.cmd firebase login</pre> En PowerShell escribe siempre <code>npx.cmd</code>, no <code>npx</code>: así evitas el error «la ejecución de scripts está deshabilitada».</li>
+        <li><pre>cd "C:\Users\Luis Carlos\Documents\soyluisflores-web"</pre></li>
+        <li><pre>npx.cmd wrangler login</pre></li>
+        <li><pre>node tools/conectar-agenda.mjs</pre></li>
       </ol>
+      <p>Si sale «Timeout after 10000», mira «Problemas conocidos» en <code>AGENDA.md</code>.</p>
     </div>
   </details>
 
-  <details class="paso">
-    <summary><span class="numero">2</span><span class="titulo"><strong>Hacer una cita de prueba desde el chat</strong><span>10 minutos · comprueba correos, calendario y panel</span></span></summary>
+  <details class="paso" open>
+    <summary><span class="numero">2</span><span class="titulo"><strong>Hacer una cita de prueba desde el chat</strong><span>Lo siguiente · 10 minutos · comprueba correos, calendario y panel</span></span></summary>
     <div class="cuerpo">
       <ol>
         <li>Abre soyluisflores.es en el celular, mejor con datos móviles.</li>
@@ -319,7 +318,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
       <li><input type="checkbox" id="c5" checked disabled><label for="c5">Email marketing: guía, lista con doble confirmación y secuencia</label></li>
       <li><input type="checkbox" id="c6" checked disabled><label for="c6">Asistente de IA que agenda la llamada y se mide en Analytics</label></li>
       <li><input type="checkbox" id="c7" checked disabled><label for="c7">Resumen semanal por correo</label></li>
-      <li><input type="checkbox" id="p1" data-guardar><label for="p1">Paso 1: conectar el horario del panel</label></li>
+      <li><input type="checkbox" id="c8" checked disabled><label for="c8">Paso 1: horario del panel conectado (02/11/2026)</label></li>
       <li><input type="checkbox" id="p2" data-guardar><label for="p2">Paso 2: cita de prueba desde el chat</label></li>
       <li><input type="checkbox" id="p3" data-guardar><label for="p3">Paso 3: Tag Manager y conversiones de Google Ads</label></li>
       <li><input type="checkbox" id="p4" data-guardar><label for="p4">Paso 4: UptimeRobot</label></li>
@@ -359,7 +358,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <div class="hito"><div class="fecha">1 nov</div><strong>Agendador rediseñado</strong>
       <ul><li>Pasos claros, hora de Madrid y privacidad a la vista.</li><li>Script para conectar el horario con el panel.</li></ul></div>
     <div class="hito"><div class="fecha">2 nov</div><strong>Asistente que agenda y resumen semanal</strong>
-      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li></ul></div>
+      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li></ul></div>
   </div>
 </section>
 
@@ -485,7 +484,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <tbody>
       <tr><td><code>npm run build</code></td><td>Compila la web.</td><td>Antes de cada publicación (Claude lo hace).</td></tr>
       <tr><td><code>node tools/auditar-dist.mjs</code></td><td>Revisa la web compilada. Tiene que dar 0 problemas.</td><td>Antes de cada publicación.</td></tr>
-      <tr><td><code>node tools/conectar-agenda.mjs</code></td><td>Crea la clave entre panel y agenda y publica el panel.</td><td>Paso 1. Lo ejecutas tú.</td></tr>
+      <tr><td><code>node tools/conectar-agenda.mjs</code></td><td>Crea la clave entre panel y agenda y publica el panel.</td><td>Ya hecho. Solo para cambiar la clave. Lo ejecutas tú.</td></tr>
       <tr><td><code>node tools/conectar-panel.mjs</code></td><td>Conecta las reservas con el panel como leads.</td><td>Ya hecho. Solo si cambia el panel.</td></tr>
       <tr><td><code>node tools/autorizar-google.mjs</code></td><td>Da permiso a la web para usar tu Google Calendar.</td><td>Si cambias o rotas la clave de Google.</td></tr>
       <tr><td><code>node tools/generar-og.mjs</code></td><td>Crea las imágenes para compartir en redes.</td><td>Al añadir un artículo o servicio.</td></tr>
@@ -549,7 +548,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
       <tr><td><code>GOOGLE_CLIENT_ID / SECRET / REFRESH_TOKEN</code></td><td>Google Calendar</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Puestas</span></td></tr>
       <tr><td><code>RESEND_API_KEY</code></td><td>Correos automáticos</td><td>Cloudflare, tipo Secreto</td><td><span class="estado pendiente">Se comprueba en el paso 2</span></td></tr>
       <tr><td><code>PANEL_WEBHOOK_URL / PANEL_SECRETO</code></td><td>Leads al panel</td><td>Cloudflare, tipo Secreto</td><td><span class="estado pendiente">Se comprueba en el paso 2</span></td></tr>
-      <tr><td><code>AGENDA_ADMIN_TOKEN</code></td><td>Horario desde el panel</td><td>Cloudflare y Firebase</td><td><span class="estado pendiente">Falta (paso 1)</span></td></tr>
+      <tr><td><code>AGENDA_ADMIN_TOKEN</code></td><td>Horario desde el panel</td><td>Cloudflare y Firebase</td><td><span class="estado ok">Puesta</span></td></tr>
       <tr><td><code>TWILIO_*</code> (4 claves)</td><td>WhatsApp 1 hora antes</td><td>Cloudflare, tipo Secreto</td><td><span class="estado apagado">Sin poner</span></td></tr>
       <tr><td><code>PUBLIC_GTM_ID</code></td><td>Tag Manager</td><td>Cloudflare → Compilación</td><td><span class="estado ok">Puesta</span></td></tr>
     </tbody>

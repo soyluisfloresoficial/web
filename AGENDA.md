@@ -261,7 +261,7 @@ revisión por un abogado).
 
 ### La pantalla del panel y su clave (una sola vez)
 
-Desde el 04/11/2026 el panel tiene la pantalla **Ajustes → Horario de la
+Desde el 02/11/2026 (conectado ese día) el panel tiene la pantalla **Ajustes → Horario de la
 agenda** (solo para el titular). No llama a la web desde el navegador: lo hace
 la Cloud Function `agendaHorario` del panel, que guarda la clave en Secret
 Manager. Así la clave nunca llega al navegador y no hace falta `PANEL_ORIGENES`.
@@ -277,6 +277,17 @@ Inventa una clave al azar, la guarda en Firebase y en Cloudflare
 (`AGENDA_ADMIN_TOKEN`) sin mostrarla, compila y publica el panel, y comprueba
 que la web responde. Si falla, dice qué pasó. Repetirlo cambia la clave en los
 dos sitios.
+
+Problemas conocidos:
+
+- **«La ejecución de scripts está deshabilitada»** al escribir `npx` en
+  PowerShell: escribe `npx.cmd` (por ejemplo `npx.cmd firebase login`). No hace
+  falta cambiar la configuración de Windows.
+- **«User code failed to load… Timeout after 10000»** al publicar: Firebase no
+  terminó de leer las funciones a tiempo. El script ya le da 120 s. Si la clave
+  ya se guardó y solo falló la publicación, no repitas el script: en la carpeta
+  del panel ejecuta `$env:FUNCTIONS_DISCOVERY_TIMEOUT="120"` y después
+  `npx.cmd firebase deploy --only "functions:agendaHorario,functions:avisoLeadNuevo,hosting" --project prod --force`.
 
 ### Cómo lo usa el panel (la function `agendaHorario`)
 
