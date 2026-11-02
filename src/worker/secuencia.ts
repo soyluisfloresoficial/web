@@ -28,12 +28,17 @@ const DIA = 86_400_000;
 const PIE = "Recibes este correo porque pediste la guía gratis en soyluisflores.es.";
 const FIRMA = ["Luis Flores", "soyluisflores.es"];
 
-/** Enlace con la campaña marcada, para medir qué correo trae cada visita. */
-function enlace(ruta: string, paso: string): string {
+/**
+ * Enlace con la campaña marcada, para medir qué correo y qué guía trae cada
+ * visita. Desde el 2/11/2026 la campaña es la guía pedida
+ * («guia-ordenar-tus-contactos-en-un-crm»); antes todas decían
+ * «guia-automatizar» y no se sabía cuál convertía.
+ */
+function enlace(ruta: string, paso: string, guia: Guia): string {
   const u = new URL(ruta, CONTACTO.web);
   u.searchParams.set("utm_source", "email");
   u.searchParams.set("utm_medium", "secuencia");
-  u.searchParams.set("utm_campaign", "guia-automatizar");
+  u.searchParams.set("utm_campaign", `guia-${guia.slug}`);
   u.searchParams.set("utm_content", paso);
   return u.toString();
 }
@@ -59,8 +64,9 @@ export function confirmarSuscripcion(nombre: string, confirmar: string, guia: Gu
     previa: `Un clic y te llega «${titulo}».`,
     bloques: [
       { p: hola(nombre) },
-      { p: `Pediste la guía «${titulo}». Para mandártela, confirma que este correo es tuyo:` },
+      { p: `Pediste la guía «${titulo}». Para mandártela, confirma que este correo es tuyo con un toque:` },
       { boton: { texto: "Confirmar y recibir la guía", url: confirmar } },
+      { p: "Al confirmar te llega la guía al momento. Después te escribo cinco correos cortos en dos semanas, con consejos para aplicarla, y ahí termina." },
       { p: "Si no fuiste tú, ignora este mensaje: sin confirmar no te llega nada más y tus datos se borran solos en unos días." },
     ],
     firma: FIRMA,
@@ -87,10 +93,11 @@ export const SECUENCIA: PasoSecuencia[] = [
         bloques: [
           { p: hola(d.nombre) },
           { p: `Gracias por confirmar. Aquí tienes «${tituloGuia(d.guia)}»:` },
-          { boton: { texto: "Abrir la guía", url: enlace(`/guia/${d.guia.slug}`, "guia") } },
+          { boton: { texto: "Abrir la guía", url: enlace(`/guia/${d.guia.slug}`, "guia", d.guia) } },
           {
-            p: `Te propongo usarla así: esta semana completa la hoja de la parte 2, «${d.guia.hoja.titulo}». Con eso, el resto de la guía te ayuda a elegir por dónde empezar.`,
+            p: `Te pide ${d.guia.tiempo}. Mi consejo: léela hoy y esta semana haz el paso 2, «${d.guia.hoja.titulo}». Incluye un ejemplo para que sepas cómo rellenarlo. Con eso, el resto de la guía te ayuda a elegir por dónde empezar.`,
           },
+          { p: "Puedes guardarla en PDF desde la propia guía. Y si tienes una duda, responde a este correo: lo leo yo." },
           { p: "En unos días te escribo con lo que suele pasar en la atención a clientes, que es por donde más conviene empezar." },
         ],
         firma: ["Luis"],
@@ -113,7 +120,7 @@ export const SECUENCIA: PasoSecuencia[] = [
           {
             p: "Lo que más preocupa de poner un agente de IA a contestar es que invente información. Se puede evitar: responde solo con lo que tú apruebas y, si no sabe algo, pasa la conversación a una persona.",
           },
-          { enlace: { antes: "Te cuento cómo se configura:", texto: "agentes de IA que no inventan información", url: enlace("/blog/agentes-ia-sin-inventar", "atencion") } },
+          { enlace: { antes: "Te cuento cómo se configura:", texto: "agentes de IA que no inventan información", url: enlace("/blog/agentes-ia-sin-inventar", "atencion", d.guia) } },
         ],
         firma: ["Luis"],
         pie: PIE,
@@ -135,7 +142,7 @@ export const SECUENCIA: PasoSecuencia[] = [
           {
             p: "Conectarlas es lograr que se pasen los datos solas, con avisos si algo falla y sin duplicados. Bien hecho, casi no se nota: solo ves el tiempo que te devuelve.",
           },
-          { enlace: { antes: "Cómo hacerlo sin que nada se rompa:", texto: "conectar tus herramientas", url: enlace("/blog/conectar-herramientas-sin-romper", "automatizacion") } },
+          { enlace: { antes: "Cómo hacerlo sin que nada se rompa:", texto: "conectar tus herramientas", url: enlace("/blog/conectar-herramientas-sin-romper", "automatizacion", d.guia) } },
         ],
         firma: ["Luis"],
         pie: PIE,
@@ -157,7 +164,7 @@ export const SECUENCIA: PasoSecuencia[] = [
           {
             p: "Un CRM ordena eso: cada contacto con su etapa, su historial y su siguiente paso, y los recordatorios salen solos. No hace falta empezar con algo complicado.",
           },
-          { enlace: { antes: "Por dónde empezar:", texto: "CRM para pymes, paso a paso", url: enlace("/blog/crm-para-pymes-por-donde-empezar", "crm") } },
+          { enlace: { antes: "Por dónde empezar:", texto: "CRM para pymes, paso a paso", url: enlace("/blog/crm-para-pymes-por-donde-empezar", "crm", d.guia) } },
         ],
         firma: ["Luis"],
         pie: PIE,
@@ -179,7 +186,7 @@ export const SECUENCIA: PasoSecuencia[] = [
           {
             p: "Y cuando automatizas algo, mide antes y después con tus propios datos. Así sabes si de verdad funcionó.",
           },
-          { enlace: { antes: "Las métricas de cada etapa:", texto: "qué medir en tu negocio", url: enlace("/blog/que-medir-en-cada-etapa", "metricas") } },
+          { enlace: { antes: "Las métricas de cada etapa:", texto: "qué medir en tu negocio", url: enlace("/blog/que-medir-en-cada-etapa", "metricas", d.guia) } },
         ],
         firma: ["Luis"],
         pie: PIE,
@@ -199,7 +206,7 @@ export const SECUENCIA: PasoSecuencia[] = [
             p: "Estos días te conté por dónde suele convenir empezar. Si quieres verlo con tu caso, en una llamada de 30 minutos me cuentas cómo trabajas y te digo qué haría primero, con qué herramienta y qué puedes esperar.",
           },
           { p: "Es gratis, por videollamada y sin compromiso. Si no tiene sentido trabajar juntos, te lo digo." },
-          { boton: { texto: "Elegir día y hora", url: enlace(`/diagnostico/${d.guia.servicio}`, "llamada") } },
+          { boton: { texto: "Elegir día y hora", url: enlace(`/diagnostico/${d.guia.servicio}`, "llamada", d.guia) } },
           { p: "Si ahora no es el momento, no pasa nada. Este es el último correo de la serie." },
         ],
         firma: ["Luis"],

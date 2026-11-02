@@ -29,6 +29,18 @@ export interface Guia {
   /** Una frase: para los correos, el formulario y la descripción. */
   resumen: string;
   entrada: string;
+  /**
+   * Ficha de arriba (2/11/2026), para que cualquiera sepa en diez segundos si
+   * la guía es para él: a quién va, qué se lleva al terminar y cuánto tiempo
+   * le pide. Sin promesas ni cifras de resultados.
+   */
+  paraQuien: string;
+  teLlevas: string;
+  tiempo: string;
+  /** Palabras técnicas de la guía, explicadas en simple. */
+  glosario: { termino: string; significado: string }[];
+  /** Una fila de ejemplo para la hoja, en el orden de sus columnas. */
+  ejemplo: string[];
   /** Lo que trae, para el formulario. */
   incluye: [string, string, string, string];
   criterio: { titulo: string; puntos: [PuntoGuia, PuntoGuia, PuntoGuia] };
@@ -48,9 +60,17 @@ const lista: Guia[] = [
     destacado: "en tu negocio",
     resumen: "Un criterio sencillo para elegir tu primera automatización, con una hoja para aplicarlo a tu caso.",
     entrada:
-      "Elegir bien la primera automatización es lo que hace que funcione y que tu equipo le tenga confianza. Esta guía te da un criterio sencillo y una hoja para aplicarlo a tu caso en una semana.",
+      "Elegir bien la primera automatización es lo que hace que funcione y que tu equipo le tenga confianza. Esta guía te da una forma sencilla de elegirla y una hoja para aplicarla a tu caso en una semana.",
+    paraQuien: "Dueños de negocio y equipos pequeños que repiten las mismas tareas todos los días y no saben por cuál empezar.",
+    teLlevas: "Sabrás cuál es la primera tarea que te conviene automatizar y cómo comprobar si funcionó.",
+    tiempo: "10 minutos de lectura y una semana anotando tus tareas",
+    glosario: [
+      { termino: "Automatizar", significado: "Que una herramienta haga sola una tarea que hoy haces a mano, siempre de la misma forma." },
+      { termino: "Tarea repetida", significado: "Algo que haces muchas veces a la semana del mismo modo, como confirmar una cita." },
+    ],
+    ejemplo: ["Confirmar citas por WhatsApp", "20", "3", "Sí", "Sí"],
     incluye: [
-      "El criterio de las tres condiciones para elegir bien",
+      "Tres preguntas para elegir bien tu primera tarea",
       "Una hoja para anotar las tareas de una semana",
       "Ideas de primeras automatizaciones por área",
       "Un plan de cinco pasos para empezar sin complicarte",
@@ -120,6 +140,15 @@ const lista: Guia[] = [
     resumen: "Qué preparar antes de poner un agente de IA a atender a tus clientes, para que responda bien y no invente.",
     entrada:
       "Un agente de IA atiende bien cuando sabe qué responder, qué no y cuándo pasar la conversación a una persona. Esta guía te ayuda a preparar eso antes de configurarlo.",
+    paraQuien: "Negocios que reciben muchas preguntas por WhatsApp, Instagram o la web y no alcanzan a responder a tiempo.",
+    teLlevas: "La lista de lo que tu agente debe saber, lo que nunca debe hacer y un plan para probarlo sin riesgos.",
+    tiempo: "10 minutos de lectura y una semana juntando preguntas",
+    glosario: [
+      { termino: "Agente de IA", significado: "Un asistente que responde a tus clientes, por escrito o por voz, solo con la información que tú le das." },
+      { termino: "Canal", significado: "El lugar por donde te escriben: WhatsApp, Instagram, la web o el teléfono." },
+      { termino: "Pasar a una persona", significado: "Cuando el agente no debe responder solo, avisa a alguien de tu equipo para que siga la conversación." },
+    ],
+    ejemplo: ["¿Qué horario tienen?", "WhatsApp", "15", "De lunes a viernes, de 9 a 18", "Sí"],
     incluye: [
       "Las tres señales de que te conviene",
       "Una hoja para juntar las preguntas que te hacen",
@@ -190,6 +219,15 @@ const lista: Guia[] = [
     resumen: "Cómo dibujar tu embudo de ventas, ver en qué paso se cae la venta y decidir qué mejorar primero.",
     entrada:
       "Un embudo de ventas es el camino que sigue una persona desde que te conoce hasta que te compra. Esta guía te ayuda a dibujar el tuyo, ver en qué paso se cae la venta y decidir qué mejorar primero.",
+    paraQuien: "Negocios que reciben visitas o mensajes, pero sienten que muchos interesados se quedan en el camino y no compran.",
+    teLlevas: "Tu embudo dibujado, el paso donde más se pierde la venta y qué mejorar primero.",
+    tiempo: "10 minutos de lectura y una hora para dibujar tu embudo",
+    glosario: [
+      { termino: "Embudo de ventas", significado: "El camino que sigue una persona desde que te conoce hasta que te compra." },
+      { termino: "Contacto (o lead)", significado: "Alguien que te dejó sus datos o te escribió porque le interesa lo que vendes." },
+      { termino: "Seguimiento", significado: "Volver a escribirle a quien mostró interés, para acompañarlo hasta que decida." },
+    ],
+    ejemplo: ["Ve una publicación en Instagram", "Entra al perfil y no sabe qué hacer", "No lo sé", "No", "Un enlace a una sola página con un botón"],
     incluye: [
       "Las tres cosas que tiene un embudo que funciona",
       "Una hoja para dibujar tu embudo actual",
@@ -260,6 +298,15 @@ const lista: Guia[] = [
     resumen: "Cómo pasar de contactos repartidos a un CRM que tu equipo use de verdad, sin complicarte.",
     entrada:
       "Cuando los contactos están en el correo, el celular y una hoja de cálculo, los seguimientos se olvidan. Esta guía te ayuda a definir las etapas de tu venta y a preparar tus contactos antes de elegir un CRM.",
+    paraQuien: "Negocios con contactos repartidos entre el correo, el celular y hojas de cálculo, que a veces olvidan volver a escribir.",
+    teLlevas: "Las etapas de tu venta definidas y tus contactos listos para pasar a un CRM sin desorden.",
+    tiempo: "10 minutos de lectura y una hora para definir tus etapas",
+    glosario: [
+      { termino: "CRM", significado: "Un programa donde guardas a tus clientes y posibles clientes, con su historial y su siguiente paso." },
+      { termino: "Etapa", significado: "Cada paso de tu venta, por ejemplo «Pidió información» o «Recibió la propuesta»." },
+      { termino: "Importar", significado: "Pasar de una sola vez al CRM los contactos que ya tienes." },
+    ],
+    ejemplo: ["Pidió información", "Que agende una llamada", "Recepción", "Escribirle si no responde en dos días"],
     incluye: [
       "Las tres señales de que ya necesitas un CRM",
       "Una hoja para definir las etapas de tu venta",
@@ -330,6 +377,15 @@ const lista: Guia[] = [
     resumen: "Cómo planear una secuencia de bienvenida que acompaña hasta la venta, sin hacer spam.",
     entrada:
       "Casi nadie compra el primer día. Una secuencia de correos le escribe a cada persona en el momento justo, con algo útil. Esta guía te ayuda a planear la primera, sin hacer spam.",
+    paraQuien: "Negocios que reciben correos de interesados, o quieren empezar a juntarlos, y no saben qué escribirles después.",
+    teLlevas: "Tu primera serie de correos planeada, uno por uno, sin hacer spam.",
+    tiempo: "10 minutos de lectura y una tarde para planear los correos",
+    glosario: [
+      { termino: "Secuencia de correos", significado: "Una serie de correos que sale sola, uno cada pocos días, desde que alguien deja su correo." },
+      { termino: "Permiso", significado: "Que la persona haya aceptado recibir tus correos, por ejemplo marcando una casilla." },
+      { termino: "Darse de baja", significado: "El enlace que permite dejar de recibir tus correos con un clic." },
+    ],
+    ejemplo: ["0", "Tu guía ya está aquí", "La guía que prometiste", "Abrir la guía"],
     incluye: [
       "Las tres reglas para no terminar en spam",
       "Una hoja para planear cada correo",
@@ -400,6 +456,15 @@ const lista: Guia[] = [
     resumen: "Qué números mirar en cada etapa para decidir con datos, sin armar informes a mano.",
     entrada:
       "Medir de más abruma y medir de menos te deja a ciegas. Esta guía te ayuda a elegir las pocas cifras que te sirven para decidir y a saber de dónde sale cada una.",
+    paraQuien: "Dueños de negocio que deciden a ojo o que pierden horas armando informes a mano.",
+    teLlevas: "Las pocas cifras que te sirven para decidir y de dónde sale cada una.",
+    tiempo: "10 minutos de lectura y media hora para elegir tus cifras",
+    glosario: [
+      { termino: "Panel de métricas", significado: "Una sola pantalla con las cifras importantes de tu negocio, que se actualiza sola." },
+      { termino: "Cifra (o métrica)", significado: "Un número que te dice cómo va algo, por ejemplo cuántas citas se agendaron esta semana." },
+      { termino: "Etapa", significado: "Cada paso de tu negocio: atraer, captar, vender y cobrar." },
+    ],
+    ejemplo: ["Citas agendadas", "Vender", "Tu calendario", "Cada lunes", "Si bajan, revisar el seguimiento"],
     incluye: [
       "Las tres condiciones de una cifra que sirve",
       "Una hoja para elegir tus cifras",
@@ -470,6 +535,15 @@ const lista: Guia[] = [
     resumen: "Qué revisar en tu web para que deje de ser solo una presentación y empiece a traerte contactos.",
     entrada:
       "Muchas webs presentan bien el negocio, pero casi no traen contactos. Esta guía te ayuda a revisar la tuya con ojos de cliente y a decidir qué cambiar primero.",
+    paraQuien: "Negocios que tienen web, pero casi no les llegan contactos desde ella.",
+    teLlevas: "La lista de qué cambiar en tu web, empezando por la página que más importa.",
+    tiempo: "10 minutos de lectura y una hora revisando tu web en el celular",
+    glosario: [
+      { termino: "SEO", significado: "Lo que ayuda a que Google encuentre tu web y la muestre cuando alguien busca lo que ofreces." },
+      { termino: "Objetivo de la página", significado: "La única cosa que quieres que haga quien la visita, como escribirte o agendar." },
+      { termino: "Medición", significado: "Saber cuántas personas te escriben o agendan desde la web, y desde qué página." },
+    ],
+    ejemplo: ["Inicio", "No, tarda en abrir", "No, pide varias cosas", "No", "Un solo botón para escribir por WhatsApp"],
     incluye: [
       "Las tres cosas que tiene una web que trae clientes",
       "Una hoja para revisar cada página",
@@ -540,6 +614,15 @@ const lista: Guia[] = [
     resumen: "Qué dejar listo antes de pagar anuncios en Meta Ads o Google Ads, para que cada campaña se pueda medir.",
     entrada:
       "Pagar anuncios sin medir es apostar a ciegas. Esta guía te ayuda a revisar lo que tiene que estar listo antes de invertir: la página, la medición y el seguimiento.",
+    paraQuien: "Negocios que quieren empezar a pagar anuncios en Instagram, Facebook o Google, o que ya pagan y no saben si funcionan.",
+    teLlevas: "Lo que tiene que estar listo antes de invertir y tu primera campaña de prueba planeada.",
+    tiempo: "10 minutos de lectura y una hora para revisar y planear",
+    glosario: [
+      { termino: "Página de destino", significado: "La página a la que llega quien toca tu anuncio." },
+      { termino: "Píxel", significado: "Un pequeño código en tu web que le avisa a Meta o a Google cuando alguien agenda o te escribe." },
+      { termino: "Conversión", significado: "El resultado que cuentas como logro: una cita, un mensaje o un registro." },
+    ],
+    ejemplo: ["Primera consulta gratis", "Personas de mi ciudad", "Meta Ads", "Página de la consulta", "Cita agendada"],
     incluye: [
       "Las tres cosas que revisar antes de invertir",
       "Una hoja para planear tu primera campaña",
@@ -610,6 +693,15 @@ const lista: Guia[] = [
     resumen: "Cómo elegir dónde usar la IA primero, con qué herramienta y qué esperar, sin probar a ciegas.",
     entrada:
       "Hay cientos de herramientas de IA y es fácil perder tiempo probando sin rumbo. Esta guía te ayuda a ordenar las oportunidades de tu negocio y a elegir por dónde empezar.",
+    paraQuien: "Dueños de negocio que oyen hablar de IA todos los días y no saben por dónde empezar sin perder tiempo.",
+    teLlevas: "Tus ideas ordenadas y la primera que conviene probar, con una forma de saber si funcionó.",
+    tiempo: "10 minutos de lectura y media hora para ordenar tus ideas",
+    glosario: [
+      { termino: "IA (inteligencia artificial)", significado: "Herramientas que entienden y escriben texto, responden preguntas u ordenan información, como un asistente." },
+      { termino: "Probar en pequeño", significado: "Usarla primero en una sola tarea y durante pocas semanas, antes de extenderla." },
+      { termino: "Medir", significado: "Decidir antes un número que te diga después si valió la pena." },
+    ],
+    ejemplo: ["Responder preguntas frecuentes", "Contesto lo mismo todo el día", "3", "2", "Tiempo en responder"],
     incluye: [
       "Las tres condiciones de una buena primera idea",
       "Una hoja para ordenar oportunidades",

@@ -51,15 +51,35 @@ volver a empezar la serie.
 | Meta Ads y Google Ads | Antes de invertir en anuncios | `/guia/antes-de-invertir-en-anuncios` |
 | Consultoría de IA | Por dónde empezar con la IA en tu negocio | `/guia/por-donde-empezar-con-ia` |
 
-Todas tienen las mismas partes: el criterio (tres condiciones con su
-pregunta), una hoja para rellenar, ideas por área, un plan de cinco pasos con
-sus señales de alto y la invitación a la llamada. El contenido está en
-`src/data/guias.ts` y sale de las fichas de cada servicio y del blog.
+Todas tienen las mismas partes (rediseño del 2/11/2026, para que cualquiera
+las entienda a la primera):
+
+1. **Ficha de arriba:** para quién es, qué te llevas y cuánto tiempo te pide,
+   con la foto de Luis y los cuatro pasos como índice.
+2. **Palabras que vas a leer:** los términos técnicos de esa guía, en simple.
+3. **Paso 1 · Mira si te conviene:** tres puntos, cada uno con «Pregúntate».
+4. **Paso 2 · Anótalo:** la hoja, con una fila de ejemplo. En el celular se
+   ve el ejemplo en tarjeta; la tabla completa sale al guardar en PDF.
+5. **Paso 3 · Elige ideas** y **Paso 4 · Sigue el plan**, con lo que conviene
+   revisar antes de empezar.
+6. **Cierre con la foto de Luis**, la llamada y WhatsApp.
+
+El contenido está en `src/data/guias.ts` (campos `paraQuien`, `teLlevas`,
+`tiempo`, `glosario` y `ejemplo` incluidos) y sale de las fichas de cada
+servicio y del blog. Las pruebas comprueban que ninguna guía se quede sin
+ficha, glosario o ejemplo.
+
+El formulario dice cuánto se tarda en leerla, para quién es, lo que trae y
+qué llega después («la guía y cinco correos cortos en dos semanas»), con la
+foto de Luis. Al enviarlo explica los tres pasos: abrir el correo de Luis
+Flores, tocar «Confirmar» y recibir la guía.
 
 - Mismo diseño que los correos de la agenda: cabecera «LUIS FLORES»,
   degradado azul a violeta, un solo botón o enlace por correo.
 - Todos los enlaces llevan `utm_source=email`, `utm_medium=secuencia`,
-  `utm_campaign=guia-automatizar` y `utm_content` con el paso. Si alguien
+  `utm_campaign=guia-<guía pedida>` (desde el 2/11/2026; antes todas decían
+  `guia-automatizar`) y `utm_content` con el paso. Así en Analytics ves qué
+  guía trae más llamadas. Si alguien
   agenda desde un correo, la cita y el aviso dicen de cuál llegó.
 - Cada correo tiene **Darte de baja** en el pie y la cabecera de baja en un
   clic que piden Gmail y Outlook.

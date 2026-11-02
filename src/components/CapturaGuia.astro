@@ -14,7 +14,9 @@
  * artículo con la guía de su servicio, el índice con la general), en cada
  * página de servicio con la suya y en /guia.
  */
+import { Image } from "astro:assets";
 import Icono from "./Icono.astro";
+import retrato from "../assets/luis-flores-sobre-mi-azul.jpg";
 import { SITIO } from "../data/servicios";
 import { GUIAS, GUIA_GENERAL, tituloGuia } from "../data/guias";
 
@@ -33,25 +35,30 @@ const { ubicacion, suelto = false, guia = GUIA_GENERAL } = Astro.props;
 const g = GUIAS[guia] ?? GUIAS[GUIA_GENERAL];
 const titulo = Astro.props.titulo ?? tituloGuia(g);
 const id = `guia-${ubicacion}`;
+// «Negocios que…» → «negocios que…», para leerlo detrás de «Pensada para».
+const paraQuien = g.paraQuien.charAt(0).toLowerCase() + g.paraQuien.slice(1);
 ---
 
 <section class:list={["captura", { "section": !suelto }]} aria-labelledby={`${id}-titulo`} data-acento="violeta">
   <div class:list={[{ "container-lf": !suelto }]}>
     <div class="card captura-caja">
       <div class="captura-texto">
-        <p class="eyebrow">Guía gratis</p>
+        <p class="eyebrow">Guía gratis · {g.tiempo.split(" y ")[0]}</p>
         <h2 id={`${id}-titulo`} class="captura-titulo mt-4">{titulo}</h2>
-        <p class="card-text mt-4">
-          {g.resumen} Te la mando por correo y, después, algunos consejos para
-          aplicarla.
-        </p>
-        <ul class="lista-check mt-6">{g.incluye.map((i) => <li>{i}</li>)}</ul>
+        <p class="card-text mt-4">{g.resumen}</p>
+        <p class="captura-para mt-4"><strong>Pensada para</strong> {paraQuien}</p>
+        <p class="captura-incluye-titulo mt-6">Lo que trae:</p>
+        <ul class="lista-check mt-3">{g.incluye.map((i) => <li>{i}</li>)}</ul>
+        <div class="captura-autor mt-6">
+          <Image src={retrato} alt="" widths={[80, 120]} sizes="40px" class="captura-autor-foto" loading="lazy" />
+          <p>Te la mando yo, {SITIO.nombre}, a tu correo. Es la misma revisión que hago con cada cliente antes de empezar.</p>
+        </div>
       </div>
 
       <form class="captura-form" data-captura data-ubicacion={ubicacion} data-whatsapp={SITIO.whatsapp} data-guia={g.slug} novalidate>
         <div data-captura-campos>
           <label class="captura-campo">
-            <span>Tu nombre</span>
+            <span>Tu nombre <small class="captura-opcional">(opcional)</small></span>
             <input name="nombre" autocomplete="given-name" maxlength="80" />
           </label>
           <label class="captura-campo mt-4">
@@ -65,27 +72,32 @@ const id = `guia-${ubicacion}`;
             <input type="checkbox" name="acepto" required />
             <span>
               Quiero recibir la guía y los correos con consejos de Luis Flores. Puedo
-              darme de baja cuando quiera. Más información en la
+              darme de baja cuando quiera. Más información en la{" "}
               <a href="/politica-de-privacidad">política de privacidad</a>.
             </span>
           </label>
           <p class="captura-error mt-4" data-captura-error role="alert" hidden></p>
           <button class="cta captura-boton mt-6" type="submit" data-captura-enviar>
             <Icono nombre="email" tamano={18} />
-            <span data-captura-enviar-texto>Enviarme la guía</span>
+            <span data-captura-enviar-texto>Quiero la guía gratis</span>
           </button>
-          <p class="captura-nota mt-3">Sin spam. Una serie corta de correos y termina sola.</p>
+          <p class="captura-nota mt-3">
+            Sin spam: la guía y cinco correos cortos con consejos en dos semanas. Después, nada más. Te das de baja con
+            un clic.
+          </p>
         </div>
 
         <div class="captura-exito" data-captura-exito hidden tabindex="-1">
           <span class="anillo-degradado anillo-grande" aria-hidden="true">
             <Icono nombre="email" tamano={24} grosor={1.6} degradado />
           </span>
-          <p class="captura-exito-titulo">Revisa tu correo</p>
-          <p class="card-text">
-            Te mandé un enlace para confirmar. Al confirmarlo te llega la guía. Si no
-            lo ves en unos minutos, mira en spam o en promociones.
-          </p>
+          <p class="captura-exito-titulo">Ya casi la tienes</p>
+          <ol class="captura-exito-pasos">
+            <li>Abre el correo de <strong>Luis Flores</strong> ({SITIO.email}).</li>
+            <li>Toca <strong>«Confirmar y recibir la guía»</strong>.</li>
+            <li>Te llega la guía al momento.</li>
+          </ol>
+          <p class="captura-nota">Si en unos minutos no lo ves, mira en spam o en promociones.</p>
         </div>
       </form>
     </div>
@@ -164,7 +176,7 @@ const id = `guia-${ubicacion}`;
         mostrarError("No hay conexión. Revisa tu internet y vuelve a probar.");
       } finally {
         boton.disabled = false;
-        textoBoton.textContent = "Enviarme la guía";
+        textoBoton.textContent = "Quiero la guía gratis";
       }
     });
   }
@@ -196,6 +208,47 @@ const id = `guia-${ubicacion}`;
     color: var(--color-ink);
     text-wrap: balance;
   }
+  .captura-para {
+    color: var(--color-soft);
+    font-size: var(--step--1);
+    line-height: 1.5;
+  }
+  .captura-para strong,
+  .captura-incluye-titulo {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  .captura-incluye-titulo {
+    font-size: var(--step--1);
+  }
+  .captura-autor {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-soft);
+    font-size: var(--step--1);
+    line-height: 1.45;
+  }
+  .captura-autor :global(.captura-autor-foto) {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px var(--color-navy), 0 0 0 4px rgb(0 123 255 / 0.55);
+  }
+  .captura-exito-pasos {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+    padding-left: 1.25rem;
+    color: var(--color-soft);
+    text-align: left;
+  }
+  .captura-exito-pasos strong {
+    color: var(--color-ink);
+  }
   .captura-form {
     padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
     border: 1px solid var(--color-line);
@@ -211,6 +264,11 @@ const id = `guia-${ubicacion}`;
     font-size: var(--step--1);
     font-weight: 700;
     color: var(--color-ink);
+  }
+  .captura-opcional {
+    color: var(--color-muted);
+    font-family: var(--font-body, inherit);
+    font-weight: 400;
   }
   .captura-campo input {
     width: 100%;

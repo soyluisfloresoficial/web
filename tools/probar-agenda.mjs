@@ -218,7 +218,8 @@ prueba("cada correo de la serie lleva la baja, su campaña y un solo botón o en
     const c = p.crear({ nombre: "Ana <b>Pérez</b>", baja: BAJA, guia: GENERAL });
     assert.ok(c.html.includes("Darte de baja") && c.html.includes("correo/baja?e=ana%40example.com&amp;f=abc"), p.nombre);
     assert.ok(c.texto.includes(BAJA), p.nombre);
-    assert.ok(c.html.includes("utm_campaign=guia-automatizar"), p.nombre);
+    // Desde el 2/11/2026 la campaña es la guía pedida (GENERAL = que-automatizar-primero).
+    assert.ok(c.html.includes("utm_campaign=guia-que-automatizar-primero"), p.nombre);
     assert.ok(!c.html.includes("<b>Pérez"), "escapa el nombre");
     assert.ok(!/—/.test(c.html + c.texto + c.asunto), `sin rayas largas en ${p.nombre}`);
   }
@@ -234,6 +235,10 @@ prueba("hay una guía completa por cada servicio", () => {
     assert.ok(g.hoja.columnas.length >= 3 && g.hoja.filas > 0);
     assert.ok(g.ideas.grupos.length === 4 && g.plan.pasos.length === 5 && g.alto.items.length >= 3);
     assert.ok(!/—/.test(JSON.stringify(g)), `sin rayas largas en ${g.slug}`);
+    // Ficha, glosario y ejemplo (2/11/2026): que nadie se quede sin entenderla.
+    assert.ok(g.paraQuien && g.teLlevas && g.tiempo, `ficha completa en ${g.slug}`);
+    assert.ok(g.glosario.length >= 2, `glosario en ${g.slug}`);
+    assert.equal(g.ejemplo.length, g.hoja.columnas.length, `el ejemplo de ${g.slug} tiene una celda por columna`);
   }
   assert.equal(Object.keys(GUIAS).length, 9);
 });
