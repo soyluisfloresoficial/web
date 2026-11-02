@@ -26,8 +26,9 @@ import { agenda, citaAgenda, configAgenda, recordatorios, zonaValida, type EnvAg
 import { HERRAMIENTAS, usarHerramienta, type CitaPropuesta } from "./chat-agenda";
 import { contar, resumenSemanal } from "./estadisticas";
 import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
+import { voz, type EnvVoz } from "./voz";
 
-interface Env extends EnvAgenda, EnvSuscripciones {
+interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** Secreto del Worker, en el panel de Cloudflare. Ver AGENTE.md. */
   ANTHROPIC_API_KEY?: string;
@@ -258,6 +259,7 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const { pathname } = new URL(request.url);
     if (pathname === "/api/chat") return chat(request, env, ctx);
+    if (pathname === "/api/voz") return voz(request, env, json, origenPermitido);
     if (pathname === "/api/agenda") return agenda(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda/cita" || pathname === "/api/agenda/cancelar") {
       return citaAgenda(request, env, json, origenPermitido, ctx);

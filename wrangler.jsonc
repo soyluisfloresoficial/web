@@ -35,8 +35,17 @@
       "name": "LIMITE_AGENDA",
       "namespace_id": "2711",
       "simple": { "limit": 10, "period": 60 }
+    },
+    // Voz de Flora (src/worker/voz.ts): 12 respuestas leídas por minuto por IP.
+    {
+      "name": "LIMITE_VOZ",
+      "namespace_id": "2712",
+      "simple": { "limit": 12, "period": 60 }
     }
   ],
+  // Workers AI: la voz de Flora (Deepgram Aura-2 en español). Se cobra en la
+  // cuenta de Cloudflare, sin claves aparte.
+  "ai": { "binding": "AI" },
   // Horario de la agenda que se edita desde el panel (AGENDA.md). Manda
   // sobre los valores de src/data/agenda.ts.
   "kv_namespaces": [
@@ -50,7 +59,11 @@
   // respaldo automático si rechaza algo. Para gastar aún menos:
   // "claude-haiku-5-5" (ver AGENTE.md).
   "vars": {
-    "MODELO_CHAT": "claude-sonnet-5-5"
+    "MODELO_CHAT": "claude-sonnet-5-5",
+    // Voz de Flora: selena (latina, cálida y calmada). Otras femeninas:
+    // celeste (latina, más alegre), estrella (mexicana, madura), diana y
+    // carina (de España).
+    "VOZ_FLORA": "selena"
   },
   // Cada 10 minutos el Worker revisa las citas y manda los recordatorios de
   // la agenda por correo (AGENDA.md) y los correos de la secuencia de la guía

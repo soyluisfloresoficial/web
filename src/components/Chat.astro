@@ -457,17 +457,82 @@ const sugerencias = [
     // Chrome carga la lista de voces tarde: se pide ya para tenerla a tiempo.
     sintesis?.getVoices();
 
-    const callar = () => sintesis?.cancel();
+    // Voz propia de Flora (02/11/2026): el Worker la genera con Deepgram
+    // Aura-2 en español latino (src/worker/voz.ts) y aquí se reproduce con
+    // Web Audio. Los celulares solo dejan sonar audio si antes se «desbloquea»
+    // dentro de un toque de la persona: eso hace desbloquearAudio() al tocar
+    // el micrófono, el altavoz o enviar. Si /api/voz falla, lee el navegador.
+    let contexto: AudioContext | null = null;
+    let fuente: AudioBufferSourceNode | null = null;
+    let turnoVoz = 0;
 
-    const decir = (texto: string) => {
-      if (!sintesis || !leerEnVoz) return;
+    const desbloquearAudio = () => {
+      try {
+        // Safari: que suene aunque el iPhone esté en silencio, como un video.
+        const sesion = (navigator as unknown as { audioSession?: { type: string } }).audioSession;
+        if (sesion) sesion.type = "playback";
+        contexto ??= new AudioContext();
+        if (contexto.state === "suspended") void contexto.resume();
+        const vacio = contexto.createBufferSource();
+        vacio.buffer = contexto.createBuffer(1, 1, 22050);
+        vacio.connect(contexto.destination);
+        vacio.start(0);
+      } catch {
+        /* sin Web Audio: queda la voz del navegador */
+      }
+    };
+
+    const callar = () => {
+      turnoVoz++;
+      try {
+        fuente?.stop();
+      } catch {
+        /* ya había terminado */
+      }
+      fuente = null;
+      sintesis?.cancel();
+    };
+
+    const decir = async (texto: string) => {
+      if (!leerEnVoz) return;
       callar();
-      const voz = elegirVoz();
+      const turno = turnoVoz;
       const limpio = texto
         .replace(ENLACE, "el enlace que ves en el chat")
         .replace(/^[-•*]\s+/gm, "")
         .replace(/\s+/g, " ")
-        .trim();
+        .trim()
+        .slice(0, 1200);
+      if (contexto) {
+        try {
+          const r = await fetch("/api/voz", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ texto: limpio }),
+            signal: AbortSignal.timeout(20_000),
+          });
+          if (!r.ok) throw new Error(String(r.status));
+          const audio = await contexto.decodeAudioData(await r.arrayBuffer());
+          // Si mientras tanto preguntó otra cosa o apagó la voz, esta ya no suena.
+          if (turno !== turnoVoz || !leerEnVoz) return;
+          if (contexto.state === "suspended") await contexto.resume();
+          const s = contexto.createBufferSource();
+          s.buffer = audio;
+          s.connect(contexto.destination);
+          s.start(0);
+          fuente = s;
+          return;
+        } catch {
+          if (turno !== turnoVoz) return;
+          medir("chat_voice_error", { chat_method: "voz-propia" });
+        }
+      }
+      decirNavegador(limpio);
+    };
+
+    const decirNavegador = (limpio: string) => {
+      if (!sintesis) return;
+      const voz = elegirVoz();
       // Por frases: Chrome corta las lecturas largas a mitad.
       for (const frase of limpio.match(/[^.!?]+[.!?]*/g) ?? []) {
         const u = new SpeechSynthesisUtterance(frase.trim());
@@ -479,6 +544,7 @@ const sugerencias = [
     };
 
     const ponerVoz = (activa: boolean) => {
+      if (activa) desbloquearAudio();
       leerEnVoz = activa;
       altavoz.setAttribute("aria-pressed", String(activa));
       altavozEtiqueta.textContent = activa ? "Dejar de leer las respuestas en voz alta" : "Leer las respuestas en voz alta";
@@ -557,7 +623,12 @@ const sugerencias = [
     };
 
     microfono.hidden = !Reconocimiento;
-    altavoz.hidden = !sintesis;
+    altavoz.hidden = !sintesis && !("AudioContext" in window);
+    // Cada toque dentro del chat con la voz encendida mantiene el audio
+    // desbloqueado (enviar, respuestas rápidas, sugerencias).
+    panel.addEventListener("pointerdown", () => {
+      if (leerEnVoz) desbloquearAudio();
+    });
     microfono.addEventListener("click", escuchar);
     altavoz.addEventListener("click", () => {
       ponerVoz(!leerEnVoz);
@@ -787,7 +858,7 @@ const sugerencias = [
         historial.push({ rol: "asistente", texto: ia.respuesta });
         const { texto, opciones } = separarOpciones(ia.respuesta);
         pintarRespuesta(texto);
-        decir(texto);
+        void decir(texto);
         if (ia.cita) pintarCita(ia.cita);
         else pintarOpciones(opciones);
       } else {
@@ -847,6 +918,7 @@ const sugerencias = [
     });
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      if (leerEnVoz) desbloquearAudio();
       const texto = input.value;
       input.value = "";
       enviar.disabled = true;
