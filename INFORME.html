@@ -184,7 +184,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <div class="meta">
       <span>Última actualización: <strong>02/11/2026</strong></span>
       <span>Commit publicado: <strong>a6253a2</strong></span>
-      <span>Panel: <strong>b877035</strong></span>
+      <span>Panel: <strong>e61313c</strong></span>
     </div>
   </div>
 </header>
@@ -200,6 +200,8 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
       <li><a href="#prompts">Prompts</a></li>
       <li><a href="#herramientas">Herramientas</a></li>
       <li><a href="#skills">Skills, plugins y agentes</a></li>
+      <li><a href="#auditoria">Auditoría</a></li>
+      <li><a href="#ideas">Ideas</a></li>
       <li><a href="#claves">Claves y servicios</a></li>
       <li><a href="#costos">Costos</a></li>
       <li><a href="#reglas">Reglas</a></li>
@@ -219,6 +221,8 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Agenda propia</h3><p>Conectada a Google Calendar, con correos automáticos y el lead entrando en el panel.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Resumen semanal</h3><p>Cada lunes a las 8:00 (Madrid) llega a hola@ con las cifras del chat y de las citas.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Horario desde el panel</h3><p>Conectado el 02/11/2026. Se cambia en el panel → Ajustes → Horario de la agenda.</p></div>
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Campana del panel</h3><p>Avisa de cada lead nuevo. Probado el 02/11/2026.</p></div>
+    <div class="tarjeta"><span class="estado pendiente">Falla</span><h3>Correo «Lead nuevo» del panel</h3><p>La clave de Resend guardada en Firebase no es válida. Paso 2.</p></div>
     <div class="tarjeta"><span class="estado pendiente">Pendiente</span><h3>Medición de anuncios</h3><p>El contenedor de Tag Manager está listo, falta importarlo y poner los IDs.</p></div>
     <div class="tarjeta"><span class="estado apagado">Apagado</span><h3>WhatsApp 1 hora antes</h3><p>Programado pero sin claves de Twilio. Tiene costo por mensaje.</p></div>
     <div class="tarjeta"><span class="estado ok">Sincronizado</span><h3>GitHub</h3><p>main y reconstruccion-oct-2026 en el mismo commit. Panel al día.</p></div>
@@ -245,23 +249,44 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     </div>
   </details>
 
-  <details class="paso" open>
-    <summary><span class="numero">2</span><span class="titulo"><strong>Hacer una cita de prueba desde el chat</strong><span>Lo siguiente · 10 minutos · comprueba correos, calendario y panel</span></span></summary>
+  <details class="paso">
+    <summary><span class="numero">✓</span><span class="titulo"><strong>Hecho: cita de prueba desde el chat</strong><span>02/11/2026 · correos, calendario, lead y campana funcionan</span></span></summary>
     <div class="cuerpo">
+      <p>La campana falló la primera vez porque Google aún no había dado permisos a su servicio de eventos (Eventarc). Se arregló volviendo a publicar <code>avisoLeadNuevo</code>. Detalle en «Problemas conocidos» de <code>AGENDA.md</code>.</p>
+    </div>
+  </details>
+
+  <details class="paso" open>
+    <summary><span class="numero">2</span><span class="titulo"><strong>Arreglar el correo «Lead nuevo» del panel</strong><span>Lo siguiente · 5 minutos · lo encontró la auditoría</span></span></summary>
+    <div class="cuerpo">
+      <p>La campana avisa, pero el correo que manda el panel a hola@ sale rechazado: la clave de Resend guardada en Firebase no es válida. También la usa el aviso de cobro de facturas. Los correos de la web sí salen, porque usan otra copia de la clave guardada en Cloudflare.</p>
       <ol>
-        <li>Abre soyluisflores.es en el celular, mejor con datos móviles.</li>
-        <li>Abre la burbuja del chat y escribe: <code>quiero agendar una llamada</code>.</li>
-        <li>Elige una hora y da tu nombre y un correo tuyo que no sea hola@.</li>
-        <li>En la tarjeta marca la casilla de privacidad y pulsa <b>Confirmar llamada</b>.</li>
-        <li>Revisa: correo de confirmación, aviso «Nueva llamada» en hola@, evento en Google Calendar y lead con campana en el panel.</li>
-        <li>Cancela la prueba con el enlace <b>Cancelar</b> del correo de confirmación.</li>
+        <li>Entra en <a href="https://resend.com/api-keys">resend.com/api-keys</a> y pulsa <b>Create API Key</b>.</li>
+        <li>Nombre: <code>panel</code>. Permiso: <b>Sending access</b>. Dominio: <b>soyluisflores.es</b>. Pulsa <b>Add</b> y <b>copia la clave</b> (empieza por <code>re_</code>; solo se ve una vez).</li>
+        <li>En PowerShell: <pre>cd "C:\Users\Luis Carlos\Documents\panel"</pre></li>
+        <li><pre>npx.cmd firebase functions:secrets:set RESEND_API_KEY --project prod</pre> Cuando pida el valor, pega la clave (clic derecho) y pulsa Enter. No se ve al pegarla: es normal.</li>
+        <li><pre>$env:FUNCTIONS_DISCOVERY_TIMEOUT="120"</pre></li>
+        <li><pre>npx.cmd firebase deploy --only "functions:avisoLeadNuevo,functions:enviarAvisoCobro" --project prod --force</pre></li>
+        <li>Prueba con otra cita desde el chat con un correo nuevo (<code>nombre+prueba3@gmail.com</code>) y mira que llegue «Lead nuevo» a hola@.</li>
       </ol>
-      <p>Si algo no llega, revisa Resend y Email Routing de Cloudflare, o dile a Claude cuál de los cuatro falló.</p>
     </div>
   </details>
 
   <details class="paso">
-    <summary><span class="numero">3</span><span class="titulo"><strong>Importar la medición de anuncios en Tag Manager</strong><span>Cuando tengas los IDs de Meta y Google Ads</span></span></summary>
+    <summary><span class="numero">3</span><span class="titulo"><strong>Quitar un script de Cloudflare que frena la web</strong><span>2 minutos · lo encontró la auditoría</span></span></summary>
+    <div class="cuerpo">
+      <p>Cloudflare mete en cada página un script de detección de bots (<code>/cdn-cgi/challenge-platform</code>). Ocupa más de 1 segundo del celular, usa funciones del navegador que se van a retirar y baja la nota de «buenas prácticas» a 81. La web ya tiene sus propias defensas (el chat y la agenda solo aceptan llamadas desde tu dominio y tienen límites).</p>
+      <ol>
+        <li>Entra en <a href="https://dash.cloudflare.com">dash.cloudflare.com</a> y abre <b>soyluisflores.es</b>.</li>
+        <li>Menú de la izquierda: <b>Security → Bots</b> (o <b>Seguridad → Bots</b>).</li>
+        <li>Busca <b>JavaScript Detections</b> y apágalo. Si ves <b>Bot Fight Mode</b> encendido, apágalo también.</li>
+        <li>Avísale a Claude para que vuelva a medir.</li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="numero">4</span><span class="titulo"><strong>Importar la medición de anuncios en Tag Manager</strong><span>Cuando tengas los IDs de Meta y Google Ads</span></span></summary>
     <div class="cuerpo">
       <ol>
         <li>Entra en <a href="https://tagmanager.google.com">tagmanager.google.com</a> y abre el contenedor de soyluisflores.es.</li>
@@ -277,7 +302,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
   </details>
 
   <details class="paso">
-    <summary><span class="numero">4</span><span class="titulo"><strong>Aviso si la web se cae (UptimeRobot)</strong><span>Gratis · no gasta tokens ni créditos</span></span></summary>
+    <summary><span class="numero">5</span><span class="titulo"><strong>Aviso si la web se cae (UptimeRobot)</strong><span>Gratis · no gasta tokens ni créditos</span></span></summary>
     <div class="cuerpo">
       <ol>
         <li>Entra en <a href="https://uptimerobot.com">uptimerobot.com</a> → <b>Register for FREE</b>.</li>
@@ -290,14 +315,12 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
   </details>
 
   <details class="paso">
-    <summary><span class="numero">5</span><span class="titulo"><strong>Pendientes sin prisa</strong><span>Abogado, enlaces viejos, rama vieja, WhatsApp</span></span></summary>
+    <summary><span class="numero">6</span><span class="titulo"><strong>Pendientes sin prisa</strong><span>Abogado, enlaces viejos, WhatsApp, velocidad de la portada</span></span></summary>
     <div class="cuerpo">
       <ul>
+        <li><b>Velocidad de la portada:</b> en celular saca 55 sobre 100. El navegador pasa más de 3 segundos calculando estilos y animaciones. Es un trabajo aparte: pídeselo a Claude con «mejora la velocidad de la portada sin cambiar el diseño».</li>
         <li><b>Abogado:</b> que revise aviso legal, privacidad, cookies y el aviso para Latinoamérica.</li>
         <li><b>Enlaces de Calendly:</b> cámbialos por <code>https://soyluisflores.es/contacto</code> en la bio de Instagram, WhatsApp Business y tu firma de correo.</li>
-        <li><b>Rama vieja (opcional),</b> en PowerShell dentro de la carpeta de la web:
-          <pre>git push origin --delete servicios-nuevos-oct-2026</pre>
-          <pre>git branch -d servicios-nuevos-oct-2026</pre></li>
         <li><b>WhatsApp 1 hora antes (de pago):</b> primero el abogado añade Twilio y Meta a la privacidad. Pasos en <code>AGENDA.md</code>, sección «Recordatorio por WhatsApp».</li>
         <li><b>Seguridad (opcional):</b> rotar el secreto del cliente de Google y volver a ejecutar <code>node tools/autorizar-google.mjs</code>.</li>
       </ul>
@@ -319,12 +342,16 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
       <li><input type="checkbox" id="c6" checked disabled><label for="c6">Asistente de IA que agenda la llamada y se mide en Analytics</label></li>
       <li><input type="checkbox" id="c7" checked disabled><label for="c7">Resumen semanal por correo</label></li>
       <li><input type="checkbox" id="c8" checked disabled><label for="c8">Paso 1: horario del panel conectado (02/11/2026)</label></li>
-      <li><input type="checkbox" id="p2" data-guardar><label for="p2">Paso 2: cita de prueba desde el chat</label></li>
-      <li><input type="checkbox" id="p3" data-guardar><label for="p3">Paso 3: Tag Manager y conversiones de Google Ads</label></li>
-      <li><input type="checkbox" id="p4" data-guardar><label for="p4">Paso 4: UptimeRobot</label></li>
+      <li><input type="checkbox" id="c9" checked disabled><label for="c9">Cita de prueba: correos, calendario, lead y campana (02/11/2026)</label></li>
+      <li><input type="checkbox" id="c10" checked disabled><label for="c10">Rama vieja servicios-nuevos-oct-2026 borrada</label></li>
+      <li><input type="checkbox" id="c11" checked disabled><label for="c11">Auditoría del 02/11/2026 y contraste del agendador corregido</label></li>
+      <li><input type="checkbox" id="p9" data-guardar><label for="p9">Paso 2: clave de Resend del panel</label></li>
+      <li><input type="checkbox" id="p10" data-guardar><label for="p10">Paso 3: apagar la detección de bots de Cloudflare</label></li>
+      <li><input type="checkbox" id="p3" data-guardar><label for="p3">Paso 4: Tag Manager y conversiones de Google Ads</label></li>
+      <li><input type="checkbox" id="p4" data-guardar><label for="p4">Paso 5: UptimeRobot</label></li>
+      <li><input type="checkbox" id="p11" data-guardar><label for="p11">Velocidad de la portada en celular</label></li>
       <li><input type="checkbox" id="p5" data-guardar><label for="p5">Revisión del abogado</label></li>
       <li><input type="checkbox" id="p6" data-guardar><label for="p6">Cambiar los enlaces viejos de Calendly</label></li>
-      <li><input type="checkbox" id="p7" data-guardar><label for="p7">Borrar la rama servicios-nuevos-oct-2026 (opcional)</label></li>
       <li><input type="checkbox" id="p8" data-guardar><label for="p8">Activar WhatsApp con Twilio (opcional, de pago)</label></li>
     </ul>
   </div>
@@ -358,7 +385,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <div class="hito"><div class="fecha">1 nov</div><strong>Agendador rediseñado</strong>
       <ul><li>Pasos claros, hora de Madrid y privacidad a la vista.</li><li>Script para conectar el horario con el panel.</li></ul></div>
     <div class="hito"><div class="fecha">2 nov</div><strong>Asistente que agenda y resumen semanal</strong>
-      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li></ul></div>
+      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li><li>Cita de prueba completa y campana del panel funcionando.</li><li>Auditoría completa y contraste del agendador corregido.</li></ul></div>
   </div>
 </section>
 
@@ -537,6 +564,59 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
   </table></div>
 </section>
 
+<!-- AUDITORÍA -->
+<section id="auditoria">
+  <h2>Auditoría del 02/11/2026</h2>
+  <p class="intro">Revisión en vivo de la web, el chat, la agenda, el panel y GitHub.</p>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Qué</th><th>Resultado</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>GitHub de la web</td><td>main y reconstruccion-oct-2026 en el mismo commit. Rama vieja borrada.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>GitHub del panel</td><td>main subido. Hay cambios a medio hacer de la sesión del panel (sonido de la campana): los termina esa sesión.</td><td><span class="estado pendiente">En curso</span></td></tr>
+      <tr><td>Compilación y auditoría propia</td><td>55 páginas, 0 problemas.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Páginas en vivo</td><td>39 revisadas (sitemap, funnels, guías, llms.txt): todas responden, ninguna lenta.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Redirecciones</td><td>http → https, www → sin www, barra final quitada, 404 correcta.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Cabeceras de seguridad</td><td>HSTS, X-Frame-Options, nosniff, Referrer y Permissions-Policy activas. La política de contenido (CSP) está en modo «solo informe» a propósito.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Asistente del chat</td><td>Responde en unos 3 segundos, no inventa precios, da botones. Rechaza llamadas desde otras webs.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Agenda</td><td>184 horas libres en las próximas semanas. Configuración protegida con clave. Rechaza reservas incompletas.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Funciones del panel</td><td>Las 14 publicadas. Los errores del 30/10 ya se resolvieron.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Correo «Lead nuevo» del panel</td><td>Resend rechaza la clave guardada en Firebase.</td><td><span class="estado pendiente">Paso 2</span></td></tr>
+      <tr><td>Contenido</td><td>NIE solo en aviso legal, sin Calendly, sin huecos [COMPLETAR], sin modismos de España ni rayas largas.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Contraste del agendador</td><td>El día y la hora elegidos tenían blanco sobre azul con 3,97:1. Corregido a unos 5,8:1.</td><td><span class="estado ok">Corregido</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>Velocidad y calidad (Lighthouse, celular)</h3>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Página</th><th>Rendimiento</th><th>Accesibilidad</th><th>Buenas prácticas</th><th>SEO</th></tr></thead>
+    <tbody>
+      <tr><td>Portada</td><td>55</td><td>100</td><td>81</td><td>100</td></tr>
+      <tr><td>Contacto</td><td>67</td><td>96 → corregido</td><td>81</td><td>100</td></tr>
+      <tr><td>Servicio agentes de IA</td><td>87</td><td>100</td><td>81</td><td>100</td></tr>
+      <tr><td>Funnel agentes de IA</td><td>67</td><td>100</td><td>81</td><td>69 (normal: no se indexa)</td></tr>
+    </tbody>
+  </table></div>
+  <p>Las «buenas prácticas» bajan a 81 en todas por el script de bots de Cloudflare (paso 3). La portada es lenta en celular por el trabajo de estilos y animaciones: queda como pendiente aparte.</p>
+</section>
+
+<!-- IDEAS -->
+<section id="ideas">
+  <h2>Ideas en estudio</h2>
+  <div class="tarjeta">
+    <span class="estado apagado">Idea · 02/11/2026</span>
+    <h3>Asistente de voz con nombre propio (estilo «Viernes» de Marvel)</h3>
+    <p>Que el visitante pueda hablarle a la web y que le conteste con voz, con un nombre y una personalidad propios. Además sirve de demostración en vivo de tu servicio de agentes de IA.</p>
+    <div class="desliza" style="margin-top:12px"><table class="tabla">
+      <thead><tr><th>Fase</th><th>Qué es</th><th>Cuándo</th><th>Costo</th></tr></thead>
+      <tbody>
+        <tr><td>1. Voz en el chat actual</td><td>Botón de micrófono en el chat: el navegador pasa la voz a texto, responde el mismo asistente y lee la respuesta en voz alta. Con nombre y personalidad.</td><td>Ya, con poca audiencia</td><td>Casi nada extra: el mismo gasto de Claude por mensaje</td></tr>
+        <tr><td>2. Voz natural en tiempo real</td><td>Conversación hablada fluida, con una voz propia de calidad (servicios como ElevenLabs o Deepgram) y Claude como cerebro. Se interrumpe y responde al momento.</td><td>Cuando haya tráfico y leads</td><td>Se paga por minuto de conversación; hay que poner límites</td></tr>
+        <tr><td>3. Llamada y WhatsApp</td><td>El mismo asistente atiende llamadas o notas de voz y agenda.</td><td>Cuando la venda como servicio</td><td>Por minuto más el número de teléfono</td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin-top:10px"><b>Lo que hace falta:</b> elegir el nombre y la personalidad, permitir el micrófono en la web (hoy está bloqueado por seguridad), un aviso de privacidad para la voz (revisado por el abogado), límites de minutos por visitante y medir su uso en Analytics.</p>
+  </div>
+</section>
+
 <!-- CLAVES -->
 <section id="claves">
   <h2>Claves y servicios conectados</h2>
@@ -546,8 +626,9 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <tbody>
       <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Asistente de IA</td><td>Cloudflare → web → Variables y secretos</td><td><span class="estado ok">Puesta</span></td></tr>
       <tr><td><code>GOOGLE_CLIENT_ID / SECRET / REFRESH_TOKEN</code></td><td>Google Calendar</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Puestas</span></td></tr>
-      <tr><td><code>RESEND_API_KEY</code></td><td>Correos automáticos</td><td>Cloudflare, tipo Secreto</td><td><span class="estado pendiente">Se comprueba en el paso 2</span></td></tr>
-      <tr><td><code>PANEL_WEBHOOK_URL / PANEL_SECRETO</code></td><td>Leads al panel</td><td>Cloudflare, tipo Secreto</td><td><span class="estado pendiente">Se comprueba en el paso 2</span></td></tr>
+      <tr><td><code>RESEND_API_KEY</code> (web)</td><td>Correos automáticos de la web</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Funciona</span></td></tr>
+      <tr><td><code>RESEND_API_KEY</code> (panel)</td><td>Correo «Lead nuevo» y avisos de cobro</td><td>Firebase, Secret Manager</td><td><span class="estado pendiente">No válida (paso 2)</span></td></tr>
+      <tr><td><code>PANEL_WEBHOOK_URL / PANEL_SECRETO</code></td><td>Leads al panel</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Funciona</span></td></tr>
       <tr><td><code>AGENDA_ADMIN_TOKEN</code></td><td>Horario desde el panel</td><td>Cloudflare y Firebase</td><td><span class="estado ok">Puesta</span></td></tr>
       <tr><td><code>TWILIO_*</code> (4 claves)</td><td>WhatsApp 1 hora antes</td><td>Cloudflare, tipo Secreto</td><td><span class="estado apagado">Sin poner</span></td></tr>
       <tr><td><code>PUBLIC_GTM_ID</code></td><td>Tag Manager</td><td>Cloudflare → Compilación</td><td><span class="estado ok">Puesta</span></td></tr>

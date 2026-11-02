@@ -288,6 +288,15 @@ Problemas conocidos:
   ya se guardó y solo falló la publicación, no repitas el script: en la carpeta
   del panel ejecuta `$env:FUNCTIONS_DISCOVERY_TIMEOUT="120"` y después
   `npx.cmd firebase deploy --only "functions:agendaHorario,functions:avisoLeadNuevo,hosting" --project prod --force`.
+- **La campana no avisa de un lead nuevo** y en los registros de Firebase sale
+  «Permission denied while using the Eventarc Service Agent»: pasa la primera
+  vez que se publica un aviso automático en el proyecto (02/11/2026). Espera
+  unos minutos y vuelve a publicar `functions:avisoLeadNuevo`.
+- **El correo «Lead nuevo» del panel no sale** y en los registros pone «API key
+  is invalid»: la clave de Resend guardada en Firebase no es válida. Es otra
+  copia, distinta de la de Cloudflare. Pasos en el informe (`INFORME.html`).
+- Para probar el aviso usa un correo nuevo (por ejemplo `nombre+prueba2@gmail.com`):
+  un lead que ya existía se actualiza y no avisa.
 
 ### Cómo lo usa el panel (la function `agendaHorario`)
 

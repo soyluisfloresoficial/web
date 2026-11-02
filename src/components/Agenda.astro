@@ -941,9 +941,11 @@ const EQUIPOS = ["Solo yo", "2 a 5 personas", "6 a 20 personas", "Más de 20 per
     line-height: 1.1;
     color: var(--color-ink);
   }
+  /* Elegido: el acento oscurecido un 20 %, para que el texto blanco pequeño
+     pase el contraste 4,5:1 (con el azul tal cual daba 3,97, 02/11/2026). */
   .ap-dias :global(.ap-dia[aria-pressed="true"]) {
     border-color: var(--ap-acento);
-    background: var(--ap-acento);
+    background: color-mix(in srgb, var(--ap-acento) 80%, #000);
     color: var(--ap-sobre-acento);
   }
   .ap-dias :global(.ap-dia[aria-pressed="true"] .ap-dia-numero) {
@@ -1013,7 +1015,7 @@ const EQUIPOS = ["Solo yo", "2 a 5 personas", "6 a 20 personas", "Más de 20 per
   }
   .ap-horas :global(.ap-hora[aria-pressed="true"]) {
     border-color: var(--ap-acento);
-    background: var(--ap-acento);
+    background: color-mix(in srgb, var(--ap-acento) 80%, #000);
     color: var(--ap-sobre-acento);
   }
   .ap-horas :global(.ap-hora[aria-pressed="true"] .ap-hora-madrid) {
