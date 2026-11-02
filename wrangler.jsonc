@@ -55,11 +55,14 @@
   ],
   // Modelo del asistente. Va aquí y no en el panel porque cada publicación
   // reescribe las variables normales del panel con las de este archivo.
-  // Sonnet 5.5 (2/11/2026): la mitad de costo que Opus, estable y con
-  // respaldo automático si rechaza algo. Para gastar aún menos:
-  // "claude-haiku-5-5" (ver AGENTE.md).
+  // Haiku 5.5 (2/11/2026, plan de ahorro): 0,10 $ / 0,50 $ por millón de
+  // tokens, veinte veces menos que Sonnet 5.5. Si algún día hace falta más
+  // calidad: "claude-sonnet-5-5" (ver AGENTE.md).
   "vars": {
-    "MODELO_CHAT": "claude-sonnet-5-5",
+    "MODELO_CHAT": "claude-haiku-5-5",
+    // Tope de mensajes con IA al día en toda la web. Al llegar, el chat sigue
+    // con las preguntas frecuentes, sin IA, hasta el día siguiente (UTC).
+    "LIMITE_DIARIO_CHAT": "300",
     // Voz de Flora: selena (latina, cálida y calmada). Otras femeninas:
     // celeste (latina, más alegre), estrella (mexicana, madura), diana y
     // carina (de España).

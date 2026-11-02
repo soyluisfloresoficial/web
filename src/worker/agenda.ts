@@ -37,7 +37,7 @@ import { recordatorioWhatsApp, type EnvWhatsApp } from "./whatsapp";
 
 interface KV {
   get(clave: string, tipo: "json"): Promise<unknown>;
-  put(clave: string, valor: string): Promise<void>;
+  put(clave: string, valor: string, opciones?: { expirationTtl?: number }): Promise<void>;
   delete(clave: string): Promise<void>;
 }
 

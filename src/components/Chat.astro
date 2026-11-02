@@ -793,7 +793,7 @@ const sugerencias = [
         const r = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mensajes: historial.slice(-24), zona }),
+          body: JSON.stringify({ mensajes: historial.slice(-HISTORIAL_ENVIADO), zona }),
           // Más margen: si mira horarios o prepara la cita, tarda más.
           signal: AbortSignal.timeout(60_000),
         });
@@ -831,6 +831,31 @@ const sugerencias = [
       }
     };
 
+    // Ahorro (02/11/2026): las tres sugerencias del saludo se contestan con
+    // un texto fijo, sin gastar IA. Entran en el historial como si las
+    // hubiera dicho Flora, así la conversación sigue con contexto.
+    const FIJAS: Record<string, string> = {
+      "¿Qué se puede automatizar en mi negocio?":
+        "Depende de tu sector, pero lo más habitual es contestar mensajes y WhatsApp a tiempo, enviar recordatorios de citas, hacer seguimiento de clientes y avisos internos.\n\nPara decirte por dónde empezar, ¿a qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
+      "¿Cuánto cuesta?":
+        "Depende de lo que haya que hacer y de las herramientas que ya usas, por eso Luis no publica precios. Después de una llamada gratis de 30 minutos te manda una propuesta por escrito con el precio cerrado.\n\n¿A qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
+      "¿Cómo es la llamada gratis?":
+        "Es una videollamada de 30 minutos por Google Meet, gratis y sin compromiso. Luis revisa contigo qué te quita tiempo o clientes y qué conviene automatizar primero, y después te manda una propuesta por escrito.\n\n¿Quieres que te la agende aquí?\nOpciones: Agéndala aquí | Prefiero el formulario | Ahora no",
+    };
+    // Tope por conversación: pasadas estas preguntas, Flora ya no llama a la
+    // IA y ofrece la llamada o WhatsApp. Lo normal es agendar mucho antes.
+    const MAX_PREGUNTAS_IA = 15;
+    // Cuántos mensajes anteriores viajan en cada pregunta (antes, 24).
+    const HISTORIAL_ENVIADO = 16;
+
+    const responderFija = (respuesta: string) => {
+      historial.push({ rol: "asistente", texto: respuesta });
+      const { texto, opciones } = separarOpciones(respuesta);
+      pintarRespuesta(texto);
+      void decir(texto);
+      pintarOpciones(opciones);
+    };
+
     const preguntar = async (texto: string, via: "escrito" | "sugerencia" | "respuesta_rapida" | "voz" = "escrito") => {
       const t = texto.trim().slice(0, 800);
       if (!t || esperando) return;
@@ -841,6 +866,22 @@ const sugerencias = [
       pintar("usuario", [t]);
 
       if (sinIA) return respuestaLocal(t);
+
+      const fija = via === "sugerencia" ? FIJAS[t] : undefined;
+      if (fija) {
+        historial.push({ rol: "usuario", texto: t });
+        return responderFija(fija);
+      }
+      if (historial.filter((m) => m.rol === "usuario").length >= MAX_PREGUNTAS_IA) {
+        pintar("bot", [
+          "Para seguir con tu caso lo mejor es hablarlo con Luis: ",
+          enlace("agenda la llamada gratis", "/contacto"),
+          " o escríbele por ",
+          enlace("WhatsApp", whatsapp),
+          ".",
+        ]);
+        return;
+      }
 
       historial.push({ rol: "usuario", texto: t });
       esperando = true;

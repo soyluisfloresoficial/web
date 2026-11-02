@@ -32,14 +32,24 @@ interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** Secreto del Worker, en el panel de Cloudflare. Ver AGENTE.md. */
   ANTHROPIC_API_KEY?: string;
-  /** Opcional: otro modelo, por ejemplo claude-haiku-5-5 para gastar menos. */
+  /** Modelo del chat (wrangler.jsonc). Desde el 2/11/2026, claude-haiku-5-5. */
   MODELO_CHAT?: string;
+  /** Tope de mensajes con IA al día en toda la web (wrangler.jsonc). */
+  LIMITE_DIARIO_CHAT?: string;
   /** Solo para pruebas locales contra un servidor simulado. */
   ANTHROPIC_BASE_URL?: string;
   LIMITE_CHAT?: { limit(opciones: { key: string }): Promise<{ success: boolean }> };
 }
 
-const MODELO = "claude-sonnet-5-5";
+// Ahorro (2/11/2026): Haiku 5.5 cuesta 0,10 $ / 0,50 $ por millón de tokens,
+// veinte veces menos que Sonnet 5.5, y basta para orientar y agendar.
+const MODELO = "claude-haiku-5-5";
+// Respuestas de unas 60 palabras: 800 tokens es un techo de seguridad, no
+// el gasto normal.
+const MAX_SALIDA = 800;
+// Si se pasa este número de mensajes con IA en un día (hora UTC), el chat
+// sigue con las preguntas frecuentes, sin IA, hasta el día siguiente.
+const LIMITE_DIARIO = 300;
 // Modelos que aceptan el reintento automático en otro modelo si Claude
 // rechaza una petición por seguridad (fallbacks: "default").
 const CON_RESPALDO = new Set(["claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"]);
@@ -107,6 +117,22 @@ function aMensajes(datos: unknown): Anthropic.Beta.BetaMessageParam[] | null {
   return validos.map((m) => ({ role: m.rol === "usuario" ? "user" : "assistant", content: m.texto }));
 }
 
+/**
+ * Tope diario de gasto: cuenta los mensajes con IA del día en el KV de la
+ * agenda. Es aproximado (el KV tarda unos segundos en verse igual en todo el
+ * mundo), suficiente para que un abuso no vacíe el crédito. Sin KV, no limita.
+ */
+async function dentroDelTopeDiario(env: Env): Promise<boolean> {
+  const kv = env.AGENDA_CONFIG;
+  if (!kv) return true;
+  const tope = Number(env.LIMITE_DIARIO_CHAT) || LIMITE_DIARIO;
+  const clave = `ia:dia:${new Date().toISOString().slice(0, 10)}`;
+  const usados = Number(await kv.get(clave, "json")) || 0;
+  if (usados >= tope) return false;
+  await kv.put(clave, String(usados + 1), { expirationTtl: 3 * 86_400 });
+  return true;
+}
+
 // La base de conocimiento cambia solo con cada publicación: se lee una vez
 // por instancia del Worker.
 let conocimiento: string | null = null;
@@ -139,6 +165,11 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
   }
   const messages = aMensajes(datos);
   if (!messages) return json({ error: "invalido" }, 400);
+  if (!(await dentroDelTopeDiario(env))) {
+    console.log(JSON.stringify({ chat: "tope-diario" }));
+    // «sin-ia»: el chat pasa a responder con las preguntas frecuentes.
+    return json({ error: "sin-ia" }, 503);
+  }
   // Antes del bucle de herramientas, que añade turnos a «messages».
   const primerMensaje = messages.length === 1;
 
@@ -173,9 +204,12 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
     for (let vuelta = 0; vuelta < MAX_VUELTAS; vuelta++) {
       respuesta = await client.beta.messages.create({
         model: modelo,
-        // Las respuestas son cortas; el margen es para el razonamiento interno.
-        max_tokens: 2048,
+        max_tokens: MAX_SALIDA,
         output_config: { effort: "low" },
+        // Sin razonamiento interno: se cobra como salida y para respuestas de
+        // 60 palabras no hace falta. Haiku acepta «disabled»; Sonnet 5.5 lo
+        // rechaza y usa «between_tools» (solo piensa entre herramientas).
+        thinking: { type: modelo.startsWith("claude-haiku") ? "disabled" : "between_tools" },
         // Instrucciones y conocimiento son iguales en todas las peticiones de
         // una misma publicación: van en caché y se cobran a una décima parte.
         // La fecha va detrás, fuera de la caché.

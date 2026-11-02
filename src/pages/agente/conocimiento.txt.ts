@@ -91,22 +91,16 @@ export const GET: APIRoute = async () => {
     l.push(`Página: ${url(`/servicios/${s.slug}`)}`);
     l.push("");
     l.push(`${s.definicion} ${s.resumen}`);
+    // Ahorro (02/11/2026): cada mensaje del chat lleva esta base entera, así
+    // que va lo justo para orientar. Fuera la introducción larga y el proceso
+    // de cada servicio (el general está arriba); se quedan las tres primeras
+    // preguntas. El detalle completo sigue en la página del servicio.
     if (d) {
-      l.push("");
-      l.push(d.intro);
-      l.push("");
-      l.push("Lo que consigues:");
-      for (const r of d.resultado) l.push(`- ${r}`);
-      l.push("Para quién es:");
-      for (const p of d.paraQuien) l.push(`- ${p}`);
-      l.push("Qué incluye:");
-      for (const q of d.queIncluye) l.push(`- ${q}`);
-      if (d.proceso) {
-        l.push("Cómo se trabaja en este servicio:");
-        d.proceso.forEach((p, i) => l.push(`${i + 1}. ${p.titulo}: ${p.texto} Luis: ${p.yo} Cliente: ${p.tu}`));
-      }
-      l.push("Preguntas frecuentes de este servicio:");
-      for (const p of d.faq) l.push(`- ${p.pregunta} ${p.respuesta}`);
+      l.push("Lo que consigues: " + d.resultado.join(" · "));
+      l.push("Para quién es: " + d.paraQuien.join(" · "));
+      l.push("Qué incluye: " + d.queIncluye.join(" · "));
+      l.push("Preguntas frecuentes:");
+      for (const p of d.faq.slice(0, 3)) l.push(`- ${p.pregunta} ${p.respuesta}`);
     }
     l.push("");
   }
@@ -123,8 +117,9 @@ export const GET: APIRoute = async () => {
   // ------------------------------------------------------------ Blog
   l.push("## Artículos del blog");
   l.push("");
+  // Solo título y enlace: basta para recomendar el artículo que toca.
   for (const p of posts) {
-    l.push(`- ${p.data.title}: ${p.data.description} ${url(`/blog/${p.id}`)}`);
+    l.push(`- ${p.data.title}: ${url(`/blog/${p.id}`)}`);
   }
   l.push("");
 
