@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Informe soyluisflores.es</title>
+<!--
+  Informe vivo del proyecto. Regla (02/11/2026): con cada cambio en la web,
+  el panel o la forma de trabajar, se actualiza este fichero en el mismo
+  commit: fecha de «Última actualización», estado, historial, pendientes y
+  lo que haga falta. No es parte de la web publicada (está fuera de src/ y
+  public/), pero el repositorio es público: aquí nunca van claves ni datos
+  privados.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --fondo: #f6f7fb;
+  --superficie: #ffffff;
+  --superficie-2: #eef1f8;
+  --texto: #0f1630;
+  --texto-suave: #4a5372;
+  --borde: #dde2ee;
+  --navy: #0b1533;
+  --azul: #2f6bff;
+  --violeta: #7b4dff;
+  --ok: #0f8a5f;
+  --ok-fondo: #e3f5ee;
+  --pendiente: #a35a00;
+  --pendiente-fondo: #fff1dc;
+  --apagado: #5a6178;
+  --apagado-fondo: #eceef4;
+  --codigo: #f0f2f8;
+  --sombra: 0 1px 2px rgba(15,22,48,.06), 0 8px 24px rgba(15,22,48,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #070c1f;
+    --superficie: #0e1630;
+    --superficie-2: #141e3d;
+    --texto: #e8ecf8;
+    --texto-suave: #a5afcc;
+    --borde: #24305a;
+    --ok: #4fd1a1;
+    --ok-fondo: #0f2b25;
+    --pendiente: #ffb85c;
+    --pendiente-fondo: #2e2210;
+    --apagado: #a5afcc;
+    --apagado-fondo: #1a2345;
+    --codigo: #0a1128;
+    --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #070c1f; --superficie: #0e1630; --superficie-2: #141e3d; --texto: #e8ecf8;
+  --texto-suave: #a5afcc; --borde: #24305a; --ok: #4fd1a1; --ok-fondo: #0f2b25;
+  --pendiente: #ffb85c; --pendiente-fondo: #2e2210; --apagado: #a5afcc; --apagado-fondo: #1a2345;
+  --codigo: #0a1128; --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; background: var(--fondo); color: var(--texto);
+  font: 16px/1.6 Inter, system-ui, sans-serif;
+}
+h1, h2, h3 { font-family: Manrope, Inter, sans-serif; line-height: 1.2; margin: 0 0 .6em; }
+h2 { font-size: 1.6rem; letter-spacing: -.01em; }
+h3 { font-size: 1.1rem; }
+a { color: var(--azul); text-underline-offset: 2px; }
+code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .88em; }
+code { background: var(--codigo); padding: .1em .35em; border-radius: 5px; }
+pre { background: var(--codigo); border: 1px solid var(--borde); padding: 14px 16px; border-radius: 10px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+.envoltura { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+header.portada {
+  background: linear-gradient(135deg, var(--navy) 0%, #142a7a 55%, #3b2a8f 100%);
+  color: #fff; padding: 56px 0 44px;
+}
+.portada .etiqueta { display: inline-block; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; opacity: .8; margin-bottom: 10px; }
+.portada h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 800; }
+.portada p { max-width: 680px; opacity: .9; margin: 0 0 18px; }
+.portada .meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .9rem; opacity: .85; }
+.portada .meta strong { color: #fff; }
+
+nav.indice {
+  position: sticky; top: 0; z-index: 5; background: var(--superficie);
+  border-bottom: 1px solid var(--borde); box-shadow: var(--sombra);
+}
+nav.indice ul { list-style: none; margin: 0; padding: 10px 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+nav.indice ul::-webkit-scrollbar { display: none; }
+nav.indice a {
+  display: block; white-space: nowrap; padding: 6px 12px; border-radius: 999px;
+  text-decoration: none; color: var(--texto-suave); font-size: .9rem; font-weight: 500;
+}
+nav.indice a:hover, nav.indice a:focus-visible { background: var(--superficie-2); color: var(--texto); }
+
+section { padding: 44px 0 8px; }
+.intro { color: var(--texto-suave); max-width: 720px; margin: -4px 0 22px; }
+
+.rejilla { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.tarjeta {
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 14px;
+  padding: 18px; box-shadow: var(--sombra);
+}
+.tarjeta h3 { margin-bottom: .35em; }
+.tarjeta p { margin: 0; color: var(--texto-suave); font-size: .94rem; }
+
+.estado { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+.estado::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.estado.ok { color: var(--ok); background: var(--ok-fondo); }
+.estado.pendiente { color: var(--pendiente); background: var(--pendiente-fondo); }
+.estado.apagado { color: var(--apagado); background: var(--apagado-fondo); }
+
+.paso {
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 14px;
+  margin-bottom: 14px; box-shadow: var(--sombra); overflow: hidden;
+}
+.paso summary {
+  list-style: none; cursor: pointer; padding: 16px 18px; display: flex; gap: 14px; align-items: center;
+}
+.paso summary::-webkit-details-marker { display: none; }
+.paso .numero {
+  flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  font: 700 .95rem Manrope, sans-serif; color: #fff; background: linear-gradient(135deg, var(--azul), var(--violeta));
+}
+.paso .titulo { flex: 1; min-width: 0; }
+.paso .titulo strong { display: block; font-family: Manrope, sans-serif; font-size: 1.05rem; }
+.paso .titulo span { color: var(--texto-suave); font-size: .88rem; }
+.paso summary::after { content: "+"; font-size: 1.4rem; color: var(--texto-suave); flex: none; }
+.paso[open] summary::after { content: "−"; }
+.paso .cuerpo { padding: 0 18px 18px 66px; }
+.paso ol, .paso ul { padding-left: 1.2em; margin: .4em 0; }
+.paso li { margin: .35em 0; }
+@media (max-width: 560px) { .paso .cuerpo { padding-left: 18px; } }
+
+.lista-check { list-style: none; padding: 0; margin: 0; }
+.lista-check li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--borde); }
+.lista-check li:last-child { border-bottom: 0; }
+.lista-check input { margin-top: 5px; width: 18px; height: 18px; accent-color: var(--azul); flex: none; }
+.lista-check label { cursor: pointer; }
+.lista-check input:checked + label { color: var(--texto-suave); text-decoration: line-through; }
+
+.tabla { width: 100%; border-collapse: collapse; background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; font-size: .93rem; }
+.tabla th, .tabla td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+.tabla th { background: var(--superficie-2); font-family: Manrope, sans-serif; font-size: .85rem; }
+.tabla tr:last-child td { border-bottom: 0; }
+.desliza { overflow-x: auto; border-radius: 12px; margin-bottom: 18px; }
+
+.linea { position: relative; padding-left: 22px; border-left: 2px solid var(--borde); margin-left: 6px; }
+.linea .hito { position: relative; padding: 0 0 18px; }
+.linea .hito::before {
+  content: ""; position: absolute; left: -29px; top: 6px; width: 12px; height: 12px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--azul), var(--violeta)); border: 2px solid var(--fondo);
+}
+.linea .fecha { font: 700 .82rem Manrope, sans-serif; color: var(--violeta); text-transform: uppercase; letter-spacing: .05em; }
+.linea ul { margin: 4px 0 0; padding-left: 1.1em; color: var(--texto-suave); }
+
+.si-no { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.si-no div { border-radius: 10px; padding: 10px 12px; font-size: .9rem; }
+.si-no .si { background: var(--ok-fondo); }
+.si-no .no { background: var(--pendiente-fondo); }
+.si-no b { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+@media (max-width: 560px) { .si-no { grid-template-columns: 1fr; } }
+
+details.desplegable { background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; margin: 10px 0; }
+details.desplegable > summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
+details.desplegable > div { padding: 0 16px 14px; }
+
+.copiar { float: right; margin: -4px -4px 6px 8px; font: 600 .78rem Inter, sans-serif; border: 1px solid var(--borde); background: var(--superficie); color: var(--texto); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+.aviso { background: var(--pendiente-fondo); border-radius: 12px; padding: 12px 16px; margin: 14px 0; font-size: .94rem; }
+footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
+</style>
+</head>
+<body>
+
+<header class="portada">
+  <div class="envoltura">
+    <span class="etiqueta">Informe vivo del proyecto</span>
+    <h1>soyluisflores.es: qué hay, qué falta y cómo se usa</h1>
+    <p>Todo lo hecho en la web, el asistente de IA, la agenda y el panel, con los enlaces, los prompts, las herramientas y el paso a paso de lo que sigue. Se actualiza con cada cambio.</p>
+    <div class="meta">
+      <span>Última actualización: <strong>02/11/2026</strong></span>
+      <span>Commit publicado: <strong>a6253a2</strong></span>
+      <span>Panel: <strong>b877035</strong></span>
+    </div>
+  </div>
+</header>
+
+<nav class="indice" aria-label="Secciones">
+  <div class="envoltura">
+    <ul>
+      <li><a href="#estado">Estado</a></li>
+      <li><a href="#siguiente">Lo que sigue</a></li>
+      <li><a href="#checklist">Checklist</a></li>
+      <li><a href="#hecho">Lo hecho</a></li>
+      <li><a href="#enlaces">Enlaces</a></li>
+      <li><a href="#prompts">Prompts</a></li>
+      <li><a href="#herramientas">Herramientas</a></li>
+      <li><a href="#skills">Skills, plugins y agentes</a></li>
+      <li><a href="#claves">Claves y servicios</a></li>
+      <li><a href="#costos">Costos</a></li>
+      <li><a href="#reglas">Reglas</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="envoltura">
+
+<!-- ESTADO -->
+<section id="estado">
+  <h2>Estado en un vistazo</h2>
+  <p class="intro">Revisado en vivo el 02/11/2026.</p>
+  <div class="rejilla">
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Web</h3><p>Publicada en soyluisflores.es desde GitHub (rama main) con Cloudflare.</p></div>
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Asistente de IA del chat</h3><p>Responde con Claude Sonnet 5.5, da botones de respuesta rápida y agenda la llamada.</p></div>
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Agenda propia</h3><p>Conectada a Google Calendar, con correos automáticos y el lead entrando en el panel.</p></div>
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Resumen semanal</h3><p>Cada lunes a las 8:00 (Madrid) llega a hola@ con las cifras del chat y de las citas.</p></div>
+    <div class="tarjeta"><span class="estado pendiente">Pendiente</span><h3>Horario desde el panel</h3><p>Falta crear la clave que une el panel con la agenda. Es el paso 1.</p></div>
+    <div class="tarjeta"><span class="estado pendiente">Pendiente</span><h3>Medición de anuncios</h3><p>El contenedor de Tag Manager está listo, falta importarlo y poner los IDs.</p></div>
+    <div class="tarjeta"><span class="estado apagado">Apagado</span><h3>WhatsApp 1 hora antes</h3><p>Programado pero sin claves de Twilio. Tiene costo por mensaje.</p></div>
+    <div class="tarjeta"><span class="estado ok">Sincronizado</span><h3>GitHub</h3><p>main y reconstruccion-oct-2026 en el mismo commit. Panel al día.</p></div>
+  </div>
+</section>
+
+<!-- LO QUE SIGUE -->
+<section id="siguiente">
+  <h2>Lo que sigue, paso a paso</h2>
+  <p class="intro">En orden de prioridad. Toca cada paso para abrirlo.</p>
+
+  <details class="paso" open>
+    <summary><span class="numero">1</span><span class="titulo"><strong>Conectar el horario del panel con la web</strong><span>Urgente · unos 5 minutos · lo haces tú en PowerShell</span></span></summary>
+    <div class="cuerpo">
+      <p>Hoy la web contesta «no autorizado» al panel porque la clave aún no existe. Con esto podrás cambiar tu horario desde el panel.</p>
+      <ol>
+        <li>Pulsa la tecla <b>Windows</b>, escribe <code>PowerShell</code> y pulsa <b>Enter</b>.</li>
+        <li>Pega y pulsa Enter: <pre>cd "C:\Users\Luis Carlos\Documents\panel"</pre></li>
+        <li>Pega y pulsa Enter: <pre>npx firebase login</pre> Si pregunta <b>Y/n</b>, escribe <code>n</code>. En el navegador elige tu cuenta de Google y pulsa <b>Permitir</b>. Si dice «Already logged in», sigue.</li>
+        <li>Pega y pulsa Enter: <pre>cd "C:\Users\Luis Carlos\Documents\soyluisflores-web"</pre></li>
+        <li>Pega y pulsa Enter: <pre>npx wrangler login</pre> En el navegador pulsa <b>Allow</b>.</li>
+        <li>Pega y pulsa Enter: <pre>node tools/conectar-agenda.mjs</pre> Tarda 2 o 3 minutos. Si sale un error, cópialo entero y pégalo en el chat con Claude.</li>
+        <li>Comprueba en <a href="https://panel.soyluisflores.es">panel.soyluisflores.es</a> → <b>Ajustes → Horario de la agenda</b> que sale tu horario.</li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="numero">2</span><span class="titulo"><strong>Hacer una cita de prueba desde el chat</strong><span>10 minutos · comprueba correos, calendario y panel</span></span></summary>
+    <div class="cuerpo">
+      <ol>
+        <li>Abre soyluisflores.es en el celular, mejor con datos móviles.</li>
+        <li>Abre la burbuja del chat y escribe: <code>quiero agendar una llamada</code>.</li>
+        <li>Elige una hora y da tu nombre y un correo tuyo que no sea hola@.</li>
+        <li>En la tarjeta marca la casilla de privacidad y pulsa <b>Confirmar llamada</b>.</li>
+        <li>Revisa: correo de confirmación, aviso «Nueva llamada» en hola@, evento en Google Calendar y lead con campana en el panel.</li>
+        <li>Cancela la prueba con el enlace <b>Cancelar</b> del correo de confirmación.</li>
+      </ol>
+      <p>Si algo no llega, revisa Resend y Email Routing de Cloudflare, o dile a Claude cuál de los cuatro falló.</p>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="numero">3</span><span class="titulo"><strong>Importar la medición de anuncios en Tag Manager</strong><span>Cuando tengas los IDs de Meta y Google Ads</span></span></summary>
+    <div class="cuerpo">
+      <ol>
+        <li>Entra en <a href="https://tagmanager.google.com">tagmanager.google.com</a> y abre el contenedor de soyluisflores.es.</li>
+        <li><b>Administrador → Importar contenedor</b>.</li>
+        <li><b>Seleccionar archivo</b>: <code>C:\Users\Luis Carlos\Documents\soyluisflores-web\gtm\contenedor-anuncios.json</code></li>
+        <li>Espacio de trabajo: <b>Existente → Default Workspace</b>.</li>
+        <li>Opción: <b>Combinar</b> y luego <b>Cambiar el nombre de las etiquetas…</b>. Nunca «Sobrescribir».</li>
+        <li><b>Confirmar</b>. En <b>Variables</b> busca las que dicen COMPLETAR y pega tus IDs.</li>
+        <li><b>Enviar → Publicar</b>.</li>
+      </ol>
+      <p>Guía completa en <code>gtm/LEEME.md</code>. Después, crea las conversiones en Google Ads.</p>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="numero">4</span><span class="titulo"><strong>Aviso si la web se cae (UptimeRobot)</strong><span>Gratis · no gasta tokens ni créditos</span></span></summary>
+    <div class="cuerpo">
+      <ol>
+        <li>Entra en <a href="https://uptimerobot.com">uptimerobot.com</a> → <b>Register for FREE</b>.</li>
+        <li><b>+ New monitor</b> → tipo <b>HTTP(s)</b> → URL <code>https://soyluisflores.es</code>.</li>
+        <li>Intervalo <b>5 minutes</b>, marca tu correo y pulsa <b>Create monitor</b>.</li>
+        <li>Opcional: repite con <code>https://panel.soyluisflores.es</code>.</li>
+      </ol>
+      <p>Nunca vigiles <code>/api/chat</code>: eso sí gastaría créditos de Claude.</p>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="numero">5</span><span class="titulo"><strong>Pendientes sin prisa</strong><span>Abogado, enlaces viejos, rama vieja, WhatsApp</span></span></summary>
+    <div class="cuerpo">
+      <ul>
+        <li><b>Abogado:</b> que revise aviso legal, privacidad, cookies y el aviso para Latinoamérica.</li>
+        <li><b>Enlaces de Calendly:</b> cámbialos por <code>https://soyluisflores.es/contacto</code> en la bio de Instagram, WhatsApp Business y tu firma de correo.</li>
+        <li><b>Rama vieja (opcional),</b> en PowerShell dentro de la carpeta de la web:
+          <pre>git push origin --delete servicios-nuevos-oct-2026</pre>
+          <pre>git branch -d servicios-nuevos-oct-2026</pre></li>
+        <li><b>WhatsApp 1 hora antes (de pago):</b> primero el abogado añade Twilio y Meta a la privacidad. Pasos en <code>AGENDA.md</code>, sección «Recordatorio por WhatsApp».</li>
+        <li><b>Seguridad (opcional):</b> rotar el secreto del cliente de Google y volver a ejecutar <code>node tools/autorizar-google.mjs</code>.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<!-- CHECKLIST -->
+<section id="checklist">
+  <h2>Checklist</h2>
+  <p class="intro">Puedes marcar las casillas: se recuerdan en este navegador. La fuente oficial es lo que Claude actualiza en este fichero.</p>
+  <div class="tarjeta">
+    <ul class="lista-check">
+      <li><input type="checkbox" id="c1" checked disabled><label for="c1">Web reconstruida en Astro y publicada con Cloudflare</label></li>
+      <li><input type="checkbox" id="c2" checked disabled><label for="c2">9 servicios, 9 funnels, 9 guías gratis y 12 artículos</label></li>
+      <li><input type="checkbox" id="c3" checked disabled><label for="c3">Agenda propia con Google Calendar, correos y cancelación</label></li>
+      <li><input type="checkbox" id="c4" checked disabled><label for="c4">Cada reserva entra como lead en el panel</label></li>
+      <li><input type="checkbox" id="c5" checked disabled><label for="c5">Email marketing: guía, lista con doble confirmación y secuencia</label></li>
+      <li><input type="checkbox" id="c6" checked disabled><label for="c6">Asistente de IA que agenda la llamada y se mide en Analytics</label></li>
+      <li><input type="checkbox" id="c7" checked disabled><label for="c7">Resumen semanal por correo</label></li>
+      <li><input type="checkbox" id="p1" data-guardar><label for="p1">Paso 1: conectar el horario del panel</label></li>
+      <li><input type="checkbox" id="p2" data-guardar><label for="p2">Paso 2: cita de prueba desde el chat</label></li>
+      <li><input type="checkbox" id="p3" data-guardar><label for="p3">Paso 3: Tag Manager y conversiones de Google Ads</label></li>
+      <li><input type="checkbox" id="p4" data-guardar><label for="p4">Paso 4: UptimeRobot</label></li>
+      <li><input type="checkbox" id="p5" data-guardar><label for="p5">Revisión del abogado</label></li>
+      <li><input type="checkbox" id="p6" data-guardar><label for="p6">Cambiar los enlaces viejos de Calendly</label></li>
+      <li><input type="checkbox" id="p7" data-guardar><label for="p7">Borrar la rama servicios-nuevos-oct-2026 (opcional)</label></li>
+      <li><input type="checkbox" id="p8" data-guardar><label for="p8">Activar WhatsApp con Twilio (opcional, de pago)</label></li>
+    </ul>
+  </div>
+</section>
+
+<!-- LO HECHO -->
+<section id="hecho">
+  <h2>Lo que se ha hecho</h2>
+  <p class="intro">Resumen del historial de GitHub. Cada punto tiene su commit en <a href="https://github.com/soyluisfloresoficial/web/commits/main">github.com/soyluisfloresoficial/web</a>.</p>
+  <div class="linea">
+    <div class="hito"><div class="fecha">18 y 19 oct</div><strong>Reconstrucción de la web en Astro</strong>
+      <ul><li>Cabecera, pie y las diez secciones de la portada.</li><li>Servicios, blog, sobre mí, contacto, calculadora ROI, legales y 404.</li><li>Sistema de movimiento, acordeones y barra de progreso.</li></ul></div>
+    <div class="hito"><div class="fecha">20 oct</div><strong>Diseño y publicación</strong>
+      <ul><li>Tipografía, acentos de color y capa premium en todo el sitio.</li><li>Worker «web» de Cloudflare: URL sin barra final y página 404.</li><li>Regla permanente: cada cambio se publica.</li></ul></div>
+    <div class="hito"><div class="fecha">21 oct</div><strong>Contenido y SEO</strong>
+      <ul><li>Tres servicios nuevos: CRM, email marketing y paneles de métricas.</li><li>Textos en español latino neutro, SEO y GEO para Latinoamérica.</li><li>Imagen para compartir en cada página, WhatsApp en toda la web.</li><li>Fuera cifras sin respaldo y Nova Funnels. Aviso de privacidad para Latinoamérica.</li></ul></div>
+    <div class="hito"><div class="fecha">22 y 23 oct</div><strong>Landing y prompt de auditoría</strong>
+      <ul><li>Landing /diagnostico para anuncios.</li><li>Titular de la portada sin promesas.</li><li>Prompt de auditoría por fases (PROMPT-AUDITORIA-WEB.md).</li></ul></div>
+    <div class="hito"><div class="fecha">26 oct</div><strong>Auditoría en cuatro fases</strong>
+      <ul><li>H1, finalidades del RGPD y tabla real de cookies.</li><li>Cabeceras de seguridad, sitemap y descripciones.</li><li>Afirmaciones con respaldo y enlaces en el blog.</li></ul></div>
+    <div class="hito"><div class="fecha">27 oct</div><strong>Video y asistente de IA</strong>
+      <ul><li>Video de motion graphics hecho con código (Remotion).</li><li>Primer asistente de IA de la web con Claude.</li></ul></div>
+    <div class="hito"><div class="fecha">28 oct</div><strong>Rendimiento, portada y agenda</strong>
+      <ul><li>Mejoras de PageSpeed y banner de cookies compacto.</li><li>Portada: públicos, cómo trabajo, herramientas y blog con portadas.</li><li>Calculadora ROI en vivo y «Mi historia» en Sobre mí.</li><li>Agenda propia con Google Calendar y funnels por servicio.</li></ul></div>
+    <div class="hito"><div class="fecha">29 oct</div><strong>Agenda completa y funnels con la identidad de la web</strong>
+      <ul><li>Correos automáticos, cancelación propia y fuera Calendly.</li><li>Funnels con los colores de la web y gráficos animados.</li></ul></div>
+    <div class="hito"><div class="fecha">30 oct</div><strong>Panel y email marketing</strong>
+      <ul><li>Cada reserva entra en el panel como lead.</li><li>Guía gratis, lista con doble confirmación y secuencia de correos.</li></ul></div>
+    <div class="hito"><div class="fecha">31 oct</div><strong>Anuncios y contenidos</strong>
+      <ul><li>Contenedor de Tag Manager para Meta y Google Ads.</li><li>Una guía gratis por servicio y tres artículos nuevos.</li></ul></div>
+    <div class="hito"><div class="fecha">1 nov</div><strong>Agendador rediseñado</strong>
+      <ul><li>Pasos claros, hora de Madrid y privacidad a la vista.</li><li>Script para conectar el horario con el panel.</li></ul></div>
+    <div class="hito"><div class="fecha">2 nov</div><strong>Asistente que agenda y resumen semanal</strong>
+      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li></ul></div>
+  </div>
+</section>
+
+<!-- ENLACES -->
+<section id="enlaces">
+  <h2>Enlaces</h2>
+
+  <h3>Tu web</h3>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Página</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://soyluisflores.es">Portada</a></td><td>Presentación y entrada a todo.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/servicios">Servicios</a></td><td>Los 9 servicios, cada uno con su página.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/contacto">Contacto</a></td><td>Agendador de la llamada, WhatsApp y correo. Es el enlace para tus perfiles.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/diagnostico">Diagnóstico</a></td><td>Landing para anuncios. No sale en Google (noindex).</td></tr>
+      <tr><td><a href="https://soyluisflores.es/guia">Guías gratis</a></td><td>Una guía por servicio a cambio del correo.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/blog">Blog</a></td><td>12 artículos, cada uno enlazado a su funnel.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/roi">Calculadora ROI</a></td><td>Calcula el tiempo y el dinero que se ahorra.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/sobre-mi">Sobre mí</a></td><td>Tu historia y tu forma de trabajar.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/llms.txt">llms.txt</a></td><td>Resumen de la web para buscadores con IA.</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="desplegable"><summary>Funnels de anuncios (uno por servicio)</summary><div>
+    <p>Usa estos en Meta Ads y Google Ads. Los parámetros de campaña están en <code>FUNNELS.md</code>.</p>
+    <ul>
+      <li><a href="https://soyluisflores.es/diagnostico/agentes-ia">/diagnostico/agentes-ia</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/funnels-conversion">/diagnostico/funnels-conversion</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/automatizacion">/diagnostico/automatizacion</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/crm-seguimiento-leads">/diagnostico/crm-seguimiento-leads</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/email-marketing">/diagnostico/email-marketing</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/paneles-de-metricas">/diagnostico/paneles-de-metricas</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/webs-ia">/diagnostico/webs-ia</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/trafico-de-pago">/diagnostico/trafico-de-pago</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/consultoria-ia">/diagnostico/consultoria-ia</a></li>
+    </ul>
+  </div></details>
+
+  <details class="desplegable"><summary>Guías gratis (una por servicio)</summary><div>
+    <ul>
+      <li><a href="https://soyluisflores.es/guia/que-automatizar-primero">Qué automatizar primero</a></li>
+      <li><a href="https://soyluisflores.es/guia/preparar-un-agente-de-ia">Preparar un agente de IA</a></li>
+      <li><a href="https://soyluisflores.es/guia/embudo-de-ventas-paso-a-paso">Embudo de ventas paso a paso</a></li>
+      <li><a href="https://soyluisflores.es/guia/ordenar-tus-contactos-en-un-crm">Ordenar tus contactos en un CRM</a></li>
+      <li><a href="https://soyluisflores.es/guia/tu-primera-secuencia-de-correos">Tu primera secuencia de correos</a></li>
+      <li><a href="https://soyluisflores.es/guia/las-cifras-de-tu-negocio">Las cifras de tu negocio</a></li>
+      <li><a href="https://soyluisflores.es/guia/una-web-que-trae-clientes">Una web que trae clientes</a></li>
+      <li><a href="https://soyluisflores.es/guia/antes-de-invertir-en-anuncios">Antes de invertir en anuncios</a></li>
+      <li><a href="https://soyluisflores.es/guia/por-donde-empezar-con-ia">Por dónde empezar con IA</a></li>
+    </ul>
+  </div></details>
+
+  <h3 style="margin-top:22px">Paneles y cuentas</h3>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Dónde</th><th>Para qué entras</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://panel.soyluisflores.es">Tu panel</a></td><td>Leads, campana de avisos y horario de la agenda.</td></tr>
+      <tr><td><a href="https://github.com/soyluisfloresoficial/web">GitHub (web)</a></td><td>El código. Lo que entra en main se publica solo.</td></tr>
+      <tr><td><a href="https://dash.cloudflare.com">Cloudflare</a></td><td>Worker «web»: claves secretas, registros de errores, correo del dominio.</td></tr>
+      <tr><td><a href="https://console.firebase.google.com">Firebase</a></td><td>Base de datos y funciones del panel.</td></tr>
+      <tr><td><a href="https://console.anthropic.com">Consola de Anthropic</a></td><td>Gasto del asistente de IA y límite mensual.</td></tr>
+      <tr><td><a href="https://resend.com">Resend</a></td><td>Ver si los correos automáticos salieron.</td></tr>
+      <tr><td><a href="https://tagmanager.google.com">Tag Manager</a></td><td>Etiquetas de medición y de anuncios.</td></tr>
+      <tr><td><a href="https://analytics.google.com">Google Analytics</a></td><td>Visitas, eventos del chat y leads.</td></tr>
+      <tr><td><a href="https://search.google.com/search-console">Search Console</a></td><td>Cómo aparece la web en Google.</td></tr>
+      <tr><td><a href="https://calendar.google.com">Google Calendar</a></td><td>Donde caen las citas.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- PROMPTS -->
+<section id="prompts">
+  <h2>Prompts: el matriz y sus derivados</h2>
+  <p class="intro">Un prompt es el texto de instrucciones que recibe una IA. El matriz define al asistente de la web; los derivados salen de él o lo completan.</p>
+
+  <div class="tarjeta" style="margin-bottom:14px">
+    <span class="estado ok">Prompt matriz</span>
+    <h3>Instrucciones del asistente de la web</h3>
+    <p>Fichero <code>src/worker/instrucciones.ts</code>. Define quién es, cómo lleva la conversación (respuesta, sector, problema, servicio, llamada), los botones «Opciones:», cómo agenda, qué no puede hacer, la seguridad contra manipulación y el tono (unas 60 palabras, español latino, sin precios inventados).</p>
+    <div class="si-no">
+      <div class="si"><b>Sirve para</b>Resolver dudas con la información de la web, recomendar el servicio que encaja y agendar la llamada.</div>
+      <div class="no"><b>No sirve para</b>Dar precios, plazos o resultados, hacer trabajos ajenos a la web, guardar mensajes para Luis ni dar asesoría legal o fiscal.</div>
+    </div>
+    <p style="margin-top:10px">Para cambiarlo, pídeselo a Claude Code: lo prueba con <code>node tools/probar-agente.mjs</code> antes de publicar.</p>
+  </div>
+
+  <div class="rejilla">
+    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Base de conocimiento</h3><p>Se genera sola en cada publicación desde los servicios, preguntas, proceso y blog (<code>/agente/conocimiento.txt</code>). Para que el asistente sepa algo nuevo, cambia la web, no el prompt.</p></div>
+    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Herramientas del asistente</h3><p><code>ver_horarios</code> (horas libres reales) y <code>preparar_cita</code> (valida los datos y muestra la tarjeta). En <code>src/worker/chat-agenda.ts</code>. La IA nunca agenda sola: confirma la persona.</p></div>
+    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Prompt de auditoría</h3><p><code>PROMPT-AUDITORIA-WEB.md</code>: se pega en una sesión nueva de Claude Code para auditar SEO, rendimiento, accesibilidad y conversión por fases, con tu aprobación entre fases.</p></div>
+    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Plantillas de correo</h3><p>Confirmación, recordatorios y cancelación en <code>src/worker/correo-plantillas.ts</code>. Secuencia de email marketing en <code>src/worker/secuencia.ts</code>. Las que se pegan a mano, en <code>correos/PLANTILLAS.md</code>.</p></div>
+  </div>
+
+  <h3 style="margin-top:26px">Prompts para pedirle cosas a Claude Code</h3>
+  <p class="intro">Cópialos, cambia lo que está entre corchetes y pégalos en una conversación de Claude Code abierta en la carpeta de la web.</p>
+
+  <details class="desplegable"><summary>Hacer un cambio en la web</summary><div>
+<pre><button class="copiar" type="button">Copiar</button>Cambia [qué quieres cambiar] en [página o sección]. Respeta las reglas de CLAUDE.md, publícalo al terminar, actualiza INFORME.html y dame el paso a paso de lo que me toque hacer a mí.</pre></div></details>
+
+  <details class="desplegable"><summary>Escribir un artículo nuevo para el blog</summary><div>
+<pre><button class="copiar" type="button">Copiar</button>Escribe un artículo para el blog sobre [tema] pensado para [tipo de negocio]. Sin cifras ni casos inventados, enlázalo al funnel de [servicio], genera su imagen para redes, publícalo y actualiza INFORME.html.</pre></div></details>
+
+  <details class="desplegable"><summary>Revisar que todo funciona</summary><div>
+<pre><button class="copiar" type="button">Copiar</button>Revisa en vivo que la web, el chat, la agenda y el panel responden bien, que GitHub está sincronizado y dime qué falta. Actualiza INFORME.html con el estado.</pre></div></details>
+
+  <details class="desplegable"><summary>Ajustar cómo responde el asistente del chat</summary><div>
+<pre><button class="copiar" type="button">Copiar</button>Quiero que el asistente del chat [cómo quieres que responda] cuando [situación]. Pruébalo con probar-agente antes de publicar y dime cómo quedó la respuesta.</pre></div></details>
+
+  <details class="desplegable"><summary>Pedir un resumen y checklist</summary><div>
+<pre><button class="copiar" type="button">Copiar</button>Hazme un resumen de lo que llevo, lo que falta y lo que me sugieres, con el paso a paso detallado. Actualiza INFORME.html y mándamelo.</pre></div></details>
+
+  <details class="desplegable"><summary>Auditoría completa de la web</summary><div>
+    <p>Abre <code>PROMPT-AUDITORIA-WEB.md</code>, copia el bloque de texto y pégalo en una conversación nueva. Trabaja en una rama aparte y no publica nada sin tu aprobación.</p>
+  </div></details>
+</section>
+
+<!-- HERRAMIENTAS -->
+<section id="herramientas">
+  <h2>Herramientas del proyecto</h2>
+  <p class="intro">Comandos que viven en la carpeta <code>tools/</code>. Se ejecutan en PowerShell dentro de la carpeta de la web.</p>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Comando</th><th>Para qué sirve</th><th>Cuándo</th></tr></thead>
+    <tbody>
+      <tr><td><code>npm run build</code></td><td>Compila la web.</td><td>Antes de cada publicación (Claude lo hace).</td></tr>
+      <tr><td><code>node tools/auditar-dist.mjs</code></td><td>Revisa la web compilada. Tiene que dar 0 problemas.</td><td>Antes de cada publicación.</td></tr>
+      <tr><td><code>node tools/conectar-agenda.mjs</code></td><td>Crea la clave entre panel y agenda y publica el panel.</td><td>Paso 1. Lo ejecutas tú.</td></tr>
+      <tr><td><code>node tools/conectar-panel.mjs</code></td><td>Conecta las reservas con el panel como leads.</td><td>Ya hecho. Solo si cambia el panel.</td></tr>
+      <tr><td><code>node tools/autorizar-google.mjs</code></td><td>Da permiso a la web para usar tu Google Calendar.</td><td>Si cambias o rotas la clave de Google.</td></tr>
+      <tr><td><code>node tools/generar-og.mjs</code></td><td>Crea las imágenes para compartir en redes.</td><td>Al añadir un artículo o servicio.</td></tr>
+      <tr><td><code>node tools/generar-contenedor-anuncios.mjs</code></td><td>Genera el fichero para importar en Tag Manager.</td><td>Al cambiar la medición.</td></tr>
+      <tr><td><code>node tools/probar-agente.mjs</code></td><td>Prueba el asistente con preguntas difíciles.</td><td>Al cambiar el prompt matriz.</td></tr>
+      <tr><td><code>node tools/probar-agenda.mjs</code></td><td>25 pruebas de la agenda.</td><td>Al cambiar la agenda.</td></tr>
+      <tr><td><code>node tools/servir-dist.mjs</code></td><td>Abre la web compilada en tu ordenador.</td><td>Para mirarla antes de publicar.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <h2>Skills, plugins y agentes</h2>
+  <p class="intro">Una <b>skill</b> es un manual de instrucciones que Claude carga para una tarea concreta. Un <b>plugin</b> es un paquete que trae skills y conexiones con otros servicios. Un <b>agente</b> es una IA que trabaja sola en una tarea.</p>
+
+  <h3>Agentes</h3>
+  <div class="rejilla">
+    <div class="tarjeta"><h3>Asistente de la web</h3><p>Claude Sonnet 5.5 dentro del chat de soyluisflores.es.</p>
+      <div class="si-no"><div class="si"><b>Sirve</b>Atender visitas y agendar.</div><div class="no"><b>No sirve</b>Para trabajar en tu código ni en tu panel.</div></div></div>
+    <div class="tarjeta"><h3>Claude Code (esta sesión)</h3><p>Trabaja en la carpeta de la web: cambia, prueba y publica.</p>
+      <div class="si-no"><div class="si"><b>Sirve</b>Cambios, revisiones, informes, guías.</div><div class="no"><b>No sirve</b>Crear cuentas, poner contraseñas o claves, borrar ramas.</div></div></div>
+    <div class="tarjeta"><h3>Sesión del panel</h3><p>Otra conversación de Claude Code en la carpeta del panel.</p>
+      <div class="si-no"><div class="si"><b>Sirve</b>Cambios del panel y la app Android.</div><div class="no"><b>No sirve</b>Publicar el panel sin tu permiso.</div></div></div>
+    <div class="tarjeta"><h3>Subagentes</h3><p>Ayudantes que Claude Code lanza para buscar o revisar en paralelo.</p>
+      <div class="si-no"><div class="si"><b>Sirve</b>Búsquedas y revisiones grandes.</div><div class="no"><b>No sirve</b>Tareas pequeñas: gastan más.</div></div></div>
+  </div>
+
+  <h3 style="margin-top:22px">Skills usadas en este proyecto</h3>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Skill</th><th>Sirve para</th><th>No sirve para</th></tr></thead>
+    <tbody>
+      <tr><td><code>claude-api</code></td><td>Elegir modelo, precios y programar el asistente de IA.</td><td>Diseño ni textos de la web.</td></tr>
+      <tr><td><code>design:design-system</code></td><td>Tipografía, colores y piezas coherentes en toda la web.</td><td>Contenido o SEO.</td></tr>
+      <tr><td><code>design:accessibility-review</code></td><td>Revisar contraste, foco y movimiento (WCAG).</td><td>Velocidad de carga.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Plugins instalados que te pueden servir</h3>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Plugin</th><th>Sirve para</th><th>Nota</th></tr></thead>
+    <tbody>
+      <tr><td>Cloudflare</td><td>Ver el Worker, las bases KV y la documentación.</td><td>Hay que autorizarlo con /mcp.</td></tr>
+      <tr><td>Firebase</td><td>Base de datos y funciones del panel.</td><td>A veces no conecta; se reintenta.</td></tr>
+      <tr><td>Twilio Developer Kit</td><td>Montar el WhatsApp de recordatorios.</td><td>Cuando decidas activarlo.</td></tr>
+      <tr><td>Marketing / SEO</td><td>Planes de campaña, auditorías SEO, correos.</td><td>Algunos necesitan cuentas de pago.</td></tr>
+      <tr><td>Design</td><td>Crítica de diseño, accesibilidad, textos de interfaz.</td><td>—</td></tr>
+      <tr><td>Instagram (skills ig-*)</td><td>Captions, carruseles, reels y plan de contenido.</td><td>Para tu marca personal.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- CLAVES -->
+<section id="claves">
+  <h2>Claves y servicios conectados</h2>
+  <p class="intro">Aquí solo están los nombres y dónde se guardan. Los valores nunca se escriben en el repositorio, que es público.</p>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Clave</th><th>Para qué</th><th>Dónde está</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Asistente de IA</td><td>Cloudflare → web → Variables y secretos</td><td><span class="estado ok">Puesta</span></td></tr>
+      <tr><td><code>GOOGLE_CLIENT_ID / SECRET / REFRESH_TOKEN</code></td><td>Google Calendar</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Puestas</span></td></tr>
+      <tr><td><code>RESEND_API_KEY</code></td><td>Correos automáticos</td><td>Cloudflare, tipo Secreto</td><td><span class="estado pendiente">Se comprueba en el paso 2</span></td></tr>
+      <tr><td><code>PANEL_WEBHOOK_URL / PANEL_SECRETO</code></td><td>Leads al panel</td><td>Cloudflare, tipo Secreto</td><td><span class="estado pendiente">Se comprueba en el paso 2</span></td></tr>
+      <tr><td><code>AGENDA_ADMIN_TOKEN</code></td><td>Horario desde el panel</td><td>Cloudflare y Firebase</td><td><span class="estado pendiente">Falta (paso 1)</span></td></tr>
+      <tr><td><code>TWILIO_*</code> (4 claves)</td><td>WhatsApp 1 hora antes</td><td>Cloudflare, tipo Secreto</td><td><span class="estado apagado">Sin poner</span></td></tr>
+      <tr><td><code>PUBLIC_GTM_ID</code></td><td>Tag Manager</td><td>Cloudflare → Compilación</td><td><span class="estado ok">Puesta</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>Guías detalladas: <code>AGENDA.md</code> (agenda, correos, panel, WhatsApp), <code>AGENTE.md</code> (asistente), <code>EMAIL-MARKETING.md</code>, <code>FUNNELS.md</code>, <code>DESPLIEGUE.md</code> y <code>GUIA-CLOUDFLARE.md</code>.</p>
+</section>
+
+<!-- COSTOS -->
+<section id="costos">
+  <h2>Costos</h2>
+  <div class="desliza"><table class="tabla">
+    <thead><tr><th>Servicio</th><th>Costo</th><th>Cómo controlarlo</th></tr></thead>
+    <tbody>
+      <tr><td>Asistente (Claude Sonnet 5.5)</td><td>Por uso: 2 $ por cada millón de tokens (trozos de texto) que lee y 10 $ por cada millón que escribe. Con caché, la base de conocimiento sale más barata.</td><td>Pon un límite mensual en la consola de Anthropic. La opción más barata es Haiku 5.5 (se cambia en <code>wrangler.jsonc</code>).</td></tr>
+      <tr><td>Cloudflare</td><td>Según tu plan actual.</td><td>Panel de Cloudflare → Facturación.</td></tr>
+      <tr><td>Resend</td><td>Según tu plan.</td><td>Panel de Resend.</td></tr>
+      <tr><td>UptimeRobot</td><td>Gratis (hasta 50 monitores).</td><td>No toca la IA.</td></tr>
+      <tr><td>WhatsApp con Twilio</td><td>Unos céntimos por mensaje (Twilio más Meta).</td><td>Solo si lo activas.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- REGLAS -->
+<section id="reglas">
+  <h2>Reglas del proyecto</h2>
+  <div class="rejilla">
+    <div class="tarjeta"><h3>Publicación</h3><p>Cada cambio: compilar, auditar con 0 problemas, commit en español y subir a main y a reconstruccion-oct-2026. Nunca forzar. El panel solo se publica con tu permiso.</p></div>
+    <div class="tarjeta"><h3>Contenido</h3><p>Español latino neutro con tuteo. Nada de cifras, clientes, reseñas ni fechas inventadas. Si falta un dato: [COMPLETAR].</p></div>
+    <div class="tarjeta"><h3>Datos personales</h3><p>El NIE solo en /aviso-legal. Domicilio público: Manresa, Barcelona, España. Los textos legales no se tocan sin tu pedido.</p></div>
+    <div class="tarjeta"><h3>Este informe</h3><p>Claude lo actualiza en cada cambio: fecha, estado, historial, pendientes y lo que corresponda. Si notas algo desactualizado, pídele «actualiza INFORME.html».</p></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="envoltura">
+  Fichero <code>INFORME.html</code> en la carpeta de la web y en GitHub. No se publica en soyluisflores.es.
+</footer>
+
+<script>
+  // Casillas pendientes: se recuerdan solo en este navegador.
+  document.querySelectorAll("input[data-guardar]").forEach(function (caja) {
+    var clave = "informe-" + caja.id;
+    try { caja.checked = localStorage.getItem(clave) === "1"; } catch (e) {}
+    caja.addEventListener("change", function () {
+      try { localStorage.setItem(clave, caja.checked ? "1" : "0"); } catch (e) {}
+    });
+  });
+  // Botones «Copiar» de los prompts.
+  document.querySelectorAll(".copiar").forEach(function (boton) {
+    boton.addEventListener("click", function () {
+      var texto = boton.parentElement.textContent.replace(boton.textContent, "").trim();
+      navigator.clipboard.writeText(texto).then(function () {
+        boton.textContent = "Copiado";
+        setTimeout(function () { boton.textContent = "Copiar"; }, 1500);
+      });
+    });
+  });
+</script>
+</body>
+</html>

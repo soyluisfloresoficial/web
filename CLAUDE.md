@@ -16,6 +16,8 @@ Autorización permanente (20/10/2026), para cualquier conversación: cuando haga
 4. `git push` a **`main`** de `https://github.com/soyluisfloresoficial/web`. Siempre en avance rápido; **nunca `--force`**.
 5. Avisa de qué se ha publicado y con qué commit. Cloudflare tarda uno o dos minutos.
 
+**Informe vivo (02/11/2026):** `INFORME.html` (en la raíz, no se publica en la web) resume lo hecho, el estado, los enlaces, los prompts, las herramientas, las claves (solo nombres) y el paso a paso de lo que falta. Actualízalo en el mismo commit de cada cambio: fecha de «Última actualización», commit, estado, historial, pendientes y checklist. El repositorio es público: nunca pongas ahí valores de claves.
+
 Si el build o la auditoría fallan, **no subas nada** y explica qué ha pasado.
 
 ## Dónde se guarda cada cosa
