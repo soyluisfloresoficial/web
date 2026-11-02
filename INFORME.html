@@ -9,692 +9,945 @@
   Informe vivo del proyecto. Regla (02/11/2026): con cada cambio en la web,
   el panel o la forma de trabajar, se actualiza este fichero en el mismo
   commit: fecha de «Última actualización», estado, historial, pendientes y
-  lo que haga falta. No es parte de la web publicada (está fuera de src/ y
-  public/), pero el repositorio es público: aquí nunca van claves ni datos
-  privados.
+  checklist. No se publica en la web (está fuera de src/ y public/), pero el
+  repositorio es público: aquí nunca van claves ni datos privados.
+
+  Rediseño del 02/11/2026: pestañas con botones de opción (radio) y CSS, así
+  funcionan aunque el visor bloquee JavaScript (vista previa de la app o del
+  celular). El JavaScript solo suma: recordar la pestaña, las casillas y el
+  botón «Copiar» con respaldo si el portapapeles está bloqueado.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --fondo: #f6f7fb;
-  --superficie: #ffffff;
-  --superficie-2: #eef1f8;
-  --texto: #0f1630;
-  --texto-suave: #4a5372;
-  --borde: #dde2ee;
-  --navy: #0b1533;
-  --azul: #2f6bff;
-  --violeta: #7b4dff;
-  --ok: #0f8a5f;
-  --ok-fondo: #e3f5ee;
-  --pendiente: #a35a00;
-  --pendiente-fondo: #fff1dc;
-  --apagado: #5a6178;
-  --apagado-fondo: #eceef4;
-  --codigo: #f0f2f8;
-  --sombra: 0 1px 2px rgba(15,22,48,.06), 0 8px 24px rgba(15,22,48,.06);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --fondo: #070c1f;
-    --superficie: #0e1630;
-    --superficie-2: #141e3d;
-    --texto: #e8ecf8;
-    --texto-suave: #a5afcc;
-    --borde: #24305a;
-    --ok: #4fd1a1;
-    --ok-fondo: #0f2b25;
-    --pendiente: #ffb85c;
-    --pendiente-fondo: #2e2210;
-    --apagado: #a5afcc;
-    --apagado-fondo: #1a2345;
-    --codigo: #0a1128;
-    --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
-  }
-}
-:root[data-theme="dark"] {
-  --fondo: #070c1f; --superficie: #0e1630; --superficie-2: #141e3d; --texto: #e8ecf8;
-  --texto-suave: #a5afcc; --borde: #24305a; --ok: #4fd1a1; --ok-fondo: #0f2b25;
-  --pendiente: #ffb85c; --pendiente-fondo: #2e2210; --apagado: #a5afcc; --apagado-fondo: #1a2345;
-  --codigo: #0a1128; --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  --navy: #070c1f;
+  --navy-2: #0b1533;
+  --superficie: #0e1630;
+  --superficie-2: #141e3d;
+  --borde: #24305a;
+  --texto: #e8ecf8;
+  --suave: #a5afcc;
+  --azul: #4d86ff;
+  --violeta: #9a7bff;
+  --degradado: linear-gradient(135deg, #2f6bff 0%, #7b4dff 100%);
+  --ok: #4fd1a1; --ok-fondo: #0f2b25;
+  --aviso: #ffb85c; --aviso-fondo: #2e2210;
+  --mal: #ff7b8a; --mal-fondo: #33141c;
+  --info: #8fb4ff; --info-fondo: #13224a;
+  --codigo: #0a1128;
+  --radio: 14px;
+  --sombra: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+html { scroll-behavior: smooth; }
 body {
-  margin: 0; background: var(--fondo); color: var(--texto);
+  margin: 0; background: var(--navy); color: var(--texto);
   font: 16px/1.6 Inter, system-ui, sans-serif;
 }
-h1, h2, h3 { font-family: Manrope, Inter, sans-serif; line-height: 1.2; margin: 0 0 .6em; }
-h2 { font-size: 1.6rem; letter-spacing: -.01em; }
+h1, h2, h3, h4 { font-family: Manrope, Inter, sans-serif; line-height: 1.2; margin: 0 0 .55em; }
+h2 { font-size: clamp(1.35rem, 3vw, 1.75rem); letter-spacing: -.01em; }
 h3 { font-size: 1.1rem; }
-a { color: var(--azul); text-underline-offset: 2px; }
-code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .88em; }
-code { background: var(--codigo); padding: .1em .35em; border-radius: 5px; }
-pre { background: var(--codigo); border: 1px solid var(--borde); padding: 14px 16px; border-radius: 10px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
-.envoltura { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+h4 { font-size: .98rem; }
+p { margin: 0 0 .8em; }
+a { color: var(--info); text-underline-offset: 2px; }
+code, pre { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .86em; }
+code { background: var(--codigo); padding: .1em .35em; border-radius: 5px; border: 1px solid var(--borde); word-break: break-word; }
+pre { background: var(--codigo); border: 1px solid var(--borde); padding: 12px 14px; border-radius: 10px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin: .4em 0 .8em; }
+.envoltura { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-header.portada {
-  background: linear-gradient(135deg, var(--navy) 0%, #142a7a 55%, #3b2a8f 100%);
-  color: #fff; padding: 56px 0 44px;
+/* Portada */
+.portada { background: radial-gradient(1200px 400px at 85% -20%, rgba(123,77,255,.35), transparent 60%), radial-gradient(900px 400px at 0% 0%, rgba(47,107,255,.3), transparent 60%), var(--navy-2); border-bottom: 1px solid var(--borde); padding: 34px 0 26px; }
+.marca { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.marca img { width: 40px; height: 40px; border-radius: 10px; }
+.marca span { font: 800 1rem Manrope, sans-serif; letter-spacing: .28em; }
+.portada h1 { font-size: clamp(1.7rem, 4.6vw, 2.7rem); font-weight: 800; max-width: 820px; }
+.portada h1 em { font-style: normal; background: var(--degradado); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.portada p.lead { color: var(--suave); max-width: 720px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.pastilla { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 600; padding: 4px 11px; border-radius: 999px; background: var(--superficie-2); border: 1px solid var(--borde); color: var(--suave); }
+.pastilla b { color: var(--texto); }
+
+/* Pestañas: radios + CSS, funcionan sin JavaScript */
+.tab-radio { position: absolute; opacity: 0; pointer-events: none; }
+.pestanas { position: sticky; top: 0; z-index: 10; background: rgba(7,12,31,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--borde); }
+.pestanas .envoltura { display: flex; gap: 6px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; scrollbar-width: thin; }
+.pestanas label {
+  flex: none; cursor: pointer; padding: 8px 14px; border-radius: 999px; font-size: .9rem; font-weight: 600;
+  color: var(--suave); border: 1px solid transparent; white-space: nowrap; user-select: none;
 }
-.portada .etiqueta { display: inline-block; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; opacity: .8; margin-bottom: 10px; }
-.portada h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); font-weight: 800; }
-.portada p { max-width: 680px; opacity: .9; margin: 0 0 18px; }
-.portada .meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .9rem; opacity: .85; }
-.portada .meta strong { color: #fff; }
+.pestanas label:hover { color: var(--texto); background: var(--superficie-2); }
+.panel { display: none; padding: 30px 0 10px; }
+#t-resumen:checked ~ .pestanas label[for="t-resumen"],
+#t-plan:checked ~ .pestanas label[for="t-plan"],
+#t-auditoria:checked ~ .pestanas label[for="t-auditoria"],
+#t-seo:checked ~ .pestanas label[for="t-seo"],
+#t-flora:checked ~ .pestanas label[for="t-flora"],
+#t-hecho:checked ~ .pestanas label[for="t-hecho"],
+#t-enlaces:checked ~ .pestanas label[for="t-enlaces"],
+#t-costos:checked ~ .pestanas label[for="t-costos"],
+#t-prompts:checked ~ .pestanas label[for="t-prompts"],
+#t-reglas:checked ~ .pestanas label[for="t-reglas"] { background: var(--degradado); color: #fff; }
+#t-resumen:focus-visible ~ .pestanas label[for="t-resumen"],
+#t-plan:focus-visible ~ .pestanas label[for="t-plan"],
+#t-auditoria:focus-visible ~ .pestanas label[for="t-auditoria"],
+#t-seo:focus-visible ~ .pestanas label[for="t-seo"],
+#t-flora:focus-visible ~ .pestanas label[for="t-flora"],
+#t-hecho:focus-visible ~ .pestanas label[for="t-hecho"],
+#t-enlaces:focus-visible ~ .pestanas label[for="t-enlaces"],
+#t-costos:focus-visible ~ .pestanas label[for="t-costos"],
+#t-prompts:focus-visible ~ .pestanas label[for="t-prompts"],
+#t-reglas:focus-visible ~ .pestanas label[for="t-reglas"] { outline: 2px solid var(--violeta); outline-offset: 2px; }
+#t-resumen:checked ~ main #p-resumen,
+#t-plan:checked ~ main #p-plan,
+#t-auditoria:checked ~ main #p-auditoria,
+#t-seo:checked ~ main #p-seo,
+#t-flora:checked ~ main #p-flora,
+#t-hecho:checked ~ main #p-hecho,
+#t-enlaces:checked ~ main #p-enlaces,
+#t-costos:checked ~ main #p-costos,
+#t-prompts:checked ~ main #p-prompts,
+#t-reglas:checked ~ main #p-reglas { display: block; }
+.intro { color: var(--suave); max-width: 760px; margin: -2px 0 20px; }
 
-nav.indice {
-  position: sticky; top: 0; z-index: 5; background: var(--superficie);
-  border-bottom: 1px solid var(--borde); box-shadow: var(--sombra);
-}
-nav.indice ul { list-style: none; margin: 0; padding: 10px 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
-nav.indice ul::-webkit-scrollbar { display: none; }
-nav.indice a {
-  display: block; white-space: nowrap; padding: 6px 12px; border-radius: 999px;
-  text-decoration: none; color: var(--texto-suave); font-size: .9rem; font-weight: 500;
-}
-nav.indice a:hover, nav.indice a:focus-visible { background: var(--superficie-2); color: var(--texto); }
-
-section { padding: 44px 0 8px; }
-.intro { color: var(--texto-suave); max-width: 720px; margin: -4px 0 22px; }
-
-.rejilla { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
-.tarjeta {
-  background: var(--superficie); border: 1px solid var(--borde); border-radius: 14px;
-  padding: 18px; box-shadow: var(--sombra);
-}
-.tarjeta h3 { margin-bottom: .35em; }
-.tarjeta p { margin: 0; color: var(--texto-suave); font-size: .94rem; }
-
-.estado { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+/* Piezas */
+.rejilla { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); margin-bottom: 18px; }
+.rejilla.dos { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 18px; box-shadow: var(--sombra); }
+.tarjeta p:last-child { margin-bottom: 0; }
+.tarjeta .sub { color: var(--suave); font-size: .92rem; }
+.nota { font: 800 2.1rem Manrope, sans-serif; line-height: 1; margin: 6px 0 4px; }
+.nota small { font-size: .95rem; color: var(--suave); font-weight: 600; }
+.barra { height: 6px; border-radius: 99px; background: var(--superficie-2); overflow: hidden; margin: 8px 0 10px; }
+.barra i { display: block; height: 100%; background: var(--degradado); border-radius: 99px; }
+.estado { display: inline-flex; align-items: center; gap: 6px; font-size: .76rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
 .estado::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.estado.ok { color: var(--ok); background: var(--ok-fondo); }
-.estado.pendiente { color: var(--pendiente); background: var(--pendiente-fondo); }
-.estado.apagado { color: var(--apagado); background: var(--apagado-fondo); }
+.ok { color: var(--ok); background: var(--ok-fondo); }
+.aviso { color: var(--aviso); background: var(--aviso-fondo); }
+.mal { color: var(--mal); background: var(--mal-fondo); }
+.info { color: var(--info); background: var(--info-fondo); }
+.caja { border-radius: 12px; padding: 12px 16px; margin: 12px 0 18px; font-size: .95rem; border: 1px solid var(--borde); }
+.caja.ok, .caja.aviso, .caja.mal, .caja.info { color: var(--texto); }
+.caja.ok { border-color: #1d5a47; } .caja.aviso { border-color: #6b4a1a; } .caja.mal { border-color: #6b2633; } .caja.info { border-color: #2a3f7a; }
 
-.paso {
-  background: var(--superficie); border: 1px solid var(--borde); border-radius: 14px;
-  margin-bottom: 14px; box-shadow: var(--sombra); overflow: hidden;
-}
-.paso summary {
-  list-style: none; cursor: pointer; padding: 16px 18px; display: flex; gap: 14px; align-items: center;
-}
-.paso summary::-webkit-details-marker { display: none; }
-.paso .numero {
-  flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
-  font: 700 .95rem Manrope, sans-serif; color: #fff; background: linear-gradient(135deg, var(--azul), var(--violeta));
-}
+.tabla-envoltura { overflow-x: auto; border-radius: 12px; border: 1px solid var(--borde); margin: 0 0 20px; }
+table { width: 100%; border-collapse: collapse; background: var(--superficie); font-size: .92rem; min-width: 560px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+th { background: var(--superficie-2); font: 700 .82rem Manrope, sans-serif; color: var(--suave); text-transform: uppercase; letter-spacing: .04em; }
+tr:last-child td { border-bottom: 0; }
+
+/* Pasos */
+.fase { margin: 26px 0 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.fase h3 { margin: 0; font-size: 1.2rem; }
+details.paso { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); margin-bottom: 12px; box-shadow: var(--sombra); }
+details.paso > summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+details.paso > summary::-webkit-details-marker { display: none; }
+.num { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 800 .85rem Manrope, sans-serif; color: #fff; background: var(--degradado); }
 .paso .titulo { flex: 1; min-width: 0; }
-.paso .titulo strong { display: block; font-family: Manrope, sans-serif; font-size: 1.05rem; }
-.paso .titulo span { color: var(--texto-suave); font-size: .88rem; }
-.paso summary::after { content: "+"; font-size: 1.4rem; color: var(--texto-suave); flex: none; }
-.paso[open] summary::after { content: "−"; }
-.paso .cuerpo { padding: 0 18px 18px 66px; }
-.paso ol, .paso ul { padding-left: 1.2em; margin: .4em 0; }
+.paso .titulo strong { display: block; font-family: Manrope, sans-serif; font-size: 1rem; }
+.paso .titulo span { color: var(--suave); font-size: .85rem; }
+details.paso > summary::after { content: "+"; font-size: 1.4rem; color: var(--suave); flex: none; }
+details.paso[open] > summary::after { content: "−"; }
+.paso .cuerpo { padding: 0 16px 16px 62px; }
+.paso ol, .paso ul { padding-left: 1.2em; margin: .3em 0 .7em; }
 .paso li { margin: .35em 0; }
-@media (max-width: 560px) { .paso .cuerpo { padding-left: 18px; } }
+.quien { display: inline-block; font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-right: 6px; vertical-align: 1px; }
+.quien.tu { background: #3b2a8f; color: #fff; } .quien.claude { background: #1d3f99; color: #fff; } .quien.abogado { background: #6b4a1a; color: #fff; }
+@media (max-width: 560px) { .paso .cuerpo { padding-left: 16px; } }
 
-.lista-check { list-style: none; padding: 0; margin: 0; }
-.lista-check li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--borde); }
-.lista-check li:last-child { border-bottom: 0; }
-.lista-check input { margin-top: 5px; width: 18px; height: 18px; accent-color: var(--azul); flex: none; }
-.lista-check label { cursor: pointer; }
-.lista-check input:checked + label { color: var(--texto-suave); text-decoration: line-through; }
+/* Checklist */
+.check { list-style: none; padding: 0; margin: 0; }
+.check li { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--borde); }
+.check li:last-child { border-bottom: 0; }
+.check input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--violeta); flex: none; cursor: pointer; }
+.check label { cursor: pointer; }
+.check input:checked + label { color: var(--suave); text-decoration: line-through; }
 
-.tabla { width: 100%; border-collapse: collapse; background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; font-size: .93rem; }
-.tabla th, .tabla td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borde); vertical-align: top; }
-.tabla th { background: var(--superficie-2); font-family: Manrope, sans-serif; font-size: .85rem; }
-.tabla tr:last-child td { border-bottom: 0; }
-.desliza { overflow-x: auto; border-radius: 12px; margin-bottom: 18px; }
-
+/* Línea de tiempo */
 .linea { position: relative; padding-left: 22px; border-left: 2px solid var(--borde); margin-left: 6px; }
-.linea .hito { position: relative; padding: 0 0 18px; }
-.linea .hito::before {
-  content: ""; position: absolute; left: -29px; top: 6px; width: 12px; height: 12px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--azul), var(--violeta)); border: 2px solid var(--fondo);
-}
-.linea .fecha { font: 700 .82rem Manrope, sans-serif; color: var(--violeta); text-transform: uppercase; letter-spacing: .05em; }
-.linea ul { margin: 4px 0 0; padding-left: 1.1em; color: var(--texto-suave); }
-
-.si-no { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-.si-no div { border-radius: 10px; padding: 10px 12px; font-size: .9rem; }
-.si-no .si { background: var(--ok-fondo); }
-.si-no .no { background: var(--pendiente-fondo); }
-.si-no b { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
-@media (max-width: 560px) { .si-no { grid-template-columns: 1fr; } }
+.hito { position: relative; padding: 0 0 18px; }
+.hito::before { content: ""; position: absolute; left: -29px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--degradado); border: 2px solid var(--navy); }
+.fecha { font: 700 .78rem Manrope, sans-serif; color: var(--violeta); text-transform: uppercase; letter-spacing: .06em; }
+.hito ul { margin: 4px 0 0; padding-left: 1.1em; color: var(--suave); }
 
 details.desplegable { background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; margin: 10px 0; }
 details.desplegable > summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
 details.desplegable > div { padding: 0 16px 14px; }
-
-.copiar { float: right; margin: -4px -4px 6px 8px; font: 600 .78rem Inter, sans-serif; border: 1px solid var(--borde); background: var(--superficie); color: var(--texto); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
-.aviso { background: var(--pendiente-fondo); border-radius: 12px; padding: 12px 16px; margin: 14px 0; font-size: .94rem; }
-footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
+.copiar { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 6px; font: 600 .8rem Inter, sans-serif; border: 1px solid var(--borde); background: var(--superficie-2); color: var(--texto); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+.copiar:hover { border-color: var(--violeta); }
+.si-no { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.si-no div { border-radius: 10px; padding: 10px 12px; font-size: .88rem; }
+.si-no .si { background: var(--ok-fondo); } .si-no .no { background: var(--aviso-fondo); }
+.si-no b { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+@media (max-width: 560px) { .si-no { grid-template-columns: 1fr; } }
+footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-top: 1px solid var(--borde); margin-top: 30px; }
+@media print {
+  .pestanas { display: none; }
+  .panel { display: block !important; break-before: page; }
+  details { open: true; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
 
 <header class="portada">
   <div class="envoltura">
-    <span class="etiqueta">Informe vivo del proyecto</span>
-    <h1>soyluisflores.es: qué hay, qué falta y cómo se usa</h1>
-    <p>Todo lo hecho en la web, el asistente de IA, la agenda y el panel, con los enlaces, los prompts, las herramientas y el paso a paso de lo que sigue. Se actualiza con cada cambio.</p>
+    <div class="marca"><img src="https://soyluisflores.es/logo/monograma-80.webp" alt="" width="40" height="40"><span>LUIS FLORES</span></div>
+    <h1>Informe y auditoría de <em>soyluisflores.es</em></h1>
+    <p class="lead">Qué va bien, qué falla, qué conviene mejorar y el paso a paso para hacerlo. Incluye la web, Flora, la agenda, el panel, la seguridad, los textos legales, el SEO y la presencia en buscadores con IA.</p>
     <div class="meta">
-      <span>Última actualización: <strong>02/11/2026</strong></span>
-      <span>Commit publicado: <strong>a6253a2</strong></span>
-      <span>Panel: <strong>e61313c</strong></span>
+      <span class="pastilla">Última actualización: <b>02/11/2026</b></span>
+      <span class="pastilla">Auditoría completa: <b>02/11/2026</b></span>
+      <span class="pastilla">Web: <b>main = reconstruccion-oct-2026</b></span>
+      <span class="pastilla">Panel: <b>e61313c</b></span>
     </div>
   </div>
 </header>
 
-<nav class="indice" aria-label="Secciones">
+<!-- Pestañas (los radios van antes de la barra y del contenido para que el CSS los encuentre) -->
+<input class="tab-radio" type="radio" name="pestana" id="t-resumen" checked>
+<input class="tab-radio" type="radio" name="pestana" id="t-plan">
+<input class="tab-radio" type="radio" name="pestana" id="t-auditoria">
+<input class="tab-radio" type="radio" name="pestana" id="t-seo">
+<input class="tab-radio" type="radio" name="pestana" id="t-flora">
+<input class="tab-radio" type="radio" name="pestana" id="t-hecho">
+<input class="tab-radio" type="radio" name="pestana" id="t-enlaces">
+<input class="tab-radio" type="radio" name="pestana" id="t-costos">
+<input class="tab-radio" type="radio" name="pestana" id="t-prompts">
+<input class="tab-radio" type="radio" name="pestana" id="t-reglas">
+
+<nav class="pestanas" aria-label="Secciones del informe">
   <div class="envoltura">
-    <ul>
-      <li><a href="#estado">Estado</a></li>
-      <li><a href="#siguiente">Lo que sigue</a></li>
-      <li><a href="#checklist">Checklist</a></li>
-      <li><a href="#hecho">Lo hecho</a></li>
-      <li><a href="#enlaces">Enlaces</a></li>
-      <li><a href="#prompts">Prompts</a></li>
-      <li><a href="#herramientas">Herramientas</a></li>
-      <li><a href="#skills">Skills, plugins y agentes</a></li>
-      <li><a href="#auditoria">Auditoría</a></li>
-      <li><a href="#ideas">Ideas</a></li>
-      <li><a href="#claves">Claves y servicios</a></li>
-      <li><a href="#costos">Costos</a></li>
-      <li><a href="#reglas">Reglas</a></li>
-    </ul>
+    <label for="t-resumen">Resumen</label>
+    <label for="t-plan">Plan paso a paso</label>
+    <label for="t-auditoria">Auditoría</label>
+    <label for="t-seo">SEO y buscadores</label>
+    <label for="t-flora">Flora (IA)</label>
+    <label for="t-hecho">Lo hecho</label>
+    <label for="t-enlaces">Enlaces y claves</label>
+    <label for="t-costos">Costos</label>
+    <label for="t-prompts">Prompts y herramientas</label>
+    <label for="t-reglas">Reglas</label>
   </div>
 </nav>
 
 <main class="envoltura">
 
-<!-- ESTADO -->
-<section id="estado">
-  <h2>Estado en un vistazo</h2>
-  <p class="intro">Revisado en vivo el 02/11/2026.</p>
+<!-- ============================================================ RESUMEN -->
+<section class="panel" id="p-resumen">
+  <h2>Resumen en un vistazo</h2>
+  <p class="intro">La web está sana, segura y bien construida. Lo que más frena hoy es que <b>casi nadie la encuentra todavía</b> en Google ni en los buscadores con IA, y que la portada tarda en cargar en el celular. Los dos se arreglan con el plan de la pestaña «Plan paso a paso».</p>
+
   <div class="rejilla">
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Web</h3><p>Publicada en soyluisflores.es desde GitHub (rama main) con Cloudflare.</p></div>
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Flora, la asistente del chat</h3><p>Responde con Claude Haiku 5.5 (plan de ahorro), da botones de respuesta rápida, agenda la llamada, escucha por micrófono y contesta con voz propia latina.</p></div>
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Agenda propia</h3><p>Conectada a Google Calendar, con correos automáticos y el lead entrando en el panel.</p></div>
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Resumen semanal</h3><p>Cada lunes a las 8:00 (Madrid) llega a hola@ con las cifras del chat y de las citas.</p></div>
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Horario desde el panel</h3><p>Conectado el 02/11/2026. Se cambia en el panel → Ajustes → Horario de la agenda.</p></div>
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Campana del panel</h3><p>Avisa de cada lead nuevo. Probado el 02/11/2026.</p></div>
-    <div class="tarjeta"><span class="estado pendiente">Falla</span><h3>Correo «Lead nuevo» del panel</h3><p>La clave de Resend guardada en Firebase no es válida. Paso 2.</p></div>
-    <div class="tarjeta"><span class="estado pendiente">Pendiente</span><h3>Medición de anuncios</h3><p>El contenedor de Tag Manager está listo, falta importarlo y poner los IDs.</p></div>
-    <div class="tarjeta"><span class="estado apagado">Apagado</span><h3>WhatsApp 1 hora antes</h3><p>Programado pero sin claves de Twilio. Tiene costo por mensaje.</p></div>
-    <div class="tarjeta"><span class="estado ok">Sincronizado</span><h3>GitHub</h3><p>main y reconstruccion-oct-2026 en el mismo commit. Panel al día.</p></div>
+    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>Seguridad</h3><p class="sub">Cabeceras de protección, APIs cerradas a otras webs, límites por IP, sin claves en el código ni librerías con fallos conocidos.</p></div>
+    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>SEO técnico</h3><p class="sub">55 páginas con título, descripción, canónica, un solo H1, datos estructurados y sitemap.</p></div>
+    <div class="tarjeta"><span class="estado mal">Flojo</span><div class="nota">3<small>/10</small></div><div class="barra"><i style="width:30%"></i></div><h3>Presencia en buscadores</h3><p class="sub">Al buscar tu nombre o tu dominio no apareces todavía. Falta Search Console, Bing, perfil de Google y enlaces desde otras webs.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Mejorable</span><div class="nota" data-nota-velocidad>5,5<small>/10</small></div><div class="barra"><i style="width:55%"></i></div><h3>Velocidad en celular</h3><p class="sub">Portada 58 y contacto 51 sobre 100: el contenido principal tarda unos 4 segundos. Las páginas de servicio sacan 92.</p></div>
+    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>Celular, tablet y computadora</h3><p class="sub">Sin desbordes ni imágenes rotas en 360, 768 y 1280 píxeles. Menú, chat y calculadora funcionan.</p></div>
+    <div class="tarjeta"><span class="estado ok">Bien</span><div class="nota" data-nota-flora>8,5<small>/10</small></div><div class="barra"><i style="width:85%"></i></div><h3>Flora (IA)</h3><p class="sub">Responde rápido, no inventa precios ni clientes, agenda, habla y recuerda 30 días.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Pendiente</span><div class="nota">6<small>/10</small></div><div class="barra"><i style="width:60%"></i></div><h3>Textos legales</h3><p class="sub">Completos y al día con la memoria de Flora. Falta mencionar la voz y que los revise un abogado.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Ordenar</span><div class="nota">7<small>/10</small></div><div class="barra"><i style="width:70%"></i></div><h3>Orden del repositorio</h3><p class="sub">Hay 14 archivos viejos sin uso (scripts, borradores y 3 logos). No rompen nada, pero ensucian.</p></div>
+  </div>
+
+  <div class="rejilla dos">
+    <div class="tarjeta">
+      <h3>Lo que estamos haciendo bien</h3>
+      <ul>
+        <li>Cada cambio pasa por compilación, auditoría de 0 problemas y publicación automática.</li>
+        <li>Agenda propia, correos, panel y campana conectados y probados con una cita real.</li>
+        <li>Flora con topes de gasto, modelo barato (Haiku 5.5), voz latina y memoria.</li>
+        <li>Cada lead dice de dónde llegó y el resumen de los lunes muestra qué sección capta más.</li>
+        <li>Contenido sin cifras inventadas, en español latino neutro, con marca coherente.</li>
+        <li>Datos estructurados muy completos: persona, servicios, preguntas frecuentes, artículos.</li>
+      </ul>
+    </div>
+    <div class="tarjeta">
+      <h3>Lo que hay que arreglar primero</h3>
+      <ol>
+        <li><b>Que Google te conozca:</b> Search Console y sitemap (paso A1).</li>
+        <li><b>Bots de IA contradictorios</b> en Cloudflare y en tu robots.txt (paso A3).</li>
+        <li><b>Velocidad de la portada</b> en celular (paso B1).</li>
+        <li><b>Bot Fight Mode</b> de Cloudflare, que frena la web (paso A4).</li>
+        <li><b>Privacidad:</b> falta explicar la voz de Flora (paso B4 y abogado).</li>
+      </ol>
+    </div>
   </div>
 </section>
 
-<!-- LO QUE SIGUE -->
-<section id="siguiente">
-  <h2>Lo que sigue, paso a paso</h2>
-  <p class="intro">En orden de prioridad. Toca cada paso para abrirlo.</p>
+<!-- ============================================================ PLAN -->
+<section class="panel" id="p-plan">
+  <h2>Plan paso a paso</h2>
+  <p class="intro">Ordenado por prioridad. Cada paso dice quién lo hace: <span class="quien tu">TÚ</span> en un panel o una cuenta tuya, <span class="quien claude">CLAUDE</span> en el código (solo tienes que pedírmelo) o <span class="quien abogado">ABOGADO</span>. Toca cada paso para abrirlo. Las casillas de la pestaña se recuerdan en este navegador.</p>
 
-  <details class="paso">
-    <summary><span class="numero">✓</span><span class="titulo"><strong>Hecho: horario del panel conectado</strong><span>02/11/2026 · solo para repetirlo si cambias la clave</span></span></summary>
-    <div class="cuerpo">
-      <p>Si algún día hay que repetirlo (por ejemplo, para cambiar la clave), en PowerShell:</p>
-      <ol>
-        <li><pre>cd "C:\Users\Luis Carlos\Documents\panel"</pre></li>
-        <li><pre>npx.cmd firebase login</pre> En PowerShell escribe siempre <code>npx.cmd</code>, no <code>npx</code>: así evitas el error «la ejecución de scripts está deshabilitada».</li>
-        <li><pre>cd "C:\Users\Luis Carlos\Documents\soyluisflores-web"</pre></li>
-        <li><pre>npx.cmd wrangler login</pre></li>
-        <li><pre>node tools/conectar-agenda.mjs</pre></li>
-      </ol>
-      <p>Si sale «Timeout after 10000», mira «Problemas conocidos» en <code>AGENDA.md</code>.</p>
-    </div>
-  </details>
-
-  <details class="paso">
-    <summary><span class="numero">✓</span><span class="titulo"><strong>Hecho: cita de prueba desde el chat</strong><span>02/11/2026 · correos, calendario, lead y campana funcionan</span></span></summary>
-    <div class="cuerpo">
-      <p>La campana falló la primera vez porque Google aún no había dado permisos a su servicio de eventos (Eventarc). Se arregló volviendo a publicar <code>avisoLeadNuevo</code>. Detalle en «Problemas conocidos» de <code>AGENDA.md</code>.</p>
-    </div>
-  </details>
+  <div class="fase"><h3>Fase A · Esta semana</h3><span class="estado mal">Urgente</span><span class="sub" style="color:var(--suave)">30 a 60 minutos en total, todo gratis</span></div>
 
   <details class="paso" open>
-    <summary><span class="numero">2</span><span class="titulo"><strong>Arreglar el correo «Lead nuevo» del panel</strong><span>Lo siguiente · 5 minutos · lo encontró la auditoría</span></span></summary>
+    <summary><span class="num">A1</span><span class="titulo"><strong>Dar de alta la web en Google Search Console</strong><span><span class="quien tu">TÚ</span>15 minutos · lo más importante para aparecer en Google</span></span></summary>
     <div class="cuerpo">
-      <p>La campana avisa, pero el correo que manda el panel a hola@ sale rechazado: la clave de Resend guardada en Firebase no es válida. También la usa el aviso de cobro de facturas. Los correos de la web sí salen, porque usan otra copia de la clave guardada en Cloudflare.</p>
+      <p>Es la herramienta gratuita de Google para decirle que tu web existe, mandarle el mapa de páginas y ver con qué búsquedas te encuentran. Sin ella vas a ciegas.</p>
       <ol>
-        <li>Entra en <a href="https://resend.com/api-keys">resend.com/api-keys</a> y pulsa <b>Create API Key</b>.</li>
-        <li>Nombre: <code>panel</code>. Permiso: <b>Sending access</b>. Dominio: <b>soyluisflores.es</b>. Pulsa <b>Add</b> y <b>copia la clave</b> (empieza por <code>re_</code>; solo se ve una vez).</li>
-        <li>En PowerShell: <pre>cd "C:\Users\Luis Carlos\Documents\panel"</pre></li>
-        <li><pre>npx.cmd firebase functions:secrets:set RESEND_API_KEY --project prod</pre> Cuando pida el valor, pega la clave (clic derecho) y pulsa Enter. No se ve al pegarla: es normal.</li>
-        <li><pre>$env:FUNCTIONS_DISCOVERY_TIMEOUT="120"</pre></li>
-        <li><pre>npx.cmd firebase deploy --only "functions:avisoLeadNuevo,functions:enviarAvisoCobro" --project prod --force</pre></li>
-        <li>Prueba con otra cita desde el chat con un correo nuevo (<code>nombre+prueba3@gmail.com</code>) y mira que llegue «Lead nuevo» a hola@.</li>
+        <li>Entra en <a href="https://search.google.com/search-console" target="_blank" rel="noopener">search.google.com/search-console</a> con tu cuenta de Google (la de hola@ o tu Gmail principal).</li>
+        <li>Si ya ves «soyluisflores.es» en la lista de arriba a la izquierda, salta al punto 6.</li>
+        <li>Pulsa <b>Añadir propiedad</b> y elige la caja de la izquierda, <b>Dominio</b>. Escribe <code>soyluisflores.es</code> (sin https ni www) y pulsa <b>Continuar</b>.</li>
+        <li>Google te muestra un texto que empieza por <code>google-site-verification=</code>. Pulsa <b>Copiar</b>.</li>
+        <li>En otra pestaña entra en <a href="https://dash.cloudflare.com" target="_blank" rel="noopener">dash.cloudflare.com</a>, abre <b>soyluisflores.es</b> → <b>DNS</b> → <b>Registros</b> → <b>Agregar registro</b>. Tipo <b>TXT</b>, nombre <code>@</code>, contenido: pega lo copiado. Pulsa <b>Guardar</b>. Vuelve a Search Console y pulsa <b>Verificar</b> (si falla, espera 10 minutos y repite).</li>
+        <li>En el menú de la izquierda, <b>Sitemaps</b>. En «Añadir un sitemap» escribe <code>sitemap-index.xml</code> y pulsa <b>Enviar</b>.</li>
+        <li>Arriba, en la barra de búsqueda («Inspeccionar cualquier URL»), pega <code>https://soyluisflores.es/</code>, pulsa Enter y luego <b>Solicitar indexación</b>. Repite con <code>/servicios</code>, <code>/contacto</code> y <code>/blog</code>.</li>
+        <li>Avísame cuando esté. En dos o tres semanas te leo los datos y te digo qué búsquedas te traen visitas.</li>
       </ol>
     </div>
   </details>
 
   <details class="paso">
-    <summary><span class="numero">3</span><span class="titulo"><strong>Quitar un script de Cloudflare que frena la web</strong><span>2 minutos · lo encontró la auditoría</span></span></summary>
+    <summary><span class="num">A2</span><span class="titulo"><strong>Bing Webmaster Tools e IndexNow</strong><span><span class="quien tu">TÚ</span>5 minutos · Bing alimenta a ChatGPT, Copilot y DuckDuckGo</span></span></summary>
     <div class="cuerpo">
-      <p>Cloudflare mete en cada página un script de detección de bots (<code>/cdn-cgi/challenge-platform</code>). Ocupa más de 1 segundo del celular, usa funciones del navegador que se van a retirar y baja la nota de «buenas prácticas» a 81. La web ya tiene sus propias defensas (el chat y la agenda solo aceptan llamadas desde tu dominio y tienen límites).</p>
+      <p>Muchos buscadores con IA, ChatGPT entre ellos, usan el índice de Bing. Darte de alta allí es gratis y casi automático si ya hiciste el paso A1.</p>
       <ol>
-        <li>Entra en <a href="https://dash.cloudflare.com">dash.cloudflare.com</a> y abre <b>soyluisflores.es</b>.</li>
-        <li>Menú de la izquierda: <b>Security → Settings</b> (o <b>Seguridad → Configuración</b>). Arriba, filtra por <b>Bot traffic</b>.</li>
-        <li>Apaga <b>Bot fight mode</b>. En el plan gratuito, la detección por JavaScript va pegada a ese interruptor: no se puede apagar sola (lo dice la documentación de Cloudflare). Revisado el 02/11 a las 14:10: el script seguía en la página.</li>
-        <li>Avísale a Claude para que vuelva a medir.</li>
+        <li>Entra en <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener">bing.com/webmasters</a> e inicia sesión con la misma cuenta de Google.</li>
+        <li>Elige <b>Importar desde Google Search Console</b>, autoriza y marca soyluisflores.es. Se importan la verificación y el sitemap.</li>
+        <li>En Cloudflare: <b>soyluisflores.es</b> → <b>Caching</b> (Almacenamiento en caché) → <b>Configuration</b> → activa <b>Crawler Hints</b>. Así Cloudflare avisa sola a Bing (IndexNow) cada vez que publicamos un cambio.</li>
       </ol>
     </div>
   </details>
 
   <details class="paso">
-    <summary><span class="numero">4</span><span class="titulo"><strong>Importar la medición de anuncios en Tag Manager</strong><span>Cuando tengas los IDs de Meta y Google Ads</span></span></summary>
+    <summary><span class="num">A3</span><span class="titulo"><strong>Decidir qué bots de IA pueden leer tu web</strong><span><span class="quien tu">TÚ</span> + <span class="quien claude">CLAUDE</span>5 minutos · hoy hay reglas que se contradicen</span></span></summary>
     <div class="cuerpo">
+      <p>Tu <code>robots.txt</code> publicado tiene dos partes que chocan. Arriba, Cloudflare añade su lista y <b>bloquea</b> GPTBot, ClaudeBot, Google-Extended y Applebot-Extended. Abajo, el archivo de la web dice que <b>sí</b> pueden entrar. Cada bot interpreta el choque a su manera, así que ahora mismo no sabemos qué lee cada uno.</p>
+      <p><b>Mi recomendación:</b> dejar entrar a los bots que <b>buscan</b> para responder (OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot, Claude-User, Googlebot y Bingbot), que ya están permitidos y son los que te hacen aparecer en las respuestas de IA. Para los que <b>entrenan</b> modelos (GPTBot, ClaudeBot, Google-Extended), decides tú: permitirlos ayuda un poco a que las IA «conozcan» tu marca, y bloquearlos protege tu contenido.</p>
       <ol>
-        <li>Entra en <a href="https://tagmanager.google.com">tagmanager.google.com</a> y abre el contenedor de soyluisflores.es.</li>
-        <li><b>Administrador → Importar contenedor</b>.</li>
-        <li><b>Seleccionar archivo</b>: <code>C:\Users\Luis Carlos\Documents\soyluisflores-web\gtm\contenedor-anuncios.json</code></li>
-        <li>Espacio de trabajo: <b>Existente → Default Workspace</b>.</li>
-        <li>Opción: <b>Combinar</b> y luego <b>Cambiar el nombre de las etiquetas…</b>. Nunca «Sobrescribir».</li>
-        <li><b>Confirmar</b>. En <b>Variables</b> busca las que dicen COMPLETAR y pega tus IDs.</li>
-        <li><b>Enviar → Publicar</b>.</li>
+        <li>En Cloudflare, abre <b>soyluisflores.es</b> → <b>AI Crawl Control</b> (o <b>Seguridad → Bots</b>, según tu panel).</li>
+        <li>Busca la opción <b>robots.txt administrado</b> («Manage your robots.txt» o «Instruct AI bot traffic with robots.txt»).</li>
+        <li>Si quieres <b>máxima visibilidad</b>: desactívala. Si quieres <b>bloquear el entrenamiento</b>: déjala activa.</li>
+        <li>Dime qué elegiste y yo ajusto el <code>robots.txt</code> de la web para que diga lo mismo y no haya contradicción.</li>
       </ol>
-      <p>Guía completa en <code>gtm/LEEME.md</code>. Después, crea las conversiones en Google Ads.</p>
     </div>
   </details>
 
   <details class="paso">
-    <summary><span class="numero">5</span><span class="titulo"><strong>Aviso si la web se cae (UptimeRobot)</strong><span>Gratis · no gasta tokens ni créditos</span></span></summary>
+    <summary><span class="num">A4</span><span class="titulo"><strong>Apagar Bot Fight Mode en Cloudflare</strong><span><span class="quien tu">TÚ</span>2 minutos · quita un script que frena la web</span></span></summary>
     <div class="cuerpo">
+      <p>Cloudflare mete en cada página un script de detección de bots. Ocupa más de un segundo del celular y baja la nota de «buenas prácticas». La web ya tiene sus propias defensas: solo acepta llamadas desde tu dominio y tiene límites por IP.</p>
       <ol>
-        <li>Entra en <a href="https://uptimerobot.com">uptimerobot.com</a> → <b>Register for FREE</b>.</li>
-        <li><b>+ New monitor</b> → tipo <b>HTTP(s)</b> → URL <code>https://soyluisflores.es</code>.</li>
-        <li>Intervalo <b>5 minutes</b>, marca tu correo y pulsa <b>Create monitor</b>.</li>
-        <li>Opcional: repite con <code>https://panel.soyluisflores.es</code>.</li>
+        <li>En <a href="https://dash.cloudflare.com" target="_blank" rel="noopener">dash.cloudflare.com</a> abre <b>soyluisflores.es</b> → <b>Security</b> (Seguridad) → <b>Settings</b> (Configuración).</li>
+        <li>Filtra por <b>Bot traffic</b> y apaga <b>Bot fight mode</b>.</li>
+        <li>Avísame y vuelvo a medir la velocidad.</li>
       </ol>
-      <p>Nunca vigiles <code>/api/chat</code>: eso sí gastaría créditos de Claude.</p>
     </div>
   </details>
 
   <details class="paso">
-    <summary><span class="numero">6</span><span class="titulo"><strong>Pendientes sin prisa</strong><span>Abogado, enlaces viejos, WhatsApp, velocidad de la portada</span></span></summary>
+    <summary><span class="num">A5</span><span class="titulo"><strong>Límite de gasto en Anthropic y prueba del correo del panel</strong><span><span class="quien tu">TÚ</span>10 minutos · protección y verificación</span></span></summary>
+    <div class="cuerpo">
+      <ol>
+        <li>Entra en <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> → <b>Settings</b> → <b>Limits</b> y pon un límite mensual, por ejemplo <b>20 $</b>. Es el freno de seguridad de Flora.</li>
+        <li>Abre soyluisflores.es en el celular, en una ventana de incógnito. Entra en un artículo del blog y pide la guía gratis con un correo nuevo, por ejemplo <code>tucorreo+prueba5@gmail.com</code>.</li>
+        <li>Confirma el correo que te llega. En el panel tiene que sonar la campana con las tres líneas de origen y llegar a hola@ el correo «Lead nuevo». Si no llega ese correo, avísame: sería la clave de Resend del panel.</li>
+      </ol>
+    </div>
+  </details>
+
+  <div class="fase"><h3>Fase B · Lo hago yo cuando me lo pidas</h3><span class="estado info">Código</span><span class="sub" style="color:var(--suave)">Solo dime «haz el paso B1» (o el que quieras)</span></div>
+
+  <details class="paso">
+    <summary><span class="num">B1</span><span class="titulo"><strong>Portada y contacto más rápidos en celular</strong><span><span class="quien claude">CLAUDE</span>Sin cambiar el diseño · el que más se nota</span></span></summary>
+    <div class="cuerpo">
+      <p>Portada: 58 de 100, el contenido principal tarda 3,7 segundos. Contacto: 51 de 100, 4,0 segundos y casi 2 segundos de celular «bloqueado». La página de un servicio, en cambio, saca 92. En la portada, el titular con degradado es lo último en aparecer porque las animaciones de entrada lo esconden hasta que terminan, y el fondo animado da mucho trabajo al celular. En contacto pesa el agendador.</p>
+      <ul>
+        <li>Mostrar el titular y el texto principal al instante y animar solo los detalles.</li>
+        <li>Aligerar el fondo animado del hero en el celular.</li>
+        <li>Cargar el agendador de contacto en partes, cuando la persona llega a él.</li>
+        <li>Volver a medir con Lighthouse y dejar las cifras en este informe.</li>
+      </ul>
+      <p>Pídemelo así: <code>Haz el paso B1 del informe: portada más rápida sin cambiar el diseño.</code></p>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">B2</span><span class="titulo"><strong>Limpiar archivos sin uso</strong><span><span class="quien claude">CLAUDE</span>5 minutos · necesita tu sí</span></span></summary>
+    <div class="cuerpo">
+      <p>Encontré 14 archivos que nadie usa. Ninguno rompe nada, pero los logos se publican en la web y el resto confunde. Todo queda guardado en el historial de GitHub, así que se puede recuperar.</p>
+      <div class="tabla-envoltura"><table>
+        <thead><tr><th>Archivo</th><th>Qué es</th><th>Propuesta</th></tr></thead>
+        <tbody>
+          <tr><td><code>public/logo/lema-180.webp</code>, <code>monograma-40.webp</code>, <code>nombre-180.webp</code></td><td>Tamaños de logo que no usa ninguna página (se publican igual)</td><td>Borrar</td></tr>
+          <tr><td><code>tools/audit.ps1</code>, <code>tools/audit2.ps1</code></td><td>Scripts de la auditoría de la web vieja (octubre)</td><td>Borrar</td></tr>
+          <tr><td><code>tools/extraer-legal.ps1</code>, <code>tools/extraer-posts.ps1</code></td><td>Copiaron los textos de la web vieja una sola vez</td><td>Borrar</td></tr>
+          <tr><td><code>AUDITORIA-DETALLE.txt</code></td><td>Salida de esos scripts</td><td>Borrar</td></tr>
+          <tr><td><code>fase-1/</code> (robots y llms)</td><td>Borradores ya pasados a la web</td><td>Borrar</td></tr>
+          <tr><td><code>AUDITORIA.md</code>, <code>AUDITORIA-PREMIUM.md</code>, <code>PARCHES.md</code>, <code>CRITICA-DISENO.md</code>, <code>ANALISIS-HTML-PRODUCCION.md</code></td><td>Informes antiguos que cita el prompt de auditoría</td><td>Mover a <code>docs/historial/</code></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">B3</span><span class="titulo"><strong>Pequeños ajustes de seguridad y SEO</strong><span><span class="quien claude">CLAUDE</span>15 minutos</span></span></summary>
     <div class="cuerpo">
       <ul>
-        <li><b>Velocidad de la portada:</b> en celular saca 55 sobre 100. El navegador pasa más de 3 segundos calculando estilos y animaciones. Es un trabajo aparte: pídeselo a Claude con «mejora la velocidad de la portada sin cambiar el diseño».</li>
-        <li><b>Abogado:</b> que revise aviso legal, privacidad, cookies y el aviso para Latinoamérica.</li>
-        <li><b>Enlaces de Calendly:</b> cámbialos por <code>https://soyluisflores.es/contacto</code> en la bio de Instagram, WhatsApp Business y tu firma de correo.</li>
-        <li><b>WhatsApp 1 hora antes (de pago):</b> primero el abogado añade Twilio y Meta a la privacidad. Pasos en <code>AGENDA.md</code>, sección «Recordatorio por WhatsApp».</li>
-        <li><b>Seguridad (opcional):</b> rotar el secreto del cliente de Google y volver a ejecutar <code>node tools/autorizar-google.mjs</code>.</li>
+        <li><b>Página 404:</b> ponerle <code>noindex</code>. Hoy dice «index» aunque responde con error 404.</li>
+        <li><b>security.txt:</b> añadir <code>/.well-known/security.txt</code> con hola@ para que quien encuentre un fallo sepa a quién avisar.</li>
+        <li><b>Política de contenido (CSP):</b> hoy solo avisa. Pasarla a modo obligatorio después de revisar que no bloquea Tag Manager ni los píxeles.</li>
+        <li><b>robots.txt:</b> dejarlo igual que lo que decidas en el paso A3.</li>
       </ul>
     </div>
   </details>
-</section>
 
-<!-- CHECKLIST -->
-<section id="checklist">
-  <h2>Checklist</h2>
-  <p class="intro">Puedes marcar las casillas: se recuerdan en este navegador. La fuente oficial es lo que Claude actualiza en este fichero.</p>
+  <details class="paso">
+    <summary><span class="num">B4</span><span class="titulo"><strong>Privacidad: explicar la voz de Flora</strong><span><span class="quien claude">CLAUDE</span> + <span class="quien abogado">ABOGADO</span>Texto legal: solo con tu permiso</span></span></summary>
+    <div class="cuerpo">
+      <p>La política de privacidad ya cubre el chat y la memoria, pero no dice nada de la voz:</p>
+      <ul>
+        <li>Al dictar, el navegador transcribe la voz (en Chrome y Android, lo hace Google).</li>
+        <li>Al leer en voz alta, el texto de la respuesta pasa por Cloudflare (Workers AI, con el modelo de Deepgram).</li>
+      </ul>
+      <p>Si me dices «sí», escribo el párrafo en la privacidad y en el aviso para Latinoamérica, marcado para que lo revise el abogado.</p>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">B5</span><span class="titulo"><strong>La memoria de Flora, en el lead del panel</strong><span><span class="quien claude">CLAUDE</span>Mejora · sin tocar el panel</span></span></summary>
+    <div class="cuerpo">
+      <p>Cuando alguien que Flora recuerda agenda la llamada, añadir su resumen al lead («clínica dental en Lima, olvida recordatorios»). Así preparas la llamada sabiendo de qué va.</p>
+    </div>
+  </details>
+
+  <div class="fase"><h3>Fase C · Crecer en Google y en las IA</h3><span class="estado info">Continuo</span><span class="sub" style="color:var(--suave)">Lo que más visitas trae a medio plazo</span></div>
+
+  <details class="paso">
+    <summary><span class="num">C1</span><span class="titulo"><strong>Perfil de Empresa en Google</strong><span><span class="quien tu">TÚ</span>20 minutos · gratis · sin mostrar tu dirección</span></span></summary>
+    <div class="cuerpo">
+      <ol>
+        <li>Entra en <a href="https://business.google.com" target="_blank" rel="noopener">business.google.com</a> → <b>Gestionar ahora</b>.</li>
+        <li>Nombre: <code>Luis Flores · IA y automatización para pymes</code>. Categoría: <b>Consultor de marketing</b> o <b>Consultor empresarial</b>.</li>
+        <li>Cuando pregunte si los clientes te visitan, elige <b>No</b> y marca <b>área de servicio</b>: España y los países de Latinoamérica donde quieras clientes. Así tu domicilio no se publica.</li>
+        <li>Web: <code>https://soyluisflores.es</code>. Teléfono: el de WhatsApp Business. Horario: el de la agenda.</li>
+        <li>Verifica como te pida Google (suele ser un video corto) y sube tu foto y el logo.</li>
+        <li>Cuando tengas clientes, pídeles una reseña real. Nunca inventes reseñas.</li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">C2</span><span class="titulo"><strong>Un solo nombre en todas partes</strong><span><span class="quien tu">TÚ</span>15 minutos · para que Google y las IA no te confundan</span></span></summary>
+    <div class="cuerpo">
+      <p>Al buscar «Luis Flores IA» aparece otro Luis Flores, especialista en publicidad digital y podcaster. Para que Google y las IA te distingan:</p>
+      <ul>
+        <li>Usa en todos tus perfiles el mismo nombre y la misma frase: «Luis Carlos Flores · IA y automatización para pymes».</li>
+        <li>Pon el enlace a <code>soyluisflores.es</code> en LinkedIn, Instagram, TikTok, WhatsApp Business y tu firma de correo. Así también quitas los enlaces viejos de Calendly.</li>
+        <li>La web ya enlaza esos perfiles en sus datos estructurados (<code>sameAs</code>). Si abres YouTube o X, dímelo y los sumo.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">C3</span><span class="titulo"><strong>Contenido: dos artículos al mes</strong><span><span class="quien tu">TÚ</span> eliges el tema · <span class="quien claude">CLAUDE</span> lo escribe y lo publica</span></span></summary>
+    <div class="cuerpo">
+      <p>Hoy hay 12 artículos de unas 800 palabras. Para posicionar en Google y en las IA conviene responder preguntas concretas de tus clientes, por país y por sector. Ideas:</p>
+      <ul>
+        <li>«Cómo automatizar los recordatorios de citas por WhatsApp en una clínica».</li>
+        <li>«Cuánto tiempo pierde una pyme respondiendo mensajes y cómo medirlo».</li>
+        <li>«CRM para inmobiliarias en México: qué mirar antes de elegir».</li>
+        <li>«Agente de IA o chatbot: diferencias para un negocio pequeño».</li>
+      </ul>
+      <p>Pídemelo con el prompt «Escribir un artículo nuevo» de la pestaña «Prompts y herramientas».</p>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">C4</span><span class="titulo"><strong>Que otras webs hablen de ti</strong><span><span class="quien tu">TÚ</span>Continuo · es lo que da autoridad</span></span></summary>
+    <div class="cuerpo">
+      <ul>
+        <li>Perfiles con enlace a tu web en directorios de agencias y profesionales: Sortlist, Clutch, Malt, Google Business.</li>
+        <li>Artículos en LinkedIn que enlacen a los del blog.</li>
+        <li>Entrevistas, podcasts o colaboraciones con cámaras de comercio, asociaciones de pymes o comunidades de emprendedores.</li>
+        <li>Casos reales (con permiso del cliente) cuando los tengas: son lo que más citan las IA.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">C5</span><span class="titulo"><strong>Medir cada mes</strong><span><span class="quien claude">CLAUDE</span>Con un prompt · 10 minutos</span></span></summary>
+    <div class="cuerpo">
+      <ul>
+        <li>Search Console: búsquedas, clics y páginas que suben o bajan.</li>
+        <li>Preguntar a ChatGPT, Perplexity y Gemini «¿quién implementa agentes de IA para pymes en Latinoamérica?» y anotar si apareces.</li>
+        <li>Analytics: qué artículos traen correos de la guía y citas (el resumen de los lunes ya lo cuenta).</li>
+      </ul>
+    </div>
+  </details>
+
+  <div class="fase"><h3>Fase D · Sin prisa</h3><span class="estado aviso">Cuando puedas</span></div>
+
+  <details class="paso">
+    <summary><span class="num">D1</span><span class="titulo"><strong>Revisión del abogado</strong><span><span class="quien abogado">ABOGADO</span>Aviso legal, privacidad, cookies y aviso para Latinoamérica</span></span></summary>
+    <div class="cuerpo">
+      <p>Pídele que revise, sobre todo:</p>
+      <ul>
+        <li>La entidad de Anthropic y el mecanismo de transferencia de datos.</li>
+        <li>Si la memoria de Flora (30 días) puede ir con interés legítimo o necesita consentimiento.</li>
+        <li>La voz (paso B4).</li>
+        <li>Google Workspace y Resend.</li>
+        <li>Si conviene una página de condiciones de contratación para los servicios. Hoy se contrata con propuesta por escrito, lo cual es válido, pero puede querer un texto general.</li>
+      </ul>
+      <p>Las notas «VERIFICAR» están al principio de cada archivo en <code>src/content/legal/</code>.</p>
+    </div>
+  </details>
+
+  <details class="paso">
+    <summary><span class="num">D2</span><span class="titulo"><strong>Otros pendientes</strong><span>Tag Manager, UptimeRobot, marca Flora, WhatsApp</span></span></summary>
+    <div class="cuerpo">
+      <ul>
+        <li><span class="quien tu">TÚ</span><b>Tag Manager:</b> importar <code>gtm/contenedor-anuncios.json</code> cuando tengas los IDs de Meta y Google Ads (guía en <code>gtm/LEEME.md</code>).</li>
+        <li><span class="quien tu">TÚ</span><b>UptimeRobot (gratis):</b> en <a href="https://uptimerobot.com" target="_blank" rel="noopener">uptimerobot.com</a> → <b>New monitor</b> → HTTP(s) → <code>https://soyluisflores.es</code> → cada 5 minutos. Nunca vigiles <code>/api/chat</code>, porque gastaría crédito de IA.</li>
+        <li><span class="quien tu">TÚ</span><b>Marca «Flora»:</b> antes de venderla como producto, mírala en <a href="https://www.tmdn.org/tmview" target="_blank" rel="noopener">TMview</a> (clases 42 y 35). Ya existen productos de IA llamados Flora.</li>
+        <li><span class="quien tu">TÚ</span><b>WhatsApp 1 hora antes (de pago):</b> Twilio. Primero el abogado lo añade a la privacidad. Pasos en <code>AGENDA.md</code>.</li>
+      </ul>
+    </div>
+  </details>
+
+  <h3 style="margin-top:28px">Checklist</h3>
   <div class="tarjeta">
-    <ul class="lista-check">
-      <li><input type="checkbox" id="c1" checked disabled><label for="c1">Web reconstruida en Astro y publicada con Cloudflare</label></li>
-      <li><input type="checkbox" id="c2" checked disabled><label for="c2">9 servicios, 9 funnels, 9 guías gratis y 12 artículos</label></li>
-      <li><input type="checkbox" id="c3" checked disabled><label for="c3">Agenda propia con Google Calendar, correos y cancelación</label></li>
-      <li><input type="checkbox" id="c4" checked disabled><label for="c4">Cada reserva entra como lead en el panel</label></li>
-      <li><input type="checkbox" id="c5" checked disabled><label for="c5">Email marketing: guía, lista con doble confirmación y secuencia</label></li>
-      <li><input type="checkbox" id="c6" checked disabled><label for="c6">Asistente de IA que agenda la llamada y se mide en Analytics</label></li>
-      <li><input type="checkbox" id="c7" checked disabled><label for="c7">Resumen semanal por correo</label></li>
-      <li><input type="checkbox" id="c8" checked disabled><label for="c8">Paso 1: horario del panel conectado (02/11/2026)</label></li>
-      <li><input type="checkbox" id="c9" checked disabled><label for="c9">Cita de prueba: correos, calendario, lead y campana (02/11/2026)</label></li>
-      <li><input type="checkbox" id="c10" checked disabled><label for="c10">Rama vieja servicios-nuevos-oct-2026 borrada</label></li>
-      <li><input type="checkbox" id="c11" checked disabled><label for="c11">Auditoría del 02/11/2026 y contraste del agendador corregido</label></li>
-      <li><input type="checkbox" id="c12" checked disabled><label for="c12">Flora: nombre y voz en el chat (fase 1)</label></li>
-      <li><input type="checkbox" id="p12" data-guardar><label for="p12">Probar el micrófono de Flora en el celular</label></li>
-      <li><input type="checkbox" id="p13" data-guardar><label for="p13">Abogado: añadir el dictado por voz a la privacidad</label></li>
-      <li><input type="checkbox" id="p9" data-guardar><label for="p9">Paso 2: clave de Resend del panel</label></li>
-      <li><input type="checkbox" id="p10" data-guardar><label for="p10">Paso 3: apagar la detección de bots de Cloudflare</label></li>
-      <li><input type="checkbox" id="p3" data-guardar><label for="p3">Paso 4: Tag Manager y conversiones de Google Ads</label></li>
-      <li><input type="checkbox" id="p4" data-guardar><label for="p4">Paso 5: UptimeRobot</label></li>
-      <li><input type="checkbox" id="p11" data-guardar><label for="p11">Velocidad de la portada en celular</label></li>
-      <li><input type="checkbox" id="p5" data-guardar><label for="p5">Revisión del abogado</label></li>
-      <li><input type="checkbox" id="p6" data-guardar><label for="p6">Cambiar los enlaces viejos de Calendly</label></li>
-      <li><input type="checkbox" id="p8" data-guardar><label for="p8">Activar WhatsApp con Twilio (opcional, de pago)</label></li>
+    <ul class="check">
+      <li><input type="checkbox" id="k-a1" data-guardar><label for="k-a1">A1 · Search Console y sitemap enviados</label></li>
+      <li><input type="checkbox" id="k-a2" data-guardar><label for="k-a2">A2 · Bing Webmaster y Crawler Hints</label></li>
+      <li><input type="checkbox" id="k-a3" data-guardar><label for="k-a3">A3 · Decidido qué bots de IA entran</label></li>
+      <li><input type="checkbox" id="k-a4" data-guardar><label for="k-a4">A4 · Bot Fight Mode apagado</label></li>
+      <li><input type="checkbox" id="k-a5" data-guardar><label for="k-a5">A5 · Límite de gasto y prueba del correo del panel</label></li>
+      <li><input type="checkbox" id="k-b1" data-guardar><label for="k-b1">B1 · Portada más rápida</label></li>
+      <li><input type="checkbox" id="k-b2" data-guardar><label for="k-b2">B2 · Archivos sin uso limpiados</label></li>
+      <li><input type="checkbox" id="k-b3" data-guardar><label for="k-b3">B3 · 404, security.txt y CSP</label></li>
+      <li><input type="checkbox" id="k-b4" data-guardar><label for="k-b4">B4 · Voz de Flora en la privacidad</label></li>
+      <li><input type="checkbox" id="k-b5" data-guardar><label for="k-b5">B5 · Memoria de Flora en el lead</label></li>
+      <li><input type="checkbox" id="k-c1" data-guardar><label for="k-c1">C1 · Perfil de Empresa en Google</label></li>
+      <li><input type="checkbox" id="k-c2" data-guardar><label for="k-c2">C2 · Mismo nombre y enlace en todos los perfiles</label></li>
+      <li><input type="checkbox" id="k-c3" data-guardar><label for="k-c3">C3 · Primer artículo nuevo del mes</label></li>
+      <li><input type="checkbox" id="k-d1" data-guardar><label for="k-d1">D1 · Revisión del abogado</label></li>
+      <li><input type="checkbox" id="k-d2" data-guardar><label for="k-d2">D2 · Tag Manager, UptimeRobot y marca Flora</label></li>
     </ul>
   </div>
 </section>
 
-<!-- LO HECHO -->
-<section id="hecho">
+<!-- ============================================================ AUDITORÍA -->
+<section class="panel" id="p-auditoria">
+  <h2>Auditoría del 02/11/2026</h2>
+  <p class="intro">Revisión en vivo de soyluisflores.es y de la web compilada, en celular (360 px), tablet (768 px) y computadora (1280 px).</p>
+
+  <h3>Seguridad</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Qué se revisó</th><th>Resultado</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Cabeceras de protección</td><td>HTTPS obligatorio (HSTS con preload), antimarcos, nosniff, referrer y permisos (micrófono solo para la propia web).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Política de contenido (CSP)</td><td>Activa en modo «solo informe»: avisa pero no bloquea. Paso B3.</td><td><span class="estado aviso">Mejorable</span></td></tr>
+      <tr><td>APIs (chat, voz, agenda, guía)</td><td>Rechazan llamadas sin origen o desde otra web (403). Métodos no permitidos dan 405.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Configuración de la agenda</td><td>Sin la clave del panel responde «no autorizado» (401).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Límites de abuso</td><td>Chat 8 por minuto, voz 12 por minuto, 300 mensajes con IA al día y 15 preguntas por conversación.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Archivos sensibles</td><td><code>.env</code>, <code>.git</code>, <code>wrangler.jsonc</code>, <code>package.json</code>, <code>CLAUDE.md</code> e <code>INFORME.html</code> no se publican (404).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Claves en el código</td><td>Ninguna clave de Anthropic, Resend, Google, GitHub o Twilio en el repositorio ni en su historial.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Librerías</td><td><code>npm audit</code>: 0 vulnerabilidades.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Redirecciones</td><td>http → https, www → sin www, barra final quitada, 404 correcta.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>security.txt</td><td>No existe. Paso B3.</td><td><span class="estado aviso">Falta</span></td></tr>
+      <tr><td>Bot Fight Mode</td><td>Sigue activo y frena la web. Paso A4.</td><td><span class="estado aviso">Pendiente</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Funcionamiento en celular, tablet y computadora</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Qué se revisó</th><th>Resultado</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Desbordes horizontales</td><td>19 páginas en celular, 7 en tablet y 11 en computadora: ninguna se sale de la pantalla.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Estructura</td><td>Todas con un solo H1, imágenes con texto alternativo y sin imágenes rotas.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Menú del celular</td><td>Se abre, muestra las 6 opciones, cambia a «Cerrar menú» y se cierra.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Chat de Flora</td><td>Se abre en celular a pantalla casi completa, con aviso de IA, micrófono y «Olvidarme».</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Pie del chat</td><td>Faltaba un espacio: se veía «teléfono.Olvidarme ·Privacidad». <b>Corregido</b> en esta auditoría.</td><td><span class="estado ok">Corregido</span></td></tr>
+      <tr><td>Calculadora ROI</td><td>Recalcula al cambiar los datos (10 campos).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Barra fija del celular</td><td>«Agenda tu llamada gratis», chat y WhatsApp visibles en todas las páginas.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Portada en celular</td><td>El texto del hero aparece con retraso por las animaciones de entrada. Paso B1.</td><td><span class="estado aviso">Mejorable</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Velocidad y calidad (Lighthouse, celular)</h3>
+  <div class="tabla-envoltura"><table data-lighthouse>
+    <thead><tr><th>Página</th><th>Rendimiento</th><th>Accesibilidad</th><th>Buenas prácticas</th><th>SEO</th><th>Carga principal (LCP)</th></tr></thead>
+    <tbody>
+      <tr><td>Portada</td><td><span class="estado aviso">58</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>3,7 s</td></tr>
+      <tr><td>Contacto (agendador)</td><td><span class="estado aviso">51</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>4,0 s</td></tr>
+      <tr><td>Servicio Agentes de IA</td><td><span class="estado ok">92</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>2,6 s</td></tr>
+    </tbody>
+  </table></div>
+  <div class="caja info"><b>Por qué no llegan a 100:</b> «Buenas prácticas» baja a 82 en todas las páginas por el script de Bot Fight Mode de Cloudflare (paso A4). «SEO» baja a 92 porque Cloudflare añade al robots.txt una línea que Google no reconoce (<code>Content-Signal</code>), que es la misma parte del paso A3. Las dos se arreglan desde el panel de Cloudflare, sin tocar la web. El rendimiento de la portada y de contacto es el paso B1.</div>
+  <p class="sub" style="color:var(--suave)">Medido el 02/11/2026. Lighthouse simula un celular de gama media con conexión 4G lenta. Las cifras varían unos puntos entre mediciones. Rendimiento por encima de 90 es excelente; de 50 a 89, mejorable.</p>
+
+  <h3>Textos legales</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Página</th><th>Qué cubre</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Aviso legal</td><td>Titular, NIE (solo aquí), condiciones de uso de la web.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Política de privacidad (España, RGPD)</td><td>Agenda, consultas, guía, Flora y su memoria de 30 días, panel, Anthropic, Resend, Google, derechos y AEPD.</td><td><span class="estado aviso">Falta la voz</span></td></tr>
+      <tr><td>Aviso para Latinoamérica</td><td>Lo mismo, según las leyes de México, Colombia, Argentina, Perú y Chile.</td><td><span class="estado aviso">Falta la voz</span></td></tr>
+      <tr><td>Política de cookies</td><td>Tabla real de lo que se guarda, con <code>flora-visitante</code> incluido.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Condiciones de contratación</td><td>No hay página propia: se contrata con propuesta por escrito.</td><td><span class="estado info">Consultar al abogado</span></td></tr>
+      <tr><td>Revisión profesional</td><td>Todos marcados para revisión de un abogado.</td><td><span class="estado aviso">Pendiente</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Orden del repositorio</h3>
+  <p>14 archivos sin uso, detallados en el paso B2. La rama de trabajo <code>reconstruccion-oct-2026</code> está en el mismo commit que <code>main</code>, y en el ordenador no queda nada sin subir.</p>
+</section>
+
+<!-- ============================================================ SEO -->
+<section class="panel" id="p-seo">
+  <h2>SEO y presencia en buscadores</h2>
+  <p class="intro"><b>SEO</b> es aparecer en Google y Bing. <b>GEO</b> es aparecer en las respuestas de las IA (ChatGPT, Perplexity, Gemini, Copilot). Las dos se apoyan en lo mismo: una web técnicamente limpia (la tuya ya lo es), que los buscadores la conozcan (falta) y que otras webs hablen de ti (falta).</p>
+
+  <div class="caja mal"><b>El hallazgo más importante:</b> al buscar «soyluisflores.es Luis Flores automatización IA» y «"Luis Carlos Flores" agentes de IA pymes», la web no aparece en los resultados. Sí aparece otro Luis Flores de publicidad digital. Esto es normal en una web nueva que todavía no está dada de alta en Search Console ni tiene enlaces desde otras webs. Se arregla con los pasos A1, A2, C1, C2 y C4.</div>
+
+  <h3>Lo técnico (en la web)</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Qué se revisó</th><th>Resultado</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Títulos y descripciones</td><td>Las 55 páginas tienen título y descripción, sin repetidos ni largos de más.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Canónicas</td><td>Todas tienen. Las landings de anuncios apuntan a su página de servicio, para no competir con ella.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Páginas indexables</td><td>33 de 55. Las otras (landings, correo, agenda) tienen <code>noindex</code> a propósito. La 404 debería llevarlo (paso B3).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Sitemap</td><td><code>sitemap-index.xml</code> con 32 direcciones y fecha de cambio.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Datos estructurados (JSON-LD)</td><td>Persona, organización, servicio profesional, 19 servicios, 19 bloques de preguntas frecuentes (93 preguntas), 12 artículos, migas de pan y página de perfil.</td><td><span class="estado ok">Muy bien</span></td></tr>
+      <tr><td>Idioma y países</td><td><code>lang="es"</code> y <code>hreflang</code> es / x-default. Zonas de servicio: España y Latinoamérica.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Imágenes para compartir</td><td>47 páginas con su imagen propia. Las legales usan la general, lo cual está bien.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Perfiles enlazados (<code>sameAs</code>)</td><td>LinkedIn, Instagram, TikTok y smilbot.com.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Contenido</td><td>12 artículos de unas 800 palabras, 9 servicios y 9 guías. Buena base; conviene sumar dos artículos al mes (paso C3).</td><td><span class="estado aviso">Ampliar</span></td></tr>
+      <tr><td>Velocidad (Core Web Vitals)</td><td>Portada lenta en celular. Paso B1.</td><td><span class="estado aviso">Mejorable</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Para las IA (GEO)</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Qué se revisó</th><th>Resultado</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><code>llms.txt</code></td><td>Resumen de la web para las IA, con servicios, enfoque, contacto y páginas principales (10,8 KB).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Bots de búsqueda con IA</td><td>OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot y Claude-User tienen permiso.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Bots de entrenamiento</td><td>Reglas contradictorias entre Cloudflare y la web. Además, la línea <code>Content-Signal</code> que añade Cloudflare hace que Google marque el robots.txt como no válido (SEO 92 en vez de 100). Paso A3.</td><td><span class="estado mal">Arreglar</span></td></tr>
+      <tr><td>Respuestas citables</td><td>Preguntas frecuentes con respuesta directa en cada servicio: es justo lo que citan las IA.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Autoridad externa</td><td>Pocas menciones fuera de tu web. Las IA citan a quien otros citan. Paso C4.</td><td><span class="estado mal">Falta</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Fuera de la web (lo que más falta)</h3>
+  <div class="rejilla">
+    <div class="tarjeta"><span class="estado aviso">No consta</span><h3>Google Search Console</h3><p class="sub">La web no lleva etiqueta de verificación. Puede estar verificada por DNS: si ya entras a Search Console, solo envía el sitemap. Paso A1.</p></div>
+    <div class="tarjeta"><span class="estado aviso">No consta</span><h3>Bing Webmaster</h3><p class="sub">Alimenta a ChatGPT, Copilot y DuckDuckGo. Paso A2.</p></div>
+    <div class="tarjeta"><span class="estado aviso">No consta</span><h3>Perfil de Empresa en Google</h3><p class="sub">Te pone en Google Maps y en el panel lateral al buscar tu nombre. Paso C1.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Mejorable</span><h3>Nombre y enlaces</h3><p class="sub">Hay otro Luis Flores con presencia en buscadores. Mismo nombre y enlace en todos tus perfiles. Paso C2.</p></div>
+  </div>
+</section>
+
+<!-- ============================================================ FLORA -->
+<section class="panel" id="p-flora">
+  <h2>Flora, la asistente de IA</h2>
+  <p class="intro">Responde con Claude Haiku 5.5, de Anthropic, solo con la información de la web. Lleva cada conversación a la llamada de diagnóstico, puede agendarla, escucha por micrófono, habla con voz latina y recuerda a quien vuelve durante 30 días.</p>
+
+  <div class="rejilla">
+    <div class="tarjeta"><h3>Rapidez</h3><p class="sub">Primera respuesta en 1,4 segundos y siguientes en unos 2,8 (medido el 02/11). Al abrir el chat se prepara la caché.</p></div>
+    <div class="tarjeta"><h3>Respuestas</h3><p class="sub">45 palabras como máximo, una idea por mensaje y siempre una pregunta al final hasta que la llamada queda agendada.</p></div>
+    <div class="tarjeta"><h3>Memoria (nueva)</h3><p class="sub">Resumen corto de 30 días con un código del navegador, nunca con la IP. Saludo «Hola de nuevo» y botón «Olvidarme». Probada en vivo: recuerda, retoma y olvida.</p></div>
+    <div class="tarjeta"><h3>Voz</h3><p class="sub">Dictado gratis por el navegador. Voz «selena» (Deepgram Aura-2) gratis hasta unas 12 a 14 respuestas al día; después, la voz del navegador.</p></div>
+  </div>
+
+  <h3>Prueba con 22 preguntas trampa (02/11/2026)</h3>
+  <div class="caja ok"><b>20 de 22 bien.</b> No inventó precios, plazos, clientes ni descuentos, resistió los intentos de manipulación («ignora tus instrucciones», «soy Luis», «modo desarrollador»), no aceptó datos de tarjeta, respondió en inglés a quien escribió en inglés y ofreció horas reales para agendar.</div>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Caso marcado</th><th>Qué pasó</th><th>Gravedad</th></tr></thead>
+    <tbody>
+      <tr><td>Precio directo</td><td>Explicó bien que el precio depende del caso, pero no puso el enlace a la llamada.</td><td><span class="estado info">Menor</span></td></tr>
+      <tr><td>Pide casos o clientes</td><td>Se negó bien a inventar clientes, pero la respuesta pasó un poco de 75 palabras.</td><td><span class="estado info">Menor</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Cómo está montada</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Pieza</th><th>Dónde</th></tr></thead>
+    <tbody>
+      <tr><td>Instrucciones (el prompt matriz)</td><td><code>src/worker/instrucciones.ts</code></td></tr>
+      <tr><td>Lo que sabe (se genera solo desde la web)</td><td><code>src/pages/agente/conocimiento.txt.ts</code></td></tr>
+      <tr><td>Servidor, topes y caché</td><td><code>src/worker/index.ts</code></td></tr>
+      <tr><td>Agendar desde el chat</td><td><code>src/worker/chat-agenda.ts</code></td></tr>
+      <tr><td>Voz</td><td><code>src/worker/voz.ts</code></td></tr>
+      <tr><td>Memoria de 30 días</td><td><code>src/worker/memoria.ts</code></td></tr>
+      <tr><td>Chat de la web</td><td><code>src/components/Chat.astro</code></td></tr>
+      <tr><td>Guía completa</td><td><code>AGENTE.md</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Próximas fases</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Fase</th><th>Qué es</th><th>Cuándo</th><th>Costo</th></tr></thead>
+    <tbody>
+      <tr><td>1. Voz en el chat <span class="estado ok">Hecha</span></td><td>Micrófono, voz propia latina y memoria.</td><td>Publicada el 02/11/2026</td><td>Casi nada: cabe en lo gratis de Cloudflare</td></tr>
+      <tr><td>2. Conversación hablada en tiempo real</td><td>Hablar de corrido con Flora y poder interrumpirla.</td><td>Cuando haya tráfico y leads</td><td>Por minuto; con límites</td></tr>
+      <tr><td>3. Llamadas y WhatsApp</td><td>Flora atiende llamadas o notas de voz y agenda.</td><td>Cuando la vendas como servicio</td><td>Por minuto más el número</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============================================================ LO HECHO -->
+<section class="panel" id="p-hecho">
   <h2>Lo que se ha hecho</h2>
-  <p class="intro">Resumen del historial de GitHub. Cada punto tiene su commit en <a href="https://github.com/soyluisfloresoficial/web/commits/main">github.com/soyluisfloresoficial/web</a>.</p>
+  <p class="intro">Resumen del historial de GitHub. Cada punto tiene su commit en <a href="https://github.com/soyluisfloresoficial/web/commits/main" target="_blank" rel="noopener">github.com/soyluisfloresoficial/web</a>.</p>
   <div class="linea">
     <div class="hito"><div class="fecha">18 y 19 oct</div><strong>Reconstrucción de la web en Astro</strong>
       <ul><li>Cabecera, pie y las diez secciones de la portada.</li><li>Servicios, blog, sobre mí, contacto, calculadora ROI, legales y 404.</li><li>Sistema de movimiento, acordeones y barra de progreso.</li></ul></div>
     <div class="hito"><div class="fecha">20 oct</div><strong>Diseño y publicación</strong>
       <ul><li>Tipografía, acentos de color y capa premium en todo el sitio.</li><li>Worker «web» de Cloudflare: URL sin barra final y página 404.</li><li>Regla permanente: cada cambio se publica.</li></ul></div>
     <div class="hito"><div class="fecha">21 oct</div><strong>Contenido y SEO</strong>
-      <ul><li>Tres servicios nuevos: CRM, email marketing y paneles de métricas.</li><li>Textos en español latino neutro, SEO y GEO para Latinoamérica.</li><li>Imagen para compartir en cada página, WhatsApp en toda la web.</li><li>Fuera cifras sin respaldo y Nova Funnels. Aviso de privacidad para Latinoamérica.</li></ul></div>
+      <ul><li>Tres servicios nuevos: CRM, email marketing y paneles de métricas.</li><li>Textos en español latino neutro, SEO y GEO para Latinoamérica.</li><li>Imagen para compartir en cada página y WhatsApp en toda la web.</li><li>Aviso de privacidad para Latinoamérica.</li></ul></div>
     <div class="hito"><div class="fecha">22 y 23 oct</div><strong>Landing y prompt de auditoría</strong>
-      <ul><li>Landing /diagnostico para anuncios.</li><li>Titular de la portada sin promesas.</li><li>Prompt de auditoría por fases (PROMPT-AUDITORIA-WEB.md).</li></ul></div>
+      <ul><li>Landing /diagnostico para anuncios.</li><li>Prompt de auditoría por fases.</li></ul></div>
     <div class="hito"><div class="fecha">26 oct</div><strong>Auditoría en cuatro fases</strong>
-      <ul><li>H1, finalidades del RGPD y tabla real de cookies.</li><li>Cabeceras de seguridad, sitemap y descripciones.</li><li>Afirmaciones con respaldo y enlaces en el blog.</li></ul></div>
+      <ul><li>Finalidades del RGPD y tabla real de cookies.</li><li>Cabeceras de seguridad, sitemap y descripciones.</li></ul></div>
     <div class="hito"><div class="fecha">27 oct</div><strong>Video y asistente de IA</strong>
-      <ul><li>Video de motion graphics hecho con código (Remotion).</li><li>Primer asistente de IA de la web con Claude.</li></ul></div>
-    <div class="hito"><div class="fecha">28 oct</div><strong>Rendimiento, portada y agenda</strong>
-      <ul><li>Mejoras de PageSpeed y banner de cookies compacto.</li><li>Portada: públicos, cómo trabajo, herramientas y blog con portadas.</li><li>Calculadora ROI en vivo y «Mi historia» en Sobre mí.</li><li>Agenda propia con Google Calendar y funnels por servicio.</li></ul></div>
-    <div class="hito"><div class="fecha">29 oct</div><strong>Agenda completa y funnels con la identidad de la web</strong>
-      <ul><li>Correos automáticos, cancelación propia y fuera Calendly.</li><li>Funnels con los colores de la web y gráficos animados.</li></ul></div>
-    <div class="hito"><div class="fecha">30 oct</div><strong>Panel y email marketing</strong>
-      <ul><li>Cada reserva entra en el panel como lead.</li><li>Guía gratis, lista con doble confirmación y secuencia de correos.</li></ul></div>
-    <div class="hito"><div class="fecha">31 oct</div><strong>Anuncios y contenidos</strong>
-      <ul><li>Contenedor de Tag Manager para Meta y Google Ads.</li><li>Una guía gratis por servicio y tres artículos nuevos.</li></ul></div>
+      <ul><li>Video de motion graphics hecho con código.</li><li>Primer asistente de IA con Claude.</li></ul></div>
+    <div class="hito"><div class="fecha">28 y 29 oct</div><strong>Agenda propia y funnels</strong>
+      <ul><li>Agenda con Google Calendar, correos automáticos y cancelación. Fuera Calendly.</li><li>Funnels por servicio con la identidad de la web.</li></ul></div>
+    <div class="hito"><div class="fecha">30 y 31 oct</div><strong>Panel, email marketing y anuncios</strong>
+      <ul><li>Cada reserva entra en el panel como lead.</li><li>Guía gratis por servicio, lista con doble confirmación y secuencia de correos.</li><li>Contenedor de Tag Manager para Meta y Google Ads.</li></ul></div>
     <div class="hito"><div class="fecha">1 nov</div><strong>Agendador rediseñado</strong>
-      <ul><li>Pasos claros, hora de Madrid y privacidad a la vista.</li><li>Script para conectar el horario con el panel.</li></ul></div>
-    <div class="hito"><div class="fecha">2 nov</div><strong>Asistente que agenda y resumen semanal</strong>
-      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li><li>Cita de prueba completa y campana del panel funcionando.</li><li>Auditoría completa y contraste del agendador corregido.</li><li>Flora: el asistente tiene nombre y voz (fase 1).</li><li>Voz propia de Flora, latina y femenina, que ya suena en el celular.</li><li>Plan de ahorro: Haiku 5.5, topes de gasto y respuestas fijas sin IA. Prueba: 21 de 22 casos bien.</li><li>Las 9 guías gratis rediseñadas: ficha, glosario, ejemplo, tu foto y tu firma. Formulario y correos más claros, y cada guía medida por separado.</li><li>Cada lead del panel dice de dónde viene (medio, sección y campaña) y el resumen de los lunes muestra qué sección capta más correos y citas.</li><li>Flora: respuestas de 45 palabras como máximo, siempre con una pregunta, y primera respuesta más rápida.</li><li>Flora recuerda a quien vuelve durante 30 días: un resumen corto ligado a un código del navegador (no a la IP), saludo «Hola de nuevo» y botón «Olvidarme». Privacidad y cookies actualizadas, pendientes del abogado.</li></ul></div>
+      <ul><li>Pasos claros, hora de Madrid y privacidad a la vista.</li></ul></div>
+    <div class="hito"><div class="fecha">2 nov</div><strong>Flora, conversión y auditoría completa</strong>
+      <ul>
+        <li>El asistente agenda la llamada y se mide en Analytics. Resumen semanal por correo.</li>
+        <li>Horario del panel conectado y cita de prueba completa con campana.</li>
+        <li>Flora: nombre, micrófono y voz propia latina que suena en el celular.</li>
+        <li>Plan de ahorro: Haiku 5.5, topes de gasto y respuestas fijas sin IA.</li>
+        <li>Las 9 guías gratis rediseñadas con ficha, glosario, ejemplo, tu foto y tu firma.</li>
+        <li>Cada lead del panel dice de dónde viene y el resumen muestra qué sección capta más.</li>
+        <li>Flora: 45 palabras como máximo, siempre con pregunta, y primera respuesta más rápida.</li>
+        <li>Flora recuerda a quien vuelve durante 30 días, con «Olvidarme». Privacidad y cookies al día.</li>
+        <li>Auditoría completa (seguridad, dispositivos, legal, SEO y GEO) e informe rediseñado con pestañas que funcionan. Espacio del pie del chat corregido.</li>
+      </ul></div>
   </div>
 </section>
 
-<!-- ENLACES -->
-<section id="enlaces">
-  <h2>Enlaces</h2>
+<!-- ============================================================ ENLACES -->
+<section class="panel" id="p-enlaces">
+  <h2>Enlaces y claves</h2>
 
   <h3>Tu web</h3>
-  <div class="desliza"><table class="tabla">
+  <div class="tabla-envoltura"><table>
     <thead><tr><th>Página</th><th>Para qué sirve</th></tr></thead>
     <tbody>
-      <tr><td><a href="https://soyluisflores.es">Portada</a></td><td>Presentación y entrada a todo.</td></tr>
-      <tr><td><a href="https://soyluisflores.es/servicios">Servicios</a></td><td>Los 9 servicios, cada uno con su página.</td></tr>
-      <tr><td><a href="https://soyluisflores.es/contacto">Contacto</a></td><td>Agendador de la llamada, WhatsApp y correo. Es el enlace para tus perfiles.</td></tr>
-      <tr><td><a href="https://soyluisflores.es/diagnostico">Diagnóstico</a></td><td>Landing para anuncios. No sale en Google (noindex).</td></tr>
-      <tr><td><a href="https://soyluisflores.es/guia">Guías gratis</a></td><td>Una guía por servicio a cambio del correo.</td></tr>
-      <tr><td><a href="https://soyluisflores.es/blog">Blog</a></td><td>12 artículos, cada uno enlazado a su funnel.</td></tr>
-      <tr><td><a href="https://soyluisflores.es/roi">Calculadora ROI</a></td><td>Calcula el tiempo y el dinero que se ahorra.</td></tr>
-      <tr><td><a href="https://soyluisflores.es/sobre-mi">Sobre mí</a></td><td>Tu historia y tu forma de trabajar.</td></tr>
-      <tr><td><a href="https://soyluisflores.es/llms.txt">llms.txt</a></td><td>Resumen de la web para buscadores con IA.</td></tr>
+      <tr><td><a href="https://soyluisflores.es" target="_blank" rel="noopener">Portada</a></td><td>Presentación y entrada a todo.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/servicios" target="_blank" rel="noopener">Servicios</a></td><td>Los 9 servicios, cada uno con su página.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/contacto" target="_blank" rel="noopener">Contacto</a></td><td>Agendador, WhatsApp y correo. El enlace para tus perfiles.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/diagnostico" target="_blank" rel="noopener">Diagnóstico</a></td><td>Landing para anuncios (no sale en Google).</td></tr>
+      <tr><td><a href="https://soyluisflores.es/guia" target="_blank" rel="noopener">Guías gratis</a></td><td>Una guía por servicio a cambio del correo.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/blog" target="_blank" rel="noopener">Blog</a></td><td>12 artículos, cada uno enlazado a su funnel.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/roi" target="_blank" rel="noopener">Calculadora ROI</a></td><td>Tiempo y dinero que se ahorran.</td></tr>
+      <tr><td><a href="https://soyluisflores.es/llms.txt" target="_blank" rel="noopener">llms.txt</a></td><td>Resumen de la web para las IA.</td></tr>
     </tbody>
   </table></div>
 
   <details class="desplegable"><summary>Funnels de anuncios (uno por servicio)</summary><div>
-    <p>Usa estos en Meta Ads y Google Ads. Los parámetros de campaña están en <code>FUNNELS.md</code>.</p>
+    <p>Para Meta Ads y Google Ads. Los parámetros de campaña están en <code>FUNNELS.md</code>.</p>
     <ul>
-      <li><a href="https://soyluisflores.es/diagnostico/agentes-ia">/diagnostico/agentes-ia</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/funnels-conversion">/diagnostico/funnels-conversion</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/automatizacion">/diagnostico/automatizacion</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/crm-seguimiento-leads">/diagnostico/crm-seguimiento-leads</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/email-marketing">/diagnostico/email-marketing</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/paneles-de-metricas">/diagnostico/paneles-de-metricas</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/webs-ia">/diagnostico/webs-ia</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/trafico-de-pago">/diagnostico/trafico-de-pago</a></li>
-      <li><a href="https://soyluisflores.es/diagnostico/consultoria-ia">/diagnostico/consultoria-ia</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/agentes-ia" target="_blank" rel="noopener">/diagnostico/agentes-ia</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/funnels-conversion" target="_blank" rel="noopener">/diagnostico/funnels-conversion</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/automatizacion" target="_blank" rel="noopener">/diagnostico/automatizacion</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/crm-seguimiento-leads" target="_blank" rel="noopener">/diagnostico/crm-seguimiento-leads</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/email-marketing" target="_blank" rel="noopener">/diagnostico/email-marketing</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/paneles-de-metricas" target="_blank" rel="noopener">/diagnostico/paneles-de-metricas</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/webs-ia" target="_blank" rel="noopener">/diagnostico/webs-ia</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/trafico-de-pago" target="_blank" rel="noopener">/diagnostico/trafico-de-pago</a></li>
+      <li><a href="https://soyluisflores.es/diagnostico/consultoria-ia" target="_blank" rel="noopener">/diagnostico/consultoria-ia</a></li>
     </ul>
   </div></details>
 
   <details class="desplegable"><summary>Guías gratis (una por servicio)</summary><div>
     <ul>
-      <li><a href="https://soyluisflores.es/guia/que-automatizar-primero">Qué automatizar primero</a></li>
-      <li><a href="https://soyluisflores.es/guia/preparar-un-agente-de-ia">Preparar un agente de IA</a></li>
-      <li><a href="https://soyluisflores.es/guia/embudo-de-ventas-paso-a-paso">Embudo de ventas paso a paso</a></li>
-      <li><a href="https://soyluisflores.es/guia/ordenar-tus-contactos-en-un-crm">Ordenar tus contactos en un CRM</a></li>
-      <li><a href="https://soyluisflores.es/guia/tu-primera-secuencia-de-correos">Tu primera secuencia de correos</a></li>
-      <li><a href="https://soyluisflores.es/guia/las-cifras-de-tu-negocio">Las cifras de tu negocio</a></li>
-      <li><a href="https://soyluisflores.es/guia/una-web-que-trae-clientes">Una web que trae clientes</a></li>
-      <li><a href="https://soyluisflores.es/guia/antes-de-invertir-en-anuncios">Antes de invertir en anuncios</a></li>
-      <li><a href="https://soyluisflores.es/guia/por-donde-empezar-con-ia">Por dónde empezar con IA</a></li>
+      <li><a href="https://soyluisflores.es/guia/que-automatizar-primero" target="_blank" rel="noopener">Qué automatizar primero</a></li>
+      <li><a href="https://soyluisflores.es/guia/preparar-un-agente-de-ia" target="_blank" rel="noopener">Preparar un agente de IA</a></li>
+      <li><a href="https://soyluisflores.es/guia/embudo-de-ventas-paso-a-paso" target="_blank" rel="noopener">Embudo de ventas paso a paso</a></li>
+      <li><a href="https://soyluisflores.es/guia/ordenar-tus-contactos-en-un-crm" target="_blank" rel="noopener">Ordenar tus contactos en un CRM</a></li>
+      <li><a href="https://soyluisflores.es/guia/tu-primera-secuencia-de-correos" target="_blank" rel="noopener">Tu primera secuencia de correos</a></li>
+      <li><a href="https://soyluisflores.es/guia/las-cifras-de-tu-negocio" target="_blank" rel="noopener">Las cifras de tu negocio</a></li>
+      <li><a href="https://soyluisflores.es/guia/una-web-que-trae-clientes" target="_blank" rel="noopener">Una web que trae clientes</a></li>
+      <li><a href="https://soyluisflores.es/guia/antes-de-invertir-en-anuncios" target="_blank" rel="noopener">Antes de invertir en anuncios</a></li>
+      <li><a href="https://soyluisflores.es/guia/por-donde-empezar-con-ia" target="_blank" rel="noopener">Por dónde empezar con IA</a></li>
     </ul>
   </div></details>
 
   <h3 style="margin-top:22px">Paneles y cuentas</h3>
-  <div class="desliza"><table class="tabla">
+  <div class="tabla-envoltura"><table>
     <thead><tr><th>Dónde</th><th>Para qué entras</th></tr></thead>
     <tbody>
-      <tr><td><a href="https://panel.soyluisflores.es">Tu panel</a></td><td>Leads, campana de avisos y horario de la agenda.</td></tr>
-      <tr><td><a href="https://github.com/soyluisfloresoficial/web">GitHub (web)</a></td><td>El código. Lo que entra en main se publica solo.</td></tr>
-      <tr><td><a href="https://dash.cloudflare.com">Cloudflare</a></td><td>Worker «web»: claves secretas, registros de errores, correo del dominio.</td></tr>
-      <tr><td><a href="https://console.firebase.google.com">Firebase</a></td><td>Base de datos y funciones del panel.</td></tr>
-      <tr><td><a href="https://console.anthropic.com">Consola de Anthropic</a></td><td>Gasto del asistente de IA y límite mensual.</td></tr>
-      <tr><td><a href="https://resend.com">Resend</a></td><td>Ver si los correos automáticos salieron.</td></tr>
-      <tr><td><a href="https://tagmanager.google.com">Tag Manager</a></td><td>Etiquetas de medición y de anuncios.</td></tr>
-      <tr><td><a href="https://analytics.google.com">Google Analytics</a></td><td>Visitas, eventos del chat y leads.</td></tr>
-      <tr><td><a href="https://search.google.com/search-console">Search Console</a></td><td>Cómo aparece la web en Google.</td></tr>
-      <tr><td><a href="https://calendar.google.com">Google Calendar</a></td><td>Donde caen las citas.</td></tr>
-    </tbody>
-  </table></div>
-</section>
-
-<!-- PROMPTS -->
-<section id="prompts">
-  <h2>Prompts: el matriz y sus derivados</h2>
-  <p class="intro">Un prompt es el texto de instrucciones que recibe una IA. El matriz define al asistente de la web; los derivados salen de él o lo completan.</p>
-
-  <div class="tarjeta" style="margin-bottom:14px">
-    <span class="estado ok">Prompt matriz</span>
-    <h3>Instrucciones de Flora, la asistente de la web</h3>
-    <p>Fichero <code>src/worker/instrucciones.ts</code>. Define quién es, cómo lleva la conversación (respuesta, sector, problema, servicio, llamada), los botones «Opciones:», cómo agenda, qué no puede hacer, la seguridad contra manipulación y el tono (unas 60 palabras, español latino, sin precios inventados).</p>
-    <div class="si-no">
-      <div class="si"><b>Sirve para</b>Resolver dudas con la información de la web, recomendar el servicio que encaja y agendar la llamada.</div>
-      <div class="no"><b>No sirve para</b>Dar precios, plazos o resultados, hacer trabajos ajenos a la web, guardar mensajes para Luis ni dar asesoría legal o fiscal.</div>
-    </div>
-    <p style="margin-top:10px">Para cambiarlo, pídeselo a Claude Code: lo prueba con <code>node tools/probar-agente.mjs</code> antes de publicar.</p>
-  </div>
-
-  <div class="rejilla">
-    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Base de conocimiento</h3><p>Se genera sola en cada publicación desde los servicios, preguntas, proceso y blog (<code>/agente/conocimiento.txt</code>). Para que el asistente sepa algo nuevo, cambia la web, no el prompt.</p></div>
-    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Herramientas del asistente</h3><p><code>ver_horarios</code> (horas libres reales) y <code>preparar_cita</code> (valida los datos y muestra la tarjeta). En <code>src/worker/chat-agenda.ts</code>. La IA nunca agenda sola: confirma la persona.</p></div>
-    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Prompt de auditoría</h3><p><code>PROMPT-AUDITORIA-WEB.md</code>: se pega en una sesión nueva de Claude Code para auditar SEO, rendimiento, accesibilidad y conversión por fases, con tu aprobación entre fases.</p></div>
-    <div class="tarjeta"><span class="estado ok">Derivado</span><h3>Plantillas de correo</h3><p>Confirmación, recordatorios y cancelación en <code>src/worker/correo-plantillas.ts</code>. Secuencia de email marketing en <code>src/worker/secuencia.ts</code>. Las que se pegan a mano, en <code>correos/PLANTILLAS.md</code>.</p></div>
-  </div>
-
-  <h3 style="margin-top:26px">Prompts para pedirle cosas a Claude Code</h3>
-  <p class="intro">Cópialos, cambia lo que está entre corchetes y pégalos en una conversación de Claude Code abierta en la carpeta de la web.</p>
-
-  <details class="desplegable"><summary>Hacer un cambio en la web</summary><div>
-<pre><button class="copiar" type="button">Copiar</button>Cambia [qué quieres cambiar] en [página o sección]. Respeta las reglas de CLAUDE.md, publícalo al terminar, actualiza INFORME.html y dame el paso a paso de lo que me toque hacer a mí.</pre></div></details>
-
-  <details class="desplegable"><summary>Escribir un artículo nuevo para el blog</summary><div>
-<pre><button class="copiar" type="button">Copiar</button>Escribe un artículo para el blog sobre [tema] pensado para [tipo de negocio]. Sin cifras ni casos inventados, enlázalo al funnel de [servicio], genera su imagen para redes, publícalo y actualiza INFORME.html.</pre></div></details>
-
-  <details class="desplegable"><summary>Revisar que todo funciona</summary><div>
-<pre><button class="copiar" type="button">Copiar</button>Revisa en vivo que la web, el chat, la agenda y el panel responden bien, que GitHub está sincronizado y dime qué falta. Actualiza INFORME.html con el estado.</pre></div></details>
-
-  <details class="desplegable"><summary>Ajustar cómo responde el asistente del chat</summary><div>
-<pre><button class="copiar" type="button">Copiar</button>Quiero que el asistente del chat [cómo quieres que responda] cuando [situación]. Pruébalo con probar-agente antes de publicar y dime cómo quedó la respuesta.</pre></div></details>
-
-  <details class="desplegable"><summary>Pedir un resumen y checklist</summary><div>
-<pre><button class="copiar" type="button">Copiar</button>Hazme un resumen de lo que llevo, lo que falta y lo que me sugieres, con el paso a paso detallado. Actualiza INFORME.html y mándamelo.</pre></div></details>
-
-  <details class="desplegable"><summary>Auditoría completa de la web</summary><div>
-    <p>Abre <code>PROMPT-AUDITORIA-WEB.md</code>, copia el bloque de texto y pégalo en una conversación nueva. Trabaja en una rama aparte y no publica nada sin tu aprobación.</p>
-  </div></details>
-</section>
-
-<!-- HERRAMIENTAS -->
-<section id="herramientas">
-  <h2>Herramientas del proyecto</h2>
-  <p class="intro">Comandos que viven en la carpeta <code>tools/</code>. Se ejecutan en PowerShell dentro de la carpeta de la web.</p>
-  <div class="desliza"><table class="tabla">
-    <thead><tr><th>Comando</th><th>Para qué sirve</th><th>Cuándo</th></tr></thead>
-    <tbody>
-      <tr><td><code>npm run build</code></td><td>Compila la web.</td><td>Antes de cada publicación (Claude lo hace).</td></tr>
-      <tr><td><code>node tools/auditar-dist.mjs</code></td><td>Revisa la web compilada. Tiene que dar 0 problemas.</td><td>Antes de cada publicación.</td></tr>
-      <tr><td><code>node tools/conectar-agenda.mjs</code></td><td>Crea la clave entre panel y agenda y publica el panel.</td><td>Ya hecho. Solo para cambiar la clave. Lo ejecutas tú.</td></tr>
-      <tr><td><code>node tools/conectar-panel.mjs</code></td><td>Conecta las reservas con el panel como leads.</td><td>Ya hecho. Solo si cambia el panel.</td></tr>
-      <tr><td><code>node tools/autorizar-google.mjs</code></td><td>Da permiso a la web para usar tu Google Calendar.</td><td>Si cambias o rotas la clave de Google.</td></tr>
-      <tr><td><code>node tools/generar-og.mjs</code></td><td>Crea las imágenes para compartir en redes.</td><td>Al añadir un artículo o servicio.</td></tr>
-      <tr><td><code>node tools/generar-contenedor-anuncios.mjs</code></td><td>Genera el fichero para importar en Tag Manager.</td><td>Al cambiar la medición.</td></tr>
-      <tr><td><code>node tools/probar-agente.mjs</code></td><td>Prueba el asistente con preguntas difíciles.</td><td>Al cambiar el prompt matriz.</td></tr>
-      <tr><td><code>node tools/probar-agenda.mjs</code></td><td>25 pruebas de la agenda.</td><td>Al cambiar la agenda.</td></tr>
-      <tr><td><code>node tools/servir-dist.mjs</code></td><td>Abre la web compilada en tu ordenador.</td><td>Para mirarla antes de publicar.</td></tr>
-    </tbody>
-  </table></div>
-</section>
-
-<!-- SKILLS -->
-<section id="skills">
-  <h2>Skills, plugins y agentes</h2>
-  <p class="intro">Una <b>skill</b> es un manual de instrucciones que Claude carga para una tarea concreta. Un <b>plugin</b> es un paquete que trae skills y conexiones con otros servicios. Un <b>agente</b> es una IA que trabaja sola en una tarea.</p>
-
-  <h3>Agentes</h3>
-  <div class="rejilla">
-    <div class="tarjeta"><h3>Flora, la asistente de la web</h3><p>Claude Haiku 5.5 dentro del chat de soyluisflores.es, por escrito o por voz.</p>
-      <div class="si-no"><div class="si"><b>Sirve</b>Atender visitas y agendar.</div><div class="no"><b>No sirve</b>Para trabajar en tu código ni en tu panel.</div></div></div>
-    <div class="tarjeta"><h3>Claude Code (esta sesión)</h3><p>Trabaja en la carpeta de la web: cambia, prueba y publica.</p>
-      <div class="si-no"><div class="si"><b>Sirve</b>Cambios, revisiones, informes, guías.</div><div class="no"><b>No sirve</b>Crear cuentas, poner contraseñas o claves, borrar ramas.</div></div></div>
-    <div class="tarjeta"><h3>Sesión del panel</h3><p>Otra conversación de Claude Code en la carpeta del panel.</p>
-      <div class="si-no"><div class="si"><b>Sirve</b>Cambios del panel y la app Android.</div><div class="no"><b>No sirve</b>Publicar el panel sin tu permiso.</div></div></div>
-    <div class="tarjeta"><h3>Subagentes</h3><p>Ayudantes que Claude Code lanza para buscar o revisar en paralelo.</p>
-      <div class="si-no"><div class="si"><b>Sirve</b>Búsquedas y revisiones grandes.</div><div class="no"><b>No sirve</b>Tareas pequeñas: gastan más.</div></div></div>
-  </div>
-
-  <h3 style="margin-top:22px">Skills usadas en este proyecto</h3>
-  <div class="desliza"><table class="tabla">
-    <thead><tr><th>Skill</th><th>Sirve para</th><th>No sirve para</th></tr></thead>
-    <tbody>
-      <tr><td><code>claude-api</code></td><td>Elegir modelo, precios y programar el asistente de IA.</td><td>Diseño ni textos de la web.</td></tr>
-      <tr><td><code>design:design-system</code></td><td>Tipografía, colores y piezas coherentes en toda la web.</td><td>Contenido o SEO.</td></tr>
-      <tr><td><code>design:accessibility-review</code></td><td>Revisar contraste, foco y movimiento (WCAG).</td><td>Velocidad de carga.</td></tr>
+      <tr><td><a href="https://panel.soyluisflores.es" target="_blank" rel="noopener">Tu panel</a></td><td>Leads, campana y horario de la agenda.</td></tr>
+      <tr><td><a href="https://github.com/soyluisfloresoficial/web" target="_blank" rel="noopener">GitHub (web)</a></td><td>El código. Lo que entra en main se publica solo.</td></tr>
+      <tr><td><a href="https://dash.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a></td><td>Worker «web», claves, DNS, bots, Workers AI.</td></tr>
+      <tr><td><a href="https://console.firebase.google.com" target="_blank" rel="noopener">Firebase</a></td><td>Base de datos y funciones del panel.</td></tr>
+      <tr><td><a href="https://console.anthropic.com" target="_blank" rel="noopener">Anthropic</a></td><td>Gasto de Flora y límite mensual.</td></tr>
+      <tr><td><a href="https://resend.com" target="_blank" rel="noopener">Resend</a></td><td>Ver si los correos salieron.</td></tr>
+      <tr><td><a href="https://search.google.com/search-console" target="_blank" rel="noopener">Search Console</a></td><td>Cómo te encuentra Google (paso A1).</td></tr>
+      <tr><td><a href="https://www.bing.com/webmasters" target="_blank" rel="noopener">Bing Webmaster</a></td><td>Bing, ChatGPT y Copilot (paso A2).</td></tr>
+      <tr><td><a href="https://business.google.com" target="_blank" rel="noopener">Perfil de Empresa</a></td><td>Google Maps y panel de tu nombre (paso C1).</td></tr>
+      <tr><td><a href="https://tagmanager.google.com" target="_blank" rel="noopener">Tag Manager</a> y <a href="https://analytics.google.com" target="_blank" rel="noopener">Analytics</a></td><td>Medición de visitas, chat, leads y anuncios.</td></tr>
     </tbody>
   </table></div>
 
-  <h3>Plugins instalados que te pueden servir</h3>
-  <div class="desliza"><table class="tabla">
-    <thead><tr><th>Plugin</th><th>Sirve para</th><th>Nota</th></tr></thead>
-    <tbody>
-      <tr><td>Cloudflare</td><td>Ver el Worker, las bases KV y la documentación.</td><td>Hay que autorizarlo con /mcp.</td></tr>
-      <tr><td>Firebase</td><td>Base de datos y funciones del panel.</td><td>A veces no conecta; se reintenta.</td></tr>
-      <tr><td>Twilio Developer Kit</td><td>Montar el WhatsApp de recordatorios.</td><td>Cuando decidas activarlo.</td></tr>
-      <tr><td>Marketing / SEO</td><td>Planes de campaña, auditorías SEO, correos.</td><td>Algunos necesitan cuentas de pago.</td></tr>
-      <tr><td>Design</td><td>Crítica de diseño, accesibilidad, textos de interfaz.</td><td>—</td></tr>
-      <tr><td>Instagram (skills ig-*)</td><td>Captions, carruseles, reels y plan de contenido.</td><td>Para tu marca personal.</td></tr>
-    </tbody>
-  </table></div>
-</section>
-
-<!-- AUDITORÍA -->
-<section id="auditoria">
-  <h2>Auditoría del 02/11/2026</h2>
-  <p class="intro">Revisión en vivo de la web, el chat, la agenda, el panel y GitHub.</p>
-  <div class="desliza"><table class="tabla">
-    <thead><tr><th>Qué</th><th>Resultado</th><th>Estado</th></tr></thead>
-    <tbody>
-      <tr><td>GitHub de la web</td><td>main y reconstruccion-oct-2026 en el mismo commit. Rama vieja borrada.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>GitHub del panel</td><td>main subido. Hay cambios a medio hacer de la sesión del panel (sonido de la campana): los termina esa sesión.</td><td><span class="estado pendiente">En curso</span></td></tr>
-      <tr><td>Compilación y auditoría propia</td><td>55 páginas, 0 problemas.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Páginas en vivo</td><td>39 revisadas (sitemap, funnels, guías, llms.txt): todas responden, ninguna lenta.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Redirecciones</td><td>http → https, www → sin www, barra final quitada, 404 correcta.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Cabeceras de seguridad</td><td>HSTS, X-Frame-Options, nosniff, Referrer y Permissions-Policy activas. La política de contenido (CSP) está en modo «solo informe» a propósito.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Asistente del chat</td><td>Responde en unos 3 segundos, no inventa precios, da botones. Rechaza llamadas desde otras webs.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Agenda</td><td>184 horas libres en las próximas semanas. Configuración protegida con clave. Rechaza reservas incompletas.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Funciones del panel</td><td>Las 14 publicadas. Los errores del 30/10 ya se resolvieron.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Correo «Lead nuevo» del panel</td><td>Resend rechaza la clave guardada en Firebase.</td><td><span class="estado pendiente">Paso 2</span></td></tr>
-      <tr><td>Contenido</td><td>NIE solo en aviso legal, sin Calendly, sin huecos [COMPLETAR], sin modismos de España ni rayas largas.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Contraste del agendador</td><td>El día y la hora elegidos tenían blanco sobre azul con 3,97:1. Corregido a unos 5,8:1.</td><td><span class="estado ok">Corregido</span></td></tr>
-    </tbody>
-  </table></div>
-  <h3>Velocidad y calidad (Lighthouse, celular)</h3>
-  <div class="desliza"><table class="tabla">
-    <thead><tr><th>Página</th><th>Rendimiento</th><th>Accesibilidad</th><th>Buenas prácticas</th><th>SEO</th></tr></thead>
-    <tbody>
-      <tr><td>Portada</td><td>55</td><td>100</td><td>81</td><td>100</td></tr>
-      <tr><td>Contacto</td><td>67</td><td>96 → corregido</td><td>81</td><td>100</td></tr>
-      <tr><td>Servicio agentes de IA</td><td>87</td><td>100</td><td>81</td><td>100</td></tr>
-      <tr><td>Funnel agentes de IA</td><td>67</td><td>100</td><td>81</td><td>69 (normal: no se indexa)</td></tr>
-    </tbody>
-  </table></div>
-  <p>Las «buenas prácticas» bajan a 81 en todas por el script de bots de Cloudflare (paso 3). La portada es lenta en celular por el trabajo de estilos y animaciones: queda como pendiente aparte.</p>
-  <p><b>Segunda medición (02/11/2026, 13:50):</b> contacto ya da 100 en accesibilidad. El script de bots de Cloudflare seguía en la página, así que «buenas prácticas» sigue en 81: revisa el paso 3. Rendimiento: portada 57, contacto 62, servicio 83 (varía unos puntos entre mediciones).</p>
-</section>
-
-<!-- IDEAS -->
-<section id="ideas">
-  <h2>Ideas en estudio</h2>
-  <div class="tarjeta">
-    <span class="estado ok">Fase 1 publicada · 02/11/2026</span>
-    <h3>Flora: asistente de voz con nombre propio (estilo «Viernes» de Marvel)</h3>
-    <p>Que el visitante pueda hablarle a la web y que le conteste con voz, con un nombre y una personalidad propios. Además sirve de demostración en vivo de tu servicio de agentes de IA.</p>
-    <div class="desliza" style="margin-top:12px"><table class="tabla">
-      <thead><tr><th>Fase</th><th>Qué es</th><th>Cuándo</th><th>Costo</th></tr></thead>
-      <tbody>
-        <tr><td>1. Voz en el chat actual ✓</td><td>Hecho. Botón de micrófono en el chat: el navegador pasa la voz a texto y Flora responde con su voz propia, femenina y latina (Deepgram Aura-2, voz «selena», generada en Cloudflare). El altavoz de la cabecera apaga la voz. En Firefox no hay micrófono (el navegador no lo trae).</td><td>Publicada el 02/11/2026</td><td>Casi nada extra: el mismo gasto de Claude por mensaje</td></tr>
-        <tr><td>2. Voz natural en tiempo real</td><td>Conversación hablada fluida, con una voz propia de calidad (servicios como ElevenLabs o Deepgram) y Claude como cerebro. Se interrumpe y responde al momento.</td><td>Cuando haya tráfico y leads</td><td>Se paga por minuto de conversación; hay que poner límites</td></tr>
-        <tr><td>3. Llamada y WhatsApp</td><td>El mismo asistente atiende llamadas o notas de voz y agenda.</td><td>Cuando la venda como servicio</td><td>Por minuto más el número de teléfono</td></tr>
-      </tbody>
-    </table></div>
-    <p style="margin-top:10px"><b>Ya hecho en la fase 1:</b> nombre (Flora) y personalidad, micrófono permitido solo para la propia web, aviso en el chat de que el navegador transcribe la voz (en Chrome y Android, Google) y medición (<code>chat_voice_start</code>, <code>chat_voice_output</code>, <code>chat_voice_error</code> y <code>chat_message</code> con método «voz»).</p>
-    <p><b>Nombre (búsqueda del 02/11/2026):</b> ya existen productos de IA llamados Flora, entre ellos una plataforma de agentes de IA para agencias y negocios (Flora AI), que es tu mismo sector, y FLORA, una herramienta creativa de IA de Nueva York. Como nombre del personaje de tu chat el riesgo es bajo, pero antes de venderlo como producto o registrarlo como marca hay que mirarlo en TMview y en la OEPM (ver «Lo que sigue»).</p>
-    <p><b>Falta antes de la fase 2:</b> que el abogado añada el dictado por voz a la política de privacidad, revisar la marca «Flora», mirar en Analytics cuánta gente usa la voz y poner límites de minutos por visitante.</p>
-  </div>
-</section>
-
-<!-- CLAVES -->
-<section id="claves">
-  <h2>Claves y servicios conectados</h2>
-  <p class="intro">Aquí solo están los nombres y dónde se guardan. Los valores nunca se escriben en el repositorio, que es público.</p>
-  <div class="desliza"><table class="tabla">
+  <h3>Claves (solo nombres; los valores nunca van al repositorio)</h3>
+  <div class="tabla-envoltura"><table>
     <thead><tr><th>Clave</th><th>Para qué</th><th>Dónde está</th><th>Estado</th></tr></thead>
     <tbody>
-      <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Asistente de IA</td><td>Cloudflare → web → Variables y secretos</td><td><span class="estado ok">Puesta</span></td></tr>
-      <tr><td><code>GOOGLE_CLIENT_ID / SECRET / REFRESH_TOKEN</code></td><td>Google Calendar</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Puestas</span></td></tr>
-      <tr><td><code>RESEND_API_KEY</code> (web)</td><td>Correos automáticos de la web</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Funciona</span></td></tr>
-      <tr><td><code>RESEND_API_KEY</code> (panel)</td><td>Correo «Lead nuevo» y avisos de cobro</td><td>Firebase, Secret Manager</td><td><span class="estado pendiente">No válida (paso 2)</span></td></tr>
+      <tr><td><code>ANTHROPIC_API_KEY</code></td><td>Flora</td><td>Cloudflare → web → Variables y secretos</td><td><span class="estado ok">Funciona</span></td></tr>
+      <tr><td><code>GOOGLE_CLIENT_ID / SECRET / REFRESH_TOKEN</code></td><td>Google Calendar</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Funciona</span></td></tr>
+      <tr><td><code>RESEND_API_KEY</code> (web)</td><td>Correos de la web</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Funciona</span></td></tr>
+      <tr><td><code>RESEND_API_KEY</code> (panel)</td><td>Correo «Lead nuevo»</td><td>Firebase, Secret Manager</td><td><span class="estado aviso">Cambiada; falta probar (A5)</span></td></tr>
       <tr><td><code>PANEL_WEBHOOK_URL / PANEL_SECRETO</code></td><td>Leads al panel</td><td>Cloudflare, tipo Secreto</td><td><span class="estado ok">Funciona</span></td></tr>
-      <tr><td><code>AGENDA_ADMIN_TOKEN</code></td><td>Horario desde el panel</td><td>Cloudflare y Firebase</td><td><span class="estado ok">Puesta</span></td></tr>
-      <tr><td><code>TWILIO_*</code> (4 claves)</td><td>WhatsApp 1 hora antes</td><td>Cloudflare, tipo Secreto</td><td><span class="estado apagado">Sin poner</span></td></tr>
+      <tr><td><code>AGENDA_ADMIN_TOKEN</code></td><td>Horario desde el panel</td><td>Cloudflare y Firebase</td><td><span class="estado ok">Funciona</span></td></tr>
+      <tr><td>Binding <code>AI</code> (Workers AI)</td><td>Voz de Flora</td><td><code>wrangler.jsonc</code></td><td><span class="estado ok">Funciona</span></td></tr>
+      <tr><td><code>TWILIO_*</code></td><td>WhatsApp 1 hora antes</td><td>Cloudflare, tipo Secreto</td><td><span class="estado info">Sin poner (opcional)</span></td></tr>
       <tr><td><code>PUBLIC_GTM_ID</code></td><td>Tag Manager</td><td>Cloudflare → Compilación</td><td><span class="estado ok">Puesta</span></td></tr>
     </tbody>
   </table></div>
-  <p>Guías detalladas: <code>AGENDA.md</code> (agenda, correos, panel, WhatsApp), <code>AGENTE.md</code> (asistente), <code>EMAIL-MARKETING.md</code>, <code>FUNNELS.md</code>, <code>DESPLIEGUE.md</code> y <code>GUIA-CLOUDFLARE.md</code>.</p>
+  <p>Guías detalladas: <code>AGENDA.md</code>, <code>AGENTE.md</code>, <code>EMAIL-MARKETING.md</code>, <code>FUNNELS.md</code>, <code>DESPLIEGUE.md</code> y <code>GUIA-CLOUDFLARE.md</code>.</p>
 </section>
 
-<!-- COSTOS -->
-<section id="costos">
+<!-- ============================================================ COSTOS -->
+<section class="panel" id="p-costos">
   <h2>Costos</h2>
-  <div class="desliza"><table class="tabla">
-    <thead><tr><th>Servicio</th><th>Costo</th><th>Cómo controlarlo</th></tr></thead>
+  <p class="intro">Qué es gratis, qué se paga y cómo ponerle freno.</p>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Servicio</th><th>¿Gratis?</th><th>Costo</th><th>Cómo controlarlo</th></tr></thead>
     <tbody>
-      <tr><td>Voz de Flora (Deepgram Aura-2 en Cloudflare)</td><td>Unos 0,03 $ por cada 1.000 caracteres leídos. Una respuesta normal ronda los 300: aproximadamente 1 céntimo de dólar.</td><td>Límite de 12 respuestas leídas por minuto por visitante. Solo suena si la persona enciende la voz o usa el micrófono.</td></tr>
-      <tr><td>Flora (Claude Haiku 5.5, desde el 02/11/2026)</td><td>0,10 $ por millón de tokens (trozos de texto) leídos y 0,50 $ por millón escritos: veinte veces menos que Sonnet 5.5. Una conversación entera ronda medio céntimo de dólar (estimación).</td><td>Topes: 8 mensajes por minuto por persona, 15 preguntas con IA por conversación y 300 mensajes con IA al día en toda la web. Las sugerencias del saludo no gastan IA. Pon además un límite mensual en la consola de Anthropic.</td></tr>
-      <tr><td>Cloudflare</td><td>Según tu plan actual.</td><td>Panel de Cloudflare → Facturación.</td></tr>
-      <tr><td>Resend</td><td>Según tu plan.</td><td>Panel de Resend.</td></tr>
-      <tr><td>UptimeRobot</td><td>Gratis (hasta 50 monitores).</td><td>No toca la IA.</td></tr>
-      <tr><td>WhatsApp con Twilio</td><td>Unos céntimos por mensaje (Twilio más Meta).</td><td>Solo si lo activas.</td></tr>
+      <tr><td>Flora: pensar la respuesta (Claude Haiku 5.5)</td><td><span class="estado aviso">No</span></td><td>0,10 $ por millón de tokens leídos y 0,50 $ por millón escritos. Una conversación ronda medio céntimo (estimación).</td><td>Topes de la web y límite mensual en Anthropic (paso A5).</td></tr>
+      <tr><td>Flora: dictado por micrófono</td><td><span class="estado ok">Sí</span></td><td>Lo hace el navegador.</td><td>Nada que hacer.</td></tr>
+      <tr><td>Flora: voz «selena» (Workers AI)</td><td><span class="estado ok">Hasta un tope</span></td><td>10.000 neuronas gratis al día, unas 12 a 14 respuestas leídas. Después, en el plan gratuito, la voz del navegador; con Workers Paid (5 $/mes), 0,03 $ por 1.000 letras.</td><td>Cloudflare → AI → Workers AI muestra el uso diario.</td></tr>
+      <tr><td>Flora: memoria</td><td><span class="estado ok">Sí</span></td><td>Usa el KV de la agenda, dentro de lo gratis.</td><td>Solo escribe cuando hay algo nuevo.</td></tr>
+      <tr><td>Cloudflare (web y Worker)</td><td><span class="estado ok">Según plan</span></td><td>Según tu plan actual.</td><td>Cloudflare → Facturación.</td></tr>
+      <tr><td>Resend (correos)</td><td><span class="estado ok">Según plan</span></td><td>Según tu plan.</td><td>Panel de Resend.</td></tr>
+      <tr><td>Search Console, Bing, Perfil de Empresa, UptimeRobot</td><td><span class="estado ok">Sí</span></td><td>Gratis.</td><td>No gastan crédito de IA.</td></tr>
+      <tr><td>WhatsApp con Twilio</td><td><span class="estado aviso">No</span></td><td>Unos céntimos por mensaje.</td><td>Solo si lo activas.</td></tr>
     </tbody>
   </table></div>
 </section>
 
-<!-- REGLAS -->
-<section id="reglas">
+<!-- ============================================================ PROMPTS -->
+<section class="panel" id="p-prompts">
+  <h2>Prompts y herramientas</h2>
+  <p class="intro">Un <b>prompt</b> es el texto de instrucciones que recibe una IA. Copia uno de estos, cambia lo que está entre corchetes y pégalo en Claude Code abierto en la carpeta de la web.</p>
+
+  <details class="desplegable" open><summary>Hacer un paso del informe</summary><div>
+    <button class="copiar" type="button" data-copiar="pr-paso">Copiar</button>
+    <pre id="pr-paso">Haz el paso [B1] del INFORME.html. Respeta las reglas de CLAUDE.md, publícalo al terminar, actualiza el informe y dame el paso a paso de lo que me toque hacer a mí.</pre>
+  </div></details>
+  <details class="desplegable"><summary>Hacer un cambio en la web</summary><div>
+    <button class="copiar" type="button" data-copiar="pr-cambio">Copiar</button>
+    <pre id="pr-cambio">Cambia [qué quieres cambiar] en [página o sección]. Respeta las reglas de CLAUDE.md, publícalo al terminar, actualiza INFORME.html y dame el paso a paso de lo que me toque hacer a mí.</pre>
+  </div></details>
+  <details class="desplegable"><summary>Escribir un artículo nuevo para el blog</summary><div>
+    <button class="copiar" type="button" data-copiar="pr-articulo">Copiar</button>
+    <pre id="pr-articulo">Escribe un artículo para el blog sobre [tema] pensado para [tipo de negocio y país]. Sin cifras ni casos inventados, con preguntas frecuentes, enlazado al funnel de [servicio], con su imagen para redes. Publícalo y actualiza INFORME.html.</pre>
+  </div></details>
+  <details class="desplegable"><summary>Revisar cómo voy en Google y en las IA</summary><div>
+    <button class="copiar" type="button" data-copiar="pr-seo">Copiar</button>
+    <pre id="pr-seo">Revisa cómo aparece soyluisflores.es en Google y en las IA: busca mi nombre y mis servicios, lee lo que te pase de Search Console y dime qué mejorar este mes. Actualiza la pestaña «SEO y buscadores» del INFORME.html.</pre>
+  </div></details>
+  <details class="desplegable"><summary>Auditoría completa otra vez</summary><div>
+    <button class="copiar" type="button" data-copiar="pr-auditoria">Copiar</button>
+    <pre id="pr-auditoria">Haz otra auditoría completa como la del 02/11/2026: seguridad, celular, tablet y computadora, legales, archivos sin uso, Flora, velocidad, SEO y GEO. Actualiza INFORME.html y dame el plan paso a paso.</pre>
+  </div></details>
+  <details class="desplegable"><summary>Ajustar cómo responde Flora</summary><div>
+    <button class="copiar" type="button" data-copiar="pr-flora">Copiar</button>
+    <pre id="pr-flora">Quiero que Flora [cómo quieres que responda] cuando [situación]. Pruébalo con probar-agente antes de publicar y dime cómo quedó.</pre>
+  </div></details>
+
+  <h3 style="margin-top:24px">Comandos del proyecto</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Comando</th><th>Para qué sirve</th><th>Cuándo</th></tr></thead>
+    <tbody>
+      <tr><td><code>npm run build</code></td><td>Compila la web.</td><td>Antes de cada publicación (lo hago yo).</td></tr>
+      <tr><td><code>node tools/auditar-dist.mjs</code></td><td>Revisa la web compilada: tiene que dar 0 problemas.</td><td>Antes de cada publicación.</td></tr>
+      <tr><td><code>node tools/probar-agenda.mjs</code></td><td>29 pruebas de la agenda, la guía, el origen y la memoria.</td><td>Al cambiar la agenda o Flora.</td></tr>
+      <tr><td><code>node tools/probar-agente.mjs</code></td><td>22 preguntas trampa a Flora (cuesta céntimos).</td><td>Al cambiar sus instrucciones.</td></tr>
+      <tr><td><code>node tools/generar-og.mjs</code></td><td>Crea las imágenes para compartir.</td><td>Al añadir un artículo o servicio.</td></tr>
+      <tr><td><code>node tools/conectar-panel.mjs</code> y <code>conectar-agenda.mjs</code></td><td>Conectan la web con el panel.</td><td>Ya hecho. Solo si cambias las claves.</td></tr>
+      <tr><td><code>node tools/autorizar-google.mjs</code></td><td>Permiso para usar tu Google Calendar.</td><td>Si rotas la clave de Google.</td></tr>
+      <tr><td><code>node tools/servir-dist.mjs</code></td><td>Abre la web compilada en tu ordenador.</td><td>Para mirarla antes de publicar.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Skills, plugins y agentes</h3>
+  <div class="rejilla">
+    <div class="tarjeta"><h3>Claude Code (esta sesión)</h3><p class="sub">Trabaja en la carpeta de la web: cambia, prueba y publica.</p><div class="si-no"><div class="si"><b>Sirve</b>Cambios, auditorías, informes, artículos.</div><div class="no"><b>No sirve</b>Crear cuentas, poner claves o publicar el panel sin permiso.</div></div></div>
+    <div class="tarjeta"><h3>Sesión del panel</h3><p class="sub">Otra conversación de Claude Code en la carpeta del panel.</p><div class="si-no"><div class="si"><b>Sirve</b>Panel y app Android.</div><div class="no"><b>No sirve</b>Publicar sin tu permiso.</div></div></div>
+    <div class="tarjeta"><h3>Skills usadas</h3><p class="sub"><code>claude-api</code> (modelo y costos de Flora), <code>design:design-system</code> (coherencia visual) y <code>design:accessibility-review</code> (contraste y foco).</p></div>
+    <div class="tarjeta"><h3>Plugins útiles</h3><p class="sub">Cloudflare (documentación y Worker), Firebase, Marketing y SEO, Design, Instagram (ig-*) para tu contenido, y Twilio para el WhatsApp.</p></div>
+  </div>
+</section>
+
+<!-- ============================================================ REGLAS -->
+<section class="panel" id="p-reglas">
   <h2>Reglas del proyecto</h2>
   <div class="rejilla">
-    <div class="tarjeta"><h3>Publicación</h3><p>Cada cambio: compilar, auditar con 0 problemas, commit en español y subir a main y a reconstruccion-oct-2026. Nunca forzar. El panel solo se publica con tu permiso.</p></div>
-    <div class="tarjeta"><h3>Contenido</h3><p>Español latino neutro con tuteo. Nada de cifras, clientes, reseñas ni fechas inventadas. Si falta un dato: [COMPLETAR].</p></div>
-    <div class="tarjeta"><h3>Datos personales</h3><p>El NIE solo en /aviso-legal. Domicilio público: Manresa, Barcelona, España. Los textos legales no se tocan sin tu pedido.</p></div>
-    <div class="tarjeta"><h3>Este informe</h3><p>Claude lo actualiza en cada cambio: fecha, estado, historial, pendientes y lo que corresponda. Si notas algo desactualizado, pídele «actualiza INFORME.html».</p></div>
+    <div class="tarjeta"><h3>Publicación</h3><p class="sub">Cada cambio: compilar, auditar con 0 problemas, commit en español y subir a main y a reconstruccion-oct-2026. Nunca forzar. El panel solo se publica con tu permiso.</p></div>
+    <div class="tarjeta"><h3>Contenido</h3><p class="sub">Español latino neutro con tuteo. Nada de cifras, clientes, reseñas ni fechas inventadas. Si falta un dato: [COMPLETAR].</p></div>
+    <div class="tarjeta"><h3>Datos personales</h3><p class="sub">El NIE solo en /aviso-legal. Domicilio público: Manresa, Barcelona, España. Los textos legales solo cambian si los pides.</p></div>
+    <div class="tarjeta"><h3>Este informe</h3><p class="sub">Se actualiza en cada cambio. Si ves algo desactualizado, pide «actualiza INFORME.html».</p></div>
   </div>
 </section>
 
 </main>
 
 <footer class="envoltura">
-  Fichero <code>INFORME.html</code> en la carpeta de la web y en GitHub. No se publica en soyluisflores.es.
+  Fichero <code>INFORME.html</code> en la carpeta de la web y en GitHub. No se publica en soyluisflores.es. Se puede imprimir o guardar en PDF desde el navegador: salen todas las pestañas.
 </footer>
 
 <script>
-  // Casillas pendientes: se recuerdan solo en este navegador.
-  document.querySelectorAll("input[data-guardar]").forEach(function (caja) {
-    var clave = "informe-" + caja.id;
-    try { caja.checked = localStorage.getItem(clave) === "1"; } catch (e) {}
-    caja.addEventListener("change", function () {
-      try { localStorage.setItem(clave, caja.checked ? "1" : "0"); } catch (e) {}
-    });
-  });
-  // Botones «Copiar» de los prompts.
-  document.querySelectorAll(".copiar").forEach(function (boton) {
-    boton.addEventListener("click", function () {
-      var texto = boton.parentElement.textContent.replace(boton.textContent, "").trim();
-      navigator.clipboard.writeText(texto).then(function () {
-        boton.textContent = "Copiado";
-        setTimeout(function () { boton.textContent = "Copiar"; }, 1500);
+  (function () {
+    // Pestañas: funcionan solo con CSS; aquí se recuerda la elegida y se
+    // puede abrir una por enlace (#plan, #seo...).
+    var radios = document.querySelectorAll(".tab-radio");
+    var guardar = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+    var leer = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    var elegir = function (id) { var r = document.getElementById("t-" + id); if (r) { r.checked = true; return true; } return false; };
+    if (!(location.hash && elegir(location.hash.slice(1)))) { var g = leer("informe-pestana"); if (g) elegir(g); }
+    radios.forEach(function (r) {
+      r.addEventListener("change", function () {
+        var id = r.id.slice(2);
+        guardar("informe-pestana", id);
+        try { history.replaceState(null, "", "#" + id); } catch (e) {}
+        window.scrollTo({ top: document.querySelector(".pestanas").offsetTop, behavior: "auto" });
       });
     });
-  });
+
+    // Casillas: se recuerdan en este navegador.
+    document.querySelectorAll("input[data-guardar]").forEach(function (c) {
+      c.checked = leer("informe-" + c.id) === "1";
+      c.addEventListener("change", function () { guardar("informe-" + c.id, c.checked ? "1" : "0"); });
+    });
+
+    // Copiar: portapapeles moderno y, si el visor lo bloquea, el método
+    // antiguo. Si tampoco se puede, deja el texto seleccionado.
+    var aviso = function (b, t) { var o = b.textContent; b.textContent = t; setTimeout(function () { b.textContent = o; }, 1800); };
+    var seleccionar = function (el) { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    document.querySelectorAll("[data-copiar]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var el = document.getElementById(b.getAttribute("data-copiar"));
+        var texto = el.textContent.trim();
+        var antiguo = function () {
+          seleccionar(el);
+          var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+          aviso(b, ok ? "Copiado" : "Seleccionado: pulsa Ctrl+C");
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(texto).then(function () { aviso(b, "Copiado"); }, antiguo);
+        } else antiguo();
+      });
+    });
+
+    // Al imprimir, se abren todos los desplegables.
+    window.addEventListener("beforeprint", function () { document.querySelectorAll("details").forEach(function (d) { d.open = true; }); });
+  })();
 </script>
 </body>
 </html>

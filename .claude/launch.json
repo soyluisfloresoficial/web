@@ -12,11 +12,10 @@
     },
     {
       "name": "vista-dist",
-      "runtimeExecutable": "npx",
+      "runtimeExecutable": "node",
       "runtimeArgs": [
-        "astro",
-        "preview",
-        "--port",
+        "tools/servir-dist.mjs",
+        "dist",
         "4330"
       ],
       "port": 4330
