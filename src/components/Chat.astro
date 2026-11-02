@@ -16,6 +16,14 @@
  * - La conversación vive solo en esta pestaña: no se guarda en el navegador
  *   ni en el servidor.
  *
+ * Flora (02/11/2026): el asistente tiene nombre y voz. Fase 1 con lo que
+ * trae el navegador: el micrófono pasa la voz a texto (SpeechRecognition; en
+ * Chrome y Android lo hace Google) y las respuestas se leen en voz alta con
+ * una voz femenina en español (speechSynthesis). Sin costo extra: cada
+ * mensaje dictado es un mensaje normal. Si el navegador no lo soporta, el
+ * botón no aparece. Permissions-Policy deja el micrófono solo a la propia web
+ * (public/_headers).
+ *
  * Sin JavaScript no sirve para nada, así que se pinta oculto y es el script
  * quien lo muestra.
  */
@@ -46,7 +54,7 @@ const sugerencias = [
     aria-controls="chat-panel"
     data-chat-abrir
   >
-    <span class="sr-only" data-chat-etiqueta>Abrir el asistente</span>
+    <span class="sr-only" data-chat-etiqueta>Abrir el chat con Flora</span>
     <svg class="icono-abrir" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
       <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 20 12Z" />
     </svg>
@@ -65,10 +73,19 @@ const sugerencias = [
   >
     <header class="chat-cabecera">
       <div>
-        <p id="chat-titulo" class="chat-titulo">Asistente de Luis</p>
-        <p class="chat-sub" data-chat-sub>IA · responde en segundos</p>
+        <p id="chat-titulo" class="chat-titulo">Flora</p>
+        <p class="chat-sub" data-chat-sub>IA · escribe o habla</p>
       </div>
       <a class="chat-agendar" href="/contacto">Agendar<span class="chat-agendar-largo">&nbsp;llamada</span></a>
+      <button type="button" class="chat-cerrar chat-altavoz" aria-pressed="false" hidden data-chat-altavoz>
+        <span class="sr-only" data-chat-altavoz-etiqueta>Leer las respuestas en voz alta</span>
+        <svg class="altavoz-apagado" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4zM17 9l4 6M21 9l-4 6" />
+        </svg>
+        <svg class="altavoz-encendido" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M4 9h4l5-4v14l-5-4H4zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" />
+        </svg>
+      </button>
       <button type="button" class="chat-cerrar" data-chat-cerrar>
         <span class="sr-only">Cerrar</span>
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -88,7 +105,7 @@ const sugerencias = [
         </span>
       </p>
       <div class="mensaje mensaje-bot">
-        <p>Hola, soy el asistente de la web de Luis.</p>
+        <p>Hola, soy Flora, la asistente de IA de la web de Luis.</p>
         <p>
           Cuéntame a qué se dedica tu negocio y te digo qué se podría automatizar
           primero, o elige una pregunta:
@@ -116,6 +133,12 @@ const sugerencias = [
         placeholder="Escribe tu pregunta…"
         data-chat-input
       />
+      <button type="button" class="chat-microfono" aria-pressed="false" hidden data-chat-microfono>
+        <span class="sr-only" data-chat-microfono-etiqueta>Hablar con Flora</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3ZM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" />
+        </svg>
+      </button>
       <button type="submit" class="chat-enviar" disabled data-chat-enviar>
         <span class="sr-only">Enviar</span>
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -160,6 +183,10 @@ const sugerencias = [
     const enviar = raiz.querySelector<HTMLButtonElement>("[data-chat-enviar]")!;
     const sub = raiz.querySelector<HTMLElement>("[data-chat-sub]")!;
     const nota = raiz.querySelector<HTMLElement>("[data-chat-nota]")!;
+    const microfono = raiz.querySelector<HTMLButtonElement>("[data-chat-microfono]")!;
+    const microfonoEtiqueta = raiz.querySelector<HTMLElement>("[data-chat-microfono-etiqueta]")!;
+    const altavoz = raiz.querySelector<HTMLButtonElement>("[data-chat-altavoz]")!;
+    const altavozEtiqueta = raiz.querySelector<HTMLElement>("[data-chat-altavoz-etiqueta]")!;
 
     // Medición (ver Medicion.astro y gtm/LEEME.md). Solo existe dataLayer si
     // hay Tag Manager, y GTM solo carga si la persona aceptó las cookies.
@@ -388,6 +415,155 @@ const sugerencias = [
       return caja;
     };
 
+    // ------------------------------------------------------------ Voz
+    // Fase 1 de Flora: dictado y lectura con lo que trae el navegador. El
+    // texto dictado entra en el chat como cualquier mensaje.
+    type Reconocedor = {
+      lang: string;
+      interimResults: boolean;
+      continuous: boolean;
+      start(): void;
+      stop(): void;
+      abort(): void;
+      onresult: ((e: { resultIndex: number; results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }> }) => void) | null;
+      onerror: ((e: { error: string }) => void) | null;
+      onend: (() => void) | null;
+    };
+    const ventana = window as unknown as { SpeechRecognition?: new () => Reconocedor; webkitSpeechRecognition?: new () => Reconocedor };
+    const Reconocimiento = ventana.SpeechRecognition ?? ventana.webkitSpeechRecognition;
+    const sintesis = "speechSynthesis" in window ? window.speechSynthesis : null;
+    const idioma = /^es\b/i.test(navigator.language) ? navigator.language : "es-ES";
+    const PISTA = Reconocimiento ? "Escribe o habla…" : "Escribe tu pregunta…";
+    input.placeholder = PISTA;
+
+    let leerEnVoz = false;
+    let escuchando: Reconocedor | null = null;
+    let avisoVozDado = false;
+
+    // No hay forma estándar de pedir «voz femenina»: se busca por el nombre
+    // de las voces femeninas habituales en Windows, macOS, iOS y Android.
+    const FEMENINAS = /helena|laura|elvira|dalia|paloma|sabina|m[oó]nica|paulina|luc[ií]a|elena|isabela|ximena|camila|sof[ií]a|marisol|esperanza|female|mujer/i;
+    const elegirVoz = () => {
+      const voces = (sintesis?.getVoices() ?? []).filter((v) => /^es\b/i.test(v.lang));
+      const mismaRegion = (v: SpeechSynthesisVoice) => v.lang.toLowerCase() === idioma.toLowerCase();
+      return (
+        voces.find((v) => FEMENINAS.test(v.name) && mismaRegion(v)) ??
+        voces.find((v) => FEMENINAS.test(v.name)) ??
+        voces.find(mismaRegion) ??
+        voces[0] ??
+        null
+      );
+    };
+    // Chrome carga la lista de voces tarde: se pide ya para tenerla a tiempo.
+    sintesis?.getVoices();
+
+    const callar = () => sintesis?.cancel();
+
+    const decir = (texto: string) => {
+      if (!sintesis || !leerEnVoz) return;
+      callar();
+      const voz = elegirVoz();
+      const limpio = texto
+        .replace(ENLACE, "el enlace que ves en el chat")
+        .replace(/^[-•*]\s+/gm, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      // Por frases: Chrome corta las lecturas largas a mitad.
+      for (const frase of limpio.match(/[^.!?]+[.!?]*/g) ?? []) {
+        const u = new SpeechSynthesisUtterance(frase.trim());
+        u.lang = voz?.lang ?? idioma;
+        if (voz) u.voice = voz;
+        u.rate = 1.03;
+        sintesis.speak(u);
+      }
+    };
+
+    const ponerVoz = (activa: boolean) => {
+      leerEnVoz = activa;
+      altavoz.setAttribute("aria-pressed", String(activa));
+      altavozEtiqueta.textContent = activa ? "Dejar de leer las respuestas en voz alta" : "Leer las respuestas en voz alta";
+      if (!activa) callar();
+    };
+
+    const estadoMicrofono = (activo: boolean) => {
+      microfono.setAttribute("aria-pressed", String(activo));
+      microfonoEtiqueta.textContent = activo ? "Dejar de escuchar" : "Hablar con Flora";
+      input.placeholder = activo ? "Te escucho…" : PISTA;
+    };
+
+    const avisoVoz = () => {
+      if (avisoVozDado) return;
+      avisoVozDado = true;
+      const p = document.createElement("p");
+      p.className = "aviso-voz";
+      p.textContent =
+        "Te escucho. Tu navegador pasa la voz a texto (en Chrome y Android lo hace Google) y te contesto también en voz alta. La voz no se graba; puedes apagarla con el altavoz de arriba.";
+      registro.append(p);
+      registro.scrollTop = registro.scrollHeight;
+    };
+
+    const escuchar = () => {
+      if (!Reconocimiento) return;
+      if (escuchando) {
+        escuchando.stop();
+        return;
+      }
+      callar();
+      const r = new Reconocimiento();
+      r.lang = idioma;
+      r.interimResults = true;
+      r.continuous = false;
+      let final = "";
+      r.onresult = (e) => {
+        let parcial = "";
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const t = e.results[i][0].transcript;
+          if (e.results[i].isFinal) final += t;
+          else parcial += t;
+        }
+        input.value = (final + parcial).trim();
+        enviar.disabled = !input.value.trim();
+      };
+      r.onerror = (e) => {
+        if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+          pintar("bot", ["No tengo permiso para usar el micrófono. Puedes darlo en el candado de la barra de direcciones, o escribir tu pregunta."]);
+          medir("chat_voice_error", { chat_method: "sin-permiso" });
+        } else if (e.error !== "no-speech" && e.error !== "aborted") {
+          medir("chat_voice_error", { chat_method: e.error.slice(0, 30) });
+        }
+      };
+      r.onend = () => {
+        escuchando = null;
+        estadoMicrofono(false);
+        const texto = final.trim();
+        // Si todavía espera la respuesta anterior, lo dictado se queda en la caja.
+        if (texto && !esperando) {
+          input.value = "";
+          enviar.disabled = true;
+          void preguntar(texto, "voz");
+        }
+      };
+      avisoVoz();
+      ponerVoz(true);
+      escuchando = r;
+      estadoMicrofono(true);
+      medir("chat_voice_start");
+      try {
+        r.start();
+      } catch {
+        escuchando = null;
+        estadoMicrofono(false);
+      }
+    };
+
+    microfono.hidden = !Reconocimiento;
+    altavoz.hidden = !sintesis;
+    microfono.addEventListener("click", escuchar);
+    altavoz.addEventListener("click", () => {
+      ponerVoz(!leerEnVoz);
+      medir("chat_voice_output", { chat_option: leerEnVoz ? "encendida" : "apagada" });
+    });
+
     // ------------------------------------------------------------ Cita
     // El asistente prepara la cita (src/worker/chat-agenda.ts) y aquí se
     // pinta una tarjeta para revisarla. La reserva la hace la persona al
@@ -584,12 +760,13 @@ const sugerencias = [
       }
     };
 
-    const preguntar = async (texto: string, via: "escrito" | "sugerencia" | "respuesta_rapida" = "escrito") => {
+    const preguntar = async (texto: string, via: "escrito" | "sugerencia" | "respuesta_rapida" | "voz" = "escrito") => {
       const t = texto.trim().slice(0, 800);
       if (!t || esperando) return;
+      callar();
       medir("chat_message", { chat_method: via, chat_turn: String(historial.length / 2 + 1) });
       raiz.querySelectorAll("[data-chat-sugerencias]").forEach((s) => s.remove());
-      input.placeholder = "Escribe tu pregunta…";
+      input.placeholder = PISTA;
       pintar("usuario", [t]);
 
       if (sinIA) return respuestaLocal(t);
@@ -610,6 +787,7 @@ const sugerencias = [
         historial.push({ rol: "asistente", texto: ia.respuesta });
         const { texto, opciones } = separarOpciones(ia.respuesta);
         pintarRespuesta(texto);
+        decir(texto);
         if (ia.cita) pintarCita(ia.cita);
         else pintarOpciones(opciones);
       } else {
@@ -637,8 +815,19 @@ const sugerencias = [
       raiz.toggleAttribute("data-abierto", abierto);
       abrir.setAttribute("aria-expanded", String(abierto));
       externos.forEach((b) => b.setAttribute("aria-expanded", String(abierto)));
-      etiqueta.textContent = abierto ? "Cerrar el asistente" : "Abrir el asistente";
+      etiqueta.textContent = abierto ? "Cerrar el chat con Flora" : "Abrir el chat con Flora";
       panel.hidden = !abierto;
+      if (!abierto) {
+        // Al cerrar se descarta lo que estuviera dictando: no se envía.
+        if (escuchando) {
+          escuchando.onend = () => {
+            escuchando = null;
+            estadoMicrofono(false);
+          };
+          escuchando.abort();
+        }
+        callar();
+      }
       if (abierto) medir("chat_open", { chat_method: origen ? "barra-movil" : "boton" });
       if (abierto) requestAnimationFrame(() => input.focus());
       else {
@@ -1026,6 +1215,72 @@ const sugerencias = [
   .chat-enviar:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+  }
+
+  /* Voz de Flora. */
+  .chat-microfono {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-soft);
+    cursor: pointer;
+  }
+  .chat-microfono[hidden] {
+    display: none;
+  }
+  .chat-microfono:hover {
+    border-color: var(--color-electric);
+    color: var(--color-ink);
+  }
+  .chat-microfono[aria-pressed="true"] {
+    border-color: transparent;
+    background: var(--grad-cta);
+    color: #fff;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-microfono[aria-pressed="true"] {
+      animation: escuchando 1.4s var(--ease) infinite;
+    }
+  }
+  @keyframes escuchando {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(139 92 246 / 0.55);
+    }
+    60% {
+      box-shadow: 0 0 0 8px rgb(139 92 246 / 0);
+    }
+  }
+  .chat-microfono:focus-visible,
+  .chat-altavoz:focus-visible {
+    outline: 2px solid var(--color-electric);
+    outline-offset: 2px;
+  }
+  .chat-altavoz[hidden] {
+    display: none;
+  }
+  .chat-altavoz .altavoz-encendido,
+  .chat-altavoz[aria-pressed="true"] .altavoz-apagado {
+    display: none;
+  }
+  .chat-altavoz[aria-pressed="true"] .altavoz-encendido {
+    display: block;
+  }
+  .chat-altavoz[aria-pressed="true"] {
+    color: var(--color-electric-soft);
+  }
+  .chat-registro :global(.aviso-voz) {
+    padding: 0.5rem 0.75rem;
+    border: 1px dashed rgb(139 92 246 / 0.4);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--color-soft);
   }
 
   /* Tarjeta de la cita que prepara el asistente. :global porque se crea

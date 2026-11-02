@@ -73,7 +73,7 @@ genera con `node tools/generar-contenedor-anuncios.mjs`.
 | **Google Ads - Llamada de diagnóstico** | `generate_lead` |
 | **Google Ads - Guía gratis** | `sign_up` |
 | **GA4 - Evento sign_up** | `sign_up` |
-| **GA4 - Eventos del chat** (2/11/2026) | Cualquier `chat_*` del asistente: `chat_open`, `chat_message`, `chat_quick_reply`, `chat_booking_shown`, `chat_cta_click` |
+| **GA4 - Eventos del chat** (2/11/2026) | Cualquier `chat_*` del asistente: `chat_open`, `chat_message`, `chat_quick_reply`, `chat_booking_shown`, `chat_cta_click` y, desde Flora, `chat_voice_start`, `chat_voice_output`, `chat_voice_error` |
 
 Cuando alguien confirma la cita desde el chat, la web envía `generate_lead`
 con `form_id: chat-asistente`: cuenta como llamada agendada en GA4, Meta y

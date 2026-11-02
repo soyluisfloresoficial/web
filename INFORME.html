@@ -217,7 +217,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
   <p class="intro">Revisado en vivo el 02/11/2026.</p>
   <div class="rejilla">
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Web</h3><p>Publicada en soyluisflores.es desde GitHub (rama main) con Cloudflare.</p></div>
-    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Asistente de IA del chat</h3><p>Responde con Claude Sonnet 5.5, da botones de respuesta rápida y agenda la llamada.</p></div>
+    <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Flora, la asistente del chat</h3><p>Responde con Claude Sonnet 5.5, da botones de respuesta rápida, agenda la llamada y desde el 02/11 escucha por micrófono y contesta en voz alta.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Agenda propia</h3><p>Conectada a Google Calendar, con correos automáticos y el lead entrando en el panel.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Resumen semanal</h3><p>Cada lunes a las 8:00 (Madrid) llega a hola@ con las cifras del chat y de las citas.</p></div>
     <div class="tarjeta"><span class="estado ok">Funciona</span><h3>Horario desde el panel</h3><p>Conectado el 02/11/2026. Se cambia en el panel → Ajustes → Horario de la agenda.</p></div>
@@ -345,6 +345,9 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
       <li><input type="checkbox" id="c9" checked disabled><label for="c9">Cita de prueba: correos, calendario, lead y campana (02/11/2026)</label></li>
       <li><input type="checkbox" id="c10" checked disabled><label for="c10">Rama vieja servicios-nuevos-oct-2026 borrada</label></li>
       <li><input type="checkbox" id="c11" checked disabled><label for="c11">Auditoría del 02/11/2026 y contraste del agendador corregido</label></li>
+      <li><input type="checkbox" id="c12" checked disabled><label for="c12">Flora: nombre y voz en el chat (fase 1)</label></li>
+      <li><input type="checkbox" id="p12" data-guardar><label for="p12">Probar el micrófono de Flora en el celular</label></li>
+      <li><input type="checkbox" id="p13" data-guardar><label for="p13">Abogado: añadir el dictado por voz a la privacidad</label></li>
       <li><input type="checkbox" id="p9" data-guardar><label for="p9">Paso 2: clave de Resend del panel</label></li>
       <li><input type="checkbox" id="p10" data-guardar><label for="p10">Paso 3: apagar la detección de bots de Cloudflare</label></li>
       <li><input type="checkbox" id="p3" data-guardar><label for="p3">Paso 4: Tag Manager y conversiones de Google Ads</label></li>
@@ -385,7 +388,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     <div class="hito"><div class="fecha">1 nov</div><strong>Agendador rediseñado</strong>
       <ul><li>Pasos claros, hora de Madrid y privacidad a la vista.</li><li>Script para conectar el horario con el panel.</li></ul></div>
     <div class="hito"><div class="fecha">2 nov</div><strong>Asistente que agenda y resumen semanal</strong>
-      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li><li>Cita de prueba completa y campana del panel funcionando.</li><li>Auditoría completa y contraste del agendador corregido.</li></ul></div>
+      <ul><li>Chat con Sonnet 5.5, conversación guiada y respuestas cortas.</li><li>Botones de respuesta rápida.</li><li>El asistente agenda la llamada y se mide en Analytics.</li><li>Resumen semanal por correo y WhatsApp listo para activar.</li><li>Informe vivo (este documento).</li><li>Horario del panel conectado con la agenda.</li><li>Cita de prueba completa y campana del panel funcionando.</li><li>Auditoría completa y contraste del agendador corregido.</li><li>Flora: el asistente tiene nombre y voz (fase 1).</li></ul></div>
   </div>
 </section>
 
@@ -463,7 +466,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
 
   <div class="tarjeta" style="margin-bottom:14px">
     <span class="estado ok">Prompt matriz</span>
-    <h3>Instrucciones del asistente de la web</h3>
+    <h3>Instrucciones de Flora, la asistente de la web</h3>
     <p>Fichero <code>src/worker/instrucciones.ts</code>. Define quién es, cómo lleva la conversación (respuesta, sector, problema, servicio, llamada), los botones «Opciones:», cómo agenda, qué no puede hacer, la seguridad contra manipulación y el tono (unas 60 palabras, español latino, sin precios inventados).</p>
     <div class="si-no">
       <div class="si"><b>Sirve para</b>Resolver dudas con la información de la web, recomendar el servicio que encaja y agendar la llamada.</div>
@@ -530,7 +533,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
 
   <h3>Agentes</h3>
   <div class="rejilla">
-    <div class="tarjeta"><h3>Asistente de la web</h3><p>Claude Sonnet 5.5 dentro del chat de soyluisflores.es.</p>
+    <div class="tarjeta"><h3>Flora, la asistente de la web</h3><p>Claude Sonnet 5.5 dentro del chat de soyluisflores.es, por escrito o por voz.</p>
       <div class="si-no"><div class="si"><b>Sirve</b>Atender visitas y agendar.</div><div class="no"><b>No sirve</b>Para trabajar en tu código ni en tu panel.</div></div></div>
     <div class="tarjeta"><h3>Claude Code (esta sesión)</h3><p>Trabaja en la carpeta de la web: cambia, prueba y publica.</p>
       <div class="si-no"><div class="si"><b>Sirve</b>Cambios, revisiones, informes, guías.</div><div class="no"><b>No sirve</b>Crear cuentas, poner contraseñas o claves, borrar ramas.</div></div></div>
@@ -596,24 +599,26 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
     </tbody>
   </table></div>
   <p>Las «buenas prácticas» bajan a 81 en todas por el script de bots de Cloudflare (paso 3). La portada es lenta en celular por el trabajo de estilos y animaciones: queda como pendiente aparte.</p>
+  <p><b>Segunda medición (02/11/2026, 13:50):</b> contacto ya da 100 en accesibilidad. El script de bots de Cloudflare seguía en la página, así que «buenas prácticas» sigue en 81: revisa el paso 3. Rendimiento: portada 57, contacto 62, servicio 83 (varía unos puntos entre mediciones).</p>
 </section>
 
 <!-- IDEAS -->
 <section id="ideas">
   <h2>Ideas en estudio</h2>
   <div class="tarjeta">
-    <span class="estado apagado">Idea · 02/11/2026</span>
-    <h3>Asistente de voz con nombre propio (estilo «Viernes» de Marvel)</h3>
+    <span class="estado ok">Fase 1 publicada · 02/11/2026</span>
+    <h3>Flora: asistente de voz con nombre propio (estilo «Viernes» de Marvel)</h3>
     <p>Que el visitante pueda hablarle a la web y que le conteste con voz, con un nombre y una personalidad propios. Además sirve de demostración en vivo de tu servicio de agentes de IA.</p>
     <div class="desliza" style="margin-top:12px"><table class="tabla">
       <thead><tr><th>Fase</th><th>Qué es</th><th>Cuándo</th><th>Costo</th></tr></thead>
       <tbody>
-        <tr><td>1. Voz en el chat actual</td><td>Botón de micrófono en el chat: el navegador pasa la voz a texto, responde el mismo asistente y lee la respuesta en voz alta. Con nombre y personalidad.</td><td>Ya, con poca audiencia</td><td>Casi nada extra: el mismo gasto de Claude por mensaje</td></tr>
+        <tr><td>1. Voz en el chat actual ✓</td><td>Hecho. Botón de micrófono en el chat: el navegador pasa la voz a texto, Flora responde y lee la respuesta con voz femenina. El altavoz de la cabecera apaga la voz. En Firefox no hay micrófono (el navegador no lo trae).</td><td>Publicada el 02/11/2026</td><td>Casi nada extra: el mismo gasto de Claude por mensaje</td></tr>
         <tr><td>2. Voz natural en tiempo real</td><td>Conversación hablada fluida, con una voz propia de calidad (servicios como ElevenLabs o Deepgram) y Claude como cerebro. Se interrumpe y responde al momento.</td><td>Cuando haya tráfico y leads</td><td>Se paga por minuto de conversación; hay que poner límites</td></tr>
         <tr><td>3. Llamada y WhatsApp</td><td>El mismo asistente atiende llamadas o notas de voz y agenda.</td><td>Cuando la venda como servicio</td><td>Por minuto más el número de teléfono</td></tr>
       </tbody>
     </table></div>
-    <p style="margin-top:10px"><b>Lo que hace falta:</b> elegir el nombre y la personalidad, permitir el micrófono en la web (hoy está bloqueado por seguridad), un aviso de privacidad para la voz (revisado por el abogado), límites de minutos por visitante y medir su uso en Analytics.</p>
+    <p style="margin-top:10px"><b>Ya hecho en la fase 1:</b> nombre (Flora) y personalidad, micrófono permitido solo para la propia web, aviso en el chat de que el navegador transcribe la voz (en Chrome y Android, Google) y medición (<code>chat_voice_start</code>, <code>chat_voice_output</code>, <code>chat_voice_error</code> y <code>chat_message</code> con método «voz»).</p>
+    <p><b>Falta antes de la fase 2:</b> que el abogado añada el dictado por voz a la política de privacidad, comprobar que el nombre «Flora» no esté registrado como marca en tu sector, mirar en Analytics cuánta gente usa la voz y poner límites de minutos por visitante.</p>
   </div>
 </section>
 
