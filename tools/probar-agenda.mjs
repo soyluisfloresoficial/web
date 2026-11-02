@@ -201,6 +201,26 @@ prueba("recordatorios, cancelación y aviso se arman sin errores", () => {
 
 const { SECUENCIA, proximoEnvio, confirmarSuscripcion, TEXTO_CONSENTIMIENTO, guiaPedida } = await import("../src/worker/secuencia.ts");
 const { GUIAS, guiaDeServicio } = await import("../src/data/guias.ts");
+const { describirOrigen, nombreSeccion } = await import("../src/worker/origen.ts");
+
+prueba("el origen de cada lead se entiende de un vistazo", () => {
+  let o = describirOrigen("blog-articulo · /blog/crm-para-pymes · source=ig · campaign=guias", "guia", "Ordena tus contactos en un CRM");
+  assert.equal(o.medio, "Pidió la guía gratis «Ordena tus contactos en un CRM»");
+  assert.equal(o.seccion, "Artículo del blog /blog/crm-para-pymes");
+  assert.equal(o.campana, "Instagram, campaña «guias»");
+  assert.equal(o.clave, "blog-articulo");
+  o = describirOrigen("funnel-agentes-ia · source=meta · medium=paid · clic de Meta", "cita");
+  assert.equal(o.seccion, "Landing de anuncios de Agentes de IA");
+  assert.equal(o.campana, "Anuncio en Meta (Facebook o Instagram)");
+  assert.equal(o.medio, "Agendó la llamada en la agenda de la web");
+  o = describirOrigen("chat-asistente · /contacto", "cita");
+  assert.equal(o.medio, "Agendó la llamada con Flora, en el chat");
+  assert.equal(o.campana, "Visita directa o búsqueda (sin campaña)");
+  o = describirOrigen("servicio-crm-seguimiento-leads · /servicios/crm-seguimiento-leads", "guia");
+  assert.equal(o.seccion, "Página del servicio CRM y seguimiento de leads");
+  assert.equal(nombreSeccion(o.clave), "Servicio CRM y seguimiento de leads");
+  assert.equal(describirOrigen("", "guia").seccion, "No consta");
+});
 const GENERAL = guiaPedida(undefined);
 const BAJA = "https://soyluisflores.es/correo/baja?e=ana%40example.com&f=abc";
 

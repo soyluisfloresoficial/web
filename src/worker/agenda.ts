@@ -32,7 +32,8 @@ import { recordatorioPendiente } from "./agenda-recordatorios";
 import { enviar, correoAvisos, type EnvCorreo } from "./correo";
 import { avisoTitular, cancelacion, confirmacion, cuando, recordatorio1, recordatorio24, CONTACTO } from "./correo-plantillas";
 import { enviarAlPanel, type EnvPanel } from "./panel";
-import { contar } from "./estadisticas";
+import { contar, contarSeccion } from "./estadisticas";
+import { describirOrigen, lineasOrigen } from "./origen";
 import { recordatorioWhatsApp, type EnvWhatsApp } from "./whatsapp";
 
 interface KV {
@@ -309,7 +310,7 @@ async function crearEvento(
     r.equipo ? `Equipo: ${r.equipo}` : "",
     r.servicio ? `Le interesa: ${r.servicio}` : "",
     `Zona horaria del cliente: ${r.zonaCliente} (${horaLegible(r.inicio, r.zonaCliente)})`,
-    r.origen ? `Llegó desde: ${r.origen}` : "",
+    ...(r.origen ? lineasOrigen(describirOrigen(r.origen, "cita")) : []),
     "",
     r.mensaje ? `Lo que quiere resolver:\n${r.mensaje}` : "No dejó mensaje.",
   ]
@@ -461,7 +462,9 @@ export async function agenda(
 
     const { id, meet, enlace } = await crearEvento(env, cfg, reserva);
     console.log(JSON.stringify({ agenda: "reserva-ok", con_meet: Boolean(meet) }));
+    const origenCita = describirOrigen(reserva.origen, "cita");
     ctx.waitUntil(contar(env, reserva.origen.startsWith("chat-asistente") ? "citasChat" : "citasWeb"));
+    ctx.waitUntil(contarSeccion(env, "citas", origenCita.clave));
     // Los correos salen después de responder: la persona ve la confirmación
     // en la web sin esperar al envío.
     ctx.waitUntil(
@@ -480,7 +483,9 @@ export async function agenda(
             nombre: reserva.nombre,
             correo: reserva.correo,
             mensaje: [
-              `Llamada de diagnóstico agendada desde la web: ${cuando(reserva.inicio, cfg.zona)}.`,
+              // El origen va primero: la campana del panel solo enseña el principio.
+              ...lineasOrigen(origenCita),
+              `Llamada de diagnóstico agendada: ${cuando(reserva.inicio, cfg.zona)}.`,
               reserva.telefono ? `WhatsApp o teléfono: ${reserva.telefono}` : "",
               reserva.empresa ? `Negocio: ${reserva.empresa}` : "",
               reserva.sitioWeb ? `Página web: ${reserva.sitioWeb}` : "",

@@ -144,6 +144,38 @@ async function leerConocimiento(env: Env, base: string): Promise<string> {
   return conocimiento;
 }
 
+/** Instrucciones y conocimiento (en caché) y, detrás, lo que cambia en cada petición. */
+function sistema(base: string, ahora: string): Anthropic.Beta.BetaTextBlockParam[] {
+  return [
+    { type: "text", text: INSTRUCCIONES },
+    { type: "text", text: base, cache_control: { type: "ephemeral" } },
+    { type: "text", text: ahora },
+  ];
+}
+
+/** Deja en caché lo fijo del chat. Devuelve false si falla (no pasa nada: la primera respuesta tarda algo más). */
+async function calentar(env: Env, url: string): Promise<boolean> {
+  try {
+    const modelo = env.MODELO_CHAT || MODELO;
+    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, baseURL: env.ANTHROPIC_BASE_URL || undefined, maxRetries: 0, timeout: 15_000 });
+    const r = await client.beta.messages.create({
+      model: modelo,
+      max_tokens: 1,
+      output_config: { effort: "low" },
+      // Sin razonamiento: aquí no se responde nada. Cambiarlo no toca la caché
+      // de las instrucciones ni del conocimiento.
+      thinking: { type: modelo.startsWith("claude-haiku") ? "disabled" : "between_tools" },
+      system: sistema(await leerConocimiento(env, url), "Petición interna para preparar la caché."),
+      tools: HERRAMIENTAS,
+      messages: [{ role: "user", content: "hola" }],
+    });
+    console.log(JSON.stringify({ chat: "calentar", cache_leida: r.usage.cache_read_input_tokens, cache_escrita: r.usage.cache_creation_input_tokens }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   if (request.method !== "POST") return json({ error: "metodo" }, 405);
   if (!origenPermitido(request.headers.get("Origin"))) return json({ error: "origen" }, 403);
@@ -163,6 +195,16 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
   } catch {
     return json({ error: "invalido" }, 400);
   }
+
+  // Calentar (2/11/2026): el chat lo pide al abrirse. Una petición de un solo
+  // token con las mismas instrucciones, herramientas y conocimiento deja todo
+  // en la caché de Claude, así la primera respuesta de verdad sale rápido. Con
+  // Haiku cuesta una fracción de céntimo; no cuenta para el tope diario.
+  if ((datos as { calentar?: unknown })?.calentar === true) {
+    if (!(await calentar(env, request.url))) console.error(JSON.stringify({ chat: "calentar-fallo" }));
+    return json({ ok: true });
+  }
+
   const messages = aMensajes(datos);
   if (!messages) return json({ error: "invalido" }, 400);
   if (!(await dentroDelTopeDiario(env))) {
@@ -215,11 +257,7 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
         // Instrucciones y conocimiento son iguales en todas las peticiones de
         // una misma publicación: van en caché y se cobran a una décima parte.
         // La fecha va detrás, fuera de la caché.
-        system: [
-          { type: "text", text: INSTRUCCIONES },
-          { type: "text", text: base, cache_control: { type: "ephemeral" } },
-          { type: "text", text: `Ahora para el visitante es ${hoy} (zona ${zona}).` },
-        ],
+        system: sistema(base, `Ahora para el visitante es ${hoy} (zona ${zona}).`),
         tools: HERRAMIENTAS,
         messages,
         ...(CON_RESPALDO.has(modelo)

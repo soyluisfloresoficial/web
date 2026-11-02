@@ -16,6 +16,7 @@
 import { enviar, correoAvisos } from "./correo";
 import { maquetar } from "./correo-plantillas";
 import type { EnvAgenda } from "./agenda";
+import { nombreSeccion } from "./origen";
 
 export type Cifra = "conversaciones" | "tarjetas" | "citasChat" | "citasWeb";
 type Semana = Record<Cifra, number>;
@@ -70,6 +71,30 @@ export async function contar(env: EnvAgenda, cifra: Cifra): Promise<void> {
   }
 }
 
+/**
+ * De qué sección llegan los correos de la guía y las citas (2/11/2026), por
+ * semana: «stats:2026-W45:secciones» = { "blog-articulo": { correos: 3,
+ * citas: 1 }, ... }. Las claves salen de origen.ts.
+ */
+type Secciones = Record<string, { correos: number; citas: number }>;
+
+export async function contarSeccion(
+  env: { AGENDA_CONFIG?: EnvAgenda["AGENDA_CONFIG"] },
+  tipo: "correos" | "citas",
+  clave: string,
+): Promise<void> {
+  if (!env.AGENDA_CONFIG) return;
+  try {
+    const k = `stats:${semanaIso(Date.now())}:secciones`;
+    const s = ((await env.AGENDA_CONFIG.get(k, "json")) as Secciones | null) ?? {};
+    s[clave] ??= { correos: 0, citas: 0 };
+    s[clave][tipo] += 1;
+    await env.AGENDA_CONFIG.put(k, JSON.stringify(s));
+  } catch {
+    console.error(JSON.stringify({ estadisticas: "fallo-seccion" }));
+  }
+}
+
 const porcentaje = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)} %` : "sin datos");
 
 /** Lo llama el cron cada 10 minutos: los lunes desde las 8:00 de Madrid manda la semana anterior, una vez. */
@@ -85,6 +110,10 @@ export async function resumenSemanal(env: EnvAgenda): Promise<void> {
     if (await env.AGENDA_CONFIG.get(marca, "json")) return;
     const s = await leer(env, anterior);
     const citas = s.citasChat + s.citasWeb;
+    const secciones = Object.entries(
+      ((await env.AGENDA_CONFIG.get(`stats:${anterior}:secciones`, "json")) as Secciones | null) ?? {},
+    ).sort((a, b) => b[1].correos + b[1].citas - (a[1].correos + a[1].citas));
+    const correosGuia = secciones.reduce((n, [, v]) => n + v.correos, 0);
     const correo = maquetar({
       asunto: `Resumen semanal de la web · ${anterior}: ${citas} ${citas === 1 ? "llamada agendada" : "llamadas agendadas"}`,
       previa: `${s.conversaciones} conversaciones en el chat y ${citas} citas la semana pasada.`,
@@ -96,8 +125,20 @@ export async function resumenSemanal(env: EnvAgenda): Promise<void> {
             ["Llegaron a la tarjeta de la cita", `${s.tarjetas} (${porcentaje(s.tarjetas, s.conversaciones)} de las conversaciones)`],
             ["Citas confirmadas desde el chat", String(s.citasChat)],
             ["Citas desde el formulario", String(s.citasWeb)],
+            ["Correos nuevos de la guía (confirmados)", String(correosGuia)],
           ],
         },
+        { p: "De dónde llegaron (sección de la web):" },
+        secciones.length
+          ? {
+              ficha: secciones.slice(0, 8).map(([clave, v]): [string, string] => [
+                nombreSeccion(clave),
+                [v.correos ? `${v.correos} ${v.correos === 1 ? "correo" : "correos"}` : "", v.citas ? `${v.citas} ${v.citas === 1 ? "cita" : "citas"}` : ""]
+                  .filter(Boolean)
+                  .join(" · "),
+              ]),
+            }
+          : { p: "Esta semana no entró ningún correo ni cita." },
         {
           p:
             s.tarjetas > 0

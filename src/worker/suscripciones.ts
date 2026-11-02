@@ -19,6 +19,9 @@ import { CONTACTO } from "./correo-plantillas";
 import { confirmarSuscripcion, guiaPedida, proximoEnvio, SECUENCIA, TEXTO_CONSENTIMIENTO } from "./secuencia";
 import { tituloGuia } from "../data/guias";
 import { enviarAlPanel, type EnvPanel } from "./panel";
+import { contarSeccion } from "./estadisticas";
+import type { EnvAgenda } from "./agenda";
+import { describirOrigen, lineasOrigen } from "./origen";
 
 interface KV {
   get(clave: string, tipo: "json"): Promise<unknown>;
@@ -33,6 +36,8 @@ interface KV {
 export interface EnvSuscripciones extends EnvCorreo, EnvPanel {
   SUSCRIPTORES?: KV;
   LIMITE_AGENDA?: { limit(opciones: { key: string }): Promise<{ success: boolean }> };
+  /** KV de la agenda: aquí solo para contar de qué sección llega cada correo. */
+  AGENDA_CONFIG?: EnvAgenda["AGENDA_CONFIG"];
 }
 
 type Estado = "pendiente" | "activo" | "terminado" | "baja";
@@ -205,19 +210,20 @@ export async function suscripciones(
     s.proximo = s.confirmado;
     await guardar(env, s);
     console.log(JSON.stringify({ lista: "confirmado" }));
+    const origenGuia = describirOrigen(s.origen, "guia", tituloGuia(guiaPedida(s.guia)));
     ctx.waitUntil(
       Promise.all([
         enviarPaso(env, s),
         enviarAlPanel(env, {
           nombre: s.nombre,
           correo: s.correo,
+          // El origen va primero: la campana del panel solo enseña el principio.
           mensaje: [
-            `Se suscribió a la guía «${tituloGuia(guiaPedida(s.guia))}» desde la web.`,
-            s.origen ? `Llegó desde: ${s.origen}` : "",
-          ]
-            .filter(Boolean)
-            .join("\n"),
+            ...lineasOrigen(origenGuia),
+            "Confirmó su correo y ya recibe la guía y la serie de consejos.",
+          ].join("\n"),
         }),
+        contarSeccion(env, "correos", origenGuia.clave),
       ]),
     );
     return json({ ok: true });

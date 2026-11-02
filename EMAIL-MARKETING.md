@@ -113,6 +113,22 @@ día la cambias, los enlaces de correos ya enviados dejan de valer. Quien
 quiera darse de baja puede escribir a hola@ o usar el enlace de un correo
 nuevo.
 
+## De dónde llega cada lead (2/11/2026)
+
+Cada lead que entra al panel (guía confirmada o llamada agendada) empieza
+con tres líneas, que se ven en la campana, en el correo «Lead nuevo» y en la
+ficha:
+
+- **Origen:** pidió la guía «…», agendó en la agenda de la web o con Flora.
+- **Sección:** artículo del blog /blog/…, página del servicio …, landing de
+  anuncios de …, chat de Flora en /…
+- **Llegó por:** anuncio en Meta o Google, Instagram, un correo de la serie,
+  con el nombre de la campaña, o «visita directa o búsqueda».
+
+La traducción está en `src/worker/origen.ts`. El resumen semanal de los
+lunes trae además **de qué sección llegaron** los correos y las citas de la
+semana, ordenadas de más a menos.
+
 ## Medición
 
 Al pedir la guía, la web envía a Tag Manager el evento `sign_up` con

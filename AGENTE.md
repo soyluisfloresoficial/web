@@ -87,6 +87,12 @@ Tarda unos tres minutos y cuesta unos céntimos. Lee lo que marque «REVISAR».
   (después ofrece la llamada o WhatsApp) y 300 mensajes con IA al día en toda
   la web (`LIMITE_DIARIO_CHAT`); al llegar, el chat sigue sin IA con las
   preguntas frecuentes hasta el día siguiente.
+- Respuestas de 45 palabras como máximo, siempre con una pregunta al final
+  hasta que la llamada quede agendada (`instrucciones.ts`).
+- Primera respuesta rápida: al abrir el chat, la web pide `{"calentar": true}`
+  a `/api/chat` y el Worker deja en la caché de Claude las instrucciones, las
+  herramientas y el conocimiento con una petición de un solo token. Una vez
+  por visita; no cuenta para el tope diario.
 - Las tres sugerencias del saludo se contestan con texto fijo en
   `Chat.astro` (`FIJAS`), sin IA. Si cambias la web, revisa que sigan siendo
   ciertas.

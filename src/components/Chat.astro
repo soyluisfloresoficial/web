@@ -836,11 +836,11 @@ const sugerencias = [
     // hubiera dicho Flora, así la conversación sigue con contexto.
     const FIJAS: Record<string, string> = {
       "¿Qué se puede automatizar en mi negocio?":
-        "Depende de tu sector, pero lo más habitual es contestar mensajes y WhatsApp a tiempo, enviar recordatorios de citas, hacer seguimiento de clientes y avisos internos.\n\nPara decirte por dónde empezar, ¿a qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
+        "Lo más habitual: contestar WhatsApp a tiempo, recordatorios de citas y seguimiento de clientes.\n\n¿A qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
       "¿Cuánto cuesta?":
-        "Depende de lo que haya que hacer y de las herramientas que ya usas, por eso Luis no publica precios. Después de una llamada gratis de 30 minutos te manda una propuesta por escrito con el precio cerrado.\n\n¿A qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
+        "Depende de lo que haya que hacer, por eso Luis no publica precios. Tras una llamada gratis de 30 minutos te manda el precio cerrado por escrito.\n\n¿A qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
       "¿Cómo es la llamada gratis?":
-        "Es una videollamada de 30 minutos por Google Meet, gratis y sin compromiso. Luis revisa contigo qué te quita tiempo o clientes y qué conviene automatizar primero, y después te manda una propuesta por escrito.\n\n¿Quieres que te la agende aquí?\nOpciones: Agéndala aquí | Prefiero el formulario | Ahora no",
+        "Es una videollamada gratis de 30 minutos por Google Meet. Luis revisa contigo qué automatizar primero y luego te manda una propuesta por escrito.\n\n¿Quieres que te la agende aquí?\nOpciones: Agéndala aquí | Prefiero el formulario | Ahora no",
     };
     // Tope por conversación: pasadas estas preguntas, Flora ya no llama a la
     // IA y ofrece la llamada o WhatsApp. Lo normal es agendar mucho antes.
@@ -915,6 +915,7 @@ const sugerencias = [
     // celular). Al cerrar, el foco vuelve al botón con el que se abrió.
     const externos = [...document.querySelectorAll<HTMLButtonElement>("[data-abrir-chat]")];
     let origen: HTMLElement | null = null;
+    let calentado = false;
     externos.forEach((b) => {
       b.hidden = false;
       b.addEventListener("click", () => {
@@ -941,6 +942,17 @@ const sugerencias = [
         callar();
       }
       if (abierto) medir("chat_open", { chat_method: origen ? "barra-movil" : "boton" });
+      // Al abrir por primera vez, el servidor deja preparada la caché de Flora
+      // mientras la persona lee el saludo y escribe: así la primera respuesta
+      // llega rápido. Una sola vez por visita.
+      if (abierto && !calentado && !sinIA) {
+        calentado = true;
+        void fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ calentar: true }),
+        }).catch(() => undefined);
+      }
       if (abierto) requestAnimationFrame(() => input.focus());
       else {
         (origen ?? abrir).focus();

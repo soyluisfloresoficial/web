@@ -26,7 +26,9 @@ const ESTILO = [
   ["sin rayas largas", (t) => !t.includes("—")],
   ["sin negritas ni títulos", (t) => !/\*\*|^#/m.test(t)],
   ["sin «¡Claro!» ni «¡Excelente pregunta!»", (t) => !/^¡(claro|excelente|buena pregunta)/i.test(t.trim())],
-  ["breve (120 palabras o menos)", (t) => t.split(/\s+/).length <= 120],
+  // Desde el 2/11/2026: 45 palabras como máximo más la pregunta y las opciones.
+  ["breve (75 palabras o menos)", (t) => t.split(/\s+/).length <= 75],
+  ["termina con una pregunta", (t) => /\?\s*(\n\s*(Opciones|Options|Opções):.*)?$/i.test(t.trim())],
   ["sin «vosotros»", (t) => !/\bvosotros\b|\bos\b(?= \w+áis)/i.test(t)],
 ];
 
