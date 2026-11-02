@@ -278,8 +278,8 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
       <p>Cloudflare mete en cada página un script de detección de bots (<code>/cdn-cgi/challenge-platform</code>). Ocupa más de 1 segundo del celular, usa funciones del navegador que se van a retirar y baja la nota de «buenas prácticas» a 81. La web ya tiene sus propias defensas (el chat y la agenda solo aceptan llamadas desde tu dominio y tienen límites).</p>
       <ol>
         <li>Entra en <a href="https://dash.cloudflare.com">dash.cloudflare.com</a> y abre <b>soyluisflores.es</b>.</li>
-        <li>Menú de la izquierda: <b>Security → Bots</b> (o <b>Seguridad → Bots</b>).</li>
-        <li>Busca <b>JavaScript Detections</b> y apágalo. Si ves <b>Bot Fight Mode</b> encendido, apágalo también.</li>
+        <li>Menú de la izquierda: <b>Security → Settings</b> (o <b>Seguridad → Configuración</b>). Arriba, filtra por <b>Bot traffic</b>.</li>
+        <li>Apaga <b>Bot fight mode</b>. En el plan gratuito, la detección por JavaScript va pegada a ese interruptor: no se puede apagar sola (lo dice la documentación de Cloudflare). Revisado el 02/11 a las 14:10: el script seguía en la página.</li>
         <li>Avísale a Claude para que vuelva a medir.</li>
       </ol>
     </div>
@@ -618,7 +618,8 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
       </tbody>
     </table></div>
     <p style="margin-top:10px"><b>Ya hecho en la fase 1:</b> nombre (Flora) y personalidad, micrófono permitido solo para la propia web, aviso en el chat de que el navegador transcribe la voz (en Chrome y Android, Google) y medición (<code>chat_voice_start</code>, <code>chat_voice_output</code>, <code>chat_voice_error</code> y <code>chat_message</code> con método «voz»).</p>
-    <p><b>Falta antes de la fase 2:</b> que el abogado añada el dictado por voz a la política de privacidad, comprobar que el nombre «Flora» no esté registrado como marca en tu sector, mirar en Analytics cuánta gente usa la voz y poner límites de minutos por visitante.</p>
+    <p><b>Nombre (búsqueda del 02/11/2026):</b> ya existen productos de IA llamados Flora, entre ellos una plataforma de agentes de IA para agencias y negocios (Flora AI), que es tu mismo sector, y FLORA, una herramienta creativa de IA de Nueva York. Como nombre del personaje de tu chat el riesgo es bajo, pero antes de venderlo como producto o registrarlo como marca hay que mirarlo en TMview y en la OEPM (ver «Lo que sigue»).</p>
+    <p><b>Falta antes de la fase 2:</b> que el abogado añada el dictado por voz a la política de privacidad, revisar la marca «Flora», mirar en Analytics cuánta gente usa la voz y poner límites de minutos por visitante.</p>
   </div>
 </section>
 
@@ -648,6 +649,7 @@ footer { padding: 40px 0 60px; color: var(--texto-suave); font-size: .88rem; }
   <div class="desliza"><table class="tabla">
     <thead><tr><th>Servicio</th><th>Costo</th><th>Cómo controlarlo</th></tr></thead>
     <tbody>
+      <tr><td>Voz de Flora (Deepgram Aura-2 en Cloudflare)</td><td>Unos 0,03 $ por cada 1.000 caracteres leídos. Una respuesta normal ronda los 300: aproximadamente 1 céntimo de dólar.</td><td>Límite de 12 respuestas leídas por minuto por visitante. Solo suena si la persona enciende la voz o usa el micrófono.</td></tr>
       <tr><td>Asistente (Claude Sonnet 5.5)</td><td>Por uso: 2 $ por cada millón de tokens (trozos de texto) que lee y 10 $ por cada millón que escribe. Con caché, la base de conocimiento sale más barata.</td><td>Pon un límite mensual en la consola de Anthropic. La opción más barata es Haiku 5.5 (se cambia en <code>wrangler.jsonc</code>).</td></tr>
       <tr><td>Cloudflare</td><td>Según tu plan actual.</td><td>Panel de Cloudflare → Facturación.</td></tr>
       <tr><td>Resend</td><td>Según tu plan.</td><td>Panel de Resend.</td></tr>
