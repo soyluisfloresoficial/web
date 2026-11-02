@@ -320,6 +320,47 @@ Ejemplo de cuerpo para `PUT` (todo opcional):
 - Respuestas: `401` clave incorrecta, `429` demasiados intentos, `503` falta
   el KV.
 
+## Resumen semanal por correo (2/11/2026)
+
+Cada lunes, a partir de las 8:00 de Madrid, llega a `hola@` (o a
+`CORREO_AVISOS`) un correo con la semana anterior: conversaciones del chat,
+cuántas llegaron a la tarjeta de la cita, citas confirmadas desde el chat y
+desde el formulario. Solo se guardan esos números, en el KV `AGENDA_CONFIG`
+con claves `stats:2026-W45`; nunca lo que escribe nadie. Código:
+`src/worker/estadisticas.ts`. No necesita configurar nada.
+
+## Recordatorio por WhatsApp (listo, apagado hasta que lo actives)
+
+1 hora antes de la llamada, además del correo, sale un WhatsApp al cliente si
+dejó su número con prefijo del país. Código: `src/worker/whatsapp.ts`. Usa
+Twilio y cuesta unos céntimos por mensaje (Twilio más la tarifa de Meta según
+el país: https://www.twilio.com/en-us/whatsapp/pricing). Se activa cuando
+estén estos cuatro secretos en Cloudflare (Worker `web` → Configuración →
+Variables y secretos, tipo **Secreto**):
+
+| Secreto | Qué es |
+|---|---|
+| `TWILIO_ACCOUNT_SID` | En https://console.twilio.com, portada: «Account SID» (empieza por AC) |
+| `TWILIO_AUTH_TOKEN` | En la misma portada: «Auth Token» |
+| `TWILIO_WHATSAPP_FROM` | Tu número de WhatsApp Business conectado a Twilio, por ejemplo `whatsapp:+34600000000` |
+| `TWILIO_PLANTILLA_1H` | El «Content SID» (empieza por HX) de la plantilla aprobada |
+
+Pasos:
+
+1. En Twilio: **Messaging** → **Senders** → **WhatsApp senders** → conecta
+   tu número con tu cuenta de Meta Business (te guía paso a paso).
+2. **Messaging** → **Content Template Builder** → **Create new** → tipo
+   **Text**, categoría **Utility**, idioma español. Texto, con las tres
+   variables en este orden:
+   `Hola {{1}}, te recuerdo nuestra llamada de diagnóstico hoy a las {{2}}. Entra aquí: {{3}}. Si no puedes, avísame por aquí. Luis Flores`
+3. Envíala a aprobación de WhatsApp y espera el «Approved».
+4. Pon los cuatro secretos en Cloudflare. No hace falta publicar nada.
+5. Antes de activarlo, pide que añadan Twilio (y Meta como proveedor de
+   WhatsApp) a la política de privacidad y al aviso para Latinoamérica.
+
+Solo funciona con las citas agendadas desde el 2/11/2026, que guardan el
+número en el evento del calendario.
+
 ## Si algo falla
 
 - **En lugar de la agenda sale «Agenda tu llamada por WhatsApp o por

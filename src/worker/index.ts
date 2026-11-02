@@ -24,6 +24,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { INSTRUCCIONES } from "./instrucciones";
 import { agenda, citaAgenda, configAgenda, recordatorios, zonaValida, type EnvAgenda } from "./agenda";
 import { HERRAMIENTAS, usarHerramienta, type CitaPropuesta } from "./chat-agenda";
+import { contar, resumenSemanal } from "./estadisticas";
 import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
 
 interface Env extends EnvAgenda, EnvSuscripciones {
@@ -116,7 +117,7 @@ async function leerConocimiento(env: Env, base: string): Promise<string> {
   return conocimiento;
 }
 
-async function chat(request: Request, env: Env): Promise<Response> {
+async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   if (request.method !== "POST") return json({ error: "metodo" }, 405);
   if (!origenPermitido(request.headers.get("Origin"))) return json({ error: "origen" }, 403);
   if (!env.ANTHROPIC_API_KEY) return json({ error: "sin-ia" }, 503);
@@ -137,6 +138,8 @@ async function chat(request: Request, env: Env): Promise<Response> {
   }
   const messages = aMensajes(datos);
   if (!messages) return json({ error: "invalido" }, 400);
+  // Antes del bucle de herramientas, que añade turnos a «messages».
+  const primerMensaje = messages.length === 1;
 
   const modelo = env.MODELO_CHAT || MODELO;
   const client = new Anthropic({
@@ -228,6 +231,9 @@ async function chat(request: Request, env: Env): Promise<Response> {
           "Eso no lo puedo responder aquí. Si tiene que ver con tu negocio, Luis lo ve contigo en la llamada: https://soyluisflores.es/contacto",
       });
     }
+    // Solo números para el resumen semanal (estadisticas.ts).
+    if (primerMensaje) ctx.waitUntil(contar(env, "conversaciones"));
+    if (cita) ctx.waitUntil(contar(env, "tarjetas"));
     return json({ respuesta: texto, ...(cita ? { cita } : {}) });
   } catch (error) {
     // Sin el contenido de la conversación: solo el tipo de fallo.
@@ -251,7 +257,7 @@ async function chat(request: Request, env: Env): Promise<Response> {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const { pathname } = new URL(request.url);
-    if (pathname === "/api/chat") return chat(request, env);
+    if (pathname === "/api/chat") return chat(request, env, ctx);
     if (pathname === "/api/agenda") return agenda(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda/cita" || pathname === "/api/agenda/cancelar") {
       return citaAgenda(request, env, json, origenPermitido, ctx);
@@ -265,10 +271,10 @@ export default {
     return env.ASSETS.fetch(request);
   },
 
-  // Cron cada 10 minutos (wrangler.jsonc): recordatorios de la agenda y
-  // correos de la secuencia de la guía.
+  // Cron cada 10 minutos (wrangler.jsonc): recordatorios de la agenda,
+  // correos de la secuencia de la guía y, los lunes, el resumen semanal.
   async scheduled(_evento: unknown, env: Env, ctx: ExecutionContext): Promise<void> {
-    ctx.waitUntil(Promise.all([recordatorios(env), secuencia(env)]));
+    ctx.waitUntil(Promise.all([recordatorios(env), secuencia(env), resumenSemanal(env)]));
   },
 };
 

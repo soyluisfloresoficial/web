@@ -32,6 +32,8 @@ import { recordatorioPendiente } from "./agenda-recordatorios";
 import { enviar, correoAvisos, type EnvCorreo } from "./correo";
 import { avisoTitular, cancelacion, confirmacion, cuando, recordatorio1, recordatorio24, CONTACTO } from "./correo-plantillas";
 import { enviarAlPanel, type EnvPanel } from "./panel";
+import { contar } from "./estadisticas";
+import { recordatorioWhatsApp, type EnvWhatsApp } from "./whatsapp";
 
 interface KV {
   get(clave: string, tipo: "json"): Promise<unknown>;
@@ -39,7 +41,7 @@ interface KV {
   delete(clave: string): Promise<void>;
 }
 
-export interface EnvAgenda extends EnvCorreo, EnvPanel {
+export interface EnvAgenda extends EnvCorreo, EnvPanel, EnvWhatsApp {
   /** Secretos del Worker, en el panel de Cloudflare. Ver AGENDA.md. */
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
@@ -341,6 +343,8 @@ async function crearEvento(
           correo: r.correo,
           zona: r.zonaCliente,
           duracion: String(cfg.duracion),
+          // Para el recordatorio por WhatsApp (whatsapp.ts), si lo dejó.
+          ...(r.telefono ? { telefono: r.telefono } : {}),
         },
       },
       conferenceData: {
@@ -457,6 +461,7 @@ export async function agenda(
 
     const { id, meet, enlace } = await crearEvento(env, cfg, reserva);
     console.log(JSON.stringify({ agenda: "reserva-ok", con_meet: Boolean(meet) }));
+    ctx.waitUntil(contar(env, reserva.origen.startsWith("chat-asistente") ? "citasChat" : "citasWeb"));
     // Los correos salen después de responder: la persona ve la confirmación
     // en la web sin esperar al envío.
     ctx.waitUntil(
@@ -719,14 +724,25 @@ export async function recordatorios(env: EnvAgenda): Promise<void> {
       if (!toca) continue;
       const cita = { ...c, cambiar: await enlaceCambiar(env, e.id) };
       const ok = await enviar(env, c.correo, toca === "24h" ? recordatorio24(cita) : recordatorio1(cita), `recordatorio-${toca}`);
-      if (!ok) continue;
+      // 1 hora antes, también por WhatsApp si está activado (whatsapp.ts) y
+      // el cliente dejó su número. Lleva su propia marca para no repetirlo.
+      const whatsapp =
+        toca === "1h" && p.telefono && p.w1 !== "1"
+          ? await recordatorioWhatsApp(env, p.telefono, {
+              nombre: c.nombre.split(/\s+/)[0] || c.nombre,
+              hora: cuando(c.inicio, c.zona),
+              enlace: c.meet ?? cita.cambiar,
+            })
+          : false;
+      if (!ok && !whatsapp) continue;
       // Se marca en la cita para no repetirlo en la siguiente vuelta.
       const marca = urlEvento(env, e.id);
       marca.searchParams.set("sendUpdates", "none");
+      const marcas = { ...(ok ? { [toca === "24h" ? "r24" : "r1"]: "1" } : {}), ...(whatsapp ? { w1: "1" } : {}) };
       await google(
         env,
         marca,
-        { method: "PATCH", body: JSON.stringify({ extendedProperties: { private: { ...p, [toca === "24h" ? "r24" : "r1"]: "1" } } }) },
+        { method: "PATCH", body: JSON.stringify({ extendedProperties: { private: { ...p, ...marcas } } }) },
         "marcar-evento",
       );
     }
