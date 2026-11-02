@@ -810,6 +810,17 @@ const schema = [
 </script>
 
 <style>
+  /* Velocidad (02/11/2026): el navegador no calcula ni pinta las secciones
+     que están fuera de la pantalla hasta que se acercan. En celular, la
+     portada tardaba casi 3 segundos en estilos y maquetación antes de
+     pintar nada. «auto» recuerda el alto real una vez vista. Fuera el hero
+     (se ve al entrar) y el showcase, cuyo contenido sobresale de la sección
+     y se recortaría. */
+  :global(main > section:not(.hero, .showcase)) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+
   .hero-line-grad {
     font-size: clamp(2.375rem, 1.6rem + 3.3vw, 3.75rem);
     letter-spacing: -0.03em;
@@ -824,17 +835,20 @@ const schema = [
      aparecer, porque no son el elemento más grande. */
   @media (prefers-reduced-motion: no-preference) {
     :global(.js) .hero .eyebrow,
-    :global(.js) .hero .lead,
     :global(.js) .hero .cta,
     :global(.js) .hero .nota {
       animation: entrada-hero 0.6s var(--ease) both;
     }
 
-    :global(.js) .hero h1 {
+    /* El párrafo principal tampoco se desvanece (02/11/2026): en celular es
+       el elemento más grande de la pantalla y, con el fundido, Lighthouse
+       medía el LCP al terminar la animación. */
+    :global(.js) .hero h1,
+    :global(.js) .hero .lead {
       animation: desplaza-hero 0.6s var(--ease) both;
-      animation-delay: 0.1s;
     }
 
+    :global(.js) .hero h1 { animation-delay: 0.1s; }
     :global(.js) .hero .eyebrow { animation-delay: 0s; }
     :global(.js) .hero .lead { animation-delay: 0.26s; }
     :global(.js) .hero .cta { animation-delay: 0.4s; }

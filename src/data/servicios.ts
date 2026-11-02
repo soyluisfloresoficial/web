@@ -238,7 +238,7 @@ export const SITIO = {
     "Luis Carlos Flores implementa agentes de IA, automatizaciones, embudos de venta, CRM, email marketing y paneles de métricas para pymes y emprendedores de Latinoamérica y España.",
   perfiles: [
     "https://www.linkedin.com/in/soyluisflores/",
-    "https://www.instagram.com/soyluisflores_/",
+    "https://www.instagram.com/soyluisfloresoficial/",
     "https://www.tiktok.com/@soyluisfloresoficial",
     "https://smilbot.com",
   ],

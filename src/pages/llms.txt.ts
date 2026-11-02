@@ -104,7 +104,7 @@ export const GET: APIRoute = async () => {
 
   lineas.push("## Perfiles");
   lineas.push("");
-  lineas.push("- [Instagram](https://www.instagram.com/soyluisflores_/)");
+  lineas.push("- [Instagram](https://www.instagram.com/soyluisfloresoficial/)");
   lineas.push("- [LinkedIn](https://www.linkedin.com/in/soyluisflores/)");
   lineas.push("- [TikTok](https://www.tiktok.com/@soyluisfloresoficial)");
   lineas.push("");

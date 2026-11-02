@@ -335,9 +335,20 @@ const EQUIPOS = ["Solo yo", "2 a 5 personas", "6 a 20 personas", "Más de 20 per
   let elegido: Hueco | null = null;
   let empezado = false;
 
-  const fmtEn = (z: string, opciones: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("es", { timeZone: z, ...opciones });
+  // Velocidad (02/11/2026): crear un Intl.DateTimeFormat es caro y aquí se
+  // pedían cientos al cargar (cuatro por hora libre). Se crean una vez por
+  // zona y formato y se reutilizan: en celular, contacto pasaba casi 4
+  // segundos solo en este script.
+  const formatos = new Map<string, Intl.DateTimeFormat>();
+  const formato = (idioma: string, opciones: Intl.DateTimeFormatOptions) => {
+    const clave = `${idioma}|${JSON.stringify(opciones)}`;
+    let f = formatos.get(clave);
+    if (!f) formatos.set(clave, (f = new Intl.DateTimeFormat(idioma, opciones)));
+    return f;
+  };
+  const fmtEn = (z: string, opciones: Intl.DateTimeFormatOptions) => formato("es", { timeZone: z, ...opciones });
   const fmt = (opciones: Intl.DateTimeFormatOptions) => fmtEn(zona, opciones);
-  const claveDiaEn = (z: string, ms: number) => new Intl.DateTimeFormat("en-CA", { timeZone: z }).format(ms);
+  const claveDiaEn = (z: string, ms: number) => formato("en-CA", { timeZone: z }).format(ms);
   const claveDia = (ms: number) => claveDiaEn(zona, ms);
   const horaEn = (z: string, ms: number) => fmtEn(z, { hour: "2-digit", minute: "2-digit" }).format(ms);
   const hora = (ms: number) => horaEn(zona, ms);
