@@ -35,6 +35,7 @@ Esta es la lista completa de lo que se guarda hoy en tu navegador al visitar el 
 <tbody>
 <tr><td><code>cf_clearance</code></td><td>Cloudflare, Inc.</td><td>Seguridad del sitio</td><td>1 año</td><td>Necesaria</td></tr>
 <tr><td><code>lf-consent-v1</code></td><td>soyluisflores.es</td><td>Recuerda tu elección de cookies</td><td>12 meses</td><td>Necesaria</td></tr>
+<tr><td><code>flora-visitante</code></td><td>soyluisflores.es</td><td>Código al azar para que el asistente Flora retome la conversación si vuelves</td><td>Hasta que lo borres; el resumen se borra a los 30 días</td><td>Funcional</td></tr>
 <tr><td><code>gtm.js</code></td><td>Google Ireland Ltd.</td><td>Carga las etiquetas de medición</td><td>No guarda cookies</td><td>Analítica y marketing</td></tr>
 <tr><td><code>_fbp</code></td><td>Meta Platforms Ireland Ltd.</td><td>Mide qué anuncios de Meta (Facebook e Instagram) traen visitas y reservas</td><td>3 meses</td><td>Marketing</td></tr>
 <tr><td><code>_gcl_au</code></td><td>Google Ireland Ltd.</td><td>Mide qué anuncios de Google traen reservas</td><td>3 meses</td><td>Marketing</td></tr>
@@ -42,7 +43,7 @@ Esta es la lista completa de lo que se guarda hoy en tu navegador al visitar el 
 </table>
 </div>
 
-**Qué hace cada una.** `cf_clearance` comprueba que la visita viene de un navegador real y no de un programa automático; se guarda aunque rechaces las cookies, porque sin ella el sitio no puede protegerse. `lf-consent-v1` no es una cookie: se guarda en el almacenamiento local del navegador para no volver a preguntarte en cada visita. La agenda para reservar la llamada es de la propia web y no guarda cookies ni nada en tu navegador.
+**Qué hace cada una.** `cf_clearance` comprueba que la visita viene de un navegador real y no de un programa automático; se guarda aunque rechaces las cookies, porque sin ella el sitio no puede protegerse. `lf-consent-v1` no es una cookie: se guarda en el almacenamiento local del navegador para no volver a preguntarte en cada visita. La agenda para reservar la llamada es de la propia web y no guarda cookies ni nada en tu navegador. `flora-visitante` tampoco es una cookie: se guarda en el almacenamiento local solo cuando escribes en el chat, no lleva datos personales y sirve para que Flora recuerde de qué hablaron. Lo borras con «Olvidarme», en el pie del chat, o borrando los datos del sitio en tu navegador.
 
 **Si rechazas.** Google Tag Manager no se descarga y no se guarda nada más que `cf_clearance` y tu elección.
 

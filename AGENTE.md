@@ -14,7 +14,8 @@ llamada de diagnóstico cuando hay un caso concreto.
 | Servidor | `src/worker/index.ts` | `POST /api/chat`. Valida, limita, llama a Claude y no guarda nada |
 | Agendar desde el chat (2/11/2026) | `src/worker/chat-agenda.ts` | Herramientas `ver_horarios` (horas libres reales de la agenda, en la hora del visitante y de Madrid) y `preparar_cita` (valida los datos). El chat pinta una tarjeta con los datos, la casilla de privacidad y «Confirmar llamada», que reserva con `POST /api/agenda`, igual que `/contacto`: mismos correos, mismo lead en el panel. La IA nunca reserva sola |
 | Flora: nombre y voz (2/11/2026) | `Chat.astro`, `instrucciones.ts` y `public/_headers` | El asistente se llama Flora. Fase 1 de voz con el navegador: micrófono para dictar (en Chrome y Android lo transcribe Google; Firefox no lo trae y el botón no sale) y lectura en voz alta, que se apaga con el altavoz de la cabecera. Desde la tarde del 2/11 la voz es propia: `POST /api/voz` (`src/worker/voz.ts`) la genera con Deepgram Aura-2 en español por Workers AI (binding `AI`), voz `selena` (latina) en la variable `VOZ_FLORA` de `wrangler.jsonc`; cuesta unos 0,03 $ por 1.000 caracteres, con límite de 12 por minuto por IP. Si falla, lee la voz del navegador. Permissions-Policy: `microphone=(self)`. Las fases 2 y 3 (voz natural en tiempo real, llamadas) están en `INFORME.html` → Ideas |
-| Medición | `Chat.astro` y `gtm/LEEME.md` | Eventos `chat_open`, `chat_message` (`chat_method: voz` si se dictó), `chat_quick_reply`, `chat_booking_shown`, `chat_cta_click`, `chat_voice_start`, `chat_voice_output`, `chat_voice_error` y `generate_lead` (`form_id: chat-asistente`) al confirmar. Nunca lo que escribe o dice la persona |
+| Memoria de 30 días (2/11/2026) | `src/worker/memoria.ts` y `Chat.astro` | Flora recuerda a quien vuelve con un resumen corto (a qué se dedica, qué le preocupa, qué servicio le interesa, si agendó). La llave es un código al azar del navegador (`localStorage` `flora-visitante`), **no la IP**, que comparten varias personas. Flora escribe el resumen al final de su respuesta con `[[memoria: …]]`; el Worker lo quita, tacha correos y teléfonos y lo guarda en el KV de la agenda (`flora:mem:<código>`), que se borra solo a los 30 días sin escribir. Al volver, el saludo cambia a «Hola de nuevo» con el botón «Sigamos donde lo dejamos». «Olvidarme», en el pie del chat, lo borra al momento y deja de recordar en ese navegador |
+| Medición | `Chat.astro` y `gtm/LEEME.md` | Eventos `chat_open`, `chat_return` (la recordó), `chat_forget` (pulsó «Olvidarme»), `chat_message` (`chat_method: voz` si se dictó), `chat_quick_reply`, `chat_booking_shown`, `chat_cta_click`, `chat_voice_start`, `chat_voice_output`, `chat_voice_error` y `generate_lead` (`form_id: chat-asistente`) al confirmar. Nunca lo que escribe o dice la persona |
 | Configuración | `wrangler.jsonc` | Ruta `/api/*`, límite de 8 mensajes por minuto por IP y modelo (`MODELO_CHAT`) |
 | Prueba con preguntas reales | `tools/probar-agente.mjs` | 22 casos: precios, servicios, manipulación, fuera de tema, datos sensibles, estilo |
 
@@ -100,8 +101,12 @@ Tarda unos tres minutos y cuesta unos céntimos. Lee lo que marque «REVISAR».
 
 ## Privacidad
 
-- La web no guarda las conversaciones. El Worker solo anota en sus registros
-  cuántos tokens usa cada respuesta, nunca el texto.
+- La web no guarda las conversaciones completas. El Worker solo anota en sus
+  registros cuántos tokens usa cada respuesta, nunca el texto.
+- Memoria: un resumen de 30 palabras como máximo por visitante, 30 días, sin
+  correos ni teléfonos. Está en la privacidad (3.f y 5), en el aviso para
+  Latinoamérica y en la política de cookies (`flora-visitante`). Pendiente de
+  que el abogado confirme si basta el interés legítimo.
 - Anthropic procesa el texto para generar la respuesta. Está en la política de
   privacidad y en el aviso para Latinoamérica (apartados marcados para que los
   revise un abogado).

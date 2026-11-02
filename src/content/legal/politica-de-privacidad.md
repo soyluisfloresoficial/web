@@ -17,11 +17,14 @@
 # confirmación y baja en un clic) y el panel privado como destino de los
 # contactos. VERIFICAR: el panel (Firebase, Google) solo recibe datos cuando
 # se conecta con tools/conectar-panel.mjs; revisar su acuerdo de tratamiento.
+# 02/11/2026: memoria del asistente (resumen de 30 días, apartados 3.f y 5),
+# a pedido del titular. VERIFICAR con un abogado si el interés legítimo basta
+# o conviene pedir consentimiento para guardar el resumen.
 title: "Política de privacidad"
 metaTitle: "Política de privacidad y protección de datos | Luis Flores"
 description: "Cómo trato tus datos personales en soyluisflores.es según el RGPD y la LOPDGDD: responsable, finalidades, base jurídica, conservación y tus derechos."
 ---
-Última actualización: 30 de octubre de 2026
+Última actualización: 2 de noviembre de 2026
 
 Esta política explica cómo se tratan los datos personales que facilitas a través de este sitio web, conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).
 
@@ -55,7 +58,7 @@ Cada tratamiento tiene su propia finalidad, su base jurídica y su plazo. Los pl
 
 **e) Medir las campañas publicitarias.** Solo si aceptas las cookies de marketing. La base jurídica es tu consentimiento (art. 6.1.a del RGPD), que puedes retirar del mismo modo. Los plazos están en la [Política de cookies](/politica-de-cookies).
 
-**f) Responder en el asistente de IA de la web.** Si escribes en el chat, el texto de la conversación se envía a Anthropic, que genera la respuesta con su modelo de IA Claude. Antes del primer mensaje el chat avisa de que hablas con una IA. La web no guarda las conversaciones: solo existen en la pestaña del navegador mientras la tienes abierta. La base jurídica es el interés legítimo en atender a quien pregunta por los servicios (art. 6.1.f del RGPD) y, si la consulta busca contratar, la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Te pedimos que no escribas datos personales ni sensibles en el chat.
+**f) Responder en el asistente de IA de la web.** Si escribes en el chat, el texto de la conversación se envía a Anthropic, que genera la respuesta con su modelo de IA Claude. Antes del primer mensaje el chat avisa de que hablas con una IA. La web no guarda las conversaciones completas: solo existen en la pestaña del navegador mientras la tienes abierta. Para retomar la conversación si vuelves, el asistente guarda durante 30 días un resumen corto de lo que contaste (por ejemplo, a qué se dedica tu negocio, qué te interesa y si agendaste la llamada), sin correos ni teléfonos, asociado a un código al azar que se guarda en tu navegador (`flora-visitante`, ver la [Política de cookies](/politica-de-cookies)). Puedes borrarlo en cualquier momento con «Olvidarme», en el pie del chat. La base jurídica es el interés legítimo en atender a quien pregunta por los servicios (art. 6.1.f del RGPD) y, si la consulta busca contratar, la aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Te pedimos que no escribas datos personales ni sensibles en el chat.
 
 **g) Enviarte la guía gratis y una serie de correos con consejos.** Solo si marcas la casilla del formulario y confirmas tu correo con el enlace que te enviamos (doble confirmación). Recibes la guía y una serie corta de correos durante unas dos semanas, que termina sola. En cada correo puedes darte de baja con un clic. La base jurídica es tu consentimiento (art. 6.1.a del RGPD), que puedes retirar cuando quieras desde el enlace de baja o escribiendo a [hola@soyluisflores.es](mailto:hola@soyluisflores.es).
 
@@ -84,7 +87,7 @@ Algunos de estos proveedores pueden tratar datos fuera del Espacio Económico Eu
 - Lista de la guía gratis: mientras sigas suscrito. Si no confirmas tu correo, los datos se borran solos a los 7 días. Si te das de baja, solo se guardan tu correo y la fecha de la baja, para no volver a escribirte.
 - Clientes: mientras dure la relación y, después, durante los plazos legales de conservación (por ejemplo, obligaciones fiscales y mercantiles).
 - Datos de analítica: según los plazos indicados en la [Política de cookies](/politica-de-cookies).
-- Conversaciones del asistente de IA: la web no las guarda. Anthropic las conserva durante el tiempo limitado que establecen sus condiciones para el servicio de API.
+- Conversaciones del asistente de IA: la web no las guarda completas. El resumen para retomarlas se borra solo a los 30 días desde tu último mensaje, o al momento si pulsas «Olvidarme». Anthropic las conserva durante el tiempo limitado que establecen sus condiciones para el servicio de API.
 
 ## 6. Tus derechos
 

@@ -148,8 +148,10 @@ const sugerencias = [
     </form>
 
     <p class="chat-nota" data-chat-nota>
-      Asistente con IA (Claude, de Anthropic). Tus mensajes se usan solo para
-      responderte y la web no los guarda. <a href="/politica-de-privacidad">Privacidad</a>
+      Asistente con IA (Claude, de Anthropic). Flora recuerda un resumen de lo
+      que hablan durante 30 días, sin tu correo ni tu teléfono.
+      <button type="button" class="chat-olvidar" data-chat-olvidar>Olvidarme</button> ·
+      <a href="/politica-de-privacidad">Privacidad</a>
     </p>
   </section>
 
@@ -397,12 +399,75 @@ const sugerencias = [
     let sinIA = false;
     let esperando = false;
 
+    // Memoria (02/11/2026, ver memoria.ts): un código al azar en el navegador,
+    // sin datos personales, con el que el servidor recuerda un resumen 30
+    // días. «no» = la persona pidió que no la recuerden en este navegador.
+    const LLAVE_VISITANTE = "flora-visitante";
+    const leerVisitante = (): string | null => {
+      try {
+        return localStorage.getItem(LLAVE_VISITANTE);
+      } catch {
+        return null;
+      }
+    };
+    const visitante = (crear: boolean): string | undefined => {
+      const actual = leerVisitante();
+      if (actual === "no") return undefined;
+      if (actual) return actual;
+      if (!crear || !crypto.randomUUID) return undefined;
+      const nuevo = crypto.randomUUID();
+      try {
+        localStorage.setItem(LLAVE_VISITANTE, nuevo);
+        return nuevo;
+      } catch {
+        // Sin almacenamiento (incógnito estricto): Flora no recuerda.
+        return undefined;
+      }
+    };
+    const olvidarBoton = raiz.querySelector<HTMLButtonElement>("[data-chat-olvidar]")!;
+    const pintarOlvidar = () => {
+      olvidarBoton.textContent = leerVisitante() === "no" ? "Volver a recordarme" : "Olvidarme";
+    };
+    pintarOlvidar();
+    olvidarBoton.addEventListener("click", () => {
+      if (leerVisitante() === "no") {
+        try {
+          localStorage.removeItem(LLAVE_VISITANTE);
+        } catch {
+          /* sin almacenamiento */
+        }
+        pintarOlvidar();
+        pintar("bot", ["Listo, desde tu próximo mensaje vuelvo a recordar de qué hablamos durante 30 días."]);
+        return;
+      }
+      const codigo = leerVisitante();
+      if (codigo) {
+        void fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ olvidar: true, visitante: codigo }),
+        }).catch(() => undefined);
+      }
+      try {
+        localStorage.setItem(LLAVE_VISITANTE, "no");
+      } catch {
+        /* sin almacenamiento: no había nada que recordar */
+      }
+      pintarOlvidar();
+      medir("chat_forget");
+      pintar("bot", ["Listo, borré lo que recordaba de ti y no volveré a recordarte en este navegador."]);
+    });
+
     const pasarASinIA = () => {
       sinIA = true;
       // Sin IA detrás, el aviso de IA ya no es verdad.
       raiz.querySelector<HTMLElement>(".chat-aviso-ia")?.remove();
       sub.textContent = "Respuestas de las preguntas frecuentes de la web";
-      nota.textContent = "Ahora respondo con las preguntas frecuentes de la web, sin IA. No se guarda ni se envía lo que escribes.";
+      // El botón de olvidar se queda: borrar la memoria tiene que poder hacerse siempre.
+      nota.replaceChildren(
+        "Ahora respondo con las preguntas frecuentes de la web, sin IA. No se guarda ni se envía lo que escribes. ",
+        olvidarBoton,
+      );
     };
 
     const escribiendo = () => {
@@ -764,6 +829,15 @@ const sugerencias = [
           if (ultimo?.rol === "asistente") {
             ultimo.texto = `${ultimo.texto}\n\n(El visitante confirmó la cita: ${fechaCita(ms, zona)}.)`.slice(-1500);
           }
+          // Y que lo recuerde si vuelve otro día (memoria.ts).
+          const codigo = visitante(false);
+          if (codigo) {
+            void fetch("/api/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ visitante: codigo, agendada: fechaCita(ms, zona) }),
+            }).catch(() => undefined);
+          }
           registro.scrollTop = tarjeta.offsetTop - registro.offsetTop - 12;
           return;
         }
@@ -793,7 +867,7 @@ const sugerencias = [
         const r = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mensajes: historial.slice(-HISTORIAL_ENVIADO), zona }),
+          body: JSON.stringify({ mensajes: historial.slice(-HISTORIAL_ENVIADO), zona, visitante: visitante(true) }),
           // Más margen: si mira horarios o prepara la cita, tarda más.
           signal: AbortSignal.timeout(60_000),
         });
@@ -910,6 +984,23 @@ const sugerencias = [
       }
     };
 
+    // Quien vuelve dentro de los 30 días: otro saludo y, primero, retomar.
+    const saludarDeVuelta = () => {
+      const saludo = registro.querySelector<HTMLElement>(".mensaje-bot");
+      saludo?.replaceChildren(
+        el("p", "", "Hola de nuevo, soy Flora. Recuerdo de qué hablamos la última vez."),
+        el("p", "", "¿Seguimos donde lo dejamos o tienes otra duda?"),
+      );
+      const caja = registro.querySelector<HTMLElement>("[data-chat-sugerencias]");
+      if (caja) {
+        const b = el("button", "sugerencia", "Sigamos donde lo dejamos");
+        b.type = "button";
+        b.addEventListener("click", () => void preguntar(b.textContent ?? "", "sugerencia"));
+        caja.prepend(b);
+      }
+      medir("chat_return");
+    };
+
     // ------------------------------------------------------------ Apertura
     // Botones de fuera que también abren el asistente (el de la barra del
     // celular). Al cerrar, el foco vuelve al botón con el que se abrió.
@@ -950,8 +1041,14 @@ const sugerencias = [
         void fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ calentar: true }),
-        }).catch(() => undefined);
+          body: JSON.stringify({ calentar: true, visitante: visitante(false) }),
+        })
+          .then((r) => r.json())
+          .then((d: { recuerda?: boolean }) => {
+            // Si la recuerda y aún no escribió nada, Flora la saluda de vuelta.
+            if (d.recuerda && !historial.length) saludarDeVuelta();
+          })
+          .catch(() => undefined);
       }
       if (abierto) requestAnimationFrame(() => input.focus());
       else {
@@ -1258,10 +1355,18 @@ const sugerencias = [
     }
   }
 
-  .chat-nota a {
+  .chat-nota a,
+  .chat-olvidar {
     color: var(--color-soft);
     text-decoration: underline;
     text-underline-offset: 2px;
+  }
+  .chat-olvidar {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
   }
 
   /* :global porque las respuestas rápidas se crean desde el script y no

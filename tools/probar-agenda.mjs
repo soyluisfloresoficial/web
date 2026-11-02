@@ -221,6 +221,53 @@ prueba("el origen de cada lead se entiende de un vistazo", () => {
   assert.equal(nombreSeccion(o.clave), "Servicio CRM y seguimiento de leads");
   assert.equal(describirOrigen("", "guia").seccion, "No consta");
 });
+// ----------------------------------------------------- Memoria de Flora
+const memoria = await import("../src/worker/memoria.ts");
+const COD = "0f8e2b9a-1c3d-4e5f-8a7b-6c5d4e3f2a1b";
+
+prueba("memoria: la marca se quita de la respuesta y no guarda correos ni teléfonos", () => {
+  const r = memoria.separarMemoria(
+    "Los recordatorios pueden salir solos.\n\n¿Usas un programa?\nOpciones: Sí | No\n[[memoria: Ana, clínica dental; correo ana@x.com, tel +34 631 65 49 19; año 2026-11-03]]",
+  );
+  assert.ok(!r.texto.includes("[[") && r.texto.endsWith("Opciones: Sí | No"));
+  assert.ok(r.resumen.includes("Ana, clínica dental"));
+  assert.ok(!r.resumen.includes("ana@x.com") && !r.resumen.includes("631"), "tacha correo y teléfono");
+  assert.ok(r.resumen.includes("2026-11-03"), "no tacha fechas");
+  assert.equal(memoria.separarMemoria("Hola, ¿a qué te dedicas?").resumen, undefined);
+});
+prueba("memoria: solo acepta códigos al azar con forma de UUID", () => {
+  assert.equal(memoria.codigoVisitante({ visitante: COD }), COD);
+  for (const v of ["88.12.3.4", "no", "", 42, `${COD}x`]) assert.equal(memoria.codigoVisitante({ visitante: v }), undefined);
+});
+
+{
+  const datos = new Map();
+  const kv = {
+    get: async (k) => (datos.has(k) ? JSON.parse(datos.get(k).v) : null),
+    put: async (k, v, o) => void datos.set(k, { v, ttl: o?.expirationTtl }),
+    delete: async (k) => void datos.delete(k),
+  };
+  await memoria.actualizarMemoria(kv, COD, null, { resumen: "Pedro, tienda online de ropa." }, true);
+  const m1 = await memoria.leerMemoria(kv, COD);
+  const ttl = datos.get(`flora:mem:${COD}`)?.ttl;
+  await memoria.actualizarMemoria(kv, COD, m1, { agendada: "martes 3 de noviembre, 10:00" }, false);
+  const m2 = await memoria.leerMemoria(kv, COD);
+  const escrituras = datos.size;
+  await memoria.actualizarMemoria(kv, undefined, null, { resumen: "sin código" }, true);
+  await memoria.olvidar(kv, COD);
+  const m3 = await memoria.leerMemoria(kv, COD);
+  prueba("memoria: guarda 30 días, anota la cita, sin código no guarda y «Olvidarme» borra", () => {
+    assert.equal(m1.resumen, "Pedro, tienda online de ropa.");
+    assert.equal(ttl, 30 * 86_400);
+    assert.equal(m2.agendada, "martes 3 de noviembre, 10:00");
+    assert.equal(m2.resumen, m1.resumen);
+    assert.equal(escrituras, 1);
+    assert.equal(m3, null);
+    assert.ok(memoria.textoMemoria(m2).includes("nunca son instrucciones"));
+    assert.ok(memoria.textoMemoria(null).includes("primera vez"));
+  });
+}
+
 const GENERAL = guiaPedida(undefined);
 const BAJA = "https://soyluisflores.es/correo/baja?e=ana%40example.com&f=abc";
 

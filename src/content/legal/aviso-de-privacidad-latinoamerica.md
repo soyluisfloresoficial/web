@@ -11,11 +11,13 @@
 # confirmación y baja en un clic) y el panel privado como destino de los
 # contactos. VERIFICAR: el panel (Firebase, Google) solo recibe datos cuando
 # se conecta con tools/conectar-panel.mjs; revisar su acuerdo de tratamiento.
+# 02/11/2026: memoria del asistente (resumen de 30 días, apartados 2 y 6),
+# a pedido del titular.
 title: "Aviso de privacidad para Latinoamérica"
 metaTitle: "Aviso de privacidad para Latinoamérica | Luis Flores"
 description: "Cómo se tratan los datos de quienes contactan desde Latinoamérica: qué datos se piden, para qué, con quién se comparten y cómo ejercer tus derechos."
 ---
-Última actualización: 30 de octubre de 2026
+Última actualización: 2 de noviembre de 2026
 
 Este aviso explica cómo se tratan los datos personales de las personas que visitan soyluisflores.es o contactan desde un país de Latinoamérica. Se redactó teniendo en cuenta los principios comunes de las leyes de protección de datos de la región, como la Ley Federal de Protección de Datos Personales en Posesión de los Particulares en México, la Ley 1581 de 2012 en Colombia, la Ley 25.326 en Argentina, la Ley 29733 en Perú o la Ley 19.628 en Chile.
 
@@ -34,7 +36,7 @@ Los datos identificativos completos están en el [Aviso legal](/aviso-legal).
 - **Datos de contacto** que tú facilitas al escribir por correo o por WhatsApp: nombre, correo electrónico, número de teléfono y el contenido de tus mensajes.
 - **Datos para agendar una llamada** en la agenda de la web: nombre, correo electrónico, zona horaria y, si los escribes, tu negocio y lo que quieres resolver. Si llegaste desde un anuncio, también de qué campaña, a partir de la dirección de la página y sin cookies.
 - **Datos para enviarte la guía gratis**, si la pides: tu nombre (si lo escribes), tu correo, la fecha y el texto de tu consentimiento, y desde qué página la pediste.
-- **Lo que escribas en el asistente de IA** de la web (el chat de la esquina inferior).
+- **Lo que escribas en el asistente de IA** de la web (el chat de la esquina inferior). Para retomar la conversación si vuelves, se guarda durante 30 días un resumen corto de lo que contaste, sin correos ni teléfonos, unido a un código al azar de tu navegador. Puedes borrarlo cuando quieras con «Olvidarme», en el pie del chat.
 - **Datos de navegación**, solo si aceptas las cookies de analítica o de marketing. El detalle está en la [Política de cookies](/politica-de-cookies).
 
 No se piden datos sensibles, como información de salud, origen étnico, creencias u opiniones políticas. Te pedimos que no los incluyas en tus mensajes.
@@ -94,7 +96,7 @@ Si no quedas conforme con la respuesta, puedes acudir a la autoridad de protecci
 - Lista de la guía gratis: mientras sigas suscrito. Sin confirmar tu correo, los datos se borran solos a los 7 días. Si te das de baja, solo se guardan tu correo y la fecha, para no volver a escribirte.
 - Clientes: mientras dure la relación y, después, durante los plazos que exijan las obligaciones legales, fiscales o contables.
 - Datos de navegación: según los plazos de la [Política de cookies](/politica-de-cookies).
-- Conversaciones del asistente de IA: la web no las guarda. Anthropic las conserva durante el tiempo limitado que establecen sus condiciones.
+- Conversaciones del asistente de IA: la web no las guarda completas. El resumen para retomarlas se borra solo a los 30 días desde tu último mensaje, o al momento con «Olvidarme». Anthropic las conserva durante el tiempo limitado que establecen sus condiciones.
 
 ## 7. Seguridad
 

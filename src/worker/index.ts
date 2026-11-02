@@ -16,7 +16,8 @@
  *   las respuestas de las preguntas frecuentes, como antes. Así la web nunca
  *   se queda con un chat roto.
  * - No guarda las conversaciones ni las escribe en los registros: solo anota
- *   los tokens usados, para seguir el costo.
+ *   los tokens usados, para seguir el costo. Desde el 2/11/2026 guarda un
+ *   resumen corto por visitante durante 30 días (memoria.ts).
  * - Solo acepta peticiones desde la propia web, con un límite por IP y
  *   mensajes de tamaño acotado.
  */
@@ -27,6 +28,7 @@ import { HERRAMIENTAS, usarHerramienta, type CitaPropuesta } from "./chat-agenda
 import { contar, resumenSemanal } from "./estadisticas";
 import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
 import { voz, type EnvVoz } from "./voz";
+import { actualizarMemoria, codigoVisitante, leerMemoria, olvidar, separarMemoria, textoMemoria } from "./memoria";
 
 interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -179,7 +181,6 @@ async function calentar(env: Env, url: string): Promise<boolean> {
 async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   if (request.method !== "POST") return json({ error: "metodo" }, 405);
   if (!origenPermitido(request.headers.get("Origin"))) return json({ error: "origen" }, 403);
-  if (!env.ANTHROPIC_API_KEY) return json({ error: "sin-ia" }, 503);
 
   if (env.LIMITE_CHAT) {
     const ip = request.headers.get("CF-Connecting-IP") ?? "sin-ip";
@@ -196,18 +197,37 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
     return json({ error: "invalido" }, 400);
   }
 
+  // Memoria (memoria.ts): «Olvidarme» y la cita agendada desde el chat. Van
+  // antes de mirar la clave de IA: olvidar tiene que funcionar siempre.
+  const kv = env.AGENDA_CONFIG;
+  const visitante = codigoVisitante(datos);
+  const pedido = datos as { olvidar?: unknown; agendada?: unknown; calentar?: unknown };
+  if (pedido?.olvidar === true) {
+    await olvidar(kv, visitante);
+    return json({ ok: true });
+  }
+  if (typeof pedido?.agendada === "string") {
+    await actualizarMemoria(kv, visitante, await leerMemoria(kv, visitante), { agendada: pedido.agendada }, false);
+    return json({ ok: true });
+  }
+
+  if (!env.ANTHROPIC_API_KEY) return json({ error: "sin-ia" }, 503);
+
   // Calentar (2/11/2026): el chat lo pide al abrirse. Una petición de un solo
   // token con las mismas instrucciones, herramientas y conocimiento deja todo
   // en la caché de Claude, así la primera respuesta de verdad sale rápido. Con
   // Haiku cuesta una fracción de céntimo; no cuenta para el tope diario.
-  if ((datos as { calentar?: unknown })?.calentar === true) {
-    if (!(await calentar(env, request.url))) console.error(JSON.stringify({ chat: "calentar-fallo" }));
-    return json({ ok: true });
+  // También dice al chat si recuerda a la persona, para saludarla de vuelta.
+  if (pedido?.calentar === true) {
+    const [listo, memoria] = await Promise.all([calentar(env, request.url), leerMemoria(kv, visitante)]);
+    if (!listo) console.error(JSON.stringify({ chat: "calentar-fallo" }));
+    return json({ ok: true, recuerda: Boolean(memoria) });
   }
 
   const messages = aMensajes(datos);
   if (!messages) return json({ error: "invalido" }, 400);
-  if (!(await dentroDelTopeDiario(env))) {
+  const [dentro, memoria] = await Promise.all([dentroDelTopeDiario(env), leerMemoria(kv, visitante)]);
+  if (!dentro) {
     console.log(JSON.stringify({ chat: "tope-diario" }));
     // «sin-ia»: el chat pasa a responder con las preguntas frecuentes.
     return json({ error: "sin-ia" }, 503);
@@ -257,7 +277,7 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
         // Instrucciones y conocimiento son iguales en todas las peticiones de
         // una misma publicación: van en caché y se cobran a una décima parte.
         // La fecha va detrás, fuera de la caché.
-        system: sistema(base, `Ahora para el visitante es ${hoy} (zona ${zona}).`),
+        system: sistema(base, `Ahora para el visitante es ${hoy} (zona ${zona}).\n\n${textoMemoria(visitante ? memoria : null)}`),
         tools: HERRAMIENTAS,
         messages,
         ...(CON_RESPALDO.has(modelo)
@@ -294,11 +314,14 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
     }
     if (!respuesta) throw new Error("sin-respuesta");
 
-    const texto = respuesta.content
-      .filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("")
-      .trim();
+    const { texto, resumen } = separarMemoria(
+      respuesta.content
+        .filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === "text")
+        .map((b) => b.text)
+        .join(""),
+    );
+    // Después de responder, sin hacer esperar al visitante.
+    ctx.waitUntil(actualizarMemoria(kv, visitante, memoria, { resumen }, primerMensaje));
 
     if (respuesta.stop_reason === "refusal" || !texto) {
       return json({
