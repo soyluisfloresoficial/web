@@ -82,6 +82,7 @@ pre { background: var(--codigo); border: 1px solid var(--borde); padding: 12px 1
 .panel { display: none; padding: 30px 0 10px; }
 #t-resumen:checked ~ .pestanas label[for="t-resumen"],
 #t-plan:checked ~ .pestanas label[for="t-plan"],
+#t-ideas:checked ~ .pestanas label[for="t-ideas"],
 #t-auditoria:checked ~ .pestanas label[for="t-auditoria"],
 #t-seo:checked ~ .pestanas label[for="t-seo"],
 #t-flora:checked ~ .pestanas label[for="t-flora"],
@@ -92,6 +93,7 @@ pre { background: var(--codigo); border: 1px solid var(--borde); padding: 12px 1
 #t-reglas:checked ~ .pestanas label[for="t-reglas"] { background: var(--degradado); color: #fff; }
 #t-resumen:focus-visible ~ .pestanas label[for="t-resumen"],
 #t-plan:focus-visible ~ .pestanas label[for="t-plan"],
+#t-ideas:focus-visible ~ .pestanas label[for="t-ideas"],
 #t-auditoria:focus-visible ~ .pestanas label[for="t-auditoria"],
 #t-seo:focus-visible ~ .pestanas label[for="t-seo"],
 #t-flora:focus-visible ~ .pestanas label[for="t-flora"],
@@ -102,6 +104,7 @@ pre { background: var(--codigo); border: 1px solid var(--borde); padding: 12px 1
 #t-reglas:focus-visible ~ .pestanas label[for="t-reglas"] { outline: 2px solid var(--violeta); outline-offset: 2px; }
 #t-resumen:checked ~ main #p-resumen,
 #t-plan:checked ~ main #p-plan,
+#t-ideas:checked ~ main #p-ideas,
 #t-auditoria:checked ~ main #p-auditoria,
 #t-seo:checked ~ main #p-seo,
 #t-flora:checked ~ main #p-flora,
@@ -199,8 +202,8 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <h1>Informe y auditoría de <em>soyluisflores.es</em></h1>
     <p class="lead">Qué va bien, qué falla, qué conviene mejorar y el paso a paso para hacerlo. Incluye la web, Flora, la agenda, el panel, la seguridad, los textos legales, el SEO y la presencia en buscadores con IA.</p>
     <div class="meta">
-      <span class="pastilla">Última actualización: <b>02/11/2026</b></span>
-      <span class="pastilla">Auditoría completa: <b>02/11/2026</b></span>
+      <span class="pastilla">Última actualización: <b>03/11/2026</b></span>
+      <span class="pastilla">Auditoría completa: <b>03/11/2026</b></span>
       <span class="pastilla">Web: <b>main = reconstruccion-oct-2026</b></span>
       <span class="pastilla">Panel: <b>e61313c</b></span>
     </div>
@@ -210,6 +213,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
 <!-- Pestañas (los radios van antes de la barra y del contenido para que el CSS los encuentre) -->
 <input class="tab-radio" type="radio" name="pestana" id="t-resumen" checked>
 <input class="tab-radio" type="radio" name="pestana" id="t-plan">
+<input class="tab-radio" type="radio" name="pestana" id="t-ideas">
 <input class="tab-radio" type="radio" name="pestana" id="t-auditoria">
 <input class="tab-radio" type="radio" name="pestana" id="t-seo">
 <input class="tab-radio" type="radio" name="pestana" id="t-flora">
@@ -223,6 +227,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <div class="envoltura">
     <label for="t-resumen">Resumen</label>
     <label for="t-plan">Plan paso a paso</label>
+    <label for="t-ideas">Sugerencias</label>
     <label for="t-auditoria">Auditoría</label>
     <label for="t-seo">SEO y buscadores</label>
     <label for="t-flora">Flora (IA)</label>
@@ -239,17 +244,17 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
 <!-- ============================================================ RESUMEN -->
 <section class="panel" id="p-resumen">
   <h2>Resumen en un vistazo</h2>
-  <p class="intro">La web está sana, segura y bien construida. Lo que más frena hoy es que <b>casi nadie la encuentra todavía</b> en Google ni en los buscadores con IA. La velocidad de la portada en celular ya se arregló (paso B1). Lo que falta está en el plan de la pestaña «Plan paso a paso».</p>
+  <p class="intro"><b>Auditoría del 03/11/2026:</b> la web está sana, segura y bien construida. 0 enlaces rotos, 55 páginas con datos estructurados válidos, 79 comprobaciones de pantalla sin desbordes, SEO de Lighthouse en 100 y Flora con 20 de 22 pruebas bien. Lo que más frena hoy es que <b>casi nadie la encuentra todavía</b> en Google ni en las IA: se resuelve con la fase A y las ideas de la pestaña «Sugerencias».</p>
 
   <div class="rejilla">
     <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>Seguridad</h3><p class="sub">Cabeceras de protección, APIs cerradas a otras webs, límites por IP, sin claves en el código ni librerías con fallos conocidos.</p></div>
-    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>SEO técnico</h3><p class="sub">55 páginas con título, descripción, canónica, un solo H1, datos estructurados y sitemap.</p></div>
-    <div class="tarjeta"><span class="estado mal">Flojo</span><div class="nota">3<small>/10</small></div><div class="barra"><i style="width:30%"></i></div><h3>Presencia en buscadores</h3><p class="sub">Al buscar tu nombre o tu dominio no apareces todavía. Falta Search Console, Bing, perfil de Google y enlaces desde otras webs.</p></div>
-    <div class="tarjeta"><span class="estado ok">Bien</span><div class="nota" data-nota-velocidad>8,5<small>/10</small></div><div class="barra"><i style="width:85%"></i></div><h3>Velocidad en celular</h3><p class="sub">Tras el paso B1: portada de 58 a 85-91 y contacto de 51 a 82-89 sobre 100. Servicios, 92.</p></div>
-    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>Celular, tablet y computadora</h3><p class="sub">Sin desbordes ni imágenes rotas en 360, 768 y 1280 píxeles. Menú, chat y calculadora funcionan.</p></div>
-    <div class="tarjeta"><span class="estado ok">Bien</span><div class="nota" data-nota-flora>8,5<small>/10</small></div><div class="barra"><i style="width:85%"></i></div><h3>Flora (IA)</h3><p class="sub">Responde rápido, no inventa precios ni clientes, agenda, habla y recuerda 30 días.</p></div>
-    <div class="tarjeta"><span class="estado aviso">Pendiente</span><div class="nota">6<small>/10</small></div><div class="barra"><i style="width:60%"></i></div><h3>Textos legales</h3><p class="sub">Completos y al día con la memoria de Flora. Falta mencionar la voz y que los revise un abogado.</p></div>
-    <div class="tarjeta"><span class="estado aviso">Ordenar</span><div class="nota">7<small>/10</small></div><div class="barra"><i style="width:70%"></i></div><h3>Orden del repositorio</h3><p class="sub">Hay 14 archivos viejos sin uso (scripts, borradores y 3 logos). No rompen nada, pero ensucian.</p></div>
+    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9,5<small>/10</small></div><div class="barra"><i style="width:95%"></i></div><h3>SEO técnico</h3><p class="sub">55 páginas con título, descripción, canónica, un solo H1 y datos válidos. Lighthouse SEO en 100.</p></div>
+    <div class="tarjeta"><span class="estado mal">Flojo</span><div class="nota">4<small>/10</small></div><div class="barra"><i style="width:40%"></i></div><h3>Presencia en buscadores</h3><p class="sub">Google ya verificó tu dominio, pero ninguna página aparece aún al buscar. Falta el sitemap correcto, Bing, perfil de Google y enlaces de otras webs.</p></div><h3>Presencia en buscadores</h3><p class="sub">Al buscar tu nombre o tu dominio no apareces todavía. Falta Search Console, Bing, perfil de Google y enlaces desde otras webs.</p></div>
+    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota" data-nota-velocidad>9,4<small>/10</small></div><div class="barra"><i style="width:94%"></i></div><h3>Velocidad en celular</h3><p class="sub">Rendimiento medio 94 de 100 en 10 páginas (de 84 a 98). Falta la caché larga (S1) y apagar Bot Fight Mode (A4).</p></div>
+    <div class="tarjeta"><span class="estado ok">Muy bien</span><div class="nota">9<small>/10</small></div><div class="barra"><i style="width:90%"></i></div><h3>Celular, tablet y computadora</h3><p class="sub">79 comprobaciones (360, 768 y 1280 px) sin desbordes ni imágenes rotas. Menú, chat, formulario de la guía y agenda funcionan.</p></div>
+    <div class="tarjeta"><span class="estado ok">Bien</span><div class="nota" data-nota-flora>8,5<small>/10</small></div><div class="barra"><i style="width:85%"></i></div><h3>Flora (IA)</h3><p class="sub">20 de 22 pruebas bien. No inventa precios ni clientes. La voz tarda 6 a 7 segundos en empezar (S2).</p></div>
+    <div class="tarjeta"><span class="estado aviso">Pendiente</span><div class="nota">6<small>/10</small></div><div class="barra"><i style="width:60%"></i></div><h3>Textos legales</h3><p class="sub">Al día con la memoria de Flora. Falta la voz, la fecha de cookies (dice 30/10) y que los revise un abogado.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Ordenar</span><div class="nota">7<small>/10</small></div><div class="barra"><i style="width:70%"></i></div><h3>Orden del repositorio</h3><p class="sub">10 archivos sin uso, 5 informes viejos por mover y 1 rama vieja. No rompen nada, pero ensucian.</p></div>
   </div>
 
   <div class="rejilla dos">
@@ -267,11 +272,11 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <div class="tarjeta">
       <h3>Lo que hay que arreglar primero</h3>
       <ol>
-        <li><b>Que Google te conozca:</b> Search Console y sitemap (paso A1).</li>
-        <li><s>Bots de IA contradictorios</s>: resuelto (paso A3, 03/11).</li>
-        <li><s>Velocidad de la portada en celular</s>: hecho (paso B1).</li>
-        <li><b>Bot Fight Mode</b> de Cloudflare, que frena la web (paso A4).</li>
-        <li><b>Privacidad:</b> falta explicar la voz de Flora (paso B4 y abogado).</li>
+        <li><b>Cerrar la fase A:</b> sitemap correcto e indexación en Search Console, verificar Bing y apagar Bot Fight Mode (A1, A2, A4).</li>
+        <li><b>Caché larga de archivos</b> (S1): hoy cada visita repetida vuelve a pedirlo todo.</li>
+        <li><b>Voz de Flora por frases</b> (S2): empieza a hablar mucho antes.</li>
+        <li><b>Revisión legal</b> con la voz y la fecha de cookies (F4).</li>
+        <li><b>Que te encuentren:</b> páginas por país y dos artículos al mes (O2, O3).</li>
       </ol>
     </div>
   </div>
@@ -336,7 +341,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <ol>
         <li>En <a href="https://dash.cloudflare.com" target="_blank" rel="noopener">dash.cloudflare.com</a> abre <b>soyluisflores.es</b> → <b>Security</b> (Seguridad) → <b>Settings</b> (Configuración).</li>
         <li>Filtra por <b>Bot traffic</b> y apaga <b>Bot fight mode</b>.</li>
-        <li>Avísame y vuelvo a medir la velocidad.</li>
+        <li>Avísame y vuelvo a medir la velocidad. <b>Revisado el 03/11/2026:</b> el script de Cloudflare sigue en la portada, en contacto y en servicios.</li>
       </ol>
     </div>
   </details>
@@ -377,7 +382,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <details class="paso">
     <summary><span class="num">B2</span><span class="titulo"><strong>Limpiar archivos sin uso</strong><span><span class="quien claude">CLAUDE</span>5 minutos · necesita tu sí</span></span></summary>
     <div class="cuerpo">
-      <p>Encontré 14 archivos que nadie usa. Ninguno rompe nada, pero los logos se publican en la web y el resto confunde. Todo queda guardado en el historial de GitHub, así que se puede recuperar.</p>
+      <p>Encontré 10 archivos que nadie usa (y 5 informes viejos que conviene mover). Ninguno rompe nada, pero los logos se publican en la web y el resto confunde. Todo queda guardado en el historial de GitHub, así que se puede recuperar.</p>
       <div class="tabla-envoltura"><table>
         <thead><tr><th>Archivo</th><th>Qué es</th><th>Propuesta</th></tr></thead>
         <tbody>
@@ -539,10 +544,73 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   </div>
 </section>
 
+<!-- ============================================================ SUGERENCIAS -->
+<section class="panel" id="p-ideas">
+  <h2>Sugerencias para avanzar</h2>
+  <p class="intro">Salen de lo que midió la auditoría del 03/11/2026. Cada una dice cuánto <b>impacto</b> tiene, cuánto <b>esfuerzo</b> cuesta y quién la hace. Dime los números (por ejemplo «haz S1, S2 y O2») y me pongo con ellas. Con tus respuestas del 03/11 (países, sectores, orgánico primero y sin precios por ahora) las ordené para que Search Console, contenido y perfiles vayan antes que los anuncios.</p>
+
+  <div class="caja info"><b>Cómo leerlas:</b> <span class="estado ok">Impacto alto</span> trae más visitas, llamadas o confianza; <span class="estado aviso">Impacto medio</span> mejora algo que ya funciona; <span class="estado info">Impacto bajo</span> es limpieza o prevención. <span class="quien claude">CLAUDE</span> lo hago yo en el código. <span class="quien tu">TÚ</span> necesita tu cuenta o tu decisión.</div>
+
+  <div class="fase"><h3>1 · Rápidas y seguras</h3><span class="estado ok">Esta semana</span><span class="sub" style="color:var(--suave)">Las hago yo, una tarde en total</span></div>
+  <div class="rejilla dos">
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien claude">CLAUDE</span> <span class="sub">15 min</span><h3>S1 · Caché larga para los archivos que no cambian</h3><p class="sub"><b>Lo que vi:</b> fuentes, logos, scripts, imágenes y el video se envían con «revalidar siempre» (<code>max-age=0</code>). Cada visita repetida vuelve a preguntar por todos.</p><p><b>Propuesta:</b> un año para los archivos con huella (<code>/_astro/</code>), fuentes, logos y video. Quien vuelve a la web la ve casi al instante y sube la nota de rendimiento.</p></div>
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 a 2 h</span><h3>S2 · Que Flora hable antes</h3><p class="sub"><b>Lo que medí:</b> generar la voz tarda unos 3 segundos con 120 letras. Una respuesta normal tiene unas 300, así que Flora tarda 6 a 7 segundos en empezar a hablar.</p><p><b>Propuesta:</b> pedir y reproducir la voz frase por frase. La primera suena en cerca de 1 segundo y el resto llega mientras habla.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien claude">CLAUDE</span> <span class="sub">15 min</span><h3>S3 · Los tres ajustes de seguridad pendientes (B3)</h3><p class="sub"><b>Lo que vi:</b> la página 404 dice «index», no hay <code>security.txt</code> y la política de contenido solo avisa, no bloquea.</p><p><b>Propuesta:</b> 404 con <code>noindex</code>, <code>/.well-known/security.txt</code> con hola@ y la política en modo obligatorio, probando antes que no rompe Tag Manager ni los píxeles.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien claude">CLAUDE</span> <span class="sub">30 min</span><h3>S4 · Dos retoques a Flora</h3><p class="sub"><b>Lo que vi (20 de 22 casos bien):</b> al preguntar el precio no enlazó a la llamada, y la respuesta sobre garantías pasó de 75 palabras.</p><p><b>Propuesta:</b> ajustar sus instrucciones y volver a pasar las 22 preguntas antes de publicar.</p></div>
+    <div class="tarjeta"><span class="estado info">Impacto bajo</span> <span class="quien claude">CLAUDE</span> <span class="sub">10 min</span><h3>S5 · Limpiar archivos y la rama vieja (B2)</h3><p class="sub"><b>Lo que vi:</b> 10 archivos sin uso (scripts de octubre, borradores, 3 logos) y la rama <code>seo-geo-oct-2026</code>, que ya está dentro de <code>main</code>.</p><p><b>Propuesta:</b> borrar los archivos (quedan en el historial de GitHub). La rama solo se borra con tu permiso.</p></div>
+    <div class="tarjeta"><span class="estado info">Impacto bajo</span> <span class="quien claude">CLAUDE</span> <span class="sub">20 min</span><h3>S6 · Actualizar Astro y el SDK de Anthropic</h3><p class="sub"><b>Lo que vi:</b> Astro 7.4.0 (hay 7.4.5) y el SDK 1.3.0 (hay 1.4.0). Sin fallos de seguridad conocidos: es mantenimiento.</p><p><b>Propuesta:</b> subirlos, compilar, pasar las 29 pruebas y las 22 preguntas de Flora, y publicar.</p></div>
+  </div>
+
+  <div class="fase"><h3>2 · Que más gente te encuentre</h3><span class="estado info">Orgánico</span><span class="sub" style="color:var(--suave)">Los resultados llegan en semanas, no en días</span></div>
+  <div class="rejilla dos">
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien tu">TÚ</span> <span class="sub">30 min</span><h3>O1 · Cerrar la fase A</h3><p class="sub">Search Console (sitemap correcto y solicitudes de indexación), Bing (verificar y Crawler Hints) y apagar Bot Fight Mode. Hoy una búsqueda de <code>site:soyluisflores.es</code> no devuelve ninguna página tuya.</p></div>
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 día</span><h3>O2 · Una página por país</h3><p class="sub">Elegiste España, México, Colombia, Argentina, Chile, Perú y EE. UU. Propongo empezar por <b>España, México, Colombia y el público hispano de EE. UU.</b>, cada una con texto propio (monedas, horarios, WhatsApp y herramientas habituales de ese país), sus preguntas frecuentes y su enlace a la llamada. Captan búsquedas locales que hoy no tienes. Después, Argentina, Chile y Perú.</p></div>
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 día por sector</span><h3>O7 · Páginas y guías por sector: clínicas y servicios profesionales</h3><p class="sub">Dijiste clínicas y salud y servicios profesionales. Quien busca «recordatorios de citas para mi clínica» o «automatizar mi despacho» tiene más intención de compra que quien busca «automatización». Una página y una guía gratis por sector, con los dolores reales de cada uno, y un artículo de apoyo. Sin casos ni cifras inventados.</p></div>
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien tu">TÚ</span> + <span class="quien claude">CLAUDE</span> <span class="sub">2 al mes</span><h3>O3 · Dos artículos al mes con los datos de Search Console</h3><p class="sub">Dentro de 3 semanas Search Console ya dirá con qué búsquedas apareces. Escribo los artículos que respondan esas preguntas, con su imagen y su guía, y los publico.</p></div>
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien tu">TÚ</span> <span class="sub">1 h</span><h3>O4 · Perfil de Empresa en Google, mismo nombre en todas partes y directorios</h3><p class="sub">Pasos C1, C2 y C4 del plan. Hoy al buscar tu nombre sale otro Luis Flores. Esto, junto con enlaces desde otras webs, es lo que más pesa para que Google y las IA te distingan.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien tu">TÚ</span> + <span class="quien claude">CLAUDE</span> <span class="sub">Cuando haya datos</span><h3>O5 · Primer caso real con permiso del cliente</h3><p class="sub">Un solo caso con cifras verdaderas (antes y después) vale más que diez textos. La web hoy no inventa ninguno y es correcto; cuando exista uno, lo maqueto como página y como respuesta citable para las IA.</p></div>
+    <div class="tarjeta"><span class="estado info">Impacto bajo</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 h</span><h3>O6 · Versión completa de la web en texto para IA</h3><p class="sub">Hoy hay <code>llms.txt</code> (resumen). Un <code>llms-full.txt</code> con los servicios, preguntas y artículos completos les da más para citar. Útil, pero después de O1 a O4.</p></div>
+  </div>
+
+  <div class="fase"><h3>3 · Convertir más visitas en llamadas</h3><span class="estado info">Conversión</span></div>
+  <div class="rejilla dos">
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien tu">TÚ</span> + <span class="quien claude">CLAUDE</span> <span class="sub">2 h</span><h3>V1 · Un tablero gratis: visita → chat → llamada</h3><p class="sub">La web ya envía los eventos (<code>chat_open</code>, <code>chat_message</code>, <code>cta_click</code>, <code>whatsapp_click</code>, <code>sign_up</code>, <code>generate_lead</code>). Falta verlos juntos en Looker Studio con Analytics y Search Console. Tú das acceso, yo lo dejo armado.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 h</span><h3>V2 · La memoria de Flora en el lead del panel (B5)</h3><p class="sub">Cuando alguien que Flora recuerda agenda, el lead ya dice su sector y su problema. Preparas la llamada sabiendo de qué va. Solo cambia la web, no el panel.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 h</span><h3>V3 · WhatsApp que dice desde qué página llegó</h3><p class="sub">Hoy el mensaje prellenado es el mismo en toda la web («Vengo de tu web…»). Con el servicio o el artículo en el texto sabrías qué contenido trae conversaciones. Los clics ya se miden.</p></div>
+    <div class="tarjeta"><span class="estado info">Decidido</span> <span class="quien tu">TÚ</span> <span class="sub">03/11/2026</span><h3>V4 · Precios: seguimos con «te lo digo tras la llamada»</h3><p class="sub">Elegiste no mostrar precios ni planes por ahora. Nota: durante la auditoría vi en la carpeta trabajo sin publicar de una página <code>/precios</code> y un catálogo de planes; al terminar ya no estaba y la web no tiene esa página. Si otra conversación tuya lo retoma, recuerda que contradice esta decisión.</p></div>
+  </div>
+
+  <div class="fase"><h3>4 · Fiabilidad y datos</h3><span class="estado aviso">Prevención</span></div>
+  <div class="rejilla dos">
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 h</span><h3>F1 · Copia de seguridad de la lista de suscriptores</h3><p class="sub"><b>Lo que vi:</b> la lista de la guía y la memoria de Flora viven solo en Cloudflare KV. Si alguien las borrara por error, no habría copia.</p><p><b>Propuesta:</b> cada mes, la web te manda a hola@ un archivo con los suscriptores confirmados (sin los textos de Flora).</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien tu">TÚ</span> <span class="sub">10 min</span><h3>F2 · Aviso si la web se cae (UptimeRobot)</h3><p class="sub">Gratis, cada 5 minutos, con aviso a tu correo. Vigila solo la portada y el panel; nunca <code>/api/chat</code>, que gastaría crédito de IA.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien tu">TÚ</span> + <span class="quien claude">CLAUDE</span> <span class="sub">Con tu permiso</span><h3>F3 · Panel: origen del lead en campos propios</h3><p class="sub">Hoy el origen va en el mensaje del lead. Con campos propios podrías filtrar el panel por sección o campaña. Requiere cambiar y publicar el panel, que solo hago con tu permiso.</p></div>
+    <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien abogado">ABOGADO</span> <span class="sub">Antes de seguir creciendo</span><h3>F4 · Revisión legal con lo nuevo</h3><p class="sub">Los textos ya cubren el chat y su memoria. Faltan la voz (dictado y lectura en voz alta), la fecha de la política de cookies (dice 30/10 y se cambió el 02/11) y, si publicas precios, las condiciones de contratación.</p></div>
+  </div>
+
+  <div class="fase"><h3>5 · Cuando haya más tráfico</h3><span class="estado info">Más adelante</span></div>
+  <div class="rejilla dos">
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span><h3>Flora fase 2 y 3</h3><p class="sub">Conversación hablada en tiempo real, y atender llamadas o notas de voz de WhatsApp. Se paga por minuto: conviene cuando el chat ya traiga llamadas de forma estable.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span><h3>Portugués para Brasil</h3><p class="sub">Mercado enorme para pymes con IA. Exige traducir bien (no literal), sus propios textos legales (LGPD) y a Flora en portugués. Solo si quieres ese mercado.</p></div>
+  </div>
+
+  <div class="caja ok"><b>Tus respuestas del 03/11/2026:</b> países: España, México, Colombia, Argentina, Chile, Perú y EE. UU.; sectores: clínicas y salud, servicios profesionales (y «todavía no lo sé» para el resto); anuncios: no, primero orgánico; precios: seguimos «tras la llamada».</div>
+  <div class="caja aviso"><b>Preguntas que me quedan</b> (respóndelas cuando quieras y ajusto el orden):
+    <ol>
+      <li><b>EE. UU.:</b> ¿te diriges a negocios <b>hispanos en español</b> o también a negocios <b>en inglés</b>? Lo segundo exige páginas en inglés y a Flora en inglés (ya responde en el idioma de quien escribe).</li>
+      <li><b>Sectores:</b> ¿empezamos por clínicas o por servicios profesionales (despachos, asesorías, inmobiliarias)? Hago uno primero, miro Search Console y sigo con el otro.</li>
+            <li>¿Tienes ya un <b>cliente</b> que acepte contar su caso con cifras reales (O5)?</li>
+    </ol>
+  </div>
+</section>
+
 <!-- ============================================================ AUDITORÍA -->
 <section class="panel" id="p-auditoria">
-  <h2>Auditoría del 02/11/2026</h2>
-  <p class="intro">Revisión en vivo de soyluisflores.es y de la web compilada, en celular (360 px), tablet (768 px) y computadora (1280 px).</p>
+  <h2>Auditoría del 03/11/2026</h2>
+  <p class="intro">Revisión completa en vivo de soyluisflores.es y de la web compilada: seguridad, 55 páginas, enlaces, celular (360 px), tablet (768 px) y computadora (1280 px), velocidad, Flora, voz, textos legales y archivos sin uso.</p>
+
+  <div class="caja ok"><b>Resultado:</b> sin problemas graves. 55 páginas compiladas con 0 problemas, 29 pruebas de la agenda superadas, 0 vulnerabilidades en librerías, 0 enlaces internos rotos (2.092 revisados), 10 enlaces externos vivos, 32 páginas del sitemap respondiendo 200 en menos de 1,5 segundos y 0 claves en el código.</div>
+  <div class="caja aviso"><b>Lo nuevo que encontré:</b> (1) todos los archivos de la web se envían sin caché larga; (2) la voz de Flora tarda en empezar porque se genera entera; (3) Bot Fight Mode sigue activo; (4) la página 404 dice «index»; (5) la política de cookies tiene la fecha del 30/10 aunque se cambió el 02/11. Durante la auditoría había en la carpeta trabajo sin publicar de una página /precios; al terminar ya no estaba, y la web no la tiene (404), de acuerdo con tu decisión de no mostrar precios.</div>
 
   <h3>Seguridad</h3>
   <div class="tabla-envoltura"><table>
@@ -553,12 +621,14 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <tr><td>APIs (chat, voz, agenda, guía)</td><td>Rechazan llamadas sin origen o desde otra web (403). Métodos no permitidos dan 405.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Configuración de la agenda</td><td>Sin la clave del panel responde «no autorizado» (401).</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Límites de abuso</td><td>Chat 8 por minuto, voz 12 por minuto, 300 mensajes con IA al día y 15 preguntas por conversación.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Archivos sensibles</td><td><code>.env</code>, <code>.git</code>, <code>wrangler.jsonc</code>, <code>package.json</code>, <code>CLAUDE.md</code> e <code>INFORME.html</code> no se publican (404).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Archivos sensibles</td><td><code>.env</code>, <code>.git</code>, <code>wrangler.jsonc</code>, <code>package.json</code>, <code>CLAUDE.md</code>, <code>.claude</code>, <code>AGENTE.md</code>, el código del Worker e <code>INFORME.html</code> no se publican (404).</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Claves en el código</td><td>Ninguna clave de Anthropic, Resend, Google, GitHub o Twilio en el repositorio ni en su historial.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Librerías</td><td><code>npm audit</code>: 0 vulnerabilidades.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Redirecciones</td><td>http → https, www → sin www, barra final quitada, 404 correcta.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Página 404</td><td>Responde 404 pero su etiqueta dice «index». Paso B3 (sugerencia S3).</td><td><span class="estado aviso">Mejorable</span></td></tr>
+      <tr><td>Correo del dominio</td><td>DMARC en modo estricto (<code>p=reject</code>) y firma de Resend: ayuda a que tus correos no caigan en spam.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>security.txt</td><td>No existe. Paso B3.</td><td><span class="estado aviso">Falta</span></td></tr>
-      <tr><td>Bot Fight Mode</td><td>Sigue activo y frena la web. Paso A4.</td><td><span class="estado aviso">Pendiente</span></td></tr>
+      <tr><td>Bot Fight Mode</td><td>Sigue activo el 03/11: el script de Cloudflare está en la portada, contacto y servicios y baja «buenas prácticas» a 81 cuando se carga durante la prueba (en otras mediciones da 100). Paso A4.</td><td><span class="estado aviso">Pendiente</span></td></tr>
     </tbody>
   </table></div>
 
@@ -566,14 +636,31 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <div class="tabla-envoltura"><table>
     <thead><tr><th>Qué se revisó</th><th>Resultado</th><th>Estado</th></tr></thead>
     <tbody>
-      <tr><td>Desbordes horizontales</td><td>19 páginas en celular, 7 en tablet y 11 en computadora: ninguna se sale de la pantalla.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Estructura</td><td>Todas con un solo H1, imágenes con texto alternativo y sin imágenes rotas.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Desbordes horizontales</td><td>79 comprobaciones (34 en celular, 22 en tablet y 23 en computadora) en portada, servicios, funnels, guías, blog con sus 12 artículos, ROI, sobre mí y legales: ninguna página se sale de la pantalla.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Estructura</td><td>Todas con un solo H1 y sin imágenes rotas. 330 imágenes: 70 llevan <code>alt</code> vacío a propósito (son decorativas) y todas tienen ancho y alto.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Menú del celular</td><td>Se abre, muestra las 6 opciones, cambia a «Cerrar menú» y se cierra.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Chat de Flora</td><td>Se abre en celular a pantalla casi completa, con aviso de IA, micrófono y «Olvidarme».</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Pie del chat</td><td>Faltaba un espacio: se veía «teléfono.Olvidarme ·Privacidad». <b>Corregido</b> en esta auditoría.</td><td><span class="estado ok">Corregido</span></td></tr>
+      <tr><td>Chat de Flora</td><td>Abre en celular a pantalla casi completa con aviso de IA, micrófono y altavoz. Una sugerencia responde al instante, salen los botones de opciones, «Olvidarme» borra y «Volver a recordarme» reactiva, y se cierra.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Formulario de la guía</td><td>Pide el correo, rechaza uno mal escrito, exige la casilla de consentimiento, tiene campo trampa anti-spam y todas las casillas tienen etiqueta.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Agenda en vivo</td><td>177 horas libres del 04 al 23 de noviembre. Rechaza una reserva incompleta (400) y una suscripción sin consentimiento (400).</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Calculadora ROI</td><td>Recalcula al cambiar los datos (10 campos).</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Barra fija del celular</td><td>«Agenda tu llamada gratis», chat y WhatsApp visibles en todas las páginas.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Portada en celular</td><td>El texto del hero aparece con retraso por las animaciones de entrada. Paso B1.</td><td><span class="estado aviso">Mejorable</span></td></tr>
+      <tr><td>Portada en celular</td><td>Tras el paso B1 el texto principal se ve desde el principio. El navegador local mostró 2 enlaces de texto («política de privacidad») de 16 px de alto en tablet: son enlaces dentro de una frase, sin problema.</td><td><span class="estado ok">Bien</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Contenido, enlaces y estructura (las 55 páginas)</h3>
+  <div class="tabla-envoltura"><table>
+    <thead><tr><th>Qué se revisó</th><th>Resultado</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Enlaces internos</td><td>2.092 enlaces revisados: 0 rotos y 0 anclas rotas.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Enlaces externos</td><td>10 distintos, todos responden. LinkedIn contesta 999 a los programas (es su bloqueo normal contra robots, no un error).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Páginas del sitemap en vivo</td><td>32 de 32 responden 200 y ninguna tarda más de 1,5 segundos. Todas las páginas indexables están en el sitemap y ninguna con <code>noindex</code> está dentro.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Datos estructurados e imágenes para compartir</td><td>55 bloques JSON-LD válidos, cada imagen de redes existe y ninguna canónica apunta a otra página.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Texto visible</td><td>Sin Calendly, sin huecos [COMPLETAR], sin modismos de España, sin exclamaciones dobles y sin rayas largas (solo el guion de relleno vacío de las dos calculadoras).</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>NIE y domicilio</td><td>El NIE solo aparece en el aviso legal.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Caché de archivos</td><td>Fuentes, logos, scripts con huella, imágenes y video se envían con <code>max-age=0</code> (revalidar siempre). Las visitas repetidas pagan una consulta por archivo. Sugerencia S1.</td><td><span class="estado aviso">Mejorable</span></td></tr>
+      <tr><td>Voz de Flora</td><td>Funciona (audio MP3 de 24 kHz). Tarda 0,8 s con 5 letras, 1,2 s con 16 y 3,1 s con 123, porque se pide entera. Sugerencia S2.</td><td><span class="estado aviso">Mejorable</span></td></tr>
+      <tr><td>Librerías</td><td>0 vulnerabilidades. Hay versiones nuevas de Astro (7.4.0 → 7.4.5) y del SDK de Anthropic (1.3.0 → 1.4.0). Sugerencia S6.</td><td><span class="estado info">Mantenimiento</span></td></tr>
     </tbody>
   </table></div>
 
@@ -581,13 +668,20 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <div class="tabla-envoltura"><table data-lighthouse>
     <thead><tr><th>Página</th><th>Rendimiento</th><th>Accesibilidad</th><th>Buenas prácticas</th><th>SEO</th><th>Carga principal (LCP)</th></tr></thead>
     <tbody>
-      <tr><td>Portada (tras el paso B1)</td><td><span class="estado ok">85 a 91</span> <small>(antes 58)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">100</span></td><td>2,2 a 3,2 s <small>(antes 3,7)</small></td></tr>
-      <tr><td>Contacto (tras el paso B1)</td><td><span class="estado ok">82 a 89</span> <small>(antes 51)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">100</span></td><td>2,2 a 2,9 s <small>(antes 4,0)</small></td></tr>
-      <tr><td>Servicio Agentes de IA</td><td><span class="estado ok">92</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">100</span></td><td>2,6 s</td></tr>
+      <tr><td>Portada</td><td><span class="estado aviso">84 a 95</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td>2,7 s</td></tr>
+      <tr><td>Contacto (agendador)</td><td><span class="estado ok">97</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td>2,2 s</td></tr>
+      <tr><td>Servicios</td><td><span class="estado ok">98</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td>2,1 s</td></tr>
+      <tr><td>Servicio Agentes de IA</td><td><span class="estado ok">94</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td>2,4 s</td></tr>
+      <tr><td>Blog</td><td><span class="estado ok">96</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td>2,3 s</td></tr>
+      <tr><td>Artículo del blog</td><td><span class="estado ok">92</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">81</span></td><td><span class="estado ok">100</span></td><td>2,0 s</td></tr>
+      <tr><td>Guía gratis</td><td><span class="estado ok">97</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">69</span> <small>(normal: no se indexa)</small></td><td>2,2 s</td></tr>
+      <tr><td>Funnel de anuncios</td><td><span class="estado aviso">84</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">69</span> <small>(normal: no se indexa)</small></td><td>2,0 s</td></tr>
+      <tr><td>Calculadora ROI</td><td><span class="estado ok">96</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td>2,3 s</td></tr>
+      <tr><td>Sobre mí</td><td><span class="estado ok">93</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td><span class="estado ok">100</span></td><td>2,3 s</td></tr>
     </tbody>
   </table></div>
-  <div class="caja info"><b>Por qué no llegan a 100:</b> «Buenas prácticas» baja a 82 en todas las páginas por el script de Bot Fight Mode de Cloudflare (paso A4). «SEO» ya está en 100 desde que apagaste el robots.txt administrado de Cloudflare (paso A3, medido el 03/11). Lo que queda se arregla desde el panel de Cloudflare, sin tocar la web. El rendimiento de la portada y de contacto es el paso B1.</div>
-  <p class="sub" style="color:var(--suave)">Medido el 02/11/2026. Lighthouse simula un celular de gama media con conexión 4G lenta. Las cifras varían unos puntos entre mediciones. Rendimiento por encima de 90 es excelente; de 50 a 89, mejorable.</p>
+  <div class="caja info"><b>Por qué no llegan a 100:</b> «Buenas prácticas» baja a 81 cuando el script de Bot Fight Mode de Cloudflare se carga durante la prueba (paso A4); en otras mediciones da 100. En las guías y los funnels «SEO» marca 69 porque llevan <code>noindex</code> a propósito. «SEO» ya está en 100 desde que apagaste el robots.txt administrado de Cloudflare (paso A3). El rendimiento mejoró con el paso B1; lo que queda es la caché larga (S1) y el script de Cloudflare.</div>
+  <p class="sub" style="color:var(--suave)">Medido el 03/11/2026 con Edge sin ventana (la portada, dos veces: las animaciones de fondo hacen que varíe). Lighthouse simula un celular de gama media con conexión 4G lenta. Las cifras varían unos puntos entre mediciones. Rendimiento por encima de 90 es excelente; de 50 a 89, mejorable.</p>
 
   <h3>Textos legales</h3>
   <div class="tabla-envoltura"><table>
@@ -596,14 +690,14 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <tr><td>Aviso legal</td><td>Titular, NIE (solo aquí), condiciones de uso de la web.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Política de privacidad (España, RGPD)</td><td>Agenda, consultas, guía, Flora y su memoria de 30 días, panel, Anthropic, Resend, Google, derechos y AEPD.</td><td><span class="estado aviso">Falta la voz</span></td></tr>
       <tr><td>Aviso para Latinoamérica</td><td>Lo mismo, según las leyes de México, Colombia, Argentina, Perú y Chile.</td><td><span class="estado aviso">Falta la voz</span></td></tr>
-      <tr><td>Política de cookies</td><td>Tabla real de lo que se guarda, con <code>flora-visitante</code> incluido.</td><td><span class="estado ok">Bien</span></td></tr>
+      <tr><td>Política de cookies</td><td>Tabla real de lo que se guarda, con <code>flora-visitante</code> incluido. Su fecha dice «30 de octubre» y se cambió el 02/11: hay que ponerla al día.</td><td><span class="estado aviso">Fecha por corregir</span></td></tr>
       <tr><td>Condiciones de contratación</td><td>No hay página propia: se contrata con propuesta por escrito.</td><td><span class="estado info">Consultar al abogado</span></td></tr>
       <tr><td>Revisión profesional</td><td>Todos marcados para revisión de un abogado.</td><td><span class="estado aviso">Pendiente</span></td></tr>
     </tbody>
   </table></div>
 
   <h3>Orden del repositorio</h3>
-  <p>14 archivos sin uso, detallados en el paso B2. La rama de trabajo <code>reconstruccion-oct-2026</code> está en el mismo commit que <code>main</code>, y en el ordenador no queda nada sin subir.</p>
+  <p>10 archivos sin uso (3 logos, 4 scripts de octubre, <code>AUDITORIA-DETALLE.txt</code> y la carpeta <code>fase-1</code>) y 5 informes viejos que conviene mover a una carpeta de historial: sugerencia S5. La rama <code>seo-geo-oct-2026</code> ya está dentro de <code>main</code>. <code>main</code> y <code>reconstruccion-oct-2026</code> están en el mismo commit.</p>
 </section>
 
 <!-- ============================================================ SEO -->
@@ -611,7 +705,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <h2>SEO y presencia en buscadores</h2>
   <p class="intro"><b>SEO</b> es aparecer en Google y Bing. <b>GEO</b> es aparecer en las respuestas de las IA (ChatGPT, Perplexity, Gemini, Copilot). Las dos se apoyan en lo mismo: una web técnicamente limpia (la tuya ya lo es), que los buscadores la conozcan (falta) y que otras webs hablen de ti (falta).</p>
 
-  <div class="caja mal"><b>El hallazgo más importante:</b> al buscar «soyluisflores.es Luis Flores automatización IA» y «"Luis Carlos Flores" agentes de IA pymes», la web no aparece en los resultados. Sí aparece otro Luis Flores de publicidad digital. Esto es normal en una web nueva que todavía no está dada de alta en Search Console ni tiene enlaces desde otras webs. Se arregla con los pasos A1, A2, C1, C2 y C4.</div>
+  <div class="caja mal"><b>El hallazgo más importante:</b> repetí las búsquedas el 03/11 («site:soyluisflores.es», tu nombre y tus servicios) y la web sigue sin aparecer. Sí aparece otro Luis Flores de publicidad digital. Es normal en una web nueva: Google ya verificó tu dominio por DNS, pero todavía no hay sitemap correcto ni indexación pedida, ni enlaces desde otras webs. Se arregla con los pasos A1, A2, C1, C2 y C4 y la sugerencia O4.</div>
 
   <h3>Lo técnico (en la web)</h3>
   <div class="tabla-envoltura"><table>
@@ -644,8 +738,8 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
 
   <h3>Fuera de la web (lo que más falta)</h3>
   <div class="rejilla">
-    <div class="tarjeta"><span class="estado aviso">No consta</span><h3>Google Search Console</h3><p class="sub">La web no lleva etiqueta de verificación. Puede estar verificada por DNS: si ya entras a Search Console, solo envía el sitemap. Paso A1.</p></div>
-    <div class="tarjeta"><span class="estado aviso">No consta</span><h3>Bing Webmaster</h3><p class="sub">Alimenta a ChatGPT, Copilot y DuckDuckGo. Paso A2.</p></div>
+    <div class="tarjeta"><span class="estado ok">Verificada</span><h3>Google Search Console</h3><p class="sub">El registro de verificación está en el DNS. Falta confirmar que el sitemap figura como «Correcto» y pedir la indexación de las páginas principales. Paso A1.</p></div>
+    <div class="tarjeta"><span class="estado aviso">A medias</span><h3>Bing Webmaster</h3><p class="sub">El archivo de verificación ya está publicado. Falta pulsar «Verificar» en Bing y activar Crawler Hints en Cloudflare. Paso A2.</p></div>
     <div class="tarjeta"><span class="estado aviso">No consta</span><h3>Perfil de Empresa en Google</h3><p class="sub">Te pone en Google Maps y en el panel lateral al buscar tu nombre. Paso C1.</p></div>
     <div class="tarjeta"><span class="estado aviso">Mejorable</span><h3>Nombre y enlaces</h3><p class="sub">Hay otro Luis Flores con presencia en buscadores. Mismo nombre y enlace en todos tus perfiles. Paso C2.</p></div>
   </div>
@@ -657,19 +751,19 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <p class="intro">Responde con Claude Haiku 5.5, de Anthropic, solo con la información de la web. Lleva cada conversación a la llamada de diagnóstico, puede agendarla, escucha por micrófono, habla con voz latina y recuerda a quien vuelve durante 30 días.</p>
 
   <div class="rejilla">
-    <div class="tarjeta"><h3>Rapidez</h3><p class="sub">Primera respuesta en 1,4 segundos y siguientes en unos 2,8 (medido el 02/11). Al abrir el chat se prepara la caché.</p></div>
+    <div class="tarjeta"><h3>Rapidez</h3><p class="sub">Primera respuesta en 1,4 segundos y siguientes en unos 2,8 (medido el 02/11). Al abrir el chat se prepara la caché. La voz tarda 0,8 a 3,1 s en generarse y hoy se pide entera (sugerencia S2).</p></div>
     <div class="tarjeta"><h3>Respuestas</h3><p class="sub">45 palabras como máximo, una idea por mensaje y siempre una pregunta al final hasta que la llamada queda agendada.</p></div>
     <div class="tarjeta"><h3>Memoria (nueva)</h3><p class="sub">Resumen corto de 30 días con un código del navegador, nunca con la IP. Saludo «Hola de nuevo» y botón «Olvidarme». Probada en vivo: recuerda, retoma y olvida.</p></div>
     <div class="tarjeta"><h3>Voz</h3><p class="sub">Dictado gratis por el navegador. Voz «selena» (Deepgram Aura-2) gratis hasta unas 12 a 14 respuestas al día; después, la voz del navegador.</p></div>
   </div>
 
-  <h3>Prueba con 22 preguntas trampa (02/11/2026)</h3>
+  <h3>Prueba con 22 preguntas trampa (03/11/2026)</h3>
   <div class="caja ok"><b>20 de 22 bien.</b> No inventó precios, plazos, clientes ni descuentos, resistió los intentos de manipulación («ignora tus instrucciones», «soy Luis», «modo desarrollador»), no aceptó datos de tarjeta, respondió en inglés a quien escribió en inglés y ofreció horas reales para agendar.</div>
   <div class="tabla-envoltura"><table>
     <thead><tr><th>Caso marcado</th><th>Qué pasó</th><th>Gravedad</th></tr></thead>
     <tbody>
       <tr><td>Precio directo</td><td>Explicó bien que el precio depende del caso, pero no puso el enlace a la llamada.</td><td><span class="estado info">Menor</span></td></tr>
-      <tr><td>Pide casos o clientes</td><td>Se negó bien a inventar clientes, pero la respuesta pasó un poco de 75 palabras.</td><td><span class="estado info">Menor</span></td></tr>
+      <tr><td>Pide garantía</td><td>Se negó bien a garantizar un porcentaje, pero la respuesta pasó de 75 palabras (unas 80).</td><td><span class="estado info">Menor</span></td></tr>
     </tbody>
   </table></div>
 
@@ -734,6 +828,12 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>Flora recuerda a quien vuelve durante 30 días, con «Olvidarme». Privacidad y cookies al día.</li>
         <li>Auditoría completa (seguridad, dispositivos, legal, SEO y GEO) e informe rediseñado con pestañas que funcionan. Espacio del pie del chat corregido.</li>
         <li>Paso B1: portada y contacto más rápidos sin cambiar el diseño (secciones fuera de pantalla sin calcular, párrafo principal sin fundido y agendador que reutiliza sus formatos de fecha). Instagram nuevo: @soyluisfloresoficial.</li>
+      </ul></div>
+    <div class="hito"><div class="fecha">3 nov</div><strong>Fase A comprobada y auditoría completa</strong>
+      <ul>
+        <li>Search Console verificada por DNS, sitemap con dirección completa, archivo de verificación de Bing y robots.txt sin contradicciones (SEO 100).</li>
+        <li>Auditoría completa: seguridad, 55 páginas, 2.092 enlaces, 79 comprobaciones de pantalla, Flora 20 de 22, voz, caché y textos legales.</li>
+        <li>Pestaña nueva «Sugerencias» con 23 ideas ordenadas por impacto y esfuerzo.</li>
       </ul></div>
   </div>
 </section>
