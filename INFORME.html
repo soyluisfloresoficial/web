@@ -268,7 +268,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <h3>Lo que hay que arreglar primero</h3>
       <ol>
         <li><b>Que Google te conozca:</b> Search Console y sitemap (paso A1).</li>
-        <li><b>Bots de IA contradictorios</b> en Cloudflare y en tu robots.txt (paso A3).</li>
+        <li><s>Bots de IA contradictorios</s>: resuelto (paso A3, 03/11).</li>
         <li><s>Velocidad de la portada en celular</s>: hecho (paso B1).</li>
         <li><b>Bot Fight Mode</b> de Cloudflare, que frena la web (paso A4).</li>
         <li><b>Privacidad:</b> falta explicar la voz de Flora (paso B4 y abogado).</li>
@@ -297,6 +297,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>En el menú de la izquierda, <b>Sitemaps</b>. En «Añadir un sitemap» escribe la dirección <b>completa</b>: <code>https://soyluisflores.es/sitemap-index.xml</code> y pulsa <b>Enviar</b>. Con una propiedad tipo <b>Dominio</b>, escribir solo <code>sitemap-index.xml</code> da «Dirección de sitemap no válida» (solo vale así en las propiedades tipo «Prefijo de URL»). Si aun así falla, prueba con <code>https://soyluisflores.es/sitemap-0.xml</code>.</li>
         <li>Arriba, en la barra de búsqueda («Inspeccionar cualquier URL»), pega <code>https://soyluisflores.es/</code>, pulsa Enter y luego <b>Solicitar indexación</b>. Repite con <code>/servicios</code>, <code>/contacto</code> y <code>/blog</code>.</li>
         <li>Avísame cuando esté. En dos o tres semanas te leo los datos y te digo qué búsquedas te traen visitas.</li>
+        <li><b>Comprobado el 03/11/2026:</b> el registro TXT de verificación de Google ya está en el DNS de soyluisflores.es y el sitemap responde 200. Falta confirmar que el sitemap figura como «Correcto» en la pantalla Sitemaps y que enviaste las solicitudes de indexación.</li>
       </ol>
     </div>
   </details>
@@ -315,7 +316,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   </details>
 
   <details class="paso">
-    <summary><span class="num">A3</span><span class="titulo"><strong>Decidir qué bots de IA pueden leer tu web</strong><span><span class="quien tu">TÚ</span> + <span class="quien claude">CLAUDE</span>5 minutos · hoy hay reglas que se contradicen</span></span></summary>
+    <summary><span class="num">A3</span><span class="titulo"><strong>Hecho · Qué bots de IA pueden leer tu web</strong><span>Comprobado en vivo el 03/11/2026: robots.txt sin bloqueos ni contradicciones</span></span></summary>
     <div class="cuerpo">
       <p>Tu <code>robots.txt</code> publicado tiene dos partes que chocan. Arriba, Cloudflare añade su lista y <b>bloquea</b> GPTBot, ClaudeBot, Google-Extended y Applebot-Extended. Abajo, el archivo de la web dice que <b>sí</b> pueden entrar. Cada bot interpreta el choque a su manera, así que ahora mismo no sabemos qué lee cada uno.</p>
       <p><b>Mi recomendación:</b> dejar entrar a los bots que <b>buscan</b> para responder (OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot, Claude-User, Googlebot y Bingbot), que ya están permitidos y son los que te hacen aparecer en las respuestas de IA. Para los que <b>entrenan</b> modelos (GPTBot, ClaudeBot, Google-Extended), decides tú: permitirlos ayuda un poco a que las IA «conozcan» tu marca, y bloquearlos protege tu contenido.</p>
@@ -398,7 +399,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li><b>Página 404:</b> ponerle <code>noindex</code>. Hoy dice «index» aunque responde con error 404.</li>
         <li><b>security.txt:</b> añadir <code>/.well-known/security.txt</code> con hola@ para que quien encuentre un fallo sepa a quién avisar.</li>
         <li><b>Política de contenido (CSP):</b> hoy solo avisa. Pasarla a modo obligatorio después de revisar que no bloquea Tag Manager ni los píxeles.</li>
-        <li><b>robots.txt:</b> dejarlo igual que lo que decidas en el paso A3.</li>
+        <li><b>robots.txt:</b> ya coincide con lo que se publica (03/11): todos los bots de búsqueda y de entrenamiento pueden leer la web.</li>
       </ul>
     </div>
   </details>
@@ -521,7 +522,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <ul class="check">
       <li><input type="checkbox" id="k-a1" data-guardar><label for="k-a1">A1 · Search Console y sitemap enviados</label></li>
       <li><input type="checkbox" id="k-a2" data-guardar><label for="k-a2">A2 · Bing Webmaster y Crawler Hints</label></li>
-      <li><input type="checkbox" id="k-a3" data-guardar><label for="k-a3">A3 · Decidido qué bots de IA entran</label></li>
+      <li><input type="checkbox" id="k-a3" checked disabled><label for="k-a3">A3 · Bots de IA decididos y robots.txt sin contradicciones (03/11)</label></li>
       <li><input type="checkbox" id="k-a4" data-guardar><label for="k-a4">A4 · Bot Fight Mode apagado</label></li>
       <li><input type="checkbox" id="k-a5" data-guardar><label for="k-a5">A5 · Límite de gasto y prueba del correo del panel</label></li>
       <li><input type="checkbox" id="k-b1" checked disabled><label for="k-b1">B1 · Portada y contacto más rápidos (hecho 02/11)</label></li>
@@ -580,12 +581,12 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <div class="tabla-envoltura"><table data-lighthouse>
     <thead><tr><th>Página</th><th>Rendimiento</th><th>Accesibilidad</th><th>Buenas prácticas</th><th>SEO</th><th>Carga principal (LCP)</th></tr></thead>
     <tbody>
-      <tr><td>Portada (tras el paso B1)</td><td><span class="estado ok">85 a 91</span> <small>(antes 58)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>2,2 a 3,2 s <small>(antes 3,7)</small></td></tr>
-      <tr><td>Contacto (tras el paso B1)</td><td><span class="estado ok">82 a 89</span> <small>(antes 51)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>2,2 a 2,9 s <small>(antes 4,0)</small></td></tr>
-      <tr><td>Servicio Agentes de IA</td><td><span class="estado ok">92</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">92</span></td><td>2,6 s</td></tr>
+      <tr><td>Portada (tras el paso B1)</td><td><span class="estado ok">85 a 91</span> <small>(antes 58)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">100</span></td><td>2,2 a 3,2 s <small>(antes 3,7)</small></td></tr>
+      <tr><td>Contacto (tras el paso B1)</td><td><span class="estado ok">82 a 89</span> <small>(antes 51)</small></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">100</span></td><td>2,2 a 2,9 s <small>(antes 4,0)</small></td></tr>
+      <tr><td>Servicio Agentes de IA</td><td><span class="estado ok">92</span></td><td><span class="estado ok">100</span></td><td><span class="estado aviso">82</span></td><td><span class="estado ok">100</span></td><td>2,6 s</td></tr>
     </tbody>
   </table></div>
-  <div class="caja info"><b>Por qué no llegan a 100:</b> «Buenas prácticas» baja a 82 en todas las páginas por el script de Bot Fight Mode de Cloudflare (paso A4). «SEO» baja a 92 porque Cloudflare añade al robots.txt una línea que Google no reconoce (<code>Content-Signal</code>), que es la misma parte del paso A3. Las dos se arreglan desde el panel de Cloudflare, sin tocar la web. El rendimiento de la portada y de contacto es el paso B1.</div>
+  <div class="caja info"><b>Por qué no llegan a 100:</b> «Buenas prácticas» baja a 82 en todas las páginas por el script de Bot Fight Mode de Cloudflare (paso A4). «SEO» ya está en 100 desde que apagaste el robots.txt administrado de Cloudflare (paso A3, medido el 03/11). Lo que queda se arregla desde el panel de Cloudflare, sin tocar la web. El rendimiento de la portada y de contacto es el paso B1.</div>
   <p class="sub" style="color:var(--suave)">Medido el 02/11/2026. Lighthouse simula un celular de gama media con conexión 4G lenta. Las cifras varían unos puntos entre mediciones. Rendimiento por encima de 90 es excelente; de 50 a 89, mejorable.</p>
 
   <h3>Textos legales</h3>
@@ -635,7 +636,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <tbody>
       <tr><td><code>llms.txt</code></td><td>Resumen de la web para las IA, con servicios, enfoque, contacto y páginas principales (10,8 KB).</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Bots de búsqueda con IA</td><td>OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot y Claude-User tienen permiso.</td><td><span class="estado ok">Bien</span></td></tr>
-      <tr><td>Bots de entrenamiento</td><td>Reglas contradictorias entre Cloudflare y la web. Además, la línea <code>Content-Signal</code> que añade Cloudflare hace que Google marque el robots.txt como no válido (SEO 92 en vez de 100). Paso A3.</td><td><span class="estado mal">Arreglar</span></td></tr>
+      <tr><td>Bots de entrenamiento</td><td>Arreglado el 03/11: el robots.txt de Cloudflare está apagado y el de la web deja entrar a todos. Lighthouse SEO sube a 100.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Respuestas citables</td><td>Preguntas frecuentes con respuesta directa en cada servicio: es justo lo que citan las IA.</td><td><span class="estado ok">Bien</span></td></tr>
       <tr><td>Autoridad externa</td><td>Pocas menciones fuera de tu web. Las IA citan a quien otros citan. Paso C4.</td><td><span class="estado mal">Falta</span></td></tr>
     </tbody>
