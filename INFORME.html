@@ -307,6 +307,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
       <p>Muchos buscadores con IA, ChatGPT entre ellos, usan el índice de Bing. Darte de alta allí es gratis y casi automático si ya hiciste el paso A1.</p>
       <ol>
         <li>Entra en <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener">bing.com/webmasters</a> e inicia sesión con la misma cuenta de Google.</li>
+        <li><b>Si te pide subir el archivo <code>BingSiteAuth.xml</code></b> (verificación por archivo): ya está puesto en la raíz de la web (<code>https://soyluisflores.es/BingSiteAuth.xml</code>, 02-03/11/2026). Solo pulsa <b>Verificar</b> en Bing. No lo borres.</li>
         <li>Elige <b>Importar desde Google Search Console</b>, autoriza y marca soyluisflores.es. Se importan la verificación y el sitemap.</li>
         <li>En Cloudflare: <b>soyluisflores.es</b> → <b>Caching</b> (Almacenamiento en caché) → <b>Configuration</b> → activa <b>Crawler Hints</b>. Así Cloudflare avisa sola a Bing (IndexNow) cada vez que publicamos un cambio.</li>
       </ol>
