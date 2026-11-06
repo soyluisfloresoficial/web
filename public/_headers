@@ -41,3 +41,32 @@
 # dice la web), pero no tiene que salir en los buscadores.
 /agente/*
   X-Robots-Tag: noindex
+
+# Caché larga (06/11/2026). Hasta hoy todo salía con «revalidar siempre»
+# (max-age=0): cada visita repetida preguntaba al servidor por cada archivo.
+# - /_astro/*: Astro les pone una huella en el nombre (cambia si cambia el
+#   contenido), así que un año «immutable» es seguro.
+# - /fonts/*: fuentes con la versión en el nombre; no cambian.
+# - /logo/*, /video/* e iconos: mismo nombre aunque se reemplacen, por eso
+#   solo 7 días. Si cambias uno, súbelo con otro nombre o espera a que caduque.
+# El HTML sigue revalidándose siempre, así que cada publicación se ve al momento.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/logo/*
+  Cache-Control: public, max-age=604800
+
+/video/*
+  Cache-Control: public, max-age=604800
+
+/favicon.ico
+  Cache-Control: public, max-age=604800
+
+/favicon.svg
+  Cache-Control: public, max-age=604800
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800

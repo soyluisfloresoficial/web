@@ -528,8 +528,10 @@ const sugerencias = [
     // dentro de un toque de la persona: eso hace desbloquearAudio() al tocar
     // el micrófono, el altavoz o enviar. Si /api/voz falla, lee el navegador.
     let contexto: AudioContext | null = null;
-    let fuente: AudioBufferSourceNode | null = null;
+    let fuentes: AudioBufferSourceNode[] = [];
     let turnoVoz = 0;
+    // Corta las peticiones de voz que sigan en vuelo si la persona interrumpe.
+    let cortarPeticiones: AbortController | null = null;
 
     const desbloquearAudio = () => {
       try {
@@ -549,13 +551,89 @@ const sugerencias = [
 
     const callar = () => {
       turnoVoz++;
-      try {
-        fuente?.stop();
-      } catch {
-        /* ya había terminado */
+      for (const s of fuentes) {
+        try {
+          s.stop();
+        } catch {
+          /* ya había terminado */
+        }
       }
-      fuente = null;
+      fuentes = [];
+      cortarPeticiones?.abort();
+      cortarPeticiones = null;
       sintesis?.cancel();
+    };
+
+    // Voz por frases (06/11/2026): generar la voz entera tardaba 6 a 7 segundos
+    // con una respuesta normal (unos 300 caracteres). Ahora se parte en trozos:
+    // el primero es corto, así empieza a sonar en cerca de 1 a 2 segundos, y
+    // los demás se piden a la vez mientras tanto y se encadenan sin cortes.
+    const PRIMER_TROZO = 90;
+    const TROZO = 230;
+
+    /** Parte un texto largo por comas o espacios sin pasarse de «max». */
+    const partirLargo = (texto: string, max: number): string[] => {
+      const partes: string[] = [];
+      let resto = texto.trim();
+      while (resto.length > max) {
+        let corte = Math.max(resto.lastIndexOf(", ", max), resto.lastIndexOf("; ", max));
+        if (corte < max * 0.4) corte = resto.lastIndexOf(" ", max);
+        if (corte < 1) corte = max;
+        partes.push(resto.slice(0, corte + 1).trim());
+        resto = resto.slice(corte + 1).trim();
+      }
+      if (resto) partes.push(resto);
+      return partes;
+    };
+
+    /** Frases agrupadas en trozos: uno corto al principio y los demás más largos. */
+    const trozosDeVoz = (texto: string): string[] => {
+      const frases = (texto.match(/[^.!?…]+[.!?…]*/g) ?? [texto]).map((f) => f.trim()).filter((f) => f.length > 1);
+      const trozos: string[] = [];
+      let actual = "";
+      for (const frase of frases) {
+        const limite = trozos.length === 0 ? PRIMER_TROZO : TROZO;
+        if (actual && actual.length + 1 + frase.length > limite) {
+          trozos.push(actual);
+          actual = "";
+        }
+        // La primera frase también se parte si es larga: lo que importa es que
+        // el primer trozo sea corto.
+        const maximo = trozos.length === 0 ? PRIMER_TROZO : TROZO;
+        if (frase.length > maximo) {
+          if (actual) trozos.push(actual);
+          actual = "";
+          const partes = partirLargo(frase, trozos.length === 0 ? PRIMER_TROZO : TROZO);
+          trozos.push(...partes.slice(0, -1));
+          actual = partes.at(-1) ?? "";
+        } else {
+          actual = actual ? `${actual} ${frase}` : frase;
+        }
+      }
+      if (actual) trozos.push(actual);
+      return trozos;
+    };
+
+    const pedirVoz = async (texto: string, corte: AbortSignal): Promise<ArrayBuffer> => {
+      // Sin AbortSignal.any (no existe en iPhone con iOS anterior a 17.4): un
+      // control propio que se corta si interrumpen o si pasan 20 segundos.
+      const propio = new AbortController();
+      const cancelar = () => propio.abort();
+      corte.addEventListener("abort", cancelar, { once: true });
+      const limite = setTimeout(cancelar, 20_000);
+      try {
+        const r = await fetch("/api/voz", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ texto }),
+          signal: propio.signal,
+        });
+        if (!r.ok) throw new Error(String(r.status));
+        return await r.arrayBuffer();
+      } finally {
+        clearTimeout(limite);
+        corte.removeEventListener("abort", cancelar);
+      }
     };
 
     const decir = async (texto: string) => {
@@ -569,28 +647,40 @@ const sugerencias = [
         .trim()
         .slice(0, 1200);
       if (contexto) {
-        try {
-          const r = await fetch("/api/voz", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ texto: limpio }),
-            signal: AbortSignal.timeout(20_000),
-          });
-          if (!r.ok) throw new Error(String(r.status));
-          const audio = await contexto.decodeAudioData(await r.arrayBuffer());
-          // Si mientras tanto preguntó otra cosa o apagó la voz, esta ya no suena.
-          if (turno !== turnoVoz || !leerEnVoz) return;
-          if (contexto.state === "suspended") await contexto.resume();
-          const s = contexto.createBufferSource();
-          s.buffer = audio;
-          s.connect(contexto.destination);
-          s.start(0);
-          fuente = s;
-          return;
-        } catch {
-          if (turno !== turnoVoz) return;
-          medir("chat_voice_error", { chat_method: "voz-propia" });
+        const ctx = contexto;
+        const trozos = trozosDeVoz(limpio);
+        // Todos los trozos se piden a la vez; se reproducen en orden.
+        cortarPeticiones = new AbortController();
+        const audios = trozos.map((t) => pedirVoz(t, cortarPeticiones!.signal));
+        audios.forEach((p) => p.catch(() => undefined));
+        let fin = 0;
+        for (let i = 0; i < trozos.length; i++) {
+          try {
+            const audio = await ctx.decodeAudioData(await audios[i]);
+            // Si mientras tanto preguntó otra cosa o apagó la voz, esta ya no suena.
+            if (turno !== turnoVoz || !leerEnVoz) return;
+            if (ctx.state === "suspended") await ctx.resume();
+            const s = ctx.createBufferSource();
+            s.buffer = audio;
+            s.connect(ctx.destination);
+            // Cada trozo empieza justo cuando termina el anterior.
+            const inicio = Math.max(ctx.currentTime + 0.02, fin);
+            s.start(inicio);
+            fin = inicio + audio.duration;
+            fuentes.push(s);
+          } catch {
+            if (turno !== turnoVoz) return;
+            medir("chat_voice_error", { chat_method: "voz-propia" });
+            // Lo que falte lo lee el navegador, cuando termine lo que ya suena.
+            const resto = trozos.slice(i).join(" ");
+            const espera = Math.max(0, (fin - ctx.currentTime) * 1000);
+            setTimeout(() => {
+              if (turno === turnoVoz && leerEnVoz) decirNavegador(resto);
+            }, espera);
+            return;
+          }
         }
+        return;
       }
       decirNavegador(limpio);
     };

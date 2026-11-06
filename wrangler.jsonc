@@ -36,11 +36,13 @@
       "namespace_id": "2711",
       "simple": { "limit": 10, "period": 60 }
     },
-    // Voz de Flora (src/worker/voz.ts): 12 respuestas leídas por minuto por IP.
+    // Voz de Flora (src/worker/voz.ts): 40 peticiones por minuto por IP. Desde el
+    // 06/11/2026 cada respuesta se pide por frases (2 a 4 peticiones) y el chat
+    // ya limita a 8 mensajes por minuto.
     {
       "name": "LIMITE_VOZ",
       "namespace_id": "2712",
-      "simple": { "limit": 12, "period": 60 }
+      "simple": { "limit": 40, "period": 60 }
     }
   ],
   // Workers AI: la voz de Flora (Deepgram Aura-2 en español). Se cobra en la
