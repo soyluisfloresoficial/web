@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import { servicios, PILARES, serviciosDe, SITIO } from "../../data/servicios";
 import { detalles } from "../../data/servicios-detalle";
 import { faq, proceso, estandares, herramientas, queMido, publicos } from "../../data/home";
+import catalogo from "../../data/catalogo.json";
 
 /**
  * Base de conocimiento del asistente de IA de la web (27/10/2026).
@@ -45,6 +46,25 @@ export const GET: APIRoute = async () => {
   l.push("## Para quién trabaja");
   l.push("");
   for (const p of publicos) l.push(`- ${p.titulo}: ${p.texto}`);
+  l.push("");
+
+  // ------------------------------------------------------------ Catálogo
+  // Los mismos planes de /catalogo. Sin precios: la web no los publica.
+  l.push("## Catálogo de servicios y planes");
+  l.push("");
+  l.push(`Publicado en ${url("/catalogo")}. Los plazos son estimaciones. El catálogo no incluye precios: se dan en la propuesta por escrito, después de la llamada.`);
+  for (const s of catalogo.servicios) {
+    l.push("");
+    l.push(`### ${s.nombre}`);
+    l.push(`${s.lema} ${s.resumen}`);
+    for (const p of s.planes) {
+      l.push(`- ${p.nombre}. Ideal para: ${p.idealPara} Plazo orientativo: ${p.plazo}.${p.conCuota ? " Lleva cuota mensual de mantenimiento o gestión." : ""} Incluye: ${p.incluye.join(" ")}`);
+    }
+    l.push(`- No incluye: ${s.noIncluye.join(" ")}`);
+  }
+  l.push("");
+  l.push("### Condiciones generales del catálogo");
+  for (const c of catalogo.condiciones) l.push(`- ${c.titulo}: ${c.texto}`);
   l.push("");
 
   // ------------------------------------------------------------ Contacto

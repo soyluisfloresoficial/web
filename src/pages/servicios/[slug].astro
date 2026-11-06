@@ -6,6 +6,7 @@ import Cierre from "../../components/Cierre.astro";
 import Icono from "../../components/Icono.astro";
 import IlustracionServicio from "../../components/IlustracionServicio.astro";
 import PruebaSocial from "../../components/PruebaSocial.astro";
+import PlanesServicio from "../../components/PlanesServicio.astro";
 import CapturaGuia from "../../components/CapturaGuia.astro";
 import { guiaDeServicio } from "../../data/guias";
 import { servicios, SITIO, AREA_SERVIDA } from "../../data/servicios";
@@ -196,6 +197,13 @@ const schema = [
             {d.queIncluye.map((p) => <li>{p}</li>)}
           </ul>
         </div>
+      </div>
+    </section>
+
+    {/* ------------------------------------------------- Planes (sin precios) */}
+    <section class="section" id="planes" aria-labelledby={`planes-${servicio.slug}`}>
+      <div class="container-lf">
+        <PlanesServicio slug={servicio.slug} />
       </div>
     </section>
 

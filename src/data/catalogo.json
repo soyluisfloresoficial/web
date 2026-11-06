@@ -1,0 +1,564 @@
+{
+  "presentacion": {
+    "titulo": "Servicios y soluciones digitales",
+    "firma": "Luis Flores | AI & Business Expert",
+    "entradilla": "Impulso negocios con inteligencia artificial, automatización y sistemas digitales diseñados para atraer clientes, optimizar procesos y aumentar las oportunidades de venta.",
+    "cierreTitulo": "¿No sabes qué solución necesita tu negocio?",
+    "cierre": "No necesitas contratar todas las herramientas ni todos los servicios. Analizamos tu situación, identificamos los puntos de mejora y te recomendamos la solución más adecuada según tus objetivos, recursos y etapa de crecimiento."
+  },
+  "servicios": [
+    {
+      "slug": "agentes-ia",
+      "nombre": "Agentes de inteligencia artificial",
+      "lema": "Tu negocio atendiendo clientes las 24 horas, incluso cuando tú no estás.",
+      "resumen": "Implementamos asistentes inteligentes capaces de responder consultas, atender conversaciones, gestionar solicitudes y agendar citas automáticamente por chat o por teléfono.",
+      "noIncluye": [
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "agente-esencial",
+          "nombre": "Esencial: Atención inteligente",
+          "idealPara": "Negocios que reciben las mismas preguntas constantemente y quieren automatizar la atención en un canal.",
+          "plazo": "2 a 3 semanas",
+          "incluye": [
+            "Un agente conversacional para web, WhatsApp o Instagram.",
+            "Respuestas personalizadas basadas en la información aprobada por tu negocio.",
+            "Configuración de hasta 30 preguntas frecuentes.",
+            "Detección de consultas que necesitan atención humana.",
+            "Derivación a una persona cuando sea necesario.",
+            "Pruebas de funcionamiento y documentación.",
+            "Mantenimiento básico, ajustes menores y soporte."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "agente-profesional",
+          "nombre": "Profesional: Atención y gestión de citas",
+          "idealPara": "Clínicas, centros de estética y negocios que gestionan citas y reciben consultas desde diferentes canales.",
+          "plazo": "3 a 5 semanas",
+          "incluye": [
+            "Todo lo del plan Esencial, además de:",
+            "Agente de IA en hasta tres canales.",
+            "Integración con calendario para consultar disponibilidad y agendar citas.",
+            "Conexión con CRM para registrar y organizar contactos.",
+            "Confirmaciones y recordatorios automáticos.",
+            "Registro de conversaciones y solicitudes.",
+            "Informe mensual de actividad y rendimiento."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "agente-avanzado",
+          "nombre": "Avanzado: Atención omnicanal con voz",
+          "idealPara": "Empresas que reciben llamadas, gestionan un volumen elevado de consultas o pierden oportunidades por no responder a tiempo.",
+          "plazo": "5 a 8 semanas",
+          "incluye": [
+            "Todo lo del plan Profesional, además de:",
+            "Agente de voz con inteligencia artificial para atender llamadas.",
+            "Gestión de consultas mediante conversaciones telefónicas.",
+            "Integración de escenarios personalizados según el negocio.",
+            "Derivación inteligente de llamadas cuando se requiere intervención humana.",
+            "Configuración de reglas y procesos de atención.",
+            "Formación del equipo.",
+            "Revisión mensual del funcionamiento."
+          ],
+          "conCuota": true
+        }
+      ]
+    },
+    {
+      "slug": "funnels-conversion",
+      "nombre": "Funnels de conversión y captación",
+      "lema": "Convierte visitas en contactos y contactos en oportunidades de venta.",
+      "resumen": "Diseñamos sistemas de captación que combinan páginas estratégicas, formularios, automatizaciones y seguimiento comercial para convertir el interés de tus potenciales clientes en oportunidades reales.",
+      "noIncluye": [
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "funnel-esencial",
+          "nombre": "Esencial: Captación de clientes",
+          "idealPara": "Profesionales y negocios que quieren promocionar un servicio, captar contactos o conseguir citas.",
+          "plazo": "2 semanas",
+          "incluye": [
+            "Una landing page estratégica.",
+            "Diseño adaptado a celulares y computadoras.",
+            "Redacción de textos orientados a conversión.",
+            "Formulario de captación o calendario para agendar.",
+            "Página de agradecimiento.",
+            "Secuencia de tres correos de seguimiento.",
+            "Configuración de medición de conversiones."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "funnel-completo",
+          "nombre": "Completo: Sistema de conversión",
+          "idealPara": "Negocios que ya reciben visitas o invierten en publicidad y quieren mejorar el seguimiento de sus oportunidades comerciales.",
+          "plazo": "3 a 4 semanas",
+          "incluye": [
+            "Todo lo del plan Esencial, además de:",
+            "Secuencia de hasta siete mensajes combinando email y WhatsApp.",
+            "Integración con CRM.",
+            "Automatización del seguimiento de contactos.",
+            "Dos versiones de la landing page para realizar pruebas A/B.",
+            "Medición del comportamiento de los usuarios.",
+            "Informe inicial de resultados al primer mes."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "funnel-avanzado",
+          "nombre": "Avanzado: Ecosistema de ventas",
+          "idealPara": "Negocios con diferentes servicios, públicos o productos que necesitan recorridos comerciales diferenciados.",
+          "plazo": "5 a 7 semanas",
+          "incluye": [
+            "Todo lo del plan Completo, además de:",
+            "Hasta tres recorridos de conversión personalizados.",
+            "Segmentación de contactos según sus intereses.",
+            "Integración de pagos en línea con Stripe.",
+            "Automatizaciones según el comportamiento del cliente.",
+            "Panel de seguimiento de las principales etapas de conversión.",
+            "Estructura preparada para ampliar campañas y ofertas."
+          ],
+          "conCuota": false
+        }
+      ]
+    },
+    {
+      "slug": "automatizacion",
+      "nombre": "Automatización de procesos empresariales",
+      "lema": "Menos tareas manuales. Más tiempo para hacer crecer tu negocio.",
+      "resumen": "Conectamos tus herramientas y aplicaciones con Make, n8n y Zapier para eliminar tareas repetitivas, sincronizar información y crear procesos que funcionan automáticamente.",
+      "noIncluye": [
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "auto-flujo",
+          "nombre": "Esencial: Automatización puntual",
+          "idealPara": "Negocios que quieren eliminar una tarea repetitiva concreta.",
+          "plazo": "1 semana",
+          "incluye": [
+            "Diseño de un flujo automatizado.",
+            "Conexión de dos o tres herramientas.",
+            "Configuración de condiciones y acciones.",
+            "Notificaciones ante posibles errores.",
+            "Pruebas con datos reales.",
+            "Documentación del funcionamiento."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "auto-paquete",
+          "nombre": "Profesional: Sistema de automatización",
+          "idealPara": "Negocios que necesitan conectar diferentes etapas de su operación, desde la captación hasta la entrega del servicio.",
+          "plazo": "2 a 4 semanas",
+          "incluye": [
+            "Análisis y documentación del proceso actual.",
+            "Diseño del sistema automatizado.",
+            "Implementación de hasta cinco flujos conectados.",
+            "Sincronización de información entre herramientas.",
+            "Registro de ejecuciones y notificaciones de errores.",
+            "Supervisión, ajustes menores y soporte mensual."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "auto-sistema",
+          "nombre": "Avanzado: Ecosistema empresarial automatizado",
+          "idealPara": "Empresas que necesitan automatizar diferentes departamentos, procesos y fuentes de información.",
+          "plazo": "5 a 8 semanas",
+          "incluye": [
+            "Todo lo del plan Profesional, además de:",
+            "Implementación de hasta quince flujos automatizados.",
+            "Lógica empresarial y condiciones personalizadas.",
+            "Registro centralizado de procesos.",
+            "Integraciones avanzadas entre plataformas.",
+            "Formación para el equipo.",
+            "Revisión mensual y propuestas de optimización."
+          ],
+          "conCuota": true
+        }
+      ]
+    },
+    {
+      "slug": "crm-seguimiento-leads",
+      "nombre": "CRM y gestión de leads",
+      "lema": "Cada oportunidad comercial organizada, cada cliente con un siguiente paso.",
+      "resumen": "Implementamos sistemas CRM para centralizar contactos, organizar oportunidades, automatizar seguimientos y ofrecer una visión clara del proceso comercial.",
+      "noIncluye": [
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "crm-esencial",
+          "nombre": "Esencial: CRM organizado",
+          "idealPara": "Profesionales y equipos pequeños que todavía gestionan sus contactos con hojas de cálculo o procesos manuales.",
+          "plazo": "2 semanas",
+          "incluye": [
+            "Configuración inicial del CRM.",
+            "Creación de etapas del proceso comercial.",
+            "Organización de contactos y oportunidades.",
+            "Importación de una base de datos existente.",
+            "Integración con un formulario de captación.",
+            "Una sesión de formación."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "crm-profesional",
+          "nombre": "Profesional: CRM inteligente",
+          "idealPara": "Negocios que reciben contactos desde diferentes canales y necesitan mejorar el seguimiento comercial.",
+          "plazo": "3 a 4 semanas",
+          "incluye": [
+            "Todo lo del plan Esencial, además de:",
+            "Captación de contactos desde web y formularios.",
+            "Integración de las fuentes de contacto acordadas.",
+            "Automatización de tareas y recordatorios.",
+            "Seguimientos comerciales por correo electrónico.",
+            "Organización de oportunidades por estado.",
+            "Soporte y ajustes menores mensuales."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "crm-avanzado",
+          "nombre": "Avanzado: Gestión comercial avanzada",
+          "idealPara": "Empresas con varios comerciales, diferentes procesos de venta o un volumen elevado de oportunidades.",
+          "plazo": "5 a 6 semanas",
+          "incluye": [
+            "Todo lo del plan Profesional, además de:",
+            "Configuración de múltiples procesos comerciales.",
+            "Usuarios, permisos y responsabilidades por persona.",
+            "Informes de actividad y rendimiento comercial.",
+            "Integración con WhatsApp y calendario.",
+            "Automatizaciones avanzadas de seguimiento.",
+            "Optimización periódica del sistema."
+          ],
+          "conCuota": true
+        }
+      ]
+    },
+    {
+      "slug": "email-marketing",
+      "nombre": "Email marketing y automatización de seguimiento",
+      "lema": "Mantén el contacto con tus clientes y convierte oportunidades en ventas.",
+      "resumen": "Creamos estrategias de comunicación automatizada para acompañar a tus contactos durante su recorrido comercial, desde el primer registro hasta la compra y la reactivación.",
+      "noIncluye": [
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "email-secuencia",
+          "nombre": "Esencial: Secuencia de bienvenida",
+          "idealPara": "Negocios que quieren comenzar a comunicarse profesionalmente con sus nuevos contactos.",
+          "plazo": "1 a 2 semanas",
+          "incluye": [
+            "Redacción de hasta cinco correos personalizados.",
+            "Configuración en tu plataforma de email marketing.",
+            "Diseño y estructura de los mensajes.",
+            "Configuración de la secuencia automática.",
+            "Pruebas de envío.",
+            "Medición básica de aperturas y clics."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "email-sistema",
+          "nombre": "Profesional: Sistema de email marketing",
+          "idealPara": "Negocios que quieren automatizar diferentes momentos de la relación con sus clientes.",
+          "plazo": "3 a 4 semanas",
+          "incluye": [
+            "Tres secuencias automatizadas: bienvenida, seguimiento comercial y reactivación de contactos.",
+            "Segmentación de la base de datos.",
+            "Formularios de suscripción con consentimiento.",
+            "Configuración de automatizaciones.",
+            "Medición del rendimiento.",
+            "Informe de resultados a los 30 días."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "email-gestion",
+          "nombre": "Avanzado: Gestión continua de campañas",
+          "idealPara": "Negocios que quieren mantener una comunicación constante con sus clientes sin tener que gestionar cada campaña.",
+          "plazo": "Alta inicial en 1 semana y gestión mensual posterior",
+          "incluye": [
+            "Configuración inicial de la cuenta.",
+            "Hasta cuatro campañas de email al mes.",
+            "Redacción y diseño de los correos.",
+            "Programación y envío de campañas.",
+            "Organización y limpieza básica de contactos.",
+            "Segmentación de audiencias.",
+            "Informe mensual de rendimiento."
+          ],
+          "conCuota": true
+        }
+      ]
+    },
+    {
+      "slug": "paneles-de-metricas",
+      "nombre": "Dashboards, métricas e informes",
+      "lema": "Tus datos conectados. Tus decisiones respaldadas por información.",
+      "resumen": "Diseñamos paneles de control que centralizan los principales indicadores de marketing, ventas y operaciones para que conozcas el rendimiento de tu negocio sin recopilar datos manualmente.",
+      "noIncluye": [
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "panel-esencial",
+          "nombre": "Esencial: Panel de control",
+          "idealPara": "Negocios que quieren visualizar sus indicadores más importantes en un único lugar.",
+          "plazo": "1 semana",
+          "incluye": [
+            "Un dashboard personalizado.",
+            "Conexión de hasta dos fuentes de datos.",
+            "Configuración de hasta diez indicadores clave (KPI).",
+            "Visualización organizada de resultados.",
+            "Actualización automática de los datos."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "panel-negocio",
+          "nombre": "Profesional: Inteligencia de negocio",
+          "idealPara": "Negocios que quieren analizar el rendimiento de marketing y ventas desde una visión global.",
+          "plazo": "2 a 3 semanas",
+          "incluye": [
+            "Conexión de hasta cuatro fuentes de datos.",
+            "Dashboard con diferentes vistas.",
+            "Indicadores por campaña, canal o etapa comercial.",
+            "Comparación de resultados.",
+            "Envío automatizado de informes por correo.",
+            "Mantenimiento de las conexiones."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "panel-avanzado",
+          "nombre": "Avanzado: Business Intelligence a medida",
+          "idealPara": "Empresas que usan múltiples herramientas y necesitan consolidar información para tomar mejores decisiones.",
+          "plazo": "4 a 5 semanas",
+          "incluye": [
+            "Integración de las fuentes de datos acordadas.",
+            "Conexiones personalizadas.",
+            "Dashboard avanzado.",
+            "Indicadores y métricas adaptados al negocio.",
+            "Alertas cuando determinados indicadores superen los límites establecidos.",
+            "Mantenimiento y supervisión de las conexiones."
+          ],
+          "conCuota": true
+        }
+      ]
+    },
+    {
+      "slug": "webs-ia",
+      "nombre": "Diseño y desarrollo web con IA",
+      "lema": "Tu web debe representar tu negocio, transmitir confianza y generar oportunidades.",
+      "resumen": "Diseñamos páginas web modernas, rápidas y adaptadas a celulares, combinando diseño estratégico, inteligencia artificial y optimización de conversión.",
+      "noIncluye": [
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "web-landing",
+          "nombre": "Esencial: Landing page profesional",
+          "idealPara": "Profesionales y negocios que necesitan presentar una oferta y conseguir un objetivo concreto.",
+          "plazo": "1 a 2 semanas",
+          "incluye": [
+            "Una landing page personalizada.",
+            "Diseño responsive, priorizando celulares.",
+            "Redacción de textos comerciales.",
+            "Estructura orientada a conversión.",
+            "Formulario o calendario conectado.",
+            "Configuración de medición.",
+            "Alojamiento gestionado, copias de seguridad y actualizaciones."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "web-negocio",
+          "nombre": "Profesional: Web corporativa",
+          "idealPara": "Empresas que quieren mejorar su presencia digital, presentar sus servicios y captar nuevos clientes.",
+          "plazo": "3 a 4 semanas",
+          "incluye": [
+            "Web corporativa de hasta cinco páginas.",
+            "Diseño personalizado y responsive.",
+            "Redacción de contenidos.",
+            "Estructura optimizada para SEO básico.",
+            "Formularios de contacto.",
+            "Integración de herramientas de medición.",
+            "Preparación de textos legales para revisión.",
+            "Mantenimiento y soporte según el plan contratado."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "web-ia",
+          "nombre": "Avanzado: Web inteligente con asistente IA",
+          "idealPara": "Negocios que quieren ofrecer atención digital permanente y convertir su página web en un canal activo de captación.",
+          "plazo": "4 a 6 semanas",
+          "incluye": [
+            "Todo lo del plan Profesional, además de:",
+            "Ampliación hasta ocho páginas.",
+            "Asistente conversacional con inteligencia artificial.",
+            "Entrenamiento con información aprobada por el negocio.",
+            "Respuestas automáticas a preguntas frecuentes.",
+            "Captación y cualificación inicial de contactos.",
+            "Integración con calendario o CRM.",
+            "Mantenimiento y soporte mensual."
+          ],
+          "conCuota": true
+        }
+      ]
+    },
+    {
+      "slug": "trafico-de-pago",
+      "nombre": "Publicidad digital: Meta Ads y Google Ads",
+      "lema": "Atrae tráfico cualificado y transforma la inversión publicitaria en oportunidades comerciales.",
+      "resumen": "Diseñamos, configuramos y optimizamos campañas en Meta Ads y Google Ads para conectar tu negocio con personas interesadas en tus productos o servicios.",
+      "noIncluye": [
+        "La inversión publicitaria, que se paga directamente a Meta o Google y no está incluida en los honorarios de gestión."
+      ],
+      "planes": [
+        {
+          "id": "ads-una",
+          "nombre": "Esencial: Gestión de una plataforma",
+          "idealPara": "Negocios que quieren comenzar a anunciarse con una estrategia organizada en Meta o Google.",
+          "plazo": "Alta inicial en 1 semana y gestión mensual posterior",
+          "incluye": [
+            "Configuración y revisión de la cuenta publicitaria.",
+            "Instalación y configuración de medición de conversiones.",
+            "Creación y gestión de hasta dos campañas activas.",
+            "Segmentación de audiencias.",
+            "Optimización continua.",
+            "Informe mensual de rendimiento."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "ads-dos",
+          "nombre": "Profesional: Estrategia multicanal",
+          "idealPara": "Negocios que quieren combinar Meta Ads y Google Ads para ampliar sus oportunidades de captación.",
+          "plazo": "Alta inicial en 1 a 2 semanas y gestión mensual posterior",
+          "incluye": [
+            "Gestión de Meta Ads y Google Ads.",
+            "Hasta cinco campañas activas en total.",
+            "Estrategia de captación multicanal.",
+            "Segmentación y optimización de audiencias.",
+            "Seguimiento de conversiones.",
+            "Optimización continua de campañas.",
+            "Reunión mensual de resultados."
+          ],
+          "conCuota": true
+        },
+        {
+          "id": "ads-avanzado",
+          "nombre": "Avanzado: Growth & Performance",
+          "idealPara": "Empresas con diferentes servicios, mercados u objetivos comerciales que necesitan una estrategia de adquisición más avanzada.",
+          "plazo": "Alta inicial en 2 semanas y gestión mensual posterior",
+          "incluye": [
+            "Gestión avanzada de Meta Ads y Google Ads.",
+            "Estructura de campañas adaptada al volumen de inversión.",
+            "Pruebas continuas de anuncios y creatividades.",
+            "Optimización de audiencias y conversiones.",
+            "Análisis de rendimiento por campaña.",
+            "Dashboard de resultados.",
+            "Reuniones de seguimiento cada 15 días."
+          ],
+          "conCuota": true
+        }
+      ]
+    },
+    {
+      "slug": "consultoria-ia",
+      "nombre": "Consultoría estratégica de inteligencia artificial",
+      "lema": "Descubre dónde aplicar IA en tu negocio y cómo convertirla en una ventaja competitiva.",
+      "resumen": "Analizamos tu operación, identificamos oportunidades de automatización y diseñamos una hoja de ruta para incorporar inteligencia artificial de manera práctica, rentable y alineada con tus objetivos.",
+      "noIncluye": [
+        "La implementación de la hoja de ruta, que se presupuesta aparte.",
+        "Licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía: el cliente los contrata y los paga directamente."
+      ],
+      "planes": [
+        {
+          "id": "consultoria-sesion",
+          "nombre": "Esencial: Sesión estratégica",
+          "idealPara": "Empresarios y profesionales que quieren resolver dudas y descubrir qué oportunidades ofrece la IA para su negocio.",
+          "plazo": "Durante la semana, con cita previa",
+          "incluye": [
+            "Sesión individual de 90 minutos por videollamada.",
+            "Revisión previa de tu situación.",
+            "Identificación de oportunidades de aplicación de IA.",
+            "Recomendaciones de herramientas.",
+            "Resumen de conclusiones y próximos pasos."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "consultoria-diagnostico",
+          "nombre": "Profesional: Diagnóstico y hoja de ruta",
+          "idealPara": "Empresas que quieren implementar IA con una estrategia definida y evitar inversiones innecesarias.",
+          "plazo": "2 semanas",
+          "incluye": [
+            "Análisis de procesos y herramientas actuales.",
+            "Identificación de tareas automatizables.",
+            "Detección de oportunidades de implementación de agentes IA.",
+            "Evaluación de herramientas y tecnologías.",
+            "Dos sesiones estratégicas de trabajo.",
+            "Hoja de ruta priorizada.",
+            "Estimación de costos y recursos necesarios."
+          ],
+          "conCuota": false
+        },
+        {
+          "id": "consultoria-acompanamiento",
+          "nombre": "Avanzado: Acompañamiento estratégico",
+          "idealPara": "Negocios que quieren incorporar inteligencia artificial progresivamente con asesoramiento especializado.",
+          "plazo": "Acompañamiento mensual renovable",
+          "incluye": [
+            "Dos sesiones estratégicas al mes.",
+            "Seguimiento de proyectos de IA.",
+            "Asesoramiento sobre herramientas y tecnologías.",
+            "Resolución de dudas por escrito.",
+            "Revisión de prioridades y objetivos.",
+            "Orientación y formación para el equipo.",
+            "Evaluación periódica de oportunidades de mejora."
+          ],
+          "conCuota": true
+        }
+      ]
+    }
+  ],
+  "condiciones": [
+    {
+      "titulo": "Implementación y mantenimiento",
+      "texto": "La implementación corresponde al diseño, la configuración, el desarrollo y la puesta en funcionamiento de cada solución. Las cuotas mensuales, cuando el plan las tiene, cubren exclusivamente los servicios recurrentes especificados en él."
+    },
+    {
+      "titulo": "Herramientas y servicios externos",
+      "texto": "No están incluidos los costos de licencias, suscripciones y consumo de plataformas de terceros, como CRM, Make, n8n, Zapier, proveedores de IA, WhatsApp Business API, alojamiento, correo electrónico y telefonía. Estos servicios los contrata y los paga directamente el cliente, salvo acuerdo expreso diferente."
+    },
+    {
+      "titulo": "Publicidad",
+      "texto": "La inversión publicitaria se paga directamente a Meta o Google y no está incluida en los honorarios de gestión."
+    },
+    {
+      "titulo": "Alcance del proyecto",
+      "texto": "Cada propuesta contempla exclusivamente los entregables descritos en el plan contratado. Las funcionalidades adicionales, integraciones especiales, ampliaciones y cambios fuera del alcance inicial se presupuestan por separado."
+    },
+    {
+      "titulo": "Plazos",
+      "texto": "Los plazos indicados son estimaciones de ejecución y dependen de la disponibilidad de materiales, accesos, validaciones e información que entregue el cliente."
+    },
+    {
+      "titulo": "Mantenimiento",
+      "texto": "El mantenimiento no implica desarrollos ilimitados ni nuevas funcionalidades. Incluye únicamente las tareas recurrentes expresamente descritas en cada servicio."
+    },
+    {
+      "titulo": "Protección de datos",
+      "texto": "Las implementaciones se realizan teniendo en cuenta las obligaciones aplicables de protección de datos, privacidad y comunicaciones comerciales. El cliente debe validar la información, los permisos y las políticas de tratamiento de datos de su negocio."
+    }
+  ]
+}

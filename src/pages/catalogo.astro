@@ -1,0 +1,77 @@
+---
+import Base from "../layouts/Base.astro";
+import CabeceraPagina from "../components/CabeceraPagina.astro";
+import Cierre from "../components/Cierre.astro";
+import PlanesServicio from "../components/PlanesServicio.astro";
+import { servicios, SITIO } from "../data/servicios";
+import catalogo from "../data/catalogo.json";
+
+/** El catálogo completo, sin precios: el precio se da en la propuesta, tras la llamada. */
+const { presentacion, condiciones } = catalogo;
+const color = (slug: string) => servicios.find((s) => s.slug === slug)?.color ?? "--acento";
+const url = `${SITIO.url}/catalogo`;
+const schema = [
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Catálogo de servicios", item: url },
+    ],
+  },
+];
+---
+
+<Base
+  title="Catálogo de servicios de IA y automatización | Luis Flores"
+  description="Agentes de IA, automatización, CRM, funnels, email, dashboards, webs, anuncios y consultoría: los planes de cada servicio y todo lo que incluyen."
+  schema={schema}
+>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Catálogo de servicios" }]}
+      antetitulo={presentacion.firma}
+      titulo={presentacion.titulo}
+      entradilla={presentacion.entradilla}
+    />
+    {
+      catalogo.servicios.map((s, i) => (
+        <section
+          class:list={["section", { banda: i % 2 === 1 }]}
+          aria-labelledby={`titulo-${s.slug}`}
+          style={`--svc: var(${color(s.slug)}); --acento: var(${color(s.slug)}); --acento-texto: var(${color(s.slug)})`}
+        >
+          <div class="container-lf">
+            <div class="cabecera-seccion">
+              <div>
+                <p class="eyebrow">{String(i + 1).padStart(2, "0")}</p>
+                <h2 id={`titulo-${s.slug}`} class="subrayado mt-4">{s.nombre}</h2>
+              </div>
+              <div>
+                <p class="lead"><strong>{s.lema}</strong></p>
+                <p class="lead mt-3">{s.resumen} <a href={`/servicios/${s.slug}`}>Ver el servicio</a></p>
+              </div>
+            </div>
+            <PlanesServicio slug={s.slug} sinCabecera />
+          </div>
+        </section>
+      ))
+    }
+    <section class="section" aria-labelledby="condiciones-titulo">
+      <div class="container-lf">
+        <h2 id="condiciones-titulo" class="subrayado">Condiciones generales del servicio</h2>
+        <dl class="rejilla-3 mt-10">
+          {
+            condiciones.map((c) => (
+              <div class="card tarjeta">
+                <dt class="card-title">{c.titulo}</dt>
+                <dd class="card-text mt-2">{c.texto}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+    <Cierre titulo={presentacion.cierreTitulo} entradilla={presentacion.cierre} />
+  </main>
+</Base>

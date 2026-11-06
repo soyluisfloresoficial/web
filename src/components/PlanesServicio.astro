@@ -1,0 +1,77 @@
+---
+/**
+ * Planes de un servicio, tal como están en el catálogo del panel (copia en
+ * src/data/catalogo.json). SIN PRECIOS, por decisión del titular (04/11/2026): la
+ * web enseña qué incluye cada plan y el precio se da en la propuesta, después de
+ * la llamada. Ese archivo ni siquiera trae importes.
+ */
+import catalogo from "../data/catalogo.json";
+import Icono from "./Icono.astro";
+
+interface Props {
+  slug: string;
+  /** En /catalogo el título de cada servicio lo pone la propia página. */
+  sinCabecera?: boolean;
+}
+const { slug, sinCabecera = false } = Astro.props;
+const servicio = catalogo.servicios.find((s) => s.slug === slug);
+const idTitulo = `planes-${slug}`;
+---
+
+{
+  servicio ? (
+    <div class="planes-bloque">
+      {!sinCabecera ? (
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Planes</p>
+            <h2 id={idTitulo} class="subrayado mt-4">Qué plan te conviene</h2>
+          </div>
+          <p class="lead">{servicio.lema} En la llamada vemos cuál encaja con tu negocio.</p>
+        </div>
+      ) : null}
+      <ul class="planes mt-10">
+        {servicio.planes.map((p) => (
+          <li class="card tarjeta plan">
+            <h3 class="card-title">{p.nombre}</h3>
+            <p class="plan-dato mt-2"><strong>Ideal para:</strong> {p.idealPara}</p>
+            <p class="plan-dato plan-plazo mt-3">
+              <Icono nombre="reloj" tamano={16} /> {p.plazo}
+            </p>
+            <ul class="lista-check plan-lista mt-5">
+              {p.incluye.map((i) => <li>{i}</li>)}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      <p class="plan-dato mt-6">
+        <strong>No incluye:</strong> {servicio.noIncluye.join(" ")}
+      </p>
+      {!sinCabecera ? (
+        <div class="botones mt-6">
+          <a class="cta" href="/contacto">
+            <Icono nombre="calendario" tamano={18} />
+            Agenda tu llamada gratis <span aria-hidden="true">→</span>
+          </a>
+          <a class="boton-secundario" href="/catalogo">Ver todo el catálogo</a>
+        </div>
+      ) : null}
+    </div>
+  ) : null
+}
+
+<style>
+  .planes {
+    display: grid;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+  }
+  @media (min-width: 900px) {
+    .planes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .plan { display: flex; flex-direction: column; min-width: 0; }
+  .plan-dato { font-size: 0.9rem; }
+  .plan-plazo { display: flex; align-items: center; gap: 0.4rem; }
+  .plan-lista { font-size: 0.95rem; }
+</style>
