@@ -345,4 +345,25 @@ if (process.env.VISTA_CORREOS) {
   for (const [n, c] of Object.entries(lista)) fs.writeFileSync(`${process.env.VISTA_CORREOS}/${n}.html`, c.html);
 }
 
+// ----------------------------------------------------- Voces grabadas de Flora
+const { FIJAS, textoDeVoz, huella } = await import("../src/data/chat-fijas.ts");
+
+prueba("las respuestas fijas de Flora se leen limpias y se pueden grabar", () => {
+  const textos = Object.values(FIJAS).map(textoDeVoz);
+  assert.equal(textos.length, 3);
+  for (const [pregunta, r] of Object.entries(FIJAS)) {
+    const t = textoDeVoz(r);
+    assert.ok(/Opciones:/.test(r) && !/Opciones/.test(t), "la línea de opciones no se lee: " + pregunta);
+    assert.ok(t.length > 40 && t.length <= 1200, "largo razonable: " + pregunta);
+    assert.ok(!/https?:|@/.test(t), "sin enlaces ni correos en la voz: " + pregunta);
+    assert.ok(t.endsWith("?"), "cierra con una pregunta: " + pregunta);
+    assert.ok(!/—/.test(t), "sin rayas largas: " + pregunta);
+    assert.ok(t.split(/\s+/).length <= 60, "respuesta breve: " + pregunta);
+  }
+  assert.equal(new Set(textos.map(huella)).size, 3, "cada texto tiene su huella");
+  assert.match(huella(textos[0]), /^[0-9a-f]{8}$/);
+  assert.equal(huella("hola"), huella("hola"), "la huella es estable");
+  assert.notEqual(huella("hola"), huella("hola."), "cambiar el texto cambia la huella");
+});
+
 console.log(`\n${pruebas} pruebas superadas.`);

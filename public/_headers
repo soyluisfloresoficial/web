@@ -70,3 +70,9 @@
 
 /apple-touch-icon.png
   Cache-Control: public, max-age=604800
+
+# Voces grabadas de Flora (08/11/2026, tools/grabar-voces.mjs). El nombre es la
+# huella del texto, pero si se regraba con otra voz el nombre se repite: por eso
+# solo 7 días.
+/voz/*
+  Cache-Control: public, max-age=604800

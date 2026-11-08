@@ -27,8 +27,22 @@
  * Sin JavaScript no sirve para nada, así que se pinta oculto y es el script
  * quien lo muestra.
  */
+import fs from "node:fs";
 import { faqPlana } from "../data/home";
 import { servicios, SITIO } from "../data/servicios";
+
+// Voces ya grabadas (public/voz/<huella>.mp3, ver tools/grabar-voces.mjs).
+// El chat solo las usa si el archivo existe: sin archivos, todo sigue como antes.
+// La ruta es relativa a la raíz del proyecto, desde donde se lanza «astro build».
+let grabadas: string[] = [];
+try {
+  grabadas = fs
+    .readdirSync("public/voz")
+    .filter((f) => f.endsWith(".mp3"))
+    .map((f) => f.replace(/\.mp3$/, ""));
+} catch {
+  /* todavía no hay carpeta: ninguna voz grabada */
+}
 
 const documentos = [
   ...faqPlana.map((p) => ({ titulo: p.pregunta, texto: p.respuesta })),
@@ -158,23 +172,27 @@ const sugerencias = [
   <script
     type="application/json"
     data-chat-datos
-    set:html={JSON.stringify({ documentos, email: SITIO.email, correo: SITIO.correoEnlace, whatsapp: SITIO.whatsapp })}
+    set:html={JSON.stringify({ documentos, email: SITIO.email, correo: SITIO.correoEnlace, whatsapp: SITIO.whatsapp, grabadas })}
   />
 </div>
 
 <script>
+  import { FIJAS, huella } from "../data/chat-fijas";
+
   type Documento = { titulo: string; texto: string; enlace?: string };
 
   const raiz = document.querySelector<HTMLElement>("[data-chat]");
   const datosEl = raiz?.querySelector("[data-chat-datos]");
 
   if (raiz && datosEl) {
-    const { documentos, email, correo, whatsapp } = JSON.parse(datosEl.textContent ?? "{}") as {
+    const { documentos, email, correo, whatsapp, grabadas: listaGrabadas } = JSON.parse(datosEl.textContent ?? "{}") as {
       documentos: Documento[];
       email: string;
       correo: string;
       whatsapp: string;
+      grabadas?: string[];
     };
+    const grabadas = new Set(listaGrabadas ?? []);
     const abrir = raiz.querySelector<HTMLButtonElement>("[data-chat-abrir]")!;
     const etiqueta = raiz.querySelector<HTMLElement>("[data-chat-etiqueta]")!;
     const panel = raiz.querySelector<HTMLElement>("[data-chat-panel]")!;
@@ -614,7 +632,8 @@ const sugerencias = [
       return trozos;
     };
 
-    const pedirVoz = async (texto: string, corte: AbortSignal): Promise<ArrayBuffer> => {
+    /** Descarga un audio (de /api/voz o un archivo de /voz/) con corte si interrumpen. */
+    const traerAudio = async (url: string, init: RequestInit, corte: AbortSignal): Promise<ArrayBuffer> => {
       // Sin AbortSignal.any (no existe en iPhone con iOS anterior a 17.4): un
       // control propio que se corta si interrumpen o si pasan 20 segundos.
       const propio = new AbortController();
@@ -622,18 +641,47 @@ const sugerencias = [
       corte.addEventListener("abort", cancelar, { once: true });
       const limite = setTimeout(cancelar, 20_000);
       try {
-        const r = await fetch("/api/voz", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ texto }),
-          signal: propio.signal,
-        });
+        const r = await fetch(url, { ...init, signal: propio.signal });
         if (!r.ok) throw new Error(String(r.status));
         return await r.arrayBuffer();
       } finally {
         clearTimeout(limite);
         corte.removeEventListener("abort", cancelar);
       }
+    };
+    const pedirVoz = (texto: string, corte: AbortSignal) =>
+      traerAudio("/api/voz", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ texto }) }, corte);
+
+    /**
+     * Reproduce los trozos en orden, sin cortes entre ellos. Devuelve el
+     * número del trozo que falló (-1 si todo fue bien o si la persona
+     * interrumpió) y cuándo termina lo que ya quedó programado.
+     */
+    const sonar = async (ctx: AudioContext, turno: number, trozos: string[], pedir: (t: string, corte: AbortSignal) => Promise<ArrayBuffer>) => {
+      // Todos los trozos se piden a la vez; se reproducen en orden.
+      cortarPeticiones = new AbortController();
+      const audios = trozos.map((t) => pedir(t, cortarPeticiones!.signal));
+      audios.forEach((p) => p.catch(() => undefined));
+      let fin = 0;
+      for (let i = 0; i < trozos.length; i++) {
+        try {
+          const audio = await ctx.decodeAudioData(await audios[i]);
+          // Si mientras tanto preguntó otra cosa o apagó la voz, esta ya no suena.
+          if (turno !== turnoVoz || !leerEnVoz) return { fallo: -1, fin };
+          if (ctx.state === "suspended") await ctx.resume();
+          const s = ctx.createBufferSource();
+          s.buffer = audio;
+          s.connect(ctx.destination);
+          // Cada trozo empieza justo cuando termina el anterior.
+          const inicio = Math.max(ctx.currentTime + 0.02, fin);
+          s.start(inicio);
+          fin = inicio + audio.duration;
+          fuentes.push(s);
+        } catch {
+          return { fallo: turno === turnoVoz ? i : -1, fin };
+        }
+      }
+      return { fallo: -1, fin };
     };
 
     const decir = async (texto: string) => {
@@ -648,37 +696,23 @@ const sugerencias = [
         .slice(0, 1200);
       if (contexto) {
         const ctx = contexto;
+        // Si ese texto está grabado (las respuestas fijas), suena al instante
+        // desde su archivo. Si el archivo falla, se pide la voz en vivo.
+        const nombre = huella(limpio);
+        if (grabadas.has(nombre)) {
+          const g = await sonar(ctx, turno, [limpio], (_t, corte) => traerAudio(`/voz/${nombre}.mp3`, {}, corte));
+          if (g.fallo === -1) return;
+        }
         const trozos = trozosDeVoz(limpio);
-        // Todos los trozos se piden a la vez; se reproducen en orden.
-        cortarPeticiones = new AbortController();
-        const audios = trozos.map((t) => pedirVoz(t, cortarPeticiones!.signal));
-        audios.forEach((p) => p.catch(() => undefined));
-        let fin = 0;
-        for (let i = 0; i < trozos.length; i++) {
-          try {
-            const audio = await ctx.decodeAudioData(await audios[i]);
-            // Si mientras tanto preguntó otra cosa o apagó la voz, esta ya no suena.
-            if (turno !== turnoVoz || !leerEnVoz) return;
-            if (ctx.state === "suspended") await ctx.resume();
-            const s = ctx.createBufferSource();
-            s.buffer = audio;
-            s.connect(ctx.destination);
-            // Cada trozo empieza justo cuando termina el anterior.
-            const inicio = Math.max(ctx.currentTime + 0.02, fin);
-            s.start(inicio);
-            fin = inicio + audio.duration;
-            fuentes.push(s);
-          } catch {
-            if (turno !== turnoVoz) return;
-            medir("chat_voice_error", { chat_method: "voz-propia" });
-            // Lo que falte lo lee el navegador, cuando termine lo que ya suena.
-            const resto = trozos.slice(i).join(" ");
-            const espera = Math.max(0, (fin - ctx.currentTime) * 1000);
-            setTimeout(() => {
-              if (turno === turnoVoz && leerEnVoz) decirNavegador(resto);
-            }, espera);
-            return;
-          }
+        const { fallo, fin } = await sonar(ctx, turno, trozos, pedirVoz);
+        if (fallo >= 0) {
+          medir("chat_voice_error", { chat_method: "voz-propia" });
+          // Lo que falte lo lee el navegador, cuando termine lo que ya suena.
+          const resto = trozos.slice(fallo).join(" ");
+          const espera = Math.max(0, (fin - ctx.currentTime) * 1000);
+          setTimeout(() => {
+            if (turno === turnoVoz && leerEnVoz) decirNavegador(resto);
+          }, espera);
         }
         return;
       }
@@ -996,16 +1030,9 @@ const sugerencias = [
     };
 
     // Ahorro (02/11/2026): las tres sugerencias del saludo se contestan con
-    // un texto fijo, sin gastar IA. Entran en el historial como si las
-    // hubiera dicho Flora, así la conversación sigue con contexto.
-    const FIJAS: Record<string, string> = {
-      "¿Qué se puede automatizar en mi negocio?":
-        "Lo más habitual: contestar WhatsApp a tiempo, recordatorios de citas y seguimiento de clientes.\n\n¿A qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
-      "¿Cuánto cuesta?":
-        "Depende de lo que haya que hacer, por eso Luis no publica precios. Tras una llamada gratis de 30 minutos te manda el precio cerrado por escrito.\n\n¿A qué se dedica tu negocio?\nOpciones: Clínica o salud | Tienda o ecommerce | Servicios profesionales | Otro sector",
-      "¿Cómo es la llamada gratis?":
-        "Es una videollamada gratis de 30 minutos por Google Meet. Luis revisa contigo qué automatizar primero y luego te manda una propuesta por escrito.\n\n¿Quieres que te la agende aquí?\nOpciones: Agéndala aquí | Prefiero el formulario | Ahora no",
-    };
+    // un texto fijo (FIJAS, en src/data/chat-fijas.ts), sin gastar IA. Entran
+    // en el historial como si las hubiera dicho Flora, así la conversación
+    // sigue con contexto.
     // Tope por conversación: pasadas estas preguntas, Flora ya no llama a la
     // IA y ofrece la llamada o WhatsApp. Lo normal es agendar mucho antes.
     const MAX_PREGUNTAS_IA = 15;

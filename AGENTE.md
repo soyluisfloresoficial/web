@@ -136,3 +136,17 @@ origen, límite, errores, caché, aviso de IA y respaldo sin IA), todas bien.
 `/video/*` e iconos (7 días). El HTML se sigue revalidando siempre, así que cada
 publicación se ve al momento. Si cambias un logo o un video, súbelo con otro
 nombre o espera a que caduque.
+
+## Voces grabadas de las respuestas fijas (8/11/2026)
+
+Las tres respuestas fijas del saludo viven en `src/data/chat-fijas.ts`. Como siempre
+dicen lo mismo, su voz se graba una vez con `node tools/grabar-voces.mjs` y se
+guarda en `public/voz/<huella>.mp3`. El chat las reproduce al instante desde ese
+archivo, con la misma voz de Flora, sin gastar el cupo diario de voz. El nombre del
+archivo es la huella del texto: si cambias una respuesta, el chat deja de usar el
+audio viejo y pide la voz en vivo hasta que vuelvas a grabar. Si el archivo falla,
+vuelve a la voz en vivo y, si esta falla, a la del navegador.
+
+- Grabar lo que falte: `node tools/grabar-voces.mjs`. Cambiar de voz: `--forzar`.
+- Gasta unas 400 letras del cupo del día; si está agotado, avisa y se para.
+- Después: `npm run build`, auditar y subir los archivos de `public/voz/`.
