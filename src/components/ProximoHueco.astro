@@ -62,7 +62,10 @@ const { class: clase } = Astro.props;
     const guardado = leerGuardado();
     if (guardado) mostrar(guardado);
     else {
-      fetch("/api/agenda/proximo")
+      // Sin la caché del navegador: Cloudflare le pone 4 horas a esta respuesta
+      // (ajuste de la zona) y el hueco podría estar ya ocupado. El servidor ya
+      // guarda 5 minutos, así que Google no se consulta en cada visita.
+      fetch("/api/agenda/proximo", { cache: "no-store" })
         .then((r) => (r.ok ? (r.json() as Promise<Respuesta>) : null))
         .then((d) => {
           if (!d?.proximo) return;
