@@ -4,6 +4,10 @@ description: "Si tu web presenta bien tu negocio pero casi no trae contactos, re
 metaTitle: "Qué revisar en tu web para conseguir clientes | Luis Flores"
 datePublished: 2026-10-31
 servicio: "webs-ia"
+resumen:
+  - "Revisa tu web desde el celular y con datos móviles, como la ve tu cliente."
+  - "Cada página debe pedir una sola cosa, explicar qué haces en la primera pantalla y tener el contacto a la vista."
+  - "Revisa lo básico de SEO técnico y mide los contactos antes de cambiar nada; muchas veces no hace falta rehacerla."
 ---
 Muchas webs presentan bien el negocio, pero casi nadie escribe ni agenda desde ahí. Antes de pensar en rehacerla entera, conviene revisarla con ojos de cliente. En la mayoría de los casos lo que frena a las visitas está en unos pocos puntos, y se pueden arreglar de a uno.
 

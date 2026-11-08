@@ -6,6 +6,10 @@ metaTitle: "Cómo armar un panel de métricas | Luis Flores"
 datePublished: 2026-10-21
 dateModified: 2026-10-21
 servicio: "paneles-de-metricas"
+resumen:
+  - "Un panel de métricas muestra los pocos números que necesitas para decidir, tomados de tus herramientas sin copiar nada a mano."
+  - "El error más común es mostrar demasiado: si un número sube o baja y no harías nada distinto, sobra."
+  - "Ordénalo siguiendo el recorrido de tus clientes y define las preguntas antes que los gráficos."
 ---
 Casi todos los dueños de negocio con los que hablo tienen los datos, pero repartidos. Las visitas están en Google Analytics, los contactos en el CRM, los resultados de la publicidad en Meta o Google y los pagos en Stripe o en el banco. Para saber cómo va el mes, alguien tiene que abrir cinco pestañas y copiar números a una hoja de cálculo. Un panel de métricas junta todo eso en una sola pantalla que se actualiza sola.
 

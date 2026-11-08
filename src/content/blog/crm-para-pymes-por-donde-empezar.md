@@ -6,6 +6,10 @@ metaTitle: "CRM para pymes: qué es y cómo empezar | Luis Flores"
 datePublished: 2026-10-21
 dateModified: 2026-10-21
 servicio: "crm-seguimiento-leads"
+resumen:
+  - "Un CRM guarda a cada persona interesada en tu negocio, con su historial y el siguiente paso."
+  - "Muchos se abandonan porque se configuraron pensando en la herramienta, había que cargar todo a mano o nadie explicó cómo usarlos."
+  - "Para empezar: dibuja tu proceso de ventas, decide qué datos guardar, programa los seguimientos y explícale el sistema a tu equipo."
 ---
 Esta escena se repite mucho: los contactos llegan por WhatsApp, por Instagram, por la web y por teléfono, y cada uno termina en un lugar distinto. Algunos están en el celular del dueño, otros en el correo y otros en una hoja de cálculo que nadie actualiza desde hace semanas. El resultado es que se pierden clientes que ya habían levantado la mano. Para eso existe un CRM.
 

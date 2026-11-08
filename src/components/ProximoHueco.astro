@@ -1,0 +1,102 @@
+---
+/**
+ * «Próximo hueco libre» junto a los botones de agendar (09/11/2026).
+ *
+ * Sale de la agenda real (GET /api/agenda/proximo, con 5 minutos de caché en
+ * el servidor) y se muestra en la hora de quien visita. Sin JavaScript, sin
+ * agenda conectada o si no hay huecos, no se muestra nada: nunca se inventa
+ * una hora ni se mete prisa.
+ *
+ * Varias copias en la misma página comparten una sola petición.
+ */
+interface Props {
+  class?: string;
+}
+const { class: clase } = Astro.props;
+---
+
+<p class:list={["proximo-hueco", clase]} data-proximo-hueco hidden>
+  <span class="proximo-punto" aria-hidden="true"></span>
+  <span data-proximo-texto></span>
+</p>
+
+<script>
+  type Respuesta = { proximo: string | null };
+  const avisos = document.querySelectorAll<HTMLElement>("[data-proximo-hueco]");
+  const CLAVE = "proximo-hueco";
+
+  /** «hoy a las 16:30», «mañana a las 9:30» o «el martes 11 de noviembre a las 10:00». */
+  const describir = (iso: string): string => {
+    const fecha = new Date(iso);
+    const hora = new Intl.DateTimeFormat("es", { hour: "numeric", minute: "2-digit" }).format(fecha);
+    const dia = (d: Date) => new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+    const hoy = new Date();
+    const manana = new Date(hoy.getTime() + 86_400_000);
+    if (dia(fecha) === dia(hoy)) return `hoy a las ${hora}`;
+    if (dia(fecha) === dia(manana)) return `mañana a las ${hora}`;
+    const largo = new Intl.DateTimeFormat("es", { weekday: "long", day: "numeric", month: "long" }).format(fecha);
+    return `el ${largo} a las ${hora}`;
+  };
+
+  const mostrar = (iso: string) => {
+    // Un hueco que ya pasó (por la caché) no se enseña.
+    if (new Date(iso).getTime() < Date.now()) return;
+    const texto = `Próximo hueco libre: ${describir(iso)}`;
+    for (const a of avisos) {
+      const t = a.querySelector<HTMLElement>("[data-proximo-texto]");
+      if (t) t.textContent = texto;
+      a.hidden = false;
+    }
+  };
+
+  const leerGuardado = (): string | null => {
+    try {
+      const g = JSON.parse(sessionStorage.getItem(CLAVE) ?? "null") as { iso: string; hasta: number } | null;
+      return g && g.hasta > Date.now() ? g.iso : null;
+    } catch {
+      return null;
+    }
+  };
+
+  if (avisos.length) {
+    const guardado = leerGuardado();
+    if (guardado) mostrar(guardado);
+    else {
+      fetch("/api/agenda/proximo")
+        .then((r) => (r.ok ? (r.json() as Promise<Respuesta>) : null))
+        .then((d) => {
+          if (!d?.proximo) return;
+          try {
+            sessionStorage.setItem(CLAVE, JSON.stringify({ iso: d.proximo, hasta: Date.now() + 5 * 60_000 }));
+          } catch {
+            /* sin almacenamiento: no pasa nada */
+          }
+          mostrar(d.proximo);
+        })
+        .catch(() => undefined);
+    }
+  }
+</script>
+
+<style>
+  .proximo-hueco {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: var(--color-soft);
+  }
+  .proximo-hueco[hidden] {
+    display: none;
+  }
+  .proximo-punto {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-teal);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-teal) 22%, transparent);
+    flex-shrink: 0;
+  }
+</style>

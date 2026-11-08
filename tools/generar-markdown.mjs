@@ -29,7 +29,9 @@ export function aMarkdown(html) {
   let h = html
     // Fuera lo que no es texto para leer.
     .replace(/<(script|style|svg|noscript|template|form|button|select|textarea|video|iframe)\b[\s\S]*?<\/\1>/gi, "")
-    .replace(/<(nav|aside)\b[\s\S]*?<\/\1>/gi, "")
+    .replace(/<nav\b[\s\S]*?<\/nav>/gi, "")
+    // Los laterales fuera, salvo el resumen «En 30 segundos» de los artículos.
+    .replace(/<aside\b(?![^>]*resumen-rapido)[\s\S]*?<\/aside>/gi, "")
     .replace(/<(img|input|source|track|br|hr)\b[^>]*>/gi, (m, t) => (t.toLowerCase() === "br" ? " " : t.toLowerCase() === "hr" ? "\n\n---\n\n" : ""))
     // Elementos ocultos y solo decorativos.
     .replace(/<([a-z0-9]+)\b[^>]*\b(?:hidden|aria-hidden="true")[^>]*>[\s\S]*?<\/\1>/gi, "")

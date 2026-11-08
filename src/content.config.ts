@@ -16,6 +16,10 @@ const blog = defineCollection({
       imageAlt: z.string().optional(),
       /** Slug del servicio con el que enlaza el post. */
       servicio: z.string().optional(),
+      /** «En 30 segundos» (09/11/2026): tres puntos que resumen el artículo,
+       *  sin decir nada que no esté en el texto. Va arriba del artículo y en
+       *  el abstract del JSON-LD. */
+      resumen: z.array(z.string()).min(2).max(4).optional(),
     }),
 });
 

@@ -6,6 +6,10 @@ metaTitle: "Agentes de IA que no inventan información | Luis Flores"
 datePublished: 2026-09-24
 dateModified: 2026-10-21
 servicio: "agentes-ia"
+resumen:
+  - "Un chatbot genérico completa lo que no sabe; en un negocio eso no se puede permitir."
+  - "Se evita con tres capas: una sola fuente de información, datos en tiempo real de tus herramientas y una regla para cuando no sabe."
+  - "Cuando no sabe o el cliente lo pide, pasa la conversación a una persona con todo lo que se habló."
 ---
 Cada vez que propongo un agente de IA para atender clientes, me hacen la misma pregunta: *«¿Y si inventa un precio o le da a alguien una hora que no tengo libre?»*. Es una duda muy válida. La respuesta corta es que un agente bien configurado no debería inventar nada, y que eso depende mucho más de la configuración que del modelo de IA que uses.
 

@@ -23,7 +23,7 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { INSTRUCCIONES } from "./instrucciones";
-import { agenda, citaAgenda, configAgenda, recordatorios, zonaValida, type EnvAgenda } from "./agenda";
+import { agenda, citaAgenda, configAgenda, proximoHueco, recordatorios, zonaValida, type EnvAgenda } from "./agenda";
 import { HERRAMIENTAS, usarHerramienta, type CitaPropuesta } from "./chat-agenda";
 import { contar, resumenSemanal } from "./estadisticas";
 import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
@@ -362,6 +362,7 @@ export default {
     if (pathname === "/api/chat") return chat(request, env, ctx);
     if (pathname === "/api/voz") return voz(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda") return agenda(request, env, json, origenPermitido, ctx);
+    if (pathname === "/api/agenda/proximo") return proximoHueco(request, env, json, ctx);
     if (pathname === "/api/agenda/cita" || pathname === "/api/agenda/cancelar") {
       return citaAgenda(request, env, json, origenPermitido, ctx);
     }

@@ -412,4 +412,32 @@ prueba("Markdown solo para quien lo pide; las personas reciben el HTML con sus c
   assert.ok(r404.headers.get("Content-Security-Policy"));
 });
 
+// ---------------------------------------- Autodiagnóstico de /servicios (09/11/2026)
+const diag = await import("../src/data/autodiagnostico.ts");
+// servicios.ts usa import.meta.env de Astro: aquí se leen los slugs del texto.
+const textoServicios = fs.readFileSync("src/data/servicios.ts", "utf8");
+
+prueba("el autodiagnóstico recomienda servicios que existen y siempre da un resultado", () => {
+  const slugs = new Set([...textoServicios.matchAll(/^\s+slug: "([^"]+)"/gm)].map((m) => m[1]));
+  assert.equal(slugs.size, 9);
+  for (const slug of Object.keys(diag.MOTIVOS)) assert.ok(slugs.has(slug), "motivo de un servicio que no existe: " + slug);
+  for (const s of slugs) assert.ok(diag.MOTIVOS[s], "falta el motivo de " + s);
+  for (const p of diag.PREGUNTAS)
+    for (const o of p.opciones) for (const slug of Object.keys(o.puntos)) assert.ok(slugs.has(slug), p.id + ": " + slug);
+  assert.equal(diag.PREGUNTAS.length, 5);
+  // Todas las combinaciones de respuestas dan al menos una recomendación.
+  const combinar = (i, actual) => {
+    if (i === diag.PREGUNTAS.length) {
+      assert.ok(diag.recomendar(actual).length >= 1, "sin resultado: " + actual.join(","));
+      return;
+    }
+    diag.PREGUNTAS[i].opciones.forEach((_, j) => combinar(i + 1, [...actual, j]));
+  };
+  combinar(0, []);
+  assert.equal(diag.recomendar([0, 0, 0, 2, 2])[0], "agentes-ia");
+  assert.equal(diag.recomendar([1, 3, 1, 2, 2])[0], "automatizacion");
+  assert.equal(diag.recomendar([3, 3, 0, 0, 2])[0], "webs-ia");
+  assert.equal(diag.recomendar([0, 0, 0, 2, 0])[1], "consultoria-ia");
+});
+
 console.log(`\n${pruebas} pruebas superadas.`);

@@ -6,6 +6,10 @@ metaTitle: "Qué métricas medir en tu negocio para decidir | Luis Flores"
 datePublished: 2026-10-13
 dateModified: 2026-10-21
 servicio: "funnels-conversion"
+resumen:
+  - "Una métrica sirve si, cuando sube o baja, harías algo diferente."
+  - "Sigue cuatro etapas: llegan, dejan sus datos, avanzan y compran."
+  - "Mide siempre antes y después de cada cambio, y revisa una tabla sencilla una vez por semana."
 ---
 Dicen que lo que no se mide no se puede mejorar, y es cierto, pero con un detalle: medir *todo* abruma tanto como no medir nada. Terminas con paneles llenos de números que no te cambian ninguna decisión. Lo que sirve es medir las pocas cosas que te dicen qué hacer después.
 

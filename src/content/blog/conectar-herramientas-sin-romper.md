@@ -6,6 +6,10 @@ metaTitle: "Cómo conectar tus herramientas sin romper nada | Luis Flores"
 datePublished: 2026-10-09
 dateModified: 2026-10-21
 servicio: "automatizacion"
+resumen:
+  - "Una automatización mal hecha es peor que ninguna: falla sin avisar, duplica contactos o manda el correo equivocado."
+  - "Tres cosas la hacen confiable: avisos de error, control de duplicados y documentación."
+  - "Empieza por un solo proceso repetido y con reglas claras; Make, n8n o Zapier se eligen según tu caso."
 ---
 Casi todos los negocios usan varias herramientas que no se comunican entre sí: el formulario por un lado, el CRM por otro, la hoja de cálculo, el calendario, la facturación. Al final siempre hay alguien copiando datos a mano de una a otra, con los errores que eso trae. Automatizar consiste en que esas herramientas se pasen la información solas. La pregunta es cómo hacerlo para que no se caiga a la primera.
 

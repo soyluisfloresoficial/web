@@ -4,6 +4,10 @@ description: "Un agente de IA en WhatsApp responde al momento y agenda citas. Te
 metaTitle: "Agente de IA en WhatsApp: cómo empezar | Luis Flores"
 datePublished: 2026-10-31
 servicio: "agentes-ia"
+resumen:
+  - "Un agente de IA en WhatsApp responde al momento, agenda citas y registra el contacto en tu CRM, con la información que tú apruebas."
+  - "Antes de configurarlo: junta las preguntas reales de una semana, escribe la información aprobada y decide qué pasa siempre a una persona."
+  - "Pasa la conversación a tu equipo cuando hace falta, y conviene decir desde el principio que es una IA."
 ---
 Para muchos negocios, WhatsApp es por donde llegan casi todas las consultas. Precios, horarios, disponibilidad, «¿tienen hora esta semana?». Si contestas tarde, ese cliente le escribe a otro. Un agente de IA puede responder en el momento, a cualquier hora, y dejar la cita agendada.
 

@@ -863,6 +863,14 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>Versión Markdown de las 33 páginas indexables para los agentes de IA que la pidan (Accept: text/markdown). Las personas ven la web igual.</li>
         <li>El Worker atiende ahora las páginas y pone él las cabeceras de seguridad de _headers, que Cloudflare no aplica a sus respuestas.</li>
         <li>Niveles 2, 3 y Comercio del panel: no hacen falta para una web de captación.</li>
+        <li>Arreglo: Cloudflare no publicaba porque <code>/api/*</code> sobraba en <code>run_worker_first</code> (comprobado con <code>wrangler deploy --dry-run</code>).</li>
+      </ul></div>
+    <div class="hito"><div class="fecha">9 nov</div><strong>Nuevas piezas para conseguir llamadas (recomendaciones 1, 2 y 6)</strong>
+      <ul>
+        <li>«Próximo hueco libre» junto a los botones de agendar (portada, bloque final y autodiagnóstico), sacado de la agenda real con 5 minutos de caché. Sin huecos no sale nada.</li>
+        <li>Autodiagnóstico «¿Por dónde empiezo?» en /servicios: 5 preguntas, recomienda un servicio y otro de apoyo, con eventos quiz_start y quiz_complete para Analytics.</li>
+        <li>Resumen «En 30 segundos» al inicio de los 12 artículos del blog, también en el JSON-LD (abstract) y en la versión Markdown.</li>
+        <li>Pendientes de la lista: formulario corto en /contacto, gráfico animado en las páginas de servicio, índice lateral del blog, glosario, comparativas, bloque de testimonios, video en /sobre-mi y página de herramientas.</li>
       </ul></div>
     <div class="hito"><div class="fecha">8 nov (noche)</div><strong>Paquete 1 de mejoras invisibles</strong>
       <ul>

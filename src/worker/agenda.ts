@@ -536,6 +536,39 @@ export async function huecosParaChat(env: EnvAgenda): Promise<{ zona: string; du
   }
 }
 
+// ------------------------------------------------ Próximo hueco libre (web)
+
+/**
+ * GET /api/agenda/proximo (09/11/2026): solo el primer hueco libre, para el
+ * aviso «Próximo hueco libre» junto a los botones de agendar.
+ *
+ * Lo piden todas las páginas, así que no consulta Google en cada visita: la
+ * respuesta se guarda 5 minutos en la caché de Cloudflare de cada ubicación.
+ * Si alguien agenda ese hueco, el aviso puede ir 5 minutos por detrás; la
+ * agenda de /contacto siempre muestra los huecos al día.
+ */
+export async function proximoHueco(request: Request, env: EnvAgenda, json: Responder, ctx: { waitUntil(p: Promise<unknown>): void }): Promise<Response> {
+  if (request.method !== "GET") return json({ error: "metodo" }, 405);
+  const cache = (globalThis as unknown as { caches?: { default: { match(r: Request): Promise<Response | undefined>; put(r: Request, res: Response): Promise<void> } } }).caches?.default;
+  const clave = new Request(`${CONTACTO.web}/api/agenda/proximo`);
+  const guardada = await cache?.match(clave);
+  if (guardada) return guardada;
+  const datos = await huecosParaChat(env);
+  if (!datos) return json({ error: "sin-agenda" }, 503);
+  const r = new Response(
+    JSON.stringify({ proximo: datos.huecos[0] ? new Date(datos.huecos[0]).toISOString() : null, duracion: datos.duracion }),
+    {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "public, max-age=300",
+        "X-Robots-Tag": "noindex",
+      },
+    },
+  );
+  if (cache) ctx.waitUntil(cache.put(clave, r.clone()));
+  return r;
+}
+
 // ------------------------------------------------------ Para el panel
 
 /** Compara la clave sin delatar por el tiempo de respuesta cuánto acertó. */

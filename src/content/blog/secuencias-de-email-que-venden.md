@@ -6,6 +6,10 @@ metaTitle: "Secuencias de email automáticas que venden | Luis Flores"
 datePublished: 2026-10-21
 dateModified: 2026-10-21
 servicio: "email-marketing"
+resumen:
+  - "Una secuencia de email es una serie de correos que se envían solos, a cada persona según lo que hace."
+  - "Las tres que conviene tener primero son bienvenida, seguimiento y reactivación."
+  - "Solo se escribe a quien aceptó recibir tus correos, y se mide cada correo por separado."
 ---
 La mayoría de las personas no compra la primera vez que conoce un negocio. Necesita tiempo, información y confianza. El problema es que, en el día a día, casi nadie tiene tiempo de escribirle a cada contacto en el momento justo. Una secuencia de email resuelve justamente eso: le escribe a cada persona cuando corresponde, aunque tú estés ocupado con otra cosa.
 

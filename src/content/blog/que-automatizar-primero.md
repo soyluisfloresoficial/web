@@ -6,6 +6,10 @@ metaTitle: "Qué automatizar primero en tu negocio con IA | Luis Flores"
 datePublished: 2026-09-15
 dateModified: 2026-10-21
 servicio: "automatizacion"
+resumen:
+  - "Automatiza primero lo que se repite seguido, sigue reglas claras y afecta a tus clientes."
+  - "La atención y el seguimiento de contactos suelen ser el mejor primer paso, porque contestar tarde cuesta ventas."
+  - "Para empezar, anota las tareas repetitivas de una semana normal y elige una que cumpla las tres condiciones."
 ---
 Cuando el dueño de un negocio me dice «quiero automatizar», lo primero que pregunto no es *con qué herramienta*, sino *qué*. Elegir mal la primera automatización es la forma más rápida de perder tiempo y quedarte con la idea de que «esto de la IA no es para mí». Por eso uso un criterio simple: una buena primera tarea cumple tres condiciones.
 

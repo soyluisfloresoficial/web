@@ -1,0 +1,312 @@
+---
+/**
+ * Autodiagnóstico «¿Por dónde empiezo?» (09/11/2026). Preguntas, puntos y
+ * motivos en src/data/autodiagnostico.ts.
+ *
+ * Una pregunta cada vez; al elegir una respuesta pasa a la siguiente. Al
+ * final recomienda un servicio (y otro que también puede servir) con el
+ * enlace al servicio y el botón para agendar. No pide datos ni guarda nada:
+ * solo manda a Analytics el servicio recomendado (evento «quiz_complete»),
+ * si la persona aceptó las cookies.
+ *
+ * Sin JavaScript se ve un enlace a la llamada en lugar del test.
+ */
+import Icono from "./Icono.astro";
+import ProximoHueco from "./ProximoHueco.astro";
+import { PREGUNTAS, MOTIVOS } from "../data/autodiagnostico";
+import { servicios } from "../data/servicios";
+
+const datos = {
+  servicios: Object.fromEntries(servicios.map((s) => [s.slug, { nombre: s.nombre, color: s.color }])),
+  motivos: MOTIVOS,
+};
+---
+
+<section class="section" id="por-donde-empiezo" aria-labelledby="diagnostico-titulo">
+  <div class="container-lf">
+    <div class="cabecera-seccion">
+      <div>
+        <p class="eyebrow">Autodiagnóstico</p>
+        <h2 id="diagnostico-titulo" class="subrayado mt-4">¿Por dónde empiezo?</h2>
+      </div>
+      <p class="lead">
+        Cinco preguntas, menos de un minuto. Te digo qué servicio conviene mirar primero. Es una orientación:
+        en la llamada lo vemos con tu caso real.
+      </p>
+    </div>
+
+    <div class="card diag mt-10" data-diag hidden>
+      <script is:inline type="application/json" data-diag-datos set:html={JSON.stringify(datos)}></script>
+      <div class="diag-progreso" aria-hidden="true"><span data-diag-barra></span></div>
+
+      {
+        PREGUNTAS.map((p, i) => (
+          <fieldset class="diag-paso" data-diag-paso={i} hidden={i > 0}>
+            <legend class="diag-pregunta">
+              <span class="diag-num">
+                Pregunta {i + 1} de {PREGUNTAS.length}
+              </span>
+              {p.texto}
+            </legend>
+            <div class="diag-opciones">
+              {p.opciones.map((o, j) => (
+                <button type="button" class="diag-opcion" data-diag-opcion={j}>
+                  {o.texto}
+                </button>
+              ))}
+            </div>
+            {i > 0 && (
+              <button type="button" class="diag-atras" data-diag-atras>
+                <span aria-hidden="true">←</span> Pregunta anterior
+              </button>
+            )}
+          </fieldset>
+        ))
+      }
+
+      <div class="diag-resultado" data-diag-resultado hidden tabindex="-1">
+        <p class="diag-num">Te recomiendo empezar por</p>
+        <h3 class="diag-servicio" data-diag-servicio></h3>
+        <p class="diag-motivo" data-diag-motivo></p>
+        <p class="diag-tambien" data-diag-tambien hidden>
+          También te puede servir: <a href="#" data-diag-tambien-enlace></a>
+        </p>
+        <div class="botones mt-6">
+          <a class="cta" href="/contacto">
+            <Icono nombre="calendario" tamano={18} />
+            Agenda tu llamada gratis <span aria-hidden="true">→</span>
+          </a>
+          <a class="boton-secundario" href="#" data-diag-enlace>Ver el servicio</a>
+        </div>
+        <ProximoHueco class="mt-4" />
+        <button type="button" class="diag-atras mt-6" data-diag-reiniciar>
+          <span aria-hidden="true">↺</span> Volver a empezar
+        </button>
+      </div>
+    </div>
+
+    <noscript>
+      <p class="lead mt-8">
+        <a href="/contacto">Agenda una llamada gratis</a> y vemos juntos por dónde empezar.
+      </p>
+    </noscript>
+  </div>
+</section>
+
+<script>
+  import { recomendar, PREGUNTAS } from "../data/autodiagnostico";
+
+  const caja = document.querySelector<HTMLElement>("[data-diag]");
+  if (caja) {
+    const datos = JSON.parse(caja.querySelector("[data-diag-datos]")?.textContent ?? "{}") as {
+      servicios: Record<string, { nombre: string; color: string }>;
+      motivos: Record<string, string>;
+    };
+    const pasos = [...caja.querySelectorAll<HTMLElement>("[data-diag-paso]")];
+    const barra = caja.querySelector<HTMLElement>("[data-diag-barra]")!;
+    const resultado = caja.querySelector<HTMLElement>("[data-diag-resultado]")!;
+    const respuestas: number[] = [];
+    let empezado = false;
+
+    const medir = (event: string, extra: Record<string, unknown> = {}) =>
+      (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({ event, ...extra, page_path: location.pathname });
+
+    const ir = (n: number) => {
+      pasos.forEach((p, i) => (p.hidden = i !== n));
+      resultado.hidden = n < pasos.length;
+      barra.style.width = `${(Math.min(n, pasos.length) / pasos.length) * 100}%`;
+    };
+
+    const enfocar = (el: HTMLElement | null | undefined) => el?.focus({ preventScroll: true });
+
+    const mostrarResultado = () => {
+      const [primero, segundo] = recomendar(respuestas);
+      const s = datos.servicios[primero];
+      if (!s) return;
+      caja.querySelector("[data-diag-servicio]")!.textContent = s.nombre;
+      caja.querySelector("[data-diag-motivo]")!.textContent = datos.motivos[primero] ?? "";
+      caja.querySelector<HTMLAnchorElement>("[data-diag-enlace]")!.href = `/servicios/${primero}`;
+      resultado.style.setProperty("--svc", `var(${s.color})`);
+      const tambien = caja.querySelector<HTMLElement>("[data-diag-tambien]")!;
+      const otro = segundo ? datos.servicios[segundo] : undefined;
+      tambien.hidden = !otro;
+      if (otro) {
+        const a = caja.querySelector<HTMLAnchorElement>("[data-diag-tambien-enlace]")!;
+        a.textContent = otro.nombre;
+        a.href = `/servicios/${segundo}`;
+      }
+      ir(pasos.length);
+      enfocar(resultado);
+      medir("quiz_complete", { quiz_result: primero, quiz_second: segundo ?? "" });
+    };
+
+    caja.addEventListener("click", (e) => {
+      const el = e.target as HTMLElement;
+      const opcion = el.closest<HTMLElement>("[data-diag-opcion]");
+      const paso = el.closest<HTMLElement>("[data-diag-paso]");
+      if (opcion && paso) {
+        const n = Number(paso.dataset.diagPaso);
+        respuestas[n] = Number(opcion.dataset.diagOpcion);
+        respuestas.length = n + 1;
+        if (!empezado) {
+          empezado = true;
+          medir("quiz_start");
+        }
+        if (n + 1 < PREGUNTAS.length) {
+          ir(n + 1);
+          enfocar(pasos[n + 1].querySelector<HTMLElement>("[data-diag-opcion]"));
+        } else mostrarResultado();
+        return;
+      }
+      if (el.closest("[data-diag-atras]") && paso) {
+        const n = Number(paso.dataset.diagPaso);
+        ir(n - 1);
+        enfocar(pasos[n - 1].querySelector<HTMLElement>("[data-diag-opcion]"));
+        return;
+      }
+      if (el.closest("[data-diag-reiniciar]")) {
+        respuestas.length = 0;
+        ir(0);
+        enfocar(pasos[0].querySelector<HTMLElement>("[data-diag-opcion]"));
+      }
+    });
+
+    caja.hidden = false;
+    ir(0);
+  }
+</script>
+
+<style>
+  .diag {
+    max-width: 46rem;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 1.1rem + 1.5vw, 2.5rem);
+    position: relative;
+    overflow: hidden;
+  }
+  .diag[hidden] {
+    display: none;
+  }
+  .diag-progreso {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--color-line);
+  }
+  .diag-progreso span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--grad-brand);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .diag-progreso span {
+      transition: width 0.35s ease;
+    }
+  }
+  .diag-paso {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .diag-paso[hidden],
+  .diag-resultado[hidden] {
+    display: none;
+  }
+  .diag-num {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+    margin-bottom: 0.5rem;
+  }
+  .diag-pregunta {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-ink);
+    padding: 0;
+  }
+  .diag-opciones {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .diag-opciones {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .diag-opcion {
+    text-align: left;
+    font: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--color-ink);
+    background: rgb(255 255 255 / 0.03);
+    border: 1px solid var(--color-line);
+    border-radius: 0.875rem;
+    padding: 0.95rem 1.1rem;
+    min-height: 3.25rem;
+    cursor: pointer;
+  }
+  .diag-opcion:hover,
+  .diag-opcion:focus-visible {
+    border-color: var(--color-electric);
+    background: rgb(0 123 255 / 0.08);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .diag-opcion {
+      transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+    }
+  }
+  .diag-atras {
+    margin-top: 1.25rem;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--color-soft);
+    background: none;
+    border: 0;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .diag-atras:hover {
+    color: var(--color-ink);
+  }
+  .diag-resultado:focus {
+    outline: none;
+  }
+  .diag-servicio {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--svc, var(--color-ink));
+  }
+  .diag-motivo {
+    margin-top: 0.75rem;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--color-soft);
+  }
+  .diag-tambien {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--color-soft);
+  }
+  .diag-tambien[hidden] {
+    display: none;
+  }
+  .botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

@@ -6,6 +6,10 @@ metaTitle: "Cómo empezar con IA en tu negocio | Luis Flores"
 datePublished: 2026-10-14
 dateModified: 2026-10-21
 servicio: "consultoria-ia"
+resumen:
+  - "El error más común es empezar por la herramienta; primero va el problema de tu negocio."
+  - "Anota durante una semana en qué se te va el tiempo y empieza por un solo proceso."
+  - "No automatices un proceso desordenado: ordénalo primero. Empezar por una sola cosa cuesta menos de lo que se cree."
 ---
 Cada semana sale una herramienta de IA nueva, y justo ahí está la trampa. Es muy fácil pasarte dos meses probando aplicaciones, pagando suscripciones «por si acaso» y terminar sin nada que de verdad funcione en tu negocio. Para empezar bien con IA no hace falta probar mucho. Hace falta empezar por lo correcto.
 

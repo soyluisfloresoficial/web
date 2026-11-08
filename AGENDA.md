@@ -404,3 +404,12 @@ número en el evento del calendario.
   Google es de Workspace o gratuita y el acuerdo de tratamiento de Resend.
 - Si en tu cuenta de Calendly quedan citas o un enlace publicado en otro
   sitio (redes, firmas de correo), cámbialo por https://soyluisflores.es/contacto.
+
+## Próximo hueco libre en los botones (9/11/2026)
+
+`GET /api/agenda/proximo` devuelve solo el primer hueco libre (`{ proximo, duracion }`).
+Lo usa `src/components/ProximoHueco.astro`, que muestra «Próximo hueco libre: mañana a
+las 10:00» junto a los botones de agendar de la portada, del bloque final de las páginas
+y del autodiagnóstico de `/servicios`, en la hora de quien visita. La respuesta se guarda
+5 minutos en la caché de Cloudflare para no consultar Google en cada visita. Sin agenda
+conectada o sin huecos, el aviso no aparece.

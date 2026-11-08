@@ -6,6 +6,10 @@ metaTitle: "Embudos de venta sin hacer spam | Luis Flores"
 datePublished: 2026-10-02
 dateModified: 2026-10-21
 servicio: "funnels-conversion"
+resumen:
+  - "Un embudo de ventas es el camino desde que alguien te conoce hasta que te compra, con cada etapa medida."
+  - "La diferencia entre seguimiento y spam no es cuántos mensajes mandas, sino qué mandas."
+  - "Una página con un solo objetivo y medir cada etapa te dicen qué arreglar primero."
 ---
 La palabra «funnel» tiene mala fama, y se entiende: mucha gente la asocia con una serie de correos insistentes que te persiguen hasta que te das de baja. Un funnel bien hecho, o embudo de ventas, funciona al revés. Es un camino ordenado donde cada paso le sirve a la persona, no solo a ti.
 
