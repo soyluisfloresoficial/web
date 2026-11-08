@@ -65,10 +65,11 @@
     // Tope de mensajes con IA al día en toda la web. Al llegar, el chat sigue
     // con las preguntas frecuentes, sin IA, hasta el día siguiente (UTC).
     "LIMITE_DIARIO_CHAT": "300",
-    // Voz de Flora: selena (latina, cálida y calmada). Otras femeninas:
-    // celeste (latina, más alegre), estrella (mexicana, madura), diana y
-    // carina (de España).
-    "VOZ_FLORA": "selena"
+    // Voz de Flora: celeste (latina), elegida el 08/11/2026 tras escuchar las cinco
+    // femeninas. Antes, selena.
+    // Otras: selena (latina), estrella (mexicana, madura), diana y
+    // carina (de España). Se cambia con esta variable.
+    "VOZ_FLORA": "celeste"
   },
   // Cada 10 minutos el Worker revisa las citas y manda los recordatorios de
   // la agenda por correo (AGENDA.md) y los correos de la secuencia de la guía

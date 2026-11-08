@@ -202,7 +202,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <h1>Informe y auditoría de <em>soyluisflores.es</em></h1>
     <p class="lead">Qué va bien, qué falla, qué conviene mejorar y el paso a paso para hacerlo. Incluye la web, Flora, la agenda, el panel, la seguridad, los textos legales, el SEO y la presencia en buscadores con IA.</p>
     <div class="meta">
-      <span class="pastilla">Última actualización: <b>06/11/2026</b></span>
+      <span class="pastilla">Última actualización: <b>08/11/2026</b></span>
       <span class="pastilla">Auditoría completa: <b>03/11/2026</b></span>
       <span class="pastilla">Web: <b>main = reconstruccion-oct-2026</b></span>
       <span class="pastilla">Panel: <b>e61313c</b></span>
@@ -754,7 +754,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <div class="tarjeta"><h3>Rapidez</h3><p class="sub">Primera respuesta en 1,4 segundos y siguientes en unos 2,8 (medido el 02/11). Al abrir el chat se prepara la caché. La voz tarda 0,8 a 3,1 s en generarse; desde el 06/11 se pide por frases y la primera suena en unos 2 segundos.</p></div>
     <div class="tarjeta"><h3>Respuestas</h3><p class="sub">45 palabras como máximo, una idea por mensaje y siempre una pregunta al final hasta que la llamada queda agendada.</p></div>
     <div class="tarjeta"><h3>Memoria (nueva)</h3><p class="sub">Resumen corto de 30 días con un código del navegador, nunca con la IP. Saludo «Hola de nuevo» y botón «Olvidarme». Probada en vivo: recuerda, retoma y olvida.</p></div>
-    <div class="tarjeta"><h3>Voz</h3><p class="sub">Dictado gratis por el navegador. Voz «selena» (Deepgram Aura-2) gratis hasta unas 12 a 14 respuestas al día; después, la voz del navegador.</p></div>
+    <div class="tarjeta"><h3>Voz</h3><p class="sub">Dictado gratis por el navegador. Voz «celeste» (Deepgram Aura-2) gratis hasta unas 12 a 14 respuestas al día; después, la voz del navegador.</p></div>
   </div>
 
   <h3>Prueba con 22 preguntas trampa (03/11/2026)</h3>
@@ -841,6 +841,8 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>S2: Flora pide y reproduce la voz frase por frase; la primera suena en unos 2 segundos en vez de unos 6 a 7 (estimado). Límite de voz de 40 peticiones por minuto.</li>
         <li>Node.js reinstalado en el ordenador (v26.13) para poder compilar.</li>
       </ul></div>
+    <div class="hito"><div class="fecha">8 nov</div><strong>Voz de Flora elegida por oído</strong>
+      <ul><li>Se compararon las cinco voces femeninas con la misma frase y el titular eligió la B: «celeste» (latina). Sustituye a «selena».</li><li>Bot Fight Mode apagado, sitemap enviado a Google y a Bing, Crawler Hints activado y tope de gasto en Anthropic puesto.</li></ul></div>
     <div class="hito"><div class="fecha">6 nov</div><strong>Catálogo de servicios sin precios</strong>
       <ul>
         <li>Página /catalogo con 9 servicios, 27 planes y condiciones generales, y planes en cada página de servicio, enlazada desde el pie.</li>
@@ -942,7 +944,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <tbody>
       <tr><td>Flora: pensar la respuesta (Claude Haiku 5.5)</td><td><span class="estado aviso">No</span></td><td>0,10 $ por millón de tokens leídos y 0,50 $ por millón escritos. Una conversación ronda medio céntimo (estimación).</td><td>Topes de la web y límite mensual en Anthropic (paso A5).</td></tr>
       <tr><td>Flora: dictado por micrófono</td><td><span class="estado ok">Sí</span></td><td>Lo hace el navegador.</td><td>Nada que hacer.</td></tr>
-      <tr><td>Flora: voz «selena» (Workers AI)</td><td><span class="estado ok">Hasta un tope</span></td><td>10.000 neuronas gratis al día, unas 12 a 14 respuestas leídas. Después, en el plan gratuito, la voz del navegador; con Workers Paid (5 $/mes), 0,03 $ por 1.000 letras.</td><td>Cloudflare → AI → Workers AI muestra el uso diario.</td></tr>
+      <tr><td>Flora: voz «celeste» (Workers AI)</td><td><span class="estado ok">Hasta un tope</span></td><td>10.000 neuronas gratis al día, unas 12 a 14 respuestas leídas. Después, en el plan gratuito, la voz del navegador; con Workers Paid (5 $/mes), 0,03 $ por 1.000 letras.</td><td>Cloudflare → AI → Workers AI muestra el uso diario.</td></tr>
       <tr><td>Flora: memoria</td><td><span class="estado ok">Sí</span></td><td>Usa el KV de la agenda, dentro de lo gratis.</td><td>Solo escribe cuando hay algo nuevo.</td></tr>
       <tr><td>Cloudflare (web y Worker)</td><td><span class="estado ok">Según plan</span></td><td>Según tu plan actual.</td><td>Cloudflare → Facturación.</td></tr>
       <tr><td>Resend (correos)</td><td><span class="estado ok">Según plan</span></td><td>Según tu plan.</td><td>Panel de Resend.</td></tr>

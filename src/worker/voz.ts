@@ -5,7 +5,7 @@
  * de Cloudflare, a unos 0,03 $ por cada 1.000 caracteres (una respuesta
  * normal del chat ronda los 300).
  *
- * Voz por defecto: «selena», femenina, acento latino, tono cercano y calmado.
+ * Voz por defecto: «celeste» (la eligió el titular el 08/11/2026), femenina y con acento latino.
  * Se cambia con la variable VOZ_FLORA de wrangler.jsonc. Solo se aceptan las
  * voces femeninas de la lista: así nadie usa la ruta para otra cosa.
  *
@@ -21,7 +21,7 @@ export interface EnvVoz {
 const MODELO = "@cf/deepgram/aura-2-es";
 /** Femeninas de Aura-2 en español. Latinas: selena, celeste, estrella. De España: diana, carina. */
 export const VOCES_FEMENINAS = ["selena", "celeste", "estrella", "diana", "carina"] as const;
-const POR_DEFECTO = "selena";
+const POR_DEFECTO = "celeste";
 const MAX_CARACTERES = 1200;
 
 export async function voz(
