@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Ecosistema de redes Luis Flores</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: columna de lectura de 46rem con índice fijo arriba; bloques para copiar como fichas de trabajo. */
+:root {
+  --bg: #f5f7fc; --surface: #ffffff; --fg: #0d1630; --muted: #4f5a78;
+  --line: #dde3f0; --accent: #4f46e5; --accent-2: #007bff; --code-bg: #0d1630; --code-fg: #e6ebff;
+  --grad: linear-gradient(110deg, #007bff 0%, #6366f1 50%, #8b5cf6 100%);
+  --f-display: "Manrope", system-ui, sans-serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0a1022; --surface: #111a33; --fg: #e9edf8; --muted: #a3adc8;
+  --line: #22305a; --accent: #8b8cff; --accent-2: #5aa9ff; --code-bg: #060b19; --code-fg: #e6ebff; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0a1022; --surface: #111a33; --fg: #e9edf8; --muted: #a3adc8;
+  --line: #22305a; --accent: #8b8cff; --accent-2: #5aa9ff; --code-bg: #060b19; --code-fg: #e6ebff; color-scheme: dark }
+* { box-sizing: border-box }
+html { scroll-behavior: smooth; scroll-padding-top: 4rem }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 46rem; margin: 0 auto; padding-block: 2rem 4rem }
+header.hero { padding-block: 1rem 1.5rem; border-bottom: 1px solid var(--line) }
+.eyebrow { font: 600 .75rem/1 var(--f-body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+h1 { font: 800 clamp(1.9rem, 6vw, 2.8rem)/1.1 var(--f-display); margin: .6rem 0 .8rem; text-wrap: balance;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent }
+h2 { font: 800 1.5rem/1.2 var(--f-display); margin: 0 0 .8rem; text-wrap: balance }
+h3 { font: 700 1.1rem/1.3 var(--f-display); margin: 1.6rem 0 .5rem; color: var(--accent) }
+section { padding-block: 2rem; border-bottom: 1px solid var(--line) }
+p, li { max-width: 65ch }
+a { color: var(--accent-2); text-underline-offset: 2px }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+code { font: .88em var(--f-mono); background: color-mix(in srgb, var(--accent) 10%, transparent); padding: .1em .35em; border-radius: 4px; word-break: break-word }
+ul, ol { padding-left: 1.3rem }
+li { margin-block: .3rem }
+nav.indice { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  border-bottom: 1px solid var(--line); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: .5rem max(16px, env(safe-area-inset-left, 0px)) }
+nav.indice ol { display: flex; gap: .4rem; overflow-x: auto; list-style: none; margin: 0; padding: 0; scrollbar-width: none }
+nav.indice li { margin: 0; flex: none }
+nav.indice a { display: block; font: 600 .8rem/1 var(--f-body); padding: .5rem .7rem; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--fg); text-decoration: none; background: var(--surface) }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
+.enlaces { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem }
+.chip { font: 500 .82rem/1 var(--f-body); padding: .55rem .75rem; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--line); color: var(--fg); text-decoration: none }
+.chip:hover { border-color: var(--accent) }
+.copiable { position: relative; margin-block: .8rem 1.2rem }
+.copiable pre { margin: 0; background: var(--code-bg); color: var(--code-fg); font: .85rem/1.6 var(--f-mono);
+  padding: 2.6rem 1rem 1rem; border-radius: 10px; white-space: pre-wrap; word-break: break-word; overflow-x: auto }
+.copiar { position: absolute; top: .5rem; right: .5rem; font: 600 .78rem/1 var(--f-body); padding: .5rem .8rem; border-radius: 6px;
+  border: 0; cursor: pointer; color: #fff; background: var(--grad) }
+.copiar.ok { background: #15803d }
+footer { color: var(--muted); font-size: .85rem; padding-top: 2rem }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+</style>
+</head>
+<body>
+<nav class="indice" aria-label="Secciones"><ol><li><a href="#que-funciona-hoy-en-cada-red-verificado-">1. Qué funciona hoy en cada red</a></li><li><a href="#el-sistema-en-una-linea">2. El sistema en una línea</a></li><li><a href="#herramientas-y-para-que-usar-cada-una">3. Herramientas y para qué…</a></li><li><a href="#heygen-como-usarlo-bien-desde-hoy">4. HeyGen</a></li><li><a href="#perfiles-dejalos-asi-antes-de-publicar">5. Perfiles</a></li><li><a href="#pilares-de-contenido-solo-4">6. Pilares de contenido</a></li><li><a href="#primera-semana-lista-para-publicar">7. Primera semana lista para…</a></li><li><a href="#banco-de-30-ideas-para-las-siguientes-se">8. Banco de 30 ideas para las…</a></li><li><a href="#prompts-para-claude-copialos-tal-cual">9. Prompts para Claude</a></li><li><a href="#manychat-de-comentario-a-lead">10. ManyChat</a></li><li><a href="#calendario-semanal-fijo">11. Calendario semanal fijo</a></li><li><a href="#que-medir-y-cuando-cambiar">12. Qué medir y cuándo cambiar</a></li><li><a href="#lo-que-no-hacer">13. Lo que no hacer</a></li></ol></nav>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Marca personal · Instagram · TikTok · LinkedIn · Facebook</div>
+  <h1>Ecosistema de redes sociales: marca personal Luis Flores</h1>
+  <p>Todo lo que va en un bloque oscuro se copia con un toque en «Copiar». Los enlaces abren en otra pestaña.</p>
+  <div class="enlaces"><a class="chip" href="https://soyluisflores.es" target="_blank" rel="noopener">Tu web</a><a class="chip" href="https://soyluisflores.es/guia" target="_blank" rel="noopener">Guía gratis</a><a class="chip" href="https://soyluisflores.es/diagnostico" target="_blank" rel="noopener">Diagnóstico</a><a class="chip" href="https://soyluisflores.es/diagnostico/agentes-ia" target="_blank" rel="noopener">Diagnóstico agentes IA</a><a class="chip" href="https://www.instagram.com/soyluisfloresoficial/" target="_blank" rel="noopener">Instagram</a><a class="chip" href="https://www.tiktok.com/@soyluisfloresoficial" target="_blank" rel="noopener">TikTok</a><a class="chip" href="https://www.linkedin.com/in/soyluisflores/" target="_blank" rel="noopener">LinkedIn</a><a class="chip" href="https://app.heygen.com/" target="_blank" rel="noopener">HeyGen</a><a class="chip" href="https://heygen.com/en-gb/pricing" target="_blank" rel="noopener">HeyGen precios</a><a class="chip" href="https://app.metricool.com/" target="_blank" rel="noopener">Metricool</a><a class="chip" href="https://app.manychat.com/" target="_blank" rel="noopener">ManyChat</a><a class="chip" href="https://manychat.com/pricing" target="_blank" rel="noopener">ManyChat precios</a><a class="chip" href="https://www.canva.com/" target="_blank" rel="noopener">Canva</a><a class="chip" href="https://www.capcut.com/" target="_blank" rel="noopener">CapCut</a><a class="chip" href="https://business.facebook.com/" target="_blank" rel="noopener">Meta Business Suite</a><a class="chip" href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics</a></div>
+</header>
+<p>Creado el 08/11/2026. Objetivo único: que gente con negocio te conozca en redes y termine en la <strong>guía gratis</strong> (<a href="https://soyluisflores.es/guia" target="_blank" rel="noopener"><code>/guia</code></a>) o en la <strong>llamada de diagnóstico</strong> (<code>/diagnostico/&lt;servicio&gt;</code>). Todo lo demás (likes, seguidores) es un medio.</p>
+<p>Cuentas: Instagram <a href="https://www.instagram.com/soyluisfloresoficial/" target="_blank" rel="noopener"><code>@soyluisfloresoficial</code></a>, TikTok <a href="https://www.instagram.com/soyluisfloresoficial/" target="_blank" rel="noopener"><code>@soyluisfloresoficial</code></a>, LinkedIn <a href="https://www.linkedin.com/in/soyluisflores/" target="_blank" rel="noopener"><code>/in/soyluisflores</code></a>, Facebook (página de Meta enlazada a Instagram).</p>
+<p>Textos al público en español latino neutro, igual que la web (CLAUDE.md).</p>
+<section id="que-funciona-hoy-en-cada-red-verificado-"><h2>1. Qué funciona hoy en cada red (verificado el 08/11/2026)</h2>
+<p>Las cifras vienen de blogs de herramientas, no de las plataformas. Tómalas como dirección, no como dato exacto. Tus propias estadísticas mandan a partir del día 30.</p>
+<p><strong>Instagram</strong></p>
+<ul><li>Reels para alcanzar gente nueva: en cuentas de menos de 50 000 seguidores siguen dando más alcance que los carruseles. Ideal 20 a 60 segundos. Los de más de 3 minutos no se recomiendan a gente nueva.</li><li>Carruseles para que te guarden y te compartan (hasta 20 láminas).</li><li>«Tu algoritmo»: la gente elige temas. Premia cuentas con <strong>un tema claro</strong>. Por eso: IA y automatización para negocios, nada más. La fe va en el tono y en la bio, no como tema de publicaciones sueltas.</li><li>Desde el 30/04/2026 las cuentas que publican sobre todo contenido ajeno salen de las recomendaciones. Nada de reposts ni plantillas virales copiadas.</li><li>Reels de prueba (Trial Reels): muestran el reel solo a no seguidores. Según varias fuentes piden cuenta profesional y 1 000 seguidores; compruébalo en tu app al publicar. Cuando lo tengas, prueba ahí los ganchos.</li></ul>
+<p><strong>TikTok</strong></p>
+<ul><li>Funciona como buscador: la palabra clave tiene que estar dicha en el video, escrita en pantalla y en la descripción (150 a 400 caracteres).</li><li>Los seguidores no cuentan para entrar en el «Para ti»: cuenta que vean el video entero. Una cuenta nueva puede llegar lejos desde el primer video.</li><li>Duración: 30 a 90 segundos si el video sostiene la atención.</li></ul>
+<p><strong>LinkedIn</strong></p>
+<ul><li>El formato más fuerte es el documento (PDF en carrusel). El video pierde alcance año tras año.</li><li>Pesan los guardados, el tiempo de lectura y los comentarios largos.</li><li>Penaliza: enlaces externos en el post (ponlo en el primer comentario o, mejor, en tu perfil) y los «comenta GUÍA y te la envío» desde julio de 2026.</li><li>Es la red con más potencial de clientes de pago para ti (dueños de empresa, gerentes en España). Publica aquí con perfil personal, no con página.</li></ul>
+<p><strong>Facebook</strong></p>
+<ul><li>No crees contenido aparte. Publica los mismos reels desde Instagram (Metricool o Meta Business Suite) y usa los grupos de emprendedores de LATAM y de España para responder dudas con valor, sin vender.</li></ul>
+<p>Fuentes: <a href="https://www.socialpilot.co/blog/instagram-reels-algorithm" target="_blank" rel="noopener">SocialPilot IG Reels</a>, <a href="https://later.com/blog/how-instagram-algorithm-works/" target="_blank" rel="noopener">Later</a>, <a href="https://creatorflow.so/blog/instagram-algorithm/" target="_blank" rel="noopener">Creatorflow</a>, <a href="https://www.dataslayer.ai/blog/linkedin-algorithm-february-2026-whats-working-now" target="_blank" rel="noopener">Dataslayer LinkedIn</a>, <a href="https://www.socialpilot.co/blog/linkedin-algorithm" target="_blank" rel="noopener">SocialPilot LinkedIn</a>, <a href="https://blog.hootsuite.com/tiktok-algorithm/" target="_blank" rel="noopener">Hootsuite TikTok</a>, <a href="https://www.socialync.io/blog/tiktok-algorithm-2026-what-works-now" target="_blank" rel="noopener">Socialync TikTok</a>.</p>
+</section><section id="el-sistema-en-una-linea"><h2>2. El sistema en una línea</h2>
+<p>Un video largo grabado por ti a la semana (o un guion para HeyGen) → Claude lo convierte en 5 reels, 2 carruseles y 3 posts de LinkedIn → Metricool lo programa en las 4 redes → ManyChat responde los DM con la guía → la guía entra en tu secuencia de correos → la secuencia lleva al diagnóstico.</p>
+<p>Tiempo objetivo: <strong>3 horas a la semana</strong> en total.</p>
+</section><section id="herramientas-y-para-que-usar-cada-una"><h2>3. Herramientas y para qué usar cada una</h2>
+<ul><li><strong>Claude</strong>: guiones, carruseles, captions y adaptación por red (prompts en la sección 9).</li><li><strong>HeyGen</strong>: tu gemelo digital (Avatar IV) para los videos de explicación. Ver sección 4.</li><li><strong>Canva</strong>: carruseles con la plantilla de tu marca (navy, degradado azul → violeta, Manrope e Inter, como la web). Tamaño 1080 × 1350 para Instagram y LinkedIn. En LinkedIn súbelo como PDF.</li><li><strong>CapCut o Edits (app de Instagram)</strong>: subtítulos y cortes de tus videos grabados con el celular.</li><li><strong>Metricool</strong>: programar en Instagram, TikTok, LinkedIn y Facebook desde un solo lugar y ver qué funciona.</li><li><strong>ManyChat</strong>: palabra clave en comentarios y DM de Instagram y Facebook → envía el enlace de la guía. (En LinkedIn no lo uses.)</li><li><strong>Web</strong>: <a href="https://soyluisflores.es/guia" target="_blank" rel="noopener"><code>/guia</code></a> y <code>/diagnostico/&lt;servicio&gt;</code> ya existen y miden con GTM.</li></ul>
+</section><section id="heygen-como-usarlo-bien-desde-hoy"><h2>4. HeyGen: cómo usarlo bien desde hoy</h2>
+<p><strong>Primero revisa tu plan</strong> en heygen.com → Settings → Billing. El plan gratis solo da 3 videos al mes de hasta 1 minuto; el de pago (Creator) da mucho más. Los créditos del Avatar IV subieron en octubre de 2026 según un rastreador de precios (no confirmado por HeyGen). Mira tu saldo antes de producir en serie.</p>
+<p><strong>Paso a paso para crear tu gemelo digital (una sola vez):</strong></p>
+<ol><li>Entra en HeyGen → Avatars → Create Avatar → Digital Twin (Avatar IV).</li><li>Grábate 2 a 5 minutos con el celular en vertical, a la altura de los ojos, con luz de frente (ventana delante de ti, nunca detrás).</li><li>Fondo limpio, la misma ropa que usarás en tu foto de perfil.</li><li>Habla mirando a la cámara, con pausas naturales y gestos con las manos. Lee el texto que te pide HeyGen para validar que eres tú.</li><li>Crea también tu voz (Voice → Clone). Revisa que el acento suene natural.</li><li>Haz un video de prueba de 30 segundos y compáralo contigo grabado de verdad. Si se nota raro, repite la grabación con mejor luz.</li></ol>
+<p><strong>Cómo usarlo en el contenido:</strong></p>
+<ul><li>Úsalo para los videos de explicación («qué es un agente de IA», «3 tareas que puedes automatizar»). Son los que más tiempo te quitarían grabar.</li><li><strong>No lo uses para todo.</strong> Al menos 2 de cada 5 videos grábalos tú con el celular (opiniones, reacciones, detrás de cámara). La gente compra a la persona, y un perfil 100 % avatar se nota y baja la confianza.</li><li>Formato: vertical 9:16, subtítulos grandes, primera frase en los primeros 2 segundos. Añade capturas de pantalla reales de Make, n8n o GoHighLevel encima del avatar: eso hace que se vea como un experto que lo muestra.</li><li><strong>Transparencia (obligatorio):</strong> marca la etiqueta «Contenido de IA» en Instagram, TikTok y Facebook al publicar videos con tu avatar. Las plataformas lo exigen para personas generadas con IA y el Reglamento europeo de IA pide avisar de los contenidos sintéticos realistas [VERIFICAR con un abogado el alcance exacto]. Además, para ti es un argumento: «este video lo hizo mi gemelo digital» demuestra que sabes usar IA.</li><li>Idea de contenido propia: un reel donde apareces tú y luego tu avatar diciendo lo mismo. «¿Cuál soy yo?» Es una demostración en vivo de tu servicio.</li></ul>
+<p>Fuentes: <a href="https://heygen.com/en-gb/pricing" target="_blank" rel="noopener">HeyGen precios</a>, <a href="https://wavespeed.ai/blog/posts/heygen-avatar-iv-complete-guide-2026" target="_blank" rel="noopener">Guía Avatar IV</a>, <a href="https://www.usagepricing.com/blueprint/activity/heygen-2026-10-15-avatar-credit-rate-increase" target="_blank" rel="noopener">Subida de créditos 15/10/2026</a>.</p>
+</section><section id="perfiles-dejalos-asi-antes-de-publicar"><h2>5. Perfiles: déjalos así antes de publicar</h2>
+<p><strong>Foto</strong>: la misma en todas las redes. Cara de frente, fondo liso, sonriendo.</p>
+<p><strong>Bio de Instagram y TikTok</strong> (copia y pega):</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c1">Copiar</button><pre id="c1">Luis Flores | IA y automatización para negocios
+Agentes que atienden y agendan por ti, funnels y procesos automáticos
+Lo implemento yo, en España y Latinoamérica
+👇 Guía gratis: qué automatizar primero</pre></div>
+<p>Enlace de la bio:</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c2">Copiar</button><pre id="c2">https://soyluisflores.es/guia?utm_source=instagram&amp;utm_medium=bio&amp;utm_campaign=organico</pre></div>
+<p>(En TikTok cambia <code>instagram</code> por <code>tiktok</code>.)</p>
+<p><strong>Titular de LinkedIn</strong> (copia y pega):</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c3">Copiar</button><pre id="c3">Implemento agentes de IA, funnels y automatizaciones para negocios en España y Latinoamérica | Make, n8n, GoHighLevel</pre></div>
+<p><strong>Acerca de en LinkedIn</strong> (copia y pega y completa lo que falta):</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c4">Copiar</button><pre id="c4">Ayudo a negocios a responder más rápido, perder menos contactos y dejar de hacer a mano tareas que una herramienta puede hacer sola.
+
+Lo que implemento:
+• Agentes de IA que atienden por chat y teléfono y agendan citas
+• Funnels de captación con seguimiento por correo y WhatsApp
+• Automatizaciones en Make y n8n que conectan tus herramientas
+• CRM y seguimiento de leads
+
+No vendo cursos. Lo construyo yo, lo dejo funcionando y te explico cómo medirlo.
+
+[COMPLETAR: un proyecto real con el resultado medido, cuando tengas permiso del cliente]
+
+Si quieres saber qué automatizar primero en tu negocio, agenda una llamada de diagnóstico: soyluisflores.es/diagnostico</pre></div>
+<p><strong>Destacadas de Instagram</strong> (historias fijas): «Empieza aquí», «Agentes IA», «Automatizar», «Guía gratis».</p>
+<p><strong>Primer post fijado</strong> en Instagram y TikTok: el reel 1 de la sección 7 (presentación). En LinkedIn, el post 1 como destacado.</p>
+</section><section id="pilares-de-contenido-solo-4"><h2>6. Pilares de contenido (solo 4)</h2>
+<ol><li><strong>Enseñar</strong> (40 %): qué es, cómo funciona, qué automatizar. Atrae y posiciona.</li><li><strong>Demostrar</strong> (30 %): pantallazos reales de flujos en Make, n8n, GoHighLevel; tu agente respondiendo; tu gemelo de HeyGen. Prueba que lo sabes hacer.</li><li><strong>Opinar</strong> (20 %): errores que ves, mitos de la IA, qué no automatizaría. Genera comentarios y confianza.</li><li><strong>Tú</strong> (10 %): por qué haces esto, cómo trabajas, Manresa, la fe como valor. Hace que te recuerden.</li></ol>
+<p>Sin casos ni cifras de clientes hasta que tengas uno real con permiso. Mientras, demuestra con tus propios sistemas: tu web, tu agenda automática, Flora (el asistente de la web), Smilbot.</p>
+</section><section id="primera-semana-lista-para-publicar"><h2>7. Primera semana lista para publicar</h2>
+<p>Formato de cada reel: gancho (0 a 2 s) → desarrollo → cierre con CTA. Texto en pantalla siempre, porque la mayoría lo ve sin sonido.</p>
+<h3>Reel 1 · Presentación (grábalo tú, no HeyGen) · lunes</h3>
+<p>Gancho en pantalla: <code>Si tienes un negocio y contestas tú todos los mensajes, mira esto</code></p>
+<ul><li>Escena 1 (0-3 s), tú a cámara: «Si todavía contestas tú cada mensaje de tu negocio, este video es para ti.»</li><li>Escena 2 (3-12 s), pantallazo de un chat de WhatsApp con un agente respondiendo: «Soy Luis. Implemento agentes de IA que atienden a tus clientes y les agendan la cita, también a las 11 de la noche.» Texto: <code>Atiende 24 h · Agenda solo</code></li><li>Escena 3 (12-22 s), tú caminando o en tu escritorio: «No vendo cursos. Lo construyo yo, lo dejo funcionando y te enseño a medirlo.» Texto: <code>Lo implemento yo</code></li><li>Escena 4 (22-30 s), tú a cámara: «Aquí voy a enseñar qué puedes automatizar en tu negocio, paso a paso. Empieza por la guía gratis del enlace.» Texto: <code>Guía gratis en mi perfil 👆</code></li></ul>
+<p>Caption:</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c5">Copiar</button><pre id="c5">Si contestas tú cada mensaje de tu negocio, estás haciendo un trabajo que una herramienta puede hacer por ti.
+
+Soy Luis Flores. Implemento agentes de IA, funnels y automatizaciones para negocios en España y Latinoamérica.
+
+En esta cuenta vas a ver qué automatizar, cómo se hace y cuánto tiempo te ahorra, con herramientas reales.
+
+Escríbeme GUIA y te envío la guía gratis para saber qué automatizar primero.
+
+#inteligenciaartificial #automatizacion #agentesdeia #emprendedores #negociosdigitales</pre></div>
+<h3>Reel 2 · Enseñar (HeyGen) · martes</h3>
+<p>Gancho en pantalla: <code>3 tareas que no deberías estar haciendo a mano en 2026</code></p>
+<ul><li>Escena 1: avatar: «Tres tareas que no deberías hacer a mano en tu negocio.»</li><li>Escena 2: «Uno: responder las mismas preguntas una y otra vez. Horarios, precios, ubicación. Eso lo contesta un agente de IA.» Texto: <code>1. Preguntas repetidas</code></li><li>Escena 3: «Dos: pasar los datos de un formulario a tu hoja de cálculo o a tu CRM. Eso lo hace Make en segundos.» Pantallazo del flujo. Texto: <code>2. Copiar datos</code></li><li>Escena 4: «Tres: recordar las citas. Un recordatorio automático por WhatsApp o correo evita que se te olviden clientes.» Texto: <code>3. Recordatorios</code></li><li>Escena 5: «¿Cuál haces tú todavía? Dímelo en comentarios y te digo cómo automatizarla.»</li></ul>
+<p>Caption:</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c6">Copiar</button><pre id="c6">Tres tareas que se pueden automatizar hoy y que la mayoría de negocios sigue haciendo a mano:
+
+1. Responder las mismas preguntas (horarios, precios, ubicación)
+2. Copiar datos de formularios al Excel o al CRM
+3. Recordar citas a los clientes
+
+¿Cuál haces tú todavía? Dímelo en comentarios y te respondo cómo automatizarla.
+
+#automatizacion #inteligenciaartificial #make #productividad #pymes</pre></div>
+<h3>Carrusel 1 · Guardable · miércoles (Instagram + LinkedIn en PDF)</h3>
+<ul><li>Lámina 1 (portada): <code>Antes de contratar un agente de IA, responde estas 5 preguntas</code></li><li>Lámina 2: <code>La mayoría de los agentes de IA fallan por lo mismo: se instalan antes de saber qué tienen que hacer.</code></li><li>Lámina 3: <code>1. ¿Qué preguntas te hacen más de 10 veces por semana?</code> Eso es lo primero que debe responder.</li><li>Lámina 4: <code>2. ¿Dónde te escriben?</code> WhatsApp, Instagram, web o teléfono. Empieza por uno.</li><li>Lámina 5: <code>3. ¿Qué no puede inventar?</code> Precios, horarios, disponibilidad. Tienen que salir de tus datos, nunca de la IA.</li><li>Lámina 6: <code>4. ¿Cuándo pasa a una persona?</code> Quejas, casos delicados o cuando el cliente lo pide.</li><li>Lámina 7: <code>5. ¿Cómo vas a medirlo?</code> Mensajes atendidos, citas agendadas, tiempo de respuesta.</li><li>Lámina 8 (resumen): las 5 preguntas en una lista.</li><li>Lámina 9 (CTA): <code>Guárdalo para cuando lo vayas a implementar. Y si quieres que lo revisemos en tu negocio, el enlace está en mi perfil.</code></li></ul>
+<p>Caption Instagram:</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c7">Copiar</button><pre id="c7">Un agente de IA mal planteado responde mal, inventa datos y espanta clientes.
+
+Antes de contratar uno, responde estas 5 preguntas. Te ahorran semanas de pruebas.
+
+Guárdalo para cuando lo vayas a implementar.
+
+#agentesdeia #chatbot #inteligenciaartificial #atencionalcliente #whatsappbusiness</pre></div>
+<h3>Reel 3 · Demostrar (tú grabando pantalla) · jueves</h3>
+<p>Gancho en pantalla: <code>Así responde mi web a las 2 de la mañana</code></p>
+<p>Graba con el celular la pantalla mientras le escribes a Flora en <a href="https://soyluisflores.es" target="_blank" rel="noopener">soyluisflores.es</a> y te propone agendar. Voz en off: «Esto es la web que hice para mí. Le escribo a las 2 de la mañana y me atiende y me agenda en mi calendario real. Esto mismo lo monto para negocios.» Cierre: <code>¿Lo quieres en tu negocio? Escríbeme AGENTE</code>.</p>
+<h3>Reel 4 · Opinar (tú a cámara) · viernes</h3>
+<p>Gancho en pantalla: <code>La IA no te va a solucionar un negocio desordenado</code></p>
+<p>Guion: «La IA no arregla un negocio desordenado. Si hoy no sabes de dónde te llegan los clientes ni cuántos se te escapan, automatizar solo hace el desorden más rápido. Primero ordena: dónde entran, quién responde, qué se mide. Después automatiza. ¿Estás de acuerdo o no?»</p>
+<h3>LinkedIn · 3 posts esta semana (lunes, miércoles, viernes)</h3>
+<p>Post 1 (lunes):</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c8">Copiar</button><pre id="c8">Esta semana empiezo a publicar aquí lo que hago cada día
+
+Implemento agentes de IA, funnels y automatizaciones para negocios en España y Latinoamérica.
+
+Voy a compartir tres cosas:
+• Qué tareas conviene automatizar primero (y cuáles no)
+• Cómo se construye, con Make, n8n y GoHighLevel
+• Los errores que veo una y otra vez al implementar IA
+
+Sin teoría de más. Lo que funciona en un negocio real.
+
+¿Qué tarea de tu negocio te gustaría dejar de hacer a mano? La leo en comentarios.</pre></div>
+<p>Post 2 (miércoles): el carrusel 1 subido como documento PDF, con este texto:</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c9">Copiar</button><pre id="c9">Antes de contratar un agente de IA, hazte estas 5 preguntas
+
+He visto agentes que inventan precios, responden fuera de horario lo que no deben y nunca pasan el caso a una persona.
+
+Casi siempre por lo mismo: se instalaron antes de definir qué tenían que hacer.
+
+Te dejo las 5 preguntas que reviso en cada proyecto.
+
+¿Cuál añadirías tú?</pre></div>
+<p>Post 3 (viernes):</p>
+<div class="copiable"><button type="button" class="copiar" data-c="c10">Copiar</button><pre id="c10">La IA no arregla un negocio desordenado
+
+Si no sabes de dónde llegan tus clientes, quién responde ni cuántos se pierden, automatizar solo acelera el desorden.
+
+El orden que sigo en cada proyecto:
+1. Dónde entran los contactos
+2. Quién responde y en cuánto tiempo
+3. Qué se mide
+4. Recién ahí, qué se automatiza
+
+Lo aburrido va primero. Lo vistoso, después.
+
+¿Lo haces en este orden o empezaste por la herramienta?</pre></div>
+</section><section id="banco-de-30-ideas-para-las-siguientes-se"><h2>8. Banco de 30 ideas para las siguientes semanas</h2>
+<p>Una por pieza. Marca con ✔ las que publiques.</p>
+<p><strong>Enseñar</strong></p>
+<ol><li>Qué es un agente de IA en 30 segundos</li><li>Chatbot vs agente de IA: la diferencia que importa</li><li>Qué es un funnel explicado con una panadería</li><li>Make vs n8n: cuál elegir según tu negocio</li><li>Las 5 automatizaciones más fáciles para empezar</li><li>Qué es un CRM y cuándo lo necesitas</li><li>Cómo responder en menos de 5 minutos sin estar pegado al celular</li><li>Qué medir en tu negocio (las 4 cifras que importan)</li><li>Por qué tu web no te trae clientes</li><li>Cómo reducir las citas a las que la gente no llega</li></ol>
+<p><strong>Demostrar</strong></p>
+<ol><li>Construyo una automatización en 60 segundos (pantalla acelerada)</li><li>Mi gemelo digital vs yo: ¿cuál es cuál?</li><li>Un formulario que entra solo al CRM y avisa por WhatsApp</li><li>Así se ve un panel de métricas de un negocio</li><li>Tour por cómo funciona mi agenda automática</li><li>Smilbot: una recepcionista de IA para clínicas dentales</li><li>Le pido a la IA que me escriba un correo de seguimiento y lo corrijo en vivo</li><li>Antes/después de un proceso (a mano vs automático)</li></ol>
+<p><strong>Opinar</strong></p>
+<ol><li>Lo que no automatizaría nunca</li><li>Por qué no vendo cursos</li><li>El error de comprar herramientas antes de tener un proceso</li><li>La IA no va a reemplazarte; un competidor que la usa, quizás sí</li><li>Por qué tu agente de IA nunca debe inventar precios</li><li>Mitos de la IA que escucho cada semana</li></ol>
+<p><strong>Tú</strong></p>
+<ol><li>Por qué empecé a dedicarme a esto</li><li>Un día de trabajo implementando para un cliente</li><li>Mi escritorio y mis herramientas</li><li>Lo que aprendí construyendo mi propia web con IA</li><li>Cómo organizo mi semana con automatizaciones</li><li>Lo que me guía en el trabajo (la fe, sin sermones)</li></ol>
+</section><section id="prompts-para-claude-copialos-tal-cual"><h2>9. Prompts para Claude (cópialos tal cual)</h2>
+<p><strong>Convertir una idea en el contenido de la semana:</strong></p>
+<div class="copiable"><button type="button" class="copiar" data-c="c11">Copiar</button><pre id="c11">Usa la skill viral-social-content y las reglas de REDES-SOCIALES.md del repositorio soyluisfloresoficial/web.
+Idea de la semana: [IDEA].
+Servicio al que lleva: [agentes-ia / funnels-conversion / automatizacion / crm-seguimiento-leads].
+Entrégame: 5 reels (2 para grabar yo, 3 para HeyGen) con gancho, guion por escenas, texto en pantalla, CTA y caption; 1 carrusel de 9 láminas; 3 posts de LinkedIn.
+Español latino neutro, sin cifras inventadas, sin tics de IA.</pre></div>
+<p><strong>Guion para HeyGen:</strong></p>
+<div class="copiable"><button type="button" class="copiar" data-c="c12">Copiar</button><pre id="c12">Escribe un guion de 40 segundos para mi avatar de HeyGen sobre [TEMA].
+Frases cortas para que suene natural al leerlas, pausas marcadas con [pausa], el gancho en la primera frase, y qué captura de pantalla poner en cada escena.
+Cierra invitando a escribir [PALABRA] por DM.</pre></div>
+<p><strong>Reutilizar lo que funcionó:</strong></p>
+<div class="copiable"><button type="button" class="copiar" data-c="c13">Copiar</button><pre id="c13">Este reel tuvo buenos resultados: [pega guion y métricas de Metricool].
+Dame 3 variantes con otro gancho y otro ejemplo, manteniendo el mismo tema, y adapta la mejor a carrusel y a post de LinkedIn.</pre></div>
+</section><section id="manychat-de-comentario-a-lead"><h2>10. ManyChat: de comentario a lead</h2>
+<p>Configúralo en Instagram y Facebook (ManyChat → Automation → New → Comment o DM keyword):</p>
+<ol><li><strong>Disparador</strong>: comentario o DM con <code>GUIA</code>, <code>AGENTE</code> o <code>AUTOMATIZAR</code>.</li><li><strong>Respuesta pública al comentario</strong> (rotar 3 textos para no parecer bot): <code>¡Te la envío por DM!</code> · <code>Revisa tus mensajes 👀</code> · <code>Listo, te escribí</code>.</li><li><strong>DM</strong>:</li></ol>
+<div class="copiable"><button type="button" class="copiar" data-c="c14">Copiar</button><pre id="c14">¡Hola! Aquí tienes la guía para saber qué automatizar primero en tu negocio 👇
+https://soyluisflores.es/guia?utm_source=instagram&amp;utm_medium=dm&amp;utm_campaign=manychat
+
+Si prefieres que lo veamos juntos en tu caso, puedes agendar una llamada de diagnóstico aquí:
+https://soyluisflores.es/diagnostico?utm_source=instagram&amp;utm_medium=dm&amp;utm_campaign=manychat</pre></div>
+<ol><li>Para <code>AGENTE</code> cambia el segundo enlace por <a href="https://soyluisflores.es/diagnostico/agentes-ia" target="_blank" rel="noopener"><code>/diagnostico/agentes-ia</code></a>.</li><li><strong>Prueba</strong>: comenta tú desde otra cuenta y comprueba que llega el DM y que el enlace abre con los UTM.</li><li><strong>Costo</strong>: el plan gratis de ManyChat tiene límite de contactos; [VERIFICAR en manychat.com/pricing el límite actual antes de lanzar].</li></ol>
+<p>La guía pide consentimiento y doble confirmación en la web, así que cumple RGPD sin tocar nada más.</p>
+</section><section id="calendario-semanal-fijo"><h2>11. Calendario semanal fijo</h2>
+<ul><li><strong>Lunes</strong>: Reel (tú) en IG + TikTok + Facebook · Post LinkedIn</li><li><strong>Martes</strong>: Reel (HeyGen) en IG + TikTok</li><li><strong>Miércoles</strong>: Carrusel en IG · Documento en LinkedIn</li><li><strong>Jueves</strong>: Reel (demostración) en IG + TikTok + Facebook</li><li><strong>Viernes</strong>: Reel (opinión) en IG + TikTok · Post LinkedIn</li><li><strong>Todos los días, 15 minutos</strong>: responder comentarios y DM, y dejar 5 comentarios útiles en cuentas de tu público (dueños de negocio, no otros expertos en IA). En una cuenta nueva esto trae más alcance que publicar más.</li><li><strong>Historias</strong>: 2 o 3 al día, sin producir: el detrás de cámara, una encuesta, compartir tu reel del día.</li></ul>
+<p><strong>Bloque de producción (domingo o lunes, 3 horas):</strong></p>
+<ol><li>30 min: Claude genera la semana con el prompt de la sección 9.</li><li>45 min: grabas tus 2 reels con el celular (varias tomas de una vez).</li><li>30 min: generas los 3 de HeyGen.</li><li>45 min: subtítulos en CapCut o Edits y carrusel en Canva.</li><li>30 min: programas todo en Metricool.</li></ol>
+<p>Hora de publicación: empieza a las 19:00 hora de España (mediodía en LATAM). A los 30 días mira en Metricool a qué hora responde tu audiencia y ajusta.</p>
+</section><section id="que-medir-y-cuando-cambiar"><h2>12. Qué medir y cuándo cambiar</h2>
+<p>Cada viernes, en Metricool, apunta por pieza:</p>
+<ul><li><strong>Retención</strong> de los reels (cuánto del video ven). Si cae en los primeros 3 segundos, el problema es el gancho.</li><li><strong>Guardados y compartidos</strong>: mejor señal que los likes.</li><li><strong>Comentarios con palabra clave</strong> (los cuenta ManyChat).</li><li><strong>Visitas a <a href="https://soyluisflores.es/guia" target="_blank" rel="noopener"><code>/guia</code></a> y <a href="https://soyluisflores.es/diagnostico" target="_blank" rel="noopener"><code>/diagnostico</code></a></strong> con <code>utm_source</code> de cada red (GA4 vía GTM).</li><li><strong>Llamadas agendadas</strong> desde redes (panel de la agenda).</li></ul>
+<p>Reglas:</p>
+<ul><li>Una pieza que duplica tu media de alcance → haz 3 variantes la semana siguiente.</li><li>Un formato que 3 semanas seguidas queda por debajo → cámbialo.</li><li>No juzgues nada antes de 30 días ni compares semanas con distinto número de publicaciones.</li></ul>
+<p>Lo que no debes esperar: seguidores rápidos. Una cuenta de servicios crece por confianza. La meta real del primer trimestre es tener las primeras llamadas de diagnóstico desde redes, no un número de seguidores.</p>
+</section><section id="lo-que-no-hacer"><h2>13. Lo que no hacer</h2>
+<ul><li>Comprar seguidores o usar grupos de «me gusta»: hunde el alcance.</li><li>Repostear contenido de otros (Instagram lo saca de recomendaciones).</li><li>Poner enlaces en el texto de LinkedIn o pedir «comenta GUÍA» ahí.</li><li>Publicar con el avatar sin la etiqueta de contenido de IA.</li><li>Inventar casos, cifras o testimonios. Si no hay, se demuestra con lo tuyo.</li><li>Mezclar Smilbot o Nova Funnels en esta cuenta más allá de mostrarlos como ejemplo: cada marca con su cuenta.</li></ul></section>
+<footer>Generado desde <code>REDES-SOCIALES.md</code> del repositorio soyluisfloresoficial/web. Si cambias el .md, ejecuta <code>python3 tools/generar-redes-html.py</code>.</footer>
+</div>
+<script>
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest(".copiar"); if (!b) return;
+  const pre = document.getElementById(b.dataset.c);
+  const t = pre.innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  b.textContent = "Copiado"; b.classList.add("ok");
+  setTimeout(() => { b.textContent = "Copiar"; b.classList.remove("ok"); }, 1800);
+});
+</script>
+</body>
+</html>
