@@ -13,7 +13,7 @@ llamada de diagnóstico cuando hay un caso concreto.
 | Base de conocimiento | `src/pages/agente/conocimiento.txt.ts` | Se genera en cada build desde `src/data` y el blog. Se publica en `/agente/conocimiento.txt` (sin indexar) |
 | Servidor | `src/worker/index.ts` | `POST /api/chat`. Valida, limita, llama a Claude y no guarda nada |
 | Agendar desde el chat (2/11/2026) | `src/worker/chat-agenda.ts` | Herramientas `ver_horarios` (horas libres reales de la agenda, en la hora del visitante y de Madrid) y `preparar_cita` (valida los datos). El chat pinta una tarjeta con los datos, la casilla de privacidad y «Confirmar llamada», que reserva con `POST /api/agenda`, igual que `/contacto`: mismos correos, mismo lead en el panel. La IA nunca reserva sola |
-| Flora: nombre y voz (2/11/2026) | `Chat.astro`, `instrucciones.ts` y `public/_headers` | El asistente se llama Flora. Fase 1 de voz con el navegador: micrófono para dictar (en Chrome y Android lo transcribe Google; Firefox no lo trae y el botón no sale) y lectura en voz alta, que se apaga con el altavoz de la cabecera. Desde la tarde del 2/11 la voz es propia: `POST /api/voz` (`src/worker/voz.ts`) la genera con Deepgram Aura-2 en español por Workers AI (binding `AI`), voz `celeste` (latina, elegida el 8/11/2026; antes `selena`) en la variable `VOZ_FLORA` de `wrangler.jsonc`; cuesta unos 0,03 $ por 1.000 caracteres, con límite de 40 peticiones por minuto por IP. Desde el 6/11/2026 la voz se pide por frases: el primer trozo, corto, suena en unos 2 segundos y los demás se piden a la vez y se encadenan sin cortes (antes se generaba entera y tardaba 6 a 7 segundos en empezar) Si falla, lee la voz del navegador. Permissions-Policy: `microphone=(self)`. Las fases 2 y 3 (voz natural en tiempo real, llamadas) están en `INFORME.html` → Ideas |
+| Flora: nombre y voz (2/11/2026) | `Chat.astro`, `instrucciones.ts` y `public/_headers` | El asistente se llama Flora. Fase 1 de voz con el navegador: micrófono para dictar (en Chrome y Android lo transcribe Google; Firefox no lo trae y el botón no sale) y lectura en voz alta, que se apaga con el altavoz de la cabecera. Desde la tarde del 2/11 la voz es propia: `POST /api/voz` (`src/worker/voz.ts`) la genera con Deepgram Aura-2 en español por Workers AI (binding `AI`), voz `celeste` (latina, elegida el 8/11/2026; antes `selena`) en la variable `VOZ_FLORA` de `wrangler.jsonc`; cuesta unos 0,03 $ por 1.000 caracteres, con límite de 40 peticiones por minuto por IP. Desde el 6/11/2026 la voz se pide por frases: el primer trozo, corto, suena en unos 2 segundos y los demás se piden a la vez y se encadenan sin cortes (antes se generaba entera y tardaba 6 a 7 segundos en empezar). Desde el 8/11/2026, si falla, Flora sigue por escrito sin voz (ya no usa la voz del navegador, que sonaba robótica) y no vuelve a pedir voz en vivo en 10 minutos. Tope de 15.000 caracteres de voz al día en toda la web (`LIMITE_DIARIO_VOZ`, `src/worker/topes.ts`). Permissions-Policy: `microphone=(self)`. Las fases 2 y 3 (voz natural en tiempo real, llamadas) están en `INFORME.html` → Ideas |
 | Memoria de 30 días (2/11/2026) | `src/worker/memoria.ts` y `Chat.astro` | Flora recuerda a quien vuelve con un resumen corto (a qué se dedica, qué le preocupa, qué servicio le interesa, si agendó). La llave es un código al azar del navegador (`localStorage` `flora-visitante`), **no la IP**, que comparten varias personas. Flora escribe el resumen al final de su respuesta con `[[memoria: …]]`; el Worker lo quita, tacha correos y teléfonos y lo guarda en el KV de la agenda (`flora:mem:<código>`), que se borra solo a los 30 días sin escribir. Al volver, el saludo cambia a «Hola de nuevo» con el botón «Sigamos donde lo dejamos». «Olvidarme», en el pie del chat, lo borra al momento y deja de recordar en ese navegador |
 | Medición | `Chat.astro` y `gtm/LEEME.md` | Eventos `chat_open`, `chat_return` (la recordó), `chat_forget` (pulsó «Olvidarme»), `chat_message` (`chat_method: voz` si se dictó), `chat_quick_reply`, `chat_booking_shown`, `chat_cta_click`, `chat_voice_start`, `chat_voice_output`, `chat_voice_error` y `generate_lead` (`form_id: chat-asistente`) al confirmar. Nunca lo que escribe o dice la persona |
 | Configuración | `wrangler.jsonc` | Ruta `/api/*`, límite de 8 mensajes por minuto por IP y modelo (`MODELO_CHAT`) |
@@ -88,6 +88,14 @@ Tarda unos tres minutos y cuesta unos céntimos. Lee lo que marque «REVISAR».
   (después ofrece la llamada o WhatsApp) y 300 mensajes con IA al día en toda
   la web (`LIMITE_DIARIO_CHAT`); al llegar, el chat sigue sin IA con las
   preguntas frecuentes hasta el día siguiente.
+- Avisos por correo (8/11/2026, `src/worker/topes.ts`): al llegar al 80 % y al
+  100 % del tope diario del chat o del de voz sale un correo a `CORREO_AVISOS`
+  (hola@ por defecto), una sola vez al día por nivel.
+- Voz: 15.000 caracteres al día en toda la web (`LIMITE_DIARIO_VOZ`), unas 50
+  respuestas habladas; con el plan de pago de Cloudflare, unos 0,45 $ al día como
+  mucho. Al llegar, `/api/voz` responde 503 y Flora sigue por escrito. El
+  contador se escribe en el KV cada 1.000 caracteres para no gastar el cupo de
+  escrituras del plan gratuito.
 - Respuestas de 45 palabras como máximo, siempre con una pregunta al final
   hasta que la llamada quede agendada (`instrucciones.ts`).
 - Primera respuesta rápida: al abrir el chat, la web pide `{"calentar": true}`
@@ -145,7 +153,7 @@ guarda en `public/voz/<huella>.mp3`. El chat las reproduce al instante desde ese
 archivo, con la misma voz de Flora, sin gastar el cupo diario de voz. El nombre del
 archivo es la huella del texto: si cambias una respuesta, el chat deja de usar el
 audio viejo y pide la voz en vivo hasta que vuelvas a grabar. Si el archivo falla,
-vuelve a la voz en vivo y, si esta falla, a la del navegador.
+vuelve a la voz en vivo y, si esta falla, Flora sigue por escrito.
 
 - Grabar lo que falte: `node tools/grabar-voces.mjs`. Cambiar de voz: `--forzar`.
 - Gasta unas 400 letras del cupo del día; si está agotado, avisa y se para.

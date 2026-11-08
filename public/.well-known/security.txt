@@ -1,0 +1,4 @@
+Contact: mailto:hola@soyluisflores.es
+Expires: 2027-11-08T00:00:00.000Z
+Preferred-Languages: es, en
+Canonical: https://soyluisflores.es/.well-known/security.txt

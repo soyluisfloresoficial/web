@@ -19,6 +19,30 @@ const schema = [
       { "@type": "ListItem", position: 2, name: "Catálogo de servicios", item: url },
     ],
   },
+  {
+    // Catálogo para Google y los buscadores con IA (08/11/2026): servicios y
+    // planes, sin precios, igual que en la página.
+    "@type": "OfferCatalog",
+    "@id": `${url}#catalogo`,
+    name: presentacion.titulo,
+    url,
+    provider: { "@id": `${SITIO.url}/#person` },
+    itemListElement: catalogo.servicios.map((s) => ({
+      "@type": "OfferCatalog",
+      name: s.nombre,
+      url: `${SITIO.url}/servicios/${s.slug}`,
+      itemListElement: s.planes.map((p) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: p.nombre,
+          serviceType: s.nombre,
+          ...(typeof p.idealPara === "string" ? { description: p.idealPara } : {}),
+          provider: { "@id": `${SITIO.url}/#person` },
+        },
+      })),
+    })),
+  },
 ];
 ---
 

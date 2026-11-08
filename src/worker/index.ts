@@ -28,6 +28,7 @@ import { HERRAMIENTAS, usarHerramienta, type CitaPropuesta } from "./chat-agenda
 import { contar, resumenSemanal } from "./estadisticas";
 import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
 import { voz, type EnvVoz } from "./voz";
+import { avisarTope } from "./topes";
 import { actualizarMemoria, codigoVisitante, leerMemoria, olvidar, separarMemoria, textoMemoria } from "./memoria";
 
 interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
@@ -123,8 +124,9 @@ function aMensajes(datos: unknown): Anthropic.Beta.BetaMessageParam[] | null {
  * Tope diario de gasto: cuenta los mensajes con IA del día en el KV de la
  * agenda. Es aproximado (el KV tarda unos segundos en verse igual en todo el
  * mundo), suficiente para que un abuso no vacíe el crédito. Sin KV, no limita.
+ * Al 80 % y al 100 % avisa por correo (08/11/2026, topes.ts).
  */
-async function dentroDelTopeDiario(env: Env): Promise<boolean> {
+async function dentroDelTopeDiario(env: Env, ctx: ExecutionContext): Promise<boolean> {
   const kv = env.AGENDA_CONFIG;
   if (!kv) return true;
   const tope = Number(env.LIMITE_DIARIO_CHAT) || LIMITE_DIARIO;
@@ -132,6 +134,7 @@ async function dentroDelTopeDiario(env: Env): Promise<boolean> {
   const usados = Number(await kv.get(clave, "json")) || 0;
   if (usados >= tope) return false;
   await kv.put(clave, String(usados + 1), { expirationTtl: 3 * 86_400 });
+  ctx.waitUntil(avisarTope(env, "chat", usados + 1, tope));
   return true;
 }
 
@@ -226,7 +229,7 @@ async function chat(request: Request, env: Env, ctx: ExecutionContext): Promise<
 
   const messages = aMensajes(datos);
   if (!messages) return json({ error: "invalido" }, 400);
-  const [dentro, memoria] = await Promise.all([dentroDelTopeDiario(env), leerMemoria(kv, visitante)]);
+  const [dentro, memoria] = await Promise.all([dentroDelTopeDiario(env, ctx), leerMemoria(kv, visitante)]);
   if (!dentro) {
     console.log(JSON.stringify({ chat: "tope-diario" }));
     // «sin-ia»: el chat pasa a responder con las preguntas frecuentes.
@@ -356,7 +359,7 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const { pathname } = new URL(request.url);
     if (pathname === "/api/chat") return chat(request, env, ctx);
-    if (pathname === "/api/voz") return voz(request, env, json, origenPermitido);
+    if (pathname === "/api/voz") return voz(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda") return agenda(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda/cita" || pathname === "/api/agenda/cancelar") {
       return citaAgenda(request, env, json, origenPermitido, ctx);

@@ -550,6 +550,8 @@ const sugerencias = [
     let turnoVoz = 0;
     // Corta las peticiones de voz que sigan en vuelo si la persona interrumpe.
     let cortarPeticiones: AbortController | null = null;
+    // Hasta cuándo no se pide voz en vivo tras un fallo (ver decir).
+    let vozPausadaHasta = 0;
 
     const desbloquearAudio = () => {
       try {
@@ -703,16 +705,17 @@ const sugerencias = [
           const g = await sonar(ctx, turno, [limpio], (_t, corte) => traerAudio(`/voz/${nombre}.mp3`, {}, corte));
           if (g.fallo === -1) return;
         }
+        // Silencio en vez de voz robótica (08/11/2026): si la voz en vivo
+        // falla (cupo diario agotado, tope de la web o red), Flora sigue por
+        // escrito y no se usa la voz del navegador, que suena artificial. Se
+        // deja de pedir voz en vivo durante 10 minutos para no gastar
+        // peticiones que van a fallar; los audios grabados siguen sonando.
+        if (Date.now() < vozPausadaHasta) return;
         const trozos = trozosDeVoz(limpio);
-        const { fallo, fin } = await sonar(ctx, turno, trozos, pedirVoz);
+        const { fallo } = await sonar(ctx, turno, trozos, pedirVoz);
         if (fallo >= 0) {
           medir("chat_voice_error", { chat_method: "voz-propia" });
-          // Lo que falte lo lee el navegador, cuando termine lo que ya suena.
-          const resto = trozos.slice(fallo).join(" ");
-          const espera = Math.max(0, (fin - ctx.currentTime) * 1000);
-          setTimeout(() => {
-            if (turno === turnoVoz && leerEnVoz) decirNavegador(resto);
-          }, espera);
+          vozPausadaHasta = Date.now() + 10 * 60_000;
         }
         return;
       }

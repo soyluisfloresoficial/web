@@ -308,6 +308,21 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   </details>
 
   <details class="paso">
+    <summary><span class="num">A1b</span><span class="titulo"><strong>HTTPS estricto (HSTS) a 12 meses</strong><span><span class="quien tu">TÚ</span>2 minutos · seguridad, invisible para las visitas</span></span></summary>
+    <div class="cuerpo">
+      <p>Le dice al navegador que entre siempre por https. Hoy está en 6 meses porque lo pone el panel de Cloudflare, que manda sobre el archivo de la web (en el archivo ya pone un año). Para entrar en la lista de precarga de los navegadores hace falta un año.</p>
+      <ol>
+        <li>Entra en <a href="https://dash.cloudflare.com" target="_blank" rel="noopener">dash.cloudflare.com</a> y abre <b>soyluisflores.es</b>.</li>
+        <li>Menú de la izquierda: <b>SSL/TLS</b> → <b>Certificados perimetrales</b> (Edge Certificates).</li>
+        <li>Baja hasta <b>HTTP Strict Transport Security (HSTS)</b> y pulsa <b>Cambiar configuración</b>. Si sale un aviso, pulsa <b>Siguiente</b>.</li>
+        <li>En <b>Encabezado de antigüedad máxima (max-age)</b> elige <b>12 meses</b>.</li>
+        <li>Deja como están: <b>Aplicar a subdominios</b> activado, <b>Precarga</b> activado y <b>Encabezado No-Sniff</b> activado. Pulsa <b>Guardar</b>.</li>
+        <li>Avísame y lo compruebo en la web publicada.</li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="paso">
     <summary><span class="num">A2</span><span class="titulo"><strong>Bing Webmaster Tools e IndexNow</strong><span><span class="quien tu">TÚ</span>5 minutos · Bing alimenta a ChatGPT, Copilot y DuckDuckGo</span></span></summary>
     <div class="cuerpo">
       <p>Muchos buscadores con IA, ChatGPT entre ellos, usan el índice de Bing. Darte de alta allí es gratis y casi automático si ya hiciste el paso A1.</p>
@@ -555,10 +570,10 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
   <div class="rejilla dos">
     <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien claude">CLAUDE</span> <span class="sub">15 min</span><h3>S1 · Caché larga para los archivos que no cambian <span class="estado ok">Hecho 06/11</span></h3><p class="sub"><b>Lo que vi:</b> fuentes, logos, scripts, imágenes y el video se envían con «revalidar siempre» (<code>max-age=0</code>). Cada visita repetida vuelve a preguntar por todos.</p><p><b>Propuesta:</b> un año para los archivos con huella (<code>/_astro/</code>) y las fuentes, y siete días para logos, video e iconos. <b>Hecho el 06/11/2026</b> en <code>public/_headers</code>: quien vuelve a la web la ve casi al instante. El HTML sigue revalidándose, así que cada publicación se ve al momento.</p></div>
     <div class="tarjeta"><span class="estado ok">Impacto alto</span> <span class="quien claude">CLAUDE</span> <span class="sub">1 a 2 h</span><h3>S2 · Que Flora hable antes <span class="estado ok">Hecho 06/11</span></h3><p class="sub"><b>Lo que medí:</b> generar la voz tarda unos 3 segundos con 120 letras. Una respuesta normal tiene unas 300, así que Flora tarda 6 a 7 segundos en empezar a hablar.</p><p><b>Propuesta:</b> pedir y reproducir la voz frase por frase. El primer trozo (de 90 letras como máximo) suena en unos 2 segundos y el resto llega mientras habla. <b>Hecho el 06/11/2026</b> (medido en vivo: 50 letras en 2 s y tres trozos a la vez en 2,6 s): si un trozo falla, lo que falte lo lee la voz del navegador; el límite de peticiones de voz pasó de 12 a 40 por minuto porque cada respuesta usa de 2 a 4.</p></div>
-    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien claude">CLAUDE</span> <span class="sub">15 min</span><h3>S3 · Los tres ajustes de seguridad pendientes (B3)</h3><p class="sub"><b>Lo que vi:</b> la página 404 dice «index», no hay <code>security.txt</code> y la política de contenido solo avisa, no bloquea.</p><p><b>Propuesta:</b> 404 con <code>noindex</code>, <code>/.well-known/security.txt</code> con hola@ y la política en modo obligatorio, probando antes que no rompe Tag Manager ni los píxeles.</p></div>
+    <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien claude">CLAUDE</span> <span class="sub">15 min</span><h3>S3 · Los tres ajustes de seguridad pendientes (B3) <span class="estado ok">Hecho 08/11</span></h3><p class="sub"><b>Lo que vi:</b> la página 404 dice «index», no hay <code>security.txt</code> y la política de contenido solo avisa, no bloquea.</p><p><b>Propuesta:</b> 404 con <code>noindex</code>, <code>/.well-known/security.txt</code> con hola@ y la política en modo obligatorio, probando antes que no rompe Tag Manager ni los píxeles.</p><p class="sub"><b>Hecho 08/11:</b> <code>security.txt</code> publicado y la política en modo obligatorio tras recorrer 10 páginas con las cookies aceptadas (solo faltaba <code>ad.doubleclick.net</code> de Google Ads). La 404 ya responde con código 404, que Google no indexa: no hace falta más. Pendiente tuyo: HTTPS estricto a 12 meses en el panel de Cloudflare.</p></div>
     <div class="tarjeta"><span class="estado aviso">Impacto medio</span> <span class="quien claude">CLAUDE</span> <span class="sub">30 min</span><h3>S4 · Dos retoques a Flora</h3><p class="sub"><b>Lo que vi (20 de 22 casos bien):</b> al preguntar el precio no enlazó a la llamada, y la respuesta sobre garantías pasó de 75 palabras.</p><p><b>Propuesta:</b> ajustar sus instrucciones y volver a pasar las 22 preguntas antes de publicar.</p></div>
     <div class="tarjeta"><span class="estado info">Impacto bajo</span> <span class="quien claude">CLAUDE</span> <span class="sub">10 min</span><h3>S5 · Limpiar archivos y la rama vieja (B2)</h3><p class="sub"><b>Lo que vi:</b> 10 archivos sin uso (scripts de octubre, borradores, 3 logos) y la rama <code>seo-geo-oct-2026</code>, que ya está dentro de <code>main</code>.</p><p><b>Propuesta:</b> borrar los archivos (quedan en el historial de GitHub). La rama solo se borra con tu permiso.</p></div>
-    <div class="tarjeta"><span class="estado info">Impacto bajo</span> <span class="quien claude">CLAUDE</span> <span class="sub">20 min</span><h3>S6 · Actualizar Astro y el SDK de Anthropic</h3><p class="sub"><b>Lo que vi:</b> Astro 7.4.0 (hay 7.4.5) y el SDK 1.3.0 (hay 1.4.0). Sin fallos de seguridad conocidos: es mantenimiento.</p><p><b>Propuesta:</b> subirlos, compilar, pasar las 29 pruebas y las 22 preguntas de Flora, y publicar.</p></div>
+    <div class="tarjeta"><span class="estado info">Impacto bajo</span> <span class="quien claude">CLAUDE</span> <span class="sub">20 min</span><h3>S6 · Actualizar Astro y el SDK de Anthropic <span class="estado ok">Hecho 08/11</span></h3><p class="sub"><b>Lo que vi:</b> Astro 7.4.0 (hay 7.4.5) y el SDK 1.3.0 (hay 1.4.0). Sin fallos de seguridad conocidos: es mantenimiento.</p><p><b>Propuesta:</b> subirlos, compilar, pasar las 29 pruebas y las 22 preguntas de Flora, y publicar.</p><p class="sub"><b>Hecho 08/11:</b> Astro 7.4.7 y SDK 1.6.0, con las 30 pruebas y la auditoría en verde.</p></div>
   </div>
 
   <div class="fase"><h3>2 · Que más gente te encuentre</h3><span class="estado info">Orgánico</span><span class="sub" style="color:var(--suave)">Los resultados llegan en semanas, no en días</span></div>
@@ -840,6 +855,17 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>S1: caché de un año para los archivos con huella y las fuentes, y de siete días para logos, video e iconos.</li>
         <li>S2: Flora pide y reproduce la voz frase por frase; la primera suena en unos 2 segundos en vez de unos 6 a 7 (estimado). Límite de voz de 40 peticiones por minuto.</li>
         <li>Node.js reinstalado en el ordenador (v26.13) para poder compilar.</li>
+      </ul></div>
+    <div class="hito"><div class="fecha">8 nov (noche)</div><strong>Paquete 1 de mejoras invisibles</strong>
+      <ul>
+        <li>Revisión completa: build y auditoría sin problemas, 30 pruebas, 0 vulnerabilidades, portada de 47 KB comprimida, datos estructurados y accesibilidad básica bien.</li>
+        <li>Tope diario de voz de Flora: 15.000 caracteres al día en toda la web (<code>LIMITE_DIARIO_VOZ</code>). Nadie puede gastar la voz sin fin con un programa.</li>
+        <li>Si la voz en vivo falla, Flora sigue por escrito y en silencio: ya no usa la voz robótica del navegador.</li>
+        <li>Aviso por correo a hola@ al 80 % y al 100 % del tope diario del chat y del de voz.</li>
+        <li>Política de seguridad del navegador (CSP) en modo obligatorio y <code>/.well-known/security.txt</code>.</li>
+        <li>Datos estructurados del catálogo (servicios y planes, sin precios) y del video de la portada.</li>
+        <li>Astro 7.4.7 y SDK de Anthropic 1.6.0.</li>
+        <li>Pendiente tuyo: subir el HTTPS estricto (HSTS) a 12 meses en el panel de Cloudflare.</li>
       </ul></div>
     <div class="hito"><div class="fecha">8 nov</div><strong>Voz de Flora elegida por oído</strong>
       <ul><li>Se compararon las cinco voces femeninas con la misma frase y el titular eligió la B: «celeste» (latina). Sustituye a «selena».</li><li>Bot Fight Mode apagado, sitemap enviado a Google y a Bing, Crawler Hints activado y tope de gasto en Anthropic puesto.</li><li>Aviso: el cupo gratuito de voz del día se agota (error 429) y Flora pasa a la voz robótica del navegador. Preparado el sistema de voces grabadas para las respuestas fijas; falta grabarlas cuando se reinicie el cupo (01:00 de Madrid).</li></ul></div>

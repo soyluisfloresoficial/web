@@ -65,6 +65,11 @@
     // Tope de mensajes con IA al día en toda la web. Al llegar, el chat sigue
     // con las preguntas frecuentes, sin IA, hasta el día siguiente (UTC).
     "LIMITE_DIARIO_CHAT": "300",
+    // Tope de caracteres de voz al día en toda la web (08/11/2026, topes.ts).
+    // 15.000 son unas 50 respuestas habladas y, con el plan de pago, unos
+    // 0,45 $ al día como mucho. Al 80 % y al 100 % llega un aviso por correo,
+    // igual que con el tope del chat. Al llegar, Flora sigue por escrito.
+    "LIMITE_DIARIO_VOZ": "15000",
     // Voz de Flora: celeste (latina), elegida el 08/11/2026 tras escuchar las cinco
     // femeninas. Antes, selena.
     // Otras: selena (latina), estrella (mexicana, madura), diana y
