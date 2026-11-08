@@ -29,6 +29,7 @@ import { contar, resumenSemanal } from "./estadisticas";
 import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones";
 import { voz, type EnvVoz } from "./voz";
 import { avisarTope } from "./topes";
+import { servirPagina } from "./paginas";
 import { actualizarMemoria, codigoVisitante, leerMemoria, olvidar, separarMemoria, textoMemoria } from "./memoria";
 
 interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
@@ -369,8 +370,9 @@ export default {
     }
     if (pathname === "/api/agenda/config") return configAgenda(request, env, json);
     if (pathname.startsWith("/api/")) return json({ error: "no-existe" }, 404);
-    // Cualquier otra ruta: los archivos de la web (y su página 404).
-    return env.ASSETS.fetch(request);
+    // Cualquier otra ruta: las páginas de la web (y su 404), con la versión
+    // Markdown para los agentes de IA que la pidan (paginas.ts).
+    return servirPagina(request, env.ASSETS);
   },
 
   // Cron cada 10 minutos (wrangler.jsonc): recordatorios de la agenda,

@@ -158,3 +158,28 @@ vuelve a la voz en vivo y, si esta falla, Flora sigue por escrito.
 - Grabar lo que falte: `node tools/grabar-voces.mjs`. Cambiar de voz: `--forzar`.
 - Gasta unas 400 letras del cupo del día; si está agotado, avisa y se para.
 - Después: `npm run build`, auditar y subir los archivos de `public/voz/`.
+
+## Markdown para agentes de IA y Content Signals (9/11/2026)
+
+Para el panel «preparación para agentes de IA» de Cloudflare (Nivel 1, 5 de 5):
+
+- **Content Signals** en `public/robots.txt`: `search=yes, ai-input=yes, ai-train=yes`
+  (decisión del titular: aparecer en buscadores, en las respuestas de la IA y
+  permitir el entrenamiento). No se usa el robots.txt gestionado por Cloudflare,
+  que se contradecía con el de la web.
+- **Versión Markdown de cada página indexable**: `tools/generar-markdown.mjs` corre
+  al final de `npm run build` y escribe `dist/<ruta>/index.md` con el título, la
+  descripción, la dirección y el texto de `<main>`, sin diseño ni scripts. Las
+  páginas con `noindex` (landings, agenda, correo) no llevan Markdown.
+- **Negociación**: el Worker (`src/worker/paginas.ts`) atiende ahora también las
+  páginas (`run_worker_first` en `wrangler.jsonc`, salvo `_astro`, fuentes, logos,
+  video, voz e imágenes). Si la petición prefiere `text/markdown`, entrega el
+  `.md` con `Vary: Accept`, `noindex`, enlace canónico a la página HTML y
+  `Content-Signal`. Navegadores y Google reciben el HTML de siempre.
+- **Cabeceras de seguridad**: Cloudflare no aplica `_headers` a las respuestas del
+  Worker. El build copia la regla `/*` de `public/_headers` en
+  `/agente/cabeceras.json` y el Worker la pone en cada página. Las cabeceras se
+  siguen editando solo en `public/_headers`.
+- Probar: `curl -H "Accept: text/markdown" https://soyluisflores.es/servicios/agentes-ia`.
+- Costo: cada visita a una página cuenta como una petición al Worker (el plan
+  gratuito incluye 100.000 al día).

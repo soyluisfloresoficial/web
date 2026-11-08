@@ -12,8 +12,26 @@
     // Para que el Worker pueda leer /agente/conocimiento.txt y devolver
     // los archivos de la web en cualquier otra ruta.
     "binding": "ASSETS",
-    // Solo /api/* ejecuta el Worker antes de buscar un archivo.
-    "run_worker_first": ["/api/*"],
+    // El Worker va antes que los archivos en /api/* y, desde el 09/11/2026, en
+    // las páginas: así entrega la versión Markdown a los agentes de IA que la
+    // piden (src/worker/paginas.ts) y pone él las cabeceras de seguridad, que
+    // Cloudflare no aplica desde _headers a las respuestas del Worker.
+    // Los archivos fijos siguen saliendo directo, sin pasar por el Worker.
+    "run_worker_first": [
+      "/api/*",
+      "/*",
+      "!/_astro/*",
+      "!/fonts/*",
+      "!/logo/*",
+      "!/video/*",
+      "!/voz/*",
+      "!/og/*",
+      "!/agente/*",
+      "!/favicon.ico",
+      "!/favicon.svg",
+      "!/apple-touch-icon.png",
+      "!/og-default.png"
+    ],
     // La web usa URL sin barra final (/servicios), igual que el canonical y
     // el sitemap. Por defecto, Cloudflare redirigía /servicios a /servicios/.
     "html_handling": "drop-trailing-slash",

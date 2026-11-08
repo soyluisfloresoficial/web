@@ -1,4 +1,9 @@
+# Content Signals (contentsignals.org, 09/11/2026): para qué se puede usar el
+# contenido de la web. Decisión del titular: aparecer en buscadores (search),
+# servir para que la IA responda en el momento (ai-input) y para entrenar
+# modelos (ai-train).
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 Disallow: /admin
 
@@ -11,6 +16,7 @@ User-agent: Claude-User
 User-agent: ClaudeBot
 User-agent: Google-Extended
 User-agent: Applebot-Extended
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 Sitemap: https://soyluisflores.es/sitemap-index.xml

@@ -202,7 +202,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
     <h1>Informe y auditoría de <em>soyluisflores.es</em></h1>
     <p class="lead">Qué va bien, qué falla, qué conviene mejorar y el paso a paso para hacerlo. Incluye la web, Flora, la agenda, el panel, la seguridad, los textos legales, el SEO y la presencia en buscadores con IA.</p>
     <div class="meta">
-      <span class="pastilla">Última actualización: <b>08/11/2026</b></span>
+      <span class="pastilla">Última actualización: <b>09/11/2026</b></span>
       <span class="pastilla">Auditoría completa: <b>03/11/2026</b></span>
       <span class="pastilla">Web: <b>main = reconstruccion-oct-2026</b></span>
       <span class="pastilla">Panel: <b>e61313c</b></span>
@@ -855,6 +855,14 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>S1: caché de un año para los archivos con huella y las fuentes, y de siete días para logos, video e iconos.</li>
         <li>S2: Flora pide y reproduce la voz frase por frase; la primera suena en unos 2 segundos en vez de unos 6 a 7 (estimado). Límite de voz de 40 peticiones por minuto.</li>
         <li>Node.js reinstalado en el ordenador (v26.13) para poder compilar.</li>
+      </ul></div>
+    <div class="hito"><div class="fecha">9 nov</div><strong>Web preparada para agentes de IA (Nivel 1 de Cloudflare)</strong>
+      <ul>
+        <li>HSTS a 12 meses en Cloudflare, comprobado en vivo.</li>
+        <li>Content Signals en robots.txt: buscadores, respuestas de la IA y entrenamiento permitidos (decisión del titular).</li>
+        <li>Versión Markdown de las 33 páginas indexables para los agentes de IA que la pidan (Accept: text/markdown). Las personas ven la web igual.</li>
+        <li>El Worker atiende ahora las páginas y pone él las cabeceras de seguridad de _headers, que Cloudflare no aplica a sus respuestas.</li>
+        <li>Niveles 2, 3 y Comercio del panel: no hacen falta para una web de captación.</li>
       </ul></div>
     <div class="hito"><div class="fecha">8 nov (noche)</div><strong>Paquete 1 de mejoras invisibles</strong>
       <ul>

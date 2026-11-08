@@ -366,4 +366,50 @@ prueba("las respuestas fijas de Flora se leen limpias y se pueden grabar", () =>
   assert.notEqual(huella("hola"), huella("hola."), "cambiar el texto cambia la huella");
 });
 
+// ------------------------------------------- Markdown para agentes de IA (09/11/2026)
+const { prefiereMarkdown, rutaMarkdown, servirPagina } = await import("../src/worker/paginas.ts");
+const archivos = {
+  "/agente/cabeceras.json": [JSON.stringify({ "Content-Security-Policy": "default-src 'self'", "X-Frame-Options": "SAMEORIGIN" }), "application/json"],
+  "/servicios/agentes-ia": ["<html>agentes</html>", "text/html"],
+  "/servicios/agentes-ia/index.md": ["# Agentes de IA\n\nTexto.", "text/plain"],
+  "/diagnostico": ["<html>landing</html>", "text/html"],
+};
+const activos = {
+  async fetch(req) {
+    const a = archivos[new URL(req.url).pathname];
+    return a ? new Response(a[0], { headers: { "Content-Type": a[1] } }) : new Response("404", { status: 404, headers: { "Content-Type": "text/html" } });
+  },
+};
+const pedir = (ruta, accept) => servirPagina(new Request("https://soyluisflores.es" + ruta, { headers: accept ? { Accept: accept } : {} }), activos);
+const rMd = await pedir("/servicios/agentes-ia", "text/markdown");
+const rMdTexto = await rMd.text();
+const rHtml = await pedir("/servicios/agentes-ia", "text/html,application/xhtml+xml,*/*;q=0.8");
+const rSinMd = await pedir("/diagnostico", "text/markdown");
+const r404 = await pedir("/no-existe", "text/html");
+
+prueba("Markdown solo para quien lo pide; las personas reciben el HTML con sus cabeceras", () => {
+  assert.equal(prefiereMarkdown("text/markdown"), true);
+  assert.equal(prefiereMarkdown("text/markdown, text/html;q=0.9"), true);
+  assert.equal(prefiereMarkdown("text/html, text/markdown"), false, "empate: gana el primero");
+  assert.equal(prefiereMarkdown("*/*"), false);
+  assert.equal(prefiereMarkdown("text/html,application/xhtml+xml,*/*;q=0.8"), false);
+  assert.equal(prefiereMarkdown(null), false);
+  assert.equal(rutaMarkdown("/"), "/index.md");
+  assert.equal(rutaMarkdown("/blog/"), "/blog/index.md");
+  assert.equal(rutaMarkdown("/robots.txt"), null);
+  assert.match(rMd.headers.get("Content-Type"), /text\/markdown/);
+  assert.equal(rMdTexto, "# Agentes de IA\n\nTexto.");
+  assert.equal(rMd.headers.get("Vary"), "Accept");
+  assert.equal(rMd.headers.get("X-Robots-Tag"), "noindex");
+  assert.match(rMd.headers.get("Link"), /agentes-ia>; rel="canonical"/);
+  assert.equal(rMd.headers.get("Content-Security-Policy"), "default-src 'self'");
+  assert.match(rHtml.headers.get("Content-Type"), /text\/html/);
+  assert.equal(rHtml.headers.get("Content-Security-Policy"), "default-src 'self'", "la CSP llega también desde el Worker");
+  assert.equal(rHtml.headers.get("X-Frame-Options"), "SAMEORIGIN");
+  assert.equal(rHtml.headers.get("Vary"), "Accept");
+  assert.match(rSinMd.headers.get("Content-Type"), /text\/html/, "sin Markdown, el HTML");
+  assert.equal(r404.status, 404);
+  assert.ok(r404.headers.get("Content-Security-Policy"));
+});
+
 console.log(`\n${pruebas} pruebas superadas.`);
