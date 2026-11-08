@@ -17,8 +17,9 @@
     // piden (src/worker/paginas.ts) y pone él las cabeceras de seguridad, que
     // Cloudflare no aplica desde _headers a las respuestas del Worker.
     // Los archivos fijos siguen saliendo directo, sin pasar por el Worker.
+    // No poner "/api/*" además de "/*": Wrangler lo rechaza por redundante
+    // y la publicación falla (le pasó al commit 6051b8e).
     "run_worker_first": [
-      "/api/*",
       "/*",
       "!/_astro/*",
       "!/fonts/*",
