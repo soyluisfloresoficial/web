@@ -5,6 +5,7 @@ import CabeceraPagina from "../../components/CabeceraPagina.astro";
 import Cierre from "../../components/Cierre.astro";
 import Icono from "../../components/Icono.astro";
 import IlustracionServicio from "../../components/IlustracionServicio.astro";
+import EscenaFunnel from "../../components/EscenaFunnel.astro";
 import PruebaSocial from "../../components/PruebaSocial.astro";
 import PlanesServicio from "../../components/PlanesServicio.astro";
 import CapturaGuia from "../../components/CapturaGuia.astro";
@@ -172,6 +173,25 @@ const schema = [
       </div>
     </section>
 
+    {/* ------------------------------------------- En la práctica (09/11/2026)
+        El mismo gráfico animado de las landings de campaña (EscenaFunnel),
+        en el color del servicio. Se reproduce una vez al entrar en pantalla
+        y queda quieto; sin JavaScript o con movimiento reducido se ve
+        terminado. Es una maqueta de ejemplo, sin cifras ni clientes reales. */}
+    <section class="section" aria-labelledby="practica-titulo">
+      <div class="container-lf practica">
+        <div class="practica-texto">
+          <p class="eyebrow">En la práctica</p>
+          <h2 id="practica-titulo" class="subrayado mt-4">Así se ve funcionando</h2>
+          <p class="lead mt-5">{servicio.resumen}</p>
+          <p class="practica-nota mt-4">Maqueta de ejemplo: así queda el sistema una vez conectado a tus herramientas.</p>
+        </div>
+        <div class="practica-visual" style={`--ef-acento: var(${servicio.color})`}>
+          <EscenaFunnel tipo={servicio.slug} />
+        </div>
+      </div>
+    </section>
+
     {/* ------------------------------------------- Para quién / Qué incluye */}
     <section class="section" aria-label="Para quién es y qué incluye">
       <div class="container-lf encaje">
@@ -310,6 +330,22 @@ const schema = [
 </Base>
 
 <style>
+  /* ------------------------------------------------------ En la práctica */
+  .practica {
+    display: grid;
+    gap: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    align-items: center;
+  }
+  @media (width >= 900px) {
+    .practica {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+  }
+  .practica-nota {
+    font-size: var(--step--1);
+    color: var(--color-muted);
+  }
+
   /* ------------------------------------------------------------ Cabecera */
   .definicion {
     max-width: 40rem;
