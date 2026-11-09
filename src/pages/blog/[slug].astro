@@ -24,7 +24,10 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+// Índice del artículo (09/11/2026): los apartados H2, solo si hay al menos tres.
+const indice = headings.filter((h) => h.depth === 2);
+const conIndice = indice.length >= 3;
 
 const publicado = post.data.datePublished;
 const modificado = post.data.dateModified ?? publicado;
@@ -177,8 +180,50 @@ const schema = [
         )
       }
 
-      <div class="prosa">
-        <Content />
+      {/* Índice (09/11/2026): plegable en celular y tableta; en pantallas
+          anchas va al lado del texto y sigue al bajar, marcando el apartado
+          que se está leyendo. */}
+      {
+        conIndice && (
+          <details class="indice-movil">
+            <summary>En este artículo</summary>
+            <nav aria-label="Índice del artículo">
+              <ol>
+                {indice.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`} data-indice-enlace={h.slug}>
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </details>
+        )
+      }
+
+      <div class="cuerpo-articulo">
+        {
+          conIndice && (
+            <aside class="indice-lateral" aria-label="Índice del artículo">
+              <nav>
+                <p class="indice-titulo">En este artículo</p>
+                <ol>
+                  {indice.map((h) => (
+                    <li>
+                      <a href={`#${h.slug}`} data-indice-enlace={h.slug}>
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            </aside>
+          )
+        }
+        <div class="prosa">
+          <Content />
+        </div>
       </div>
 
       {
@@ -263,6 +308,39 @@ const schema = [
     />
   </main>
 </Base>
+
+<script>
+  // Índice lateral: marca el apartado que se está leyendo (aria-current).
+  // Sin JavaScript el índice funciona igual, solo sin la marca.
+  const enlaces = [...document.querySelectorAll<HTMLAnchorElement>(".indice-lateral [data-indice-enlace]")];
+  const titulos = enlaces
+    .map((a) => document.getElementById(a.dataset.indiceEnlace ?? ""))
+    .filter((t): t is HTMLElement => Boolean(t));
+  if (titulos.length && "IntersectionObserver" in window) {
+    const marcar = (id: string) => {
+      for (const a of enlaces) {
+        if (a.dataset.indiceEnlace === id) a.setAttribute("aria-current", "true");
+        else a.removeAttribute("aria-current");
+      }
+    };
+    const visibles = new Set<string>();
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          if (e.isIntersecting) visibles.add(e.target.id);
+          else visibles.delete(e.target.id);
+        }
+        // El primero visible; si no hay ninguno, el último que quedó arriba.
+        const actual =
+          titulos.find((t) => visibles.has(t.id)) ??
+          [...titulos].reverse().find((t) => t.getBoundingClientRect().top < 0);
+        if (actual) marcar(actual.id);
+      },
+      { rootMargin: "-80px 0px -55% 0px" },
+    );
+    titulos.forEach((t) => observador.observe(t));
+  }
+</script>
 
 <style>
   .migas {
@@ -423,6 +501,99 @@ const schema = [
     margin-top: var(--space-4);
     color: var(--color-soft);
     font-size: var(--step-1);
+  }
+
+  /* ------------------------------------------------ Índice (09/11/2026) */
+  .cuerpo-articulo {
+    position: relative;
+  }
+  .indice-movil {
+    margin-top: var(--space-4);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+  }
+  .indice-movil summary {
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--svc, var(--color-electric));
+  }
+  .indice-movil nav {
+    padding: 0 1.25rem 1.1rem;
+  }
+  .indice-movil ol,
+  .indice-lateral ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .indice-movil a,
+  .indice-lateral a {
+    display: block;
+    padding: 0.4rem 0 0.4rem 0.85rem;
+    border-left: 2px solid var(--color-line);
+    color: var(--color-soft);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    text-decoration: none;
+  }
+  .indice-movil a:hover,
+  .indice-lateral a:hover,
+  .indice-lateral a:focus-visible {
+    color: var(--color-ink);
+  }
+  .indice-lateral a[aria-current="true"] {
+    color: var(--color-ink);
+    border-left-color: var(--svc, var(--color-electric));
+  }
+  .indice-lateral {
+    display: none;
+  }
+  .indice-titulo {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--svc, var(--color-electric));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .indice-lateral a {
+      transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+    }
+  }
+  /* Pantallas anchas: el índice va a la derecha del texto y sigue al bajar. */
+  @media (width >= 1240px) {
+    .indice-movil {
+      display: none;
+    }
+    .indice-lateral {
+      display: block;
+      position: absolute;
+      top: var(--space-4);
+      bottom: 0;
+      left: calc(100% + 3rem);
+      width: 15rem;
+    }
+    .indice-lateral nav {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      max-height: calc(100vh - var(--header-h) - 4rem);
+      overflow-y: auto;
+    }
+    .indice-lateral a {
+      font-size: 0.875rem;
+    }
   }
 
   .prosa :global(h2) {
