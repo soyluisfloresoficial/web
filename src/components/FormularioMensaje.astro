@@ -1,0 +1,273 @@
+---
+/**
+ * Formulario corto de /contacto (9/11/2026): nombre, correo y mensaje, para
+ * quien quiere escribir sin agendar todavía. Lo recibe POST /api/mensaje
+ * (src/worker/mensaje.ts): entra como lead en el panel, llega un aviso a
+ * hola@ y la persona recibe un acuse.
+ *
+ * Mismo estilo que el formulario de la guía (CapturaGuia.astro). Sin
+ * JavaScript se ve el correo para escribir directamente.
+ */
+import Icono from "./Icono.astro";
+import { SITIO } from "../data/servicios";
+---
+
+<div class="card mensaje-caja">
+  <p class="mensaje-titulo">Escríbeme desde aquí</p>
+  <p class="mensaje-sub">Te respondo en 24 a 48 horas hábiles.</p>
+
+  <form class="mensaje-form mt-6" data-mensaje novalidate hidden>
+    <div data-mensaje-campos>
+      <label class="mensaje-campo">
+        <span>Tu nombre</span>
+        <input name="nombre" autocomplete="name" required minlength="2" maxlength="80" />
+      </label>
+      <label class="mensaje-campo mt-4">
+        <span>Tu correo</span>
+        <input name="correo" type="email" autocomplete="email" inputmode="email" required maxlength="120" />
+      </label>
+      <label class="mensaje-campo mt-4">
+        <span>Tu mensaje</span>
+        <textarea name="mensaje" rows="4" required minlength="10" maxlength="1000" placeholder="Cuéntame a qué se dedica tu negocio y qué te gustaría resolver."></textarea>
+      </label>
+      <div class="mensaje-trampa" aria-hidden="true">
+        <label>Web <input name="web" tabindex="-1" autocomplete="off" /></label>
+      </div>
+      <label class="mensaje-acepto mt-5">
+        <input type="checkbox" name="acepto" required />
+        <span>
+          Acepto que se traten mis datos para responder a mi mensaje. Más detalle en la{" "}
+          <a href="/politica-de-privacidad" target="_blank" rel="noopener">política de privacidad</a>{" "}
+          (y, si estás en Latinoamérica, en el{" "}
+          <a href="/aviso-de-privacidad-latinoamerica" target="_blank" rel="noopener">aviso de privacidad para Latinoamérica</a>).
+        </span>
+      </label>
+      <p class="mensaje-error mt-4" data-mensaje-error role="alert" hidden></p>
+      <button class="cta mensaje-boton mt-6" type="submit" data-mensaje-enviar>
+        <Icono nombre="email" tamano={18} />
+        <span data-mensaje-enviar-texto>Enviar mensaje</span>
+      </button>
+    </div>
+
+    <div class="mensaje-exito" data-mensaje-exito hidden tabindex="-1">
+      <span class="anillo-degradado anillo-grande" aria-hidden="true">
+        <Icono nombre="check" tamano={24} grosor={2} degradado />
+      </span>
+      <p class="mensaje-exito-titulo">Mensaje enviado</p>
+      <p class="mensaje-sub">
+        Te llegó un correo de confirmación. Te respondo en 24 a 48 horas hábiles. Si prefieres no esperar,{" "}
+        <a href="#agenda">agenda la llamada</a>.
+      </p>
+    </div>
+  </form>
+
+  <noscript>
+    <p class="mensaje-sub mt-6">Escríbeme a <a href={`mailto:${SITIO.email}`}>{SITIO.email}</a>.</p>
+  </noscript>
+</div>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-mensaje]");
+  if (form) {
+    form.hidden = false;
+    const campos = form.querySelector<HTMLElement>("[data-mensaje-campos]")!;
+    const exito = form.querySelector<HTMLElement>("[data-mensaje-exito]")!;
+    const error = form.querySelector<HTMLElement>("[data-mensaje-error]")!;
+    const boton = form.querySelector<HTMLButtonElement>("[data-mensaje-enviar]")!;
+    const textoBoton = form.querySelector<HTMLElement>("[data-mensaje-enviar-texto]")!;
+    const medir = (event: string, extra: Record<string, unknown> = {}) =>
+      (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({ event, ...extra, page_path: location.pathname });
+    let empezado = false;
+
+    form.addEventListener("input", () => {
+      if (empezado) return;
+      empezado = true;
+      medir("form_start", { form_id: "formulario-contacto" });
+    });
+
+    const mostrarError = (texto: string) => {
+      error.textContent = texto;
+      error.hidden = false;
+    };
+
+    // Campaña de la visita, como en la agenda: se lee de la dirección y no se guarda.
+    const origenVisita = () => {
+      const p = new URLSearchParams(location.search);
+      const partes = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]
+        .filter((k) => p.get(k))
+        .map((k) => `${k.replace("utm_", "")}=${p.get(k)!.slice(0, 60)}`);
+      if (p.has("gclid")) partes.push("clic de Google Ads");
+      if (p.has("fbclid")) partes.push("clic de Meta");
+      return ["formulario-contacto", ...partes].join(" · ").slice(0, 300);
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      error.hidden = true;
+      const malos = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input[required], textarea[required]")].filter(
+        (c) => !c.checkValidity(),
+      );
+      form.querySelectorAll("[aria-invalid]").forEach((c) => c.removeAttribute("aria-invalid"));
+      if (malos.length) {
+        malos.forEach((c) => c.setAttribute("aria-invalid", "true"));
+        const primero = malos[0];
+        mostrarError(
+          primero.name === "acepto"
+            ? "Marca la casilla de privacidad para poder responderte."
+            : primero.name === "correo"
+              ? "Revisa tu correo: parece que falta algo."
+              : primero.name === "mensaje"
+                ? "Cuéntame un poco más en el mensaje (al menos 10 letras)."
+                : "Escribe tu nombre.",
+        );
+        primero.focus();
+        return;
+      }
+      const datos = new FormData(form);
+      boton.disabled = true;
+      textoBoton.textContent = "Enviando…";
+      try {
+        const r = await fetch("/api/mensaje", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nombre: datos.get("nombre"),
+            correo: datos.get("correo"),
+            mensaje: datos.get("mensaje"),
+            web: datos.get("web"),
+            acepto: (form.querySelector<HTMLInputElement>('[name="acepto"]')?.checked ?? false) === true,
+            origen: origenVisita(),
+          }),
+        });
+        if (!r.ok) throw new Error(String(r.status));
+        campos.hidden = true;
+        exito.hidden = false;
+        exito.focus();
+        medir("generate_lead", { form_id: "formulario-contacto", method: "formulario" });
+      } catch (err) {
+        mostrarError(
+          String(err).includes("429")
+            ? "Has enviado varios mensajes seguidos. Espera un minuto y vuelve a intentarlo."
+            : "No se pudo enviar. Inténtalo de nuevo o escríbeme a hola@soyluisflores.es.",
+        );
+      } finally {
+        boton.disabled = false;
+        textoBoton.textContent = "Enviar mensaje";
+      }
+    });
+  }
+</script>
+
+<style>
+  .mensaje-caja {
+    padding: clamp(1.5rem, 1.1rem + 1.5vw, 2.25rem);
+    --acento: var(--color-electric);
+  }
+  .mensaje-titulo {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .mensaje-sub {
+    margin-top: 0.4rem;
+    color: var(--color-soft);
+    font-size: var(--step--1);
+    line-height: 1.55;
+  }
+  .mensaje-sub a,
+  .mensaje-acepto a {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .mensaje-form[hidden],
+  .mensaje-exito[hidden],
+  .mensaje-error[hidden],
+  [data-mensaje-campos][hidden] {
+    display: none;
+  }
+  .mensaje-campo {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .mensaje-campo span {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .mensaje-campo input,
+  .mensaje-campo textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-navy);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+  }
+  .mensaje-campo textarea {
+    resize: vertical;
+    min-height: 7rem;
+  }
+  .mensaje-campo input:focus,
+  .mensaje-campo textarea:focus {
+    outline: none;
+    border-color: var(--acento);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--acento) 25%, transparent);
+  }
+  .mensaje-campo [aria-invalid="true"] {
+    border-color: var(--acento-coral);
+  }
+  .mensaje-acepto {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--color-soft);
+    cursor: pointer;
+  }
+  .mensaje-acepto input {
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.15rem;
+    accent-color: var(--acento);
+  }
+  .mensaje-trampa {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .mensaje-error {
+    color: var(--acento-coral);
+    font-size: var(--step--1);
+  }
+  .mensaje-boton {
+    width: 100%;
+    justify-content: center;
+  }
+  .mensaje-exito {
+    text-align: center;
+    padding-block: 1rem;
+  }
+  .mensaje-exito .anillo-degradado {
+    margin-inline: auto;
+  }
+  .mensaje-exito:focus {
+    outline: none;
+  }
+  .mensaje-exito-titulo {
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+</style>

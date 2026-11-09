@@ -201,7 +201,7 @@ prueba("recordatorios, cancelación y aviso se arman sin errores", () => {
 
 const { SECUENCIA, proximoEnvio, confirmarSuscripcion, TEXTO_CONSENTIMIENTO, guiaPedida } = await import("../src/worker/secuencia.ts");
 const { GUIAS, guiaDeServicio } = await import("../src/data/guias.ts");
-const { describirOrigen, nombreSeccion } = await import("../src/worker/origen.ts");
+const { describirOrigen, nombreSeccion, lineasOrigen: lineasOrigenPrueba } = await import("../src/worker/origen.ts");
 
 prueba("el origen de cada lead se entiende de un vistazo", () => {
   let o = describirOrigen("blog-articulo · /blog/crm-para-pymes · source=ig · campaign=guias", "guia", "Ordena tus contactos en un CRM");
@@ -438,6 +438,33 @@ prueba("el autodiagnóstico recomienda servicios que existen y siempre da un res
   assert.equal(diag.recomendar([1, 3, 1, 2, 2])[0], "automatizacion");
   assert.equal(diag.recomendar([3, 3, 0, 0, 2])[0], "webs-ia");
   assert.equal(diag.recomendar([0, 0, 0, 2, 0])[1], "consultoria-ia");
+});
+
+// ------------------------------------------ Formulario corto de /contacto (09/11/2026)
+const { aMensaje } = await import("../src/worker/mensaje-validar.ts");
+
+prueba("el formulario de contacto valida, frena programas y avisa con el origen", () => {
+  const bueno = { nombre: "Ana", correo: "Ana@Ejemplo.com", mensaje: "Quiero automatizar las citas.", acepto: true, origen: "formulario-contacto" };
+  assert.deepEqual(aMensaje(bueno), { nombre: "Ana", correo: "ana@ejemplo.com", mensaje: "Quiero automatizar las citas.", origen: "formulario-contacto" });
+  assert.equal(aMensaje({ ...bueno, acepto: false }), null, "sin la casilla no vale");
+  assert.equal(aMensaje({ ...bueno, correo: "ana@" }), null);
+  assert.equal(aMensaje({ ...bueno, mensaje: "hola" }), null, "mensaje demasiado corto");
+  assert.equal(aMensaje({ ...bueno, mensaje: "x".repeat(1001) }), null, "mensaje demasiado largo");
+  assert.equal(aMensaje({ ...bueno, nombre: "A" }), null);
+  assert.equal(aMensaje({ ...bueno, web: "http://spam" }), "trampa");
+  assert.equal(aMensaje(null), null);
+  const o = describirOrigen("formulario-contacto · source=ig · medium=paid", "mensaje");
+  assert.equal(o.seccion, "Formulario de la página de contacto");
+  assert.equal(o.medio, "Escribió por el formulario de contacto");
+  assert.match(o.campana, /Instagram/);
+  const aviso = correos.avisoMensaje({ nombre: "Ana", correo: "ana@ejemplo.com", mensaje: "Quiero automatizar.", origen: lineasOrigenPrueba(o) });
+  assert.match(aviso.asunto, /Ana/);
+  assert.match(aviso.html, /mailto:ana@ejemplo.com/);
+  assert.match(aviso.texto, /Formulario de la página de contacto/);
+  const acuse = correos.acuseMensaje("Ana María");
+  assert.match(acuse.texto, /Hola, Ana:/);
+  assert.match(acuse.texto, /24 a 48 horas hábiles/);
+  assert.ok(!/—/.test(acuse.texto + aviso.texto), "sin rayas largas");
 });
 
 console.log(`\n${pruebas} pruebas superadas.`);

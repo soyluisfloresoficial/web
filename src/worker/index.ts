@@ -30,6 +30,7 @@ import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones
 import { voz, type EnvVoz } from "./voz";
 import { avisarTope } from "./topes";
 import { servirPagina } from "./paginas";
+import { mensaje } from "./mensaje";
 import { actualizarMemoria, codigoVisitante, leerMemoria, olvidar, separarMemoria, textoMemoria } from "./memoria";
 
 interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
@@ -363,6 +364,7 @@ export default {
     if (pathname === "/api/voz") return voz(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda") return agenda(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda/proximo") return proximoHueco(request, env, json, ctx);
+    if (pathname === "/api/mensaje") return mensaje(request, env, json, origenPermitido, ctx);
     if (pathname === "/api/agenda/cita" || pathname === "/api/agenda/cancelar") {
       return citaAgenda(request, env, json, origenPermitido, ctx);
     }

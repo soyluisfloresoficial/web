@@ -413,3 +413,13 @@ las 10:00» junto a los botones de agendar de la portada, del bloque final de la
 y del autodiagnóstico de `/servicios`, en la hora de quien visita. La respuesta se guarda
 5 minutos en la caché de Cloudflare para no consultar Google en cada visita. Sin agenda
 conectada o sin huecos, el aviso no aparece.
+
+## Formulario corto de contacto (9/11/2026)
+
+En `/contacto`, debajo de WhatsApp y correo: nombre, correo y mensaje para quien no quiere
+agendar todavía (`src/components/FormularioMensaje.astro`). Lo recibe `POST /api/mensaje`
+(`src/worker/mensaje.ts`, validación en `mensaje-validar.ts`): entra como lead en el panel
+con el origen («Formulario de la página de contacto» y la campaña), llega el aviso «Mensaje
+nuevo de …» a `CORREO_AVISOS` y la persona recibe el acuse «Recibí tu mensaje». Usa la misma
+clave de Resend y el mismo límite por IP que la agenda (`LIMITE_AGENDA`, tipo «mensaje»).
+Revisar con el abogado que la política de privacidad cubra este formulario.

@@ -308,3 +308,47 @@ export function avisoTitular(d: DatosAviso, tipo: "nueva" | "cancelada"): Correo
     pie: "Aviso automático de la agenda de la web.",
   });
 }
+
+// ------------------------------------------- Formulario de contacto (9/11/2026)
+
+export interface DatosMensaje {
+  nombre: string;
+  correo: string;
+  mensaje: string;
+  /** Líneas de origen (origen.ts): de qué sección y campaña llegó. */
+  origen: string[];
+}
+
+/** Aviso al titular: alguien escribió desde el formulario de /contacto. */
+export function avisoMensaje(d: DatosMensaje): Correo {
+  return maquetar({
+    asunto: `Mensaje nuevo de ${d.nombre} desde la web`,
+    previa: d.mensaje.slice(0, 90),
+    bloques: [
+      { p: "Alguien te escribió desde el formulario de la página de contacto." },
+      { ficha: [["Nombre", d.nombre], ["Correo", d.correo], ...d.origen.map((l): [string, string] => [l.split(": ")[0], l.split(": ").slice(1).join(": ")])] },
+      { p: `Su mensaje: ${d.mensaje}` },
+      { boton: { texto: "Responder por correo", url: `mailto:${d.correo}?subject=${encodeURIComponent("Tu mensaje en soyluisflores.es")}` } },
+      { p: "También entró como lead en el panel." },
+    ],
+    firma: ["Web de soyluisflores.es"],
+    pie: "Aviso automático del formulario de contacto.",
+  });
+}
+
+/** Acuse para quien escribió: recibido, cuándo responde y cómo adelantar. */
+export function acuseMensaje(nombre: string): Correo {
+  return maquetar({
+    asunto: "Recibí tu mensaje",
+    previa: "Te respondo en 24 a 48 horas hábiles.",
+    bloques: [
+      { p: `Hola, ${primerNombre(nombre)}:` },
+      { p: "Recibí tu mensaje desde la web. Lo leo yo y te respondo en 24 a 48 horas hábiles." },
+      { p: "Si prefieres verlo de una vez, puedes agendar una llamada gratis de 30 minutos:" },
+      { boton: { texto: "Agendar la llamada", url: `${CONTACTO.web}/contacto` } },
+      { p: `O escríbeme por WhatsApp al ${CONTACTO.whatsapp}.` },
+    ],
+    firma: ["Un saludo,", ...FIRMA],
+    pie: "Recibes este correo porque escribiste desde el formulario de soyluisflores.es.",
+  });
+}

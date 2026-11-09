@@ -68,8 +68,8 @@ function campana(partes: string[]): string {
   return trozos.length ? trozos.join(", ") : "Visita directa o búsqueda (sin campaña)";
 }
 
-/** tipo: «guia» para suscripciones, «cita» para llamadas agendadas. */
-export function describirOrigen(origen: string, tipo: "guia" | "cita", guia?: string): Origen {
+/** tipo: «guia» para suscripciones, «cita» para llamadas agendadas, «mensaje» para el formulario de /contacto. */
+export function describirOrigen(origen: string, tipo: "guia" | "cita" | "mensaje", guia?: string): Origen {
   const partes = origen
     .split(" · ")
     .map((p) => p.trim())
@@ -85,6 +85,9 @@ export function describirOrigen(origen: string, tipo: "guia" | "cita", guia?: st
   } else if (primero === "agenda-contacto") {
     seccion = "Agenda de la página de contacto";
     clave = "contacto";
+  } else if (primero === "formulario-contacto") {
+    seccion = "Formulario de la página de contacto";
+    clave = "formulario";
   } else if (primero === "agenda-diagnostico") {
     seccion = "Landing de anuncios /diagnostico";
     clave = "diagnostico";
@@ -108,7 +111,9 @@ export function describirOrigen(origen: string, tipo: "guia" | "cita", guia?: st
   }
 
   const medio =
-    tipo === "guia"
+    tipo === "mensaje"
+      ? "Escribió por el formulario de contacto"
+      : tipo === "guia"
       ? `Pidió la guía gratis${guia ? ` «${guia}»` : ""}`
       : clave === "chat"
         ? "Agendó la llamada con Flora, en el chat"
