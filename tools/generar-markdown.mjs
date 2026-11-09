@@ -24,17 +24,44 @@ const decodificar = (t) =>
 
 const absoluta = (href) => (href.startsWith("/") ? SITIO + href : href);
 
+/**
+ * Quita los elementos ocultos o solo decorativos (hidden, aria-hidden="true"),
+ * contando las etiquetas anidadas del mismo tipo para cerrar en la buena.
+ * Así se van enteras las maquetas animadas (EscenaFunnel) y los adornos.
+ */
+function quitarOcultos(html) {
+  // Solo el atributo hidden suelto o aria-hidden="true", no clases como «overflow-hidden».
+  const apertura = /<([a-z0-9]+)\b[^>]*?(?:\shidden(?=[\s>/=])|\saria-hidden="true")[^>]*>/gi;
+  let salida = "";
+  let desde = 0;
+  let m;
+  while ((m = apertura.exec(html))) {
+    const etiqueta = m[1].toLowerCase();
+    salida += html.slice(desde, m.index);
+    if (m[0].endsWith("/>") || ["img", "input", "br", "hr", "source", "track"].includes(etiqueta)) {
+      desde = apertura.lastIndex;
+      continue;
+    }
+    const marca = new RegExp(`<(/?)${etiqueta}\\b[^>]*>`, "gi");
+    marca.lastIndex = apertura.lastIndex;
+    let nivel = 1;
+    let t;
+    while (nivel > 0 && (t = marca.exec(html))) nivel += t[1] ? -1 : 1;
+    desde = t ? marca.lastIndex : html.length;
+    apertura.lastIndex = desde;
+  }
+  return salida + html.slice(desde);
+}
+
 /** HTML del contenido principal → Markdown sencillo. */
 export function aMarkdown(html) {
-  let h = html
+  let h = quitarOcultos(html)
     // Fuera lo que no es texto para leer.
     .replace(/<(script|style|svg|noscript|template|form|button|select|textarea|video|iframe)\b[\s\S]*?<\/\1>/gi, "")
     .replace(/<nav\b[\s\S]*?<\/nav>/gi, "")
     // Los laterales fuera, salvo el resumen «En 30 segundos» de los artículos.
     .replace(/<aside\b(?![^>]*resumen-rapido)[\s\S]*?<\/aside>/gi, "")
     .replace(/<(img|input|source|track|br|hr)\b[^>]*>/gi, (m, t) => (t.toLowerCase() === "br" ? " " : t.toLowerCase() === "hr" ? "\n\n---\n\n" : ""))
-    // Elementos ocultos y solo decorativos.
-    .replace(/<([a-z0-9]+)\b[^>]*\b(?:hidden|aria-hidden="true")[^>]*>[\s\S]*?<\/\1>/gi, "")
     .replace(/<!--[\s\S]*?-->/g, "");
   // Enlaces: [texto](url)
   h = h.replace(/<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_, href, txt) => {
