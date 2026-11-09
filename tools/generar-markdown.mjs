@@ -76,6 +76,8 @@ export function aMarkdown(html) {
     .replace(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi, (_, n, t) => `\n\n${"#".repeat(Number(n))} ${t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()}\n\n`)
     .replace(/<(strong|b)\b[^>]*>([\s\S]*?)<\/\1>/gi, (_, __, t) => (t.trim() ? `**${t.trim()}**` : ""))
     .replace(/<li\b[^>]*>/gi, "\n- ")
+    // Términos del glosario (<dt>): como títulos.
+    .replace(/<dt\b[^>]*>([\s\S]*?)<\/dt>/gi, (_, t) => `\n\n### ${t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()}\n\n`)
     .replace(/<\/(p|div|section|article|header|footer|ul|ol|li|figure|figcaption|blockquote|details|summary|table|tr|dl|dd|dt)>/gi, "\n")
     .replace(/<(p|div|section|article|ul|ol|figure|blockquote|details|summary|table|tr|dl|dd|dt)\b[^>]*>/gi, "\n")
     .replace(/<\/?(td|th)\b[^>]*>/gi, " | ")

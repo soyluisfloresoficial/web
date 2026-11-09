@@ -1,0 +1,177 @@
+---
+/**
+ * Glosario de IA y automatización para negocios (09/11/2026). Términos en
+ * src/data/glosario.ts. Cada término tiene su ancla (/glosario#crm) y va en
+ * el JSON-LD como DefinedTerm, para que Google y los buscadores con IA puedan
+ * citar la definición.
+ */
+import Base from "../layouts/Base.astro";
+import CabeceraPagina from "../components/CabeceraPagina.astro";
+import Cierre from "../components/Cierre.astro";
+import { SITIO } from "../data/servicios";
+import { TERMINOS } from "../data/glosario";
+
+const url = `${SITIO.url}/glosario`;
+const title = "Glosario de IA y automatización para negocios | Luis Flores";
+const description =
+  "Qué es un agente de IA, un CRM, un funnel, un webhook o una secuencia de email, explicado en palabras simples y con ejemplos de negocios reales.";
+
+const ordenados = [...TERMINOS].sort((a, b) => a.termino.localeCompare(b.termino, "es"));
+
+const schema = [
+  {
+    "@type": "DefinedTermSet",
+    "@id": `${url}#glosario`,
+    name: "Glosario de IA y automatización para negocios",
+    url,
+    inLanguage: "es",
+    hasDefinedTerm: ordenados.map((t) => ({
+      "@type": "DefinedTerm",
+      "@id": `${url}#${t.id}`,
+      name: t.termino,
+      ...(t.tambien ? { alternateName: t.tambien } : {}),
+      description: t.definicion,
+      url: `${url}#${t.id}`,
+      inDefinedTermSet: { "@id": `${url}#glosario` },
+    })),
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Glosario", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Glosario" }]}
+      antetitulo="Glosario"
+      titulo="IA y automatización,"
+      destacado="en palabras simples"
+      entradilla="Los términos que más escuchas cuando hablas de agentes de IA, automatización y ventas, explicados sin palabras técnicas y con ejemplos de negocios reales."
+    />
+
+    <section class="section" aria-labelledby="terminos-titulo">
+      <div class="container-lf">
+        <h2 id="terminos-titulo" class="sr-only">Términos</h2>
+        <nav class="glosario-indice" aria-label="Términos del glosario">
+          <ul>
+            {
+              ordenados.map((t) => (
+                <li>
+                  <a href={`#${t.id}`}>{t.termino}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <dl class="glosario-lista mt-10">
+          {
+            ordenados.map((t) => (
+              <div class="card tarjeta termino" id={t.id}>
+                <dt class="termino-nombre">
+                  {t.termino}
+                  {t.tambien && <span class="termino-tambien">También: {t.tambien}</span>}
+                </dt>
+                <dd class="termino-cuerpo">
+                  <p>{t.definicion}</p>
+                  {t.ejemplo && (
+                    <p class="termino-ejemplo">
+                      <strong>Ejemplo:</strong> {t.ejemplo}
+                    </p>
+                  )}
+                  {t.enlace && (
+                    <a class="card-link termino-enlace" href={t.enlace.href}>
+                      {t.enlace.texto} <span aria-hidden="true">→</span>
+                    </a>
+                  )}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <Cierre
+      titulo="¿Quieres ver cómo se aplica en tu negocio?"
+      entradilla="En una llamada gratis de 30 minutos revisamos tu caso y te digo qué conviene automatizar primero."
+    />
+  </main>
+</Base>
+
+<style>
+  .glosario-indice ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .glosario-indice a {
+    display: inline-block;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.03);
+    color: var(--color-soft);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+  .glosario-indice a:hover,
+  .glosario-indice a:focus-visible {
+    color: var(--color-ink);
+    border-color: var(--color-electric);
+  }
+  .glosario-lista {
+    display: grid;
+    gap: 1.25rem;
+    margin-block: 0;
+  }
+  @media (width >= 900px) {
+    .glosario-lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .termino {
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  }
+  .termino-nombre {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    color: var(--color-ink);
+    line-height: 1.2;
+  }
+  .termino-tambien {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+  .termino-cuerpo {
+    margin: 0.85rem 0 0;
+    color: var(--color-soft);
+    line-height: 1.6;
+  }
+  .termino-cuerpo p + p {
+    margin-top: 0.6rem;
+  }
+  .termino-ejemplo strong {
+    color: var(--color-ink);
+  }
+  .termino-enlace {
+    display: inline-flex;
+    gap: 0.35rem;
+    margin-top: 0.9rem;
+  }
+</style>

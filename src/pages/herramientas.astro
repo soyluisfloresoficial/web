@@ -1,0 +1,157 @@
+---
+/**
+ * Herramientas que uso (09/11/2026). Datos en src/data/herramientas.ts.
+ * Las mismas de la portada, agrupadas, con qué es cada una, para qué la uso
+ * y en qué servicios aparece.
+ */
+import Base from "../layouts/Base.astro";
+import CabeceraPagina from "../components/CabeceraPagina.astro";
+import Cierre from "../components/Cierre.astro";
+import { SITIO, servicios } from "../data/servicios";
+import { HERRAMIENTAS, GRUPOS } from "../data/herramientas";
+
+const url = `${SITIO.url}/herramientas`;
+const title = "Herramientas que uso para IA y automatización | Luis Flores";
+const description =
+  "Make, n8n, Zapier, GoHighLevel, ActiveCampaign, Airtable, WhatsApp, ChatGPT, Claude, Stripe y más: qué es cada una y para qué la uso en tu negocio.";
+
+const servicio = (slug: string) => servicios.find((s) => s.slug === slug);
+
+const schema = [
+  {
+    "@type": "WebPage",
+    "@id": `${url}#page`,
+    url,
+    name: "Herramientas que uso",
+    description,
+    inLanguage: "es",
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    about: { "@id": `${SITIO.url}/#person` },
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Herramientas", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Herramientas" }]}
+      antetitulo="Herramientas"
+      titulo="Las herramientas"
+      destacado="que uso"
+      entradilla="Elijo la herramienta según tu caso, no según la moda. Si ya usas otra, primero reviso si se puede conectar antes de sugerirte un cambio."
+    />
+
+    {
+      GRUPOS.map((grupo, i) => (
+        <section class:list={["section", { banda: i % 2 === 1 }]} aria-labelledby={`grupo-${i}`}>
+          <div class="container-lf">
+            <h2 id={`grupo-${i}`} class="subrayado">{grupo}</h2>
+            <ul class="herramientas mt-8">
+              {HERRAMIENTAS.filter((h) => h.grupo === grupo).map((h) => (
+                <li class="card tarjeta herramienta">
+                  <h3 class="herramienta-nombre">{h.nombre}</h3>
+                  <p class="herramienta-que">{h.queEs}</p>
+                  <p class="herramienta-para">
+                    <strong>Para qué la uso:</strong> {h.paraQue}
+                  </p>
+                  <p class="herramienta-servicios">
+                    {h.servicios
+                      .map(servicio)
+                      .filter(Boolean)
+                      .map((s, j) => (
+                        <>
+                          {j > 0 && " · "}
+                          <a href={`/servicios/${s!.slug}`}>{s!.nombre}</a>
+                        </>
+                      ))}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ))
+    }
+
+    <section class="section" aria-labelledby="comparar-titulo">
+      <div class="container-lf">
+        <h2 id="comparar-titulo" class="subrayado">¿Dudas entre dos?</h2>
+        <ul class="comparar mt-8">
+          <li><a href="/blog/make-n8n-o-zapier">Make, n8n o Zapier: cuál elegir para automatizar tu negocio</a></li>
+          <li><a href="/blog/gohighlevel-o-activecampaign">GoHighLevel o ActiveCampaign: cuál conviene a tu negocio</a></li>
+          <li><a href="/glosario">Glosario de IA y automatización, en palabras simples</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <Cierre
+      titulo="¿No sabes cuál te conviene?"
+      entradilla="En una llamada gratis de 30 minutos vemos lo que ya usas y qué herramienta encaja con tu caso."
+    />
+  </main>
+</Base>
+
+<style>
+  .herramientas {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 720px) {
+    .herramientas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (width >= 1100px) {
+    .herramientas {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .herramienta-nombre {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .herramienta-que {
+    margin-top: 0.6rem;
+    color: var(--color-soft);
+    line-height: 1.55;
+  }
+  .herramienta-para {
+    margin-top: 0.6rem;
+    color: var(--color-soft);
+    line-height: 1.55;
+  }
+  .herramienta-para strong {
+    color: var(--color-ink);
+  }
+  .herramienta-servicios {
+    margin-top: 0.9rem;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+  .herramienta-servicios a,
+  .comparar a {
+    color: var(--color-electric-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .comparar {
+    display: grid;
+    gap: 0.75rem;
+    padding-left: 1.1rem;
+    color: var(--color-soft);
+    font-size: var(--step-1);
+  }
+</style>

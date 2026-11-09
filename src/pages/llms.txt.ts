@@ -2,6 +2,8 @@ import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { servicios, proyectos, SITIO } from "../data/servicios";
 import { faq } from "../data/home";
+import { TERMINOS } from "../data/glosario";
+import { HERRAMIENTAS } from "../data/herramientas";
 
 /**
  * llms.txt generado desde los mismos datos que la web.
@@ -54,6 +56,8 @@ export const GET: APIRoute = async () => {
   lineas.push(
     `- [Blog](${SITIO.url}/blog): guías prácticas sobre IA aplicada, automatización y funnels.`,
   );
+  lineas.push(`- [Glosario](${SITIO.url}/glosario): términos de IA y automatización para negocios, en palabras simples.`);
+  lineas.push(`- [Herramientas](${SITIO.url}/herramientas): las herramientas que uso, qué es cada una y para qué la uso.`);
   lineas.push(
     `- [Llamada de diagnóstico](${SITIO.url}/diagnostico): videollamada gratis de 30 minutos para decidir qué automatizar primero, con qué herramienta y qué esperar. Agenda en la misma página.`,
   );
@@ -74,6 +78,20 @@ export const GET: APIRoute = async () => {
   lineas.push("");
   for (const s of servicios) {
     lineas.push(`- [${s.nombre}](${SITIO.url}/servicios/${s.slug}): ${s.definicion}`);
+  }
+  lineas.push("");
+
+  lineas.push("## Glosario");
+  lineas.push("");
+  for (const t of TERMINOS) {
+    lineas.push(`- [${t.termino}](${SITIO.url}/glosario#${t.id}): ${t.definicion}`);
+  }
+  lineas.push("");
+
+  lineas.push("## Herramientas que uso");
+  lineas.push("");
+  for (const h of HERRAMIENTAS) {
+    lineas.push(`- ${h.nombre}: ${h.queEs} Para qué la uso: ${h.paraQue}`);
   }
   lineas.push("");
 
