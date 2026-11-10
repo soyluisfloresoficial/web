@@ -85,6 +85,14 @@ export async function servirPagina(request: Request, activos: Activos): Promise<
   const globales = await cabecerasGlobales(activos, request.url);
   const lectura = request.method === "GET" || request.method === "HEAD";
 
+  // Barra final (10/11/2026): /servicios/ → /servicios con 301 (permanente).
+  // Cloudflare lo hacía con 307 (temporal) y Search Console lo contaba como
+  // «Página con redirección» sin consolidarla. Solo rutas de página, sin extensión.
+  if (lectura && url.pathname.length > 1 && url.pathname.endsWith("/") && !/\.[a-z0-9]+\/?$/i.test(url.pathname)) {
+    const destino = url.pathname.replace(/\/+$/, "") + url.search;
+    return new Response(null, { status: 301, headers: { Location: destino, ...globales } });
+  }
+
   if (lectura && prefiereMarkdown(request.headers.get("Accept"))) {
     const ruta = rutaMarkdown(url.pathname);
     if (ruta) {
