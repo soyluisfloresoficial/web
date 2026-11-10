@@ -418,14 +418,44 @@ const schema = [
 
         {/* Los nueve servicios, agrupados en los tres frentes de PILARES.
             Siguen saliendo de un único array: aquí solo se ordenan. */}
+        {/* Ruta de los tres frentes (10/11/2026): la barra acompaña al bajar y
+            cada frente se ilumina cuando entra en pantalla. Todo en CSS
+            (animaciones ligadas al scroll), sin JavaScript. Sin soporte o con
+            movimiento reducido se ve todo encendido y la barra sirve de índice. */}
+        <div class="frentes">
+        <nav class="frentes-ruta mt-10" aria-label="Los tres frentes">
+          <ol>
+            {
+              PILARES.map((p, i) => (
+                <li class="ruta-paso">
+                  {i > 0 && (
+                    <span class="ruta-tramo" aria-hidden="true">
+                      <span style={`animation-timeline: --frente-${p.id}`} />
+                    </span>
+                  )}
+                  <a href={`#frente-${p.id}`} style={`animation-timeline: --frente-${p.id}`}>
+                    <span class="ruta-num" aria-hidden="true">
+                      <span style={`animation-timeline: --frente-${p.id}`} />
+                      <b>{i + 1}</b>
+                    </span>
+                    {p.nombre}
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
         {
-          PILARES.map((pilar) => (
-            <div class="pilar mt-12">
+          PILARES.map((pilar, i) => (
+            <div class="pilar mt-12" id={`frente-${pilar.id}`} style={`view-timeline-name: --frente-${pilar.id}`}>
               <div class="pilar-cabecera reveal">
                 <span class="pilar-icono" aria-hidden="true">
                   <Icono nombre={pilar.icono} tamano={20} grosor={1.8} />
                 </span>
-                <h3 class="pilar-nombre">{pilar.nombre}</h3>
+                <h3 class="pilar-nombre">
+                  <span class="pilar-num" aria-hidden="true">0{i + 1}</span>
+                  {pilar.nombre}
+                </h3>
                 <p class="pilar-texto">{pilar.descripcion}</p>
               </div>
 
@@ -471,6 +501,7 @@ const schema = [
             </div>
           ))
         }
+        </div>
 
         <div class="caja-cta mt-10 reveal">
           <p>
@@ -1038,6 +1069,187 @@ const schema = [
 
   .grid-3,
   .grid-4,
+  /* ------------------------------------ Ruta de los tres frentes (10/11/2026)
+     Estado normal: todo encendido. Donde el navegador admite animaciones
+     ligadas al scroll, cada pieza arranca apagada y se enciende al avanzar. */
+  .frentes {
+    timeline-scope: --frente-captar, --frente-convertir, --frente-escalar;
+  }
+  .frentes .pilar {
+    scroll-margin-top: calc(var(--header-h) + 5rem);
+  }
+  .frentes-ruta {
+    position: sticky;
+    top: calc(var(--header-h) + 0.75rem);
+    z-index: 5;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-navy-glass-blur);
+    backdrop-filter: blur(14px);
+    box-shadow: var(--shadow-2);
+  }
+  .frentes-ruta ol {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ruta-paso {
+    display: flex;
+    align-items: center;
+  }
+  .ruta-paso a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+    border-radius: 999px;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-bold);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .ruta-paso a:hover,
+  .ruta-paso a:focus-visible {
+    background: rgb(255 255 255 / 0.06);
+  }
+  .ruta-num {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    font-size: 0.75rem;
+    overflow: clip;
+  }
+  .ruta-num > span {
+    position: absolute;
+    inset: 0;
+    background: var(--grad-brand);
+  }
+  .ruta-num > b {
+    position: relative;
+    font-weight: var(--font-weight-extrabold);
+    color: #fff;
+  }
+  .ruta-tramo {
+    position: relative;
+    display: block;
+    width: clamp(1rem, 6vw, 3.5rem);
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-line);
+    overflow: clip;
+  }
+  .ruta-tramo > span {
+    position: absolute;
+    inset: 0;
+    background: var(--grad-brand);
+    transform-origin: left;
+  }
+  @media (width < 480px) {
+    .ruta-paso a {
+      padding-right: 0.5rem;
+      font-size: 0.8125rem;
+    }
+  }
+
+  /* Cabecera de cada frente: número, icono encendido y filete en degradado. */
+  .pilar-num {
+    margin-right: 0.4rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    color: var(--color-electric-soft);
+  }
+  .frentes .pilar-cabecera {
+    position: relative;
+  }
+  .frentes .pilar-cabecera::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 -1px 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--grad-brand);
+    transform-origin: left;
+  }
+  .frentes .pilar-icono {
+    position: relative;
+    overflow: clip; /* clip y no hidden: hidden crea una zona de scroll propia y view() dejaría de mirar la página */
+    color: #fff;
+  }
+  .frentes .pilar-icono::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--grad-brand);
+  }
+  .frentes .pilar-icono :global(svg) {
+    position: relative;
+  }
+
+  @supports (animation-timeline: view()) and (timeline-scope: --a) {
+    @media (prefers-reduced-motion: no-preference) {
+      /* Barra: el tramo se llena mientras el frente entra y su número se enciende al final. */
+      .ruta-tramo > span {
+        animation: ruta-llenar linear both;
+        animation-range: entry 0% entry 90%;
+      }
+      .ruta-paso a {
+        animation: ruta-encender linear both;
+        animation-range: entry 55% entry 100%;
+      }
+      .ruta-num > span {
+        animation: ruta-aparecer linear both;
+        animation-range: entry 55% entry 100%;
+      }
+      /* Cabecera de cada frente, con su propio paso por la pantalla.
+         Con propiedades sueltas a propósito: si se escribe «animation: …» y
+         después «animation-timeline: view()», el compilador los junta en una
+         sola línea que el navegador no entiende y la animación no corre. */
+      .frentes .pilar-cabecera::after {
+        animation-name: ruta-llenar;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 100% cover 40%;
+      }
+      .frentes .pilar-icono::before {
+        animation-name: ruta-aparecer;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 100% cover 30%;
+      }
+    }
+  }
+  @keyframes ruta-llenar {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes ruta-aparecer {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes ruta-encender {
+    from {
+      color: var(--color-muted);
+    }
+  }
+
   .services-grid {
     display: grid;
     gap: 1.25rem;
