@@ -717,7 +717,12 @@ const pasos = [
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) and (width >= 768px) {
       .lc-pasos::before {
-        animation: lc-linea linear both;
+        /* Propiedades sueltas (10/11/2026): con «animation: …» el compilador
+           metía view() dentro y el navegador descartaba la animación. */
+        animation-name: lc-linea;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
         animation-range: entry 20% cover 45%;
       }

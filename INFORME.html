@@ -856,6 +856,12 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>S2: Flora pide y reproduce la voz frase por frase; la primera suena en unos 2 segundos en vez de unos 6 a 7 (estimado). Límite de voz de 40 peticiones por minuto.</li>
         <li>Node.js reinstalado en el ordenador (v26.13) para poder compilar.</li>
       </ul></div>
+    <div class="hito"><div class="fecha">10 nov</div><strong>Animaciones: estudio de seis recursos y arreglo en las landings</strong>
+      <ul>
+        <li>Estudio de Spline, Image Trail, Uiverse, Unicorn Studio, Flying Button (enlace roto) y GSAP: solo aporta el scroll animado, y se hace en CSS puro, sin añadir peso.</li>
+        <li>Arreglo: en las landings de anuncios la línea de los pasos no se dibujaba con el scroll, porque el compilador juntaba «animation» y «animation-timeline» en una línea que el navegador descarta. Ahora van como propiedades sueltas.</li>
+        <li>En vista previa, sin publicar: barra «Captar → Convertir → Escalar» en la portada, a la espera de la aprobación del titular.</li>
+      </ul></div>
     <div class="hito"><div class="fecha">10 nov</div><strong>Revisión de Search Console</strong>
       <ul>
         <li>El sitemap está bien (37 páginas, responde 200). El error del 8/11 coincide con Bot Fight Mode aún activo: hay que volver a enviarlo.</li>
