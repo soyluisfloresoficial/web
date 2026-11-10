@@ -230,6 +230,11 @@ const schema = [
 
         <div class="hero-tarjetas">
           <div class="flotante flotante-metrica">
+            {/* Cursor del agente que trae la tarjeta (10/11/2026). Decorativo. */}
+            <span class="agente" aria-hidden="true" style="--c: var(--color-teal)">
+              <svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 1.5 14 7l-5 1.6L7.2 14 2 1.5Z" /></svg>
+              <span class="agente-nombre">Agente de chat</span>
+            </span>
             <div class="flotante-fila">
               <span class="flotante-icono flotante-icono-turquesa">
                 <Icono nombre="chat" tamano={17} grosor={2} />
@@ -247,6 +252,11 @@ const schema = [
           </div>
 
           <div class="flotante flotante-2">
+            {/* Cursor del agente que trae la tarjeta (10/11/2026). Decorativo. */}
+            <span class="agente" aria-hidden="true" style="--c: var(--color-whatsapp)">
+              <svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 1.5 14 7l-5 1.6L7.2 14 2 1.5Z" /></svg>
+              <span class="agente-nombre">Agente de WhatsApp</span>
+            </span>
             <div class="flotante-fila">
               <span class="flotante-icono flotante-icono-whatsapp">
                 <Icono nombre="whatsapp" tamano={19} grosor={1.9} />
@@ -259,6 +269,11 @@ const schema = [
           </div>
 
           <div class="flotante flotante-3">
+            {/* Cursor del agente que trae la tarjeta (10/11/2026). Decorativo. */}
+            <span class="agente" aria-hidden="true" style="--c: var(--color-violet)">
+              <svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 1.5 14 7l-5 1.6L7.2 14 2 1.5Z" /></svg>
+              <span class="agente-nombre">Agente de citas</span>
+            </span>
             <div class="flotante-fila">
               <span class="flotante-icono anillo-degradado">
                 <Icono nombre="chipIa" tamano={19} grosor={1.9} />
@@ -1818,6 +1833,94 @@ const schema = [
     :global(.js) .hero .nota-escudo { animation-delay: 0.46s; }
     :global(.js) .hero .hero-prueba { animation-delay: 0.58s; }
     :global(.js) .hero-tarjetas { animation-delay: 0.5s; }
+  }
+
+  /* ------------------------------------------------ Agentes trabajando (10/11/2026)
+     En computadora, tres cursores de agentes traen cada tarjeta a su sitio,
+     una vez, y se retiran. Después las tarjetas flotan como siempre. Todo en
+     CSS. En celular y tableta, con movimiento reducido o sin JavaScript, los
+     cursores no existen y las tarjetas se ven como antes. */
+  .agente {
+    display: none;
+  }
+  @media (width >= 1024px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .hero-tarjetas {
+      animation: none;
+    }
+    :global(.js) .flotante {
+      animation:
+        flota 6s ease-in-out var(--retraso, 0s) infinite,
+        agente-trae 1s var(--ease) var(--llega, 0.5s) both;
+    }
+    :global(.js) .flotante-metrica {
+      --llega: 0.5s;
+      --dx: 9rem;
+      --dy: -3.5rem;
+    }
+    :global(.js) .flotante-2 {
+      --llega: 1.25s;
+      --dx: -7rem;
+      --dy: 3rem;
+      /* Por encima de la tercera tarjeta, para que no tape la etiqueta de su cursor. */
+      z-index: 1;
+    }
+    :global(.js) .flotante-3 {
+      --llega: 2s;
+      --dx: 6rem;
+      --dy: 6.5rem;
+    }
+    /* La respuesta del mini chat aparece cuando su tarjeta ya llegó. */
+    :global(.js) .mini-agente {
+      animation-delay: 1.8s;
+    }
+    :global(.js) .agente {
+      position: absolute;
+      right: -1.25rem;
+      bottom: -1.5rem;
+      z-index: 3;
+      display: flex;
+      align-items: flex-start;
+      pointer-events: none;
+      animation: agente-suelta 0.7s var(--ease) calc(var(--llega, 0.5s) + 1.35s) both;
+    }
+    .agente svg {
+      flex-shrink: 0;
+      fill: var(--c);
+      stroke: #fff;
+      stroke-width: 1;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.5));
+    }
+    .agente-nombre {
+      margin: 0.7rem 0 0 -0.1rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 0.2rem 999px 999px 999px;
+      background: var(--c);
+      color: #07090d;
+      font-family: var(--font-display);
+      font-size: 0.6875rem;
+      font-weight: var(--font-weight-bold);
+      line-height: 1.2;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.35);
+    }
+  }
+  /* La tarjeta llega desde fuera de su sitio, con la misma inclinación. */
+  @keyframes agente-trae {
+    from {
+      opacity: 0;
+      transform: perspective(900px) rotateY(-8deg) rotateX(3deg) translate(var(--dx, 6rem), var(--dy, 3rem));
+    }
+    35% {
+      opacity: 1;
+    }
+  }
+  /* El cursor suelta la tarjeta y se va. */
+  @keyframes agente-suelta {
+    to {
+      opacity: 0;
+      transform: translate(1.75rem, 1.25rem);
+    }
   }
 
   /* ------------------------------------------------------------- Público */
