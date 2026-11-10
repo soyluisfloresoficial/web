@@ -862,6 +862,7 @@ footer { padding: 34px 0 60px; color: var(--suave); font-size: .86rem; border-to
         <li>Arreglo: en las landings de anuncios la línea de los pasos no se dibujaba con el scroll, porque el compilador juntaba «animation» y «animation-timeline» en una línea que el navegador descarta. Ahora van como propiedades sueltas.</li>
         <li>Publicada con la aprobación del titular: barra «Captar → Convertir → Escalar» en la portada. Acompaña al bajar y cada frente se enciende al entrar en pantalla (número, icono y línea), todo en CSS ligado al scroll y sin JavaScript. Sin soporte o con movimiento reducido se ve todo encendido.</li>
         <li>Publicado con la aprobación del titular: «agentes trabajando» en el hero de la portada. En computadora, tres cursores (Agente de chat, Agente de WhatsApp y Agente de citas) traen cada tarjeta a su sitio una vez y se retiran. Idea adaptada de saai.pro en versión contenida y con código propio: no tapa la página ni el botón de agendar. En celular, tableta o con movimiento reducido no aparecen.</li>
+        <li>Fallo corregido el mismo día: al insertar los estilos de la barra se partió la regla que compartían las rejillas (.grid-3, .grid-4 y .services-grid) y las tarjetas de «El problema», «Lo que mido», «Cómo trabajo» y «Lo último del blog» quedaron en una sola columna, enormes. Lo detectó el titular. Regla restaurada con un comentario para que no vuelva a pasar.</li>
       </ul></div>
     <div class="hito"><div class="fecha">10 nov</div><strong>Revisión de Search Console</strong>
       <ul>

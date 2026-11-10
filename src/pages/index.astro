@@ -1082,8 +1082,6 @@ const schema = [
     font-weight: 700;
   }
 
-  .grid-3,
-  .grid-4,
   /* ------------------------------------ Ruta de los tres frentes (10/11/2026)
      Estado normal: todo encendido. Donde el navegador admite animaciones
      ligadas al scroll, cada pieza arranca apagada y se enciende al avanzar. */
@@ -1265,6 +1263,11 @@ const schema = [
     }
   }
 
+  /* Las tres rejillas comparten esta regla: no separar los selectores (el
+     10/11/2026 se partió al insertar un bloque en medio y las tarjetas de
+     varias secciones quedaron en una sola columna). */
+  .grid-3,
+  .grid-4,
   .services-grid {
     display: grid;
     gap: 1.25rem;
