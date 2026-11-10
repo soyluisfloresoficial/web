@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Plantilla web para clientes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: columna de lectura de 46rem con índice fijo arriba; bloques para copiar como fichas de trabajo. */
+:root {
+  --bg: #f5f7fc; --surface: #ffffff; --fg: #0d1630; --muted: #4f5a78;
+  --line: #dde3f0; --accent: #4f46e5; --accent-2: #007bff; --code-bg: #0d1630; --code-fg: #e6ebff;
+  --grad: linear-gradient(110deg, #007bff 0%, #6366f1 50%, #8b5cf6 100%);
+  --f-display: "Manrope", system-ui, sans-serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0a1022; --surface: #111a33; --fg: #e9edf8; --muted: #a3adc8;
+  --line: #22305a; --accent: #8b8cff; --accent-2: #5aa9ff; --code-bg: #060b19; --code-fg: #e6ebff; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0a1022; --surface: #111a33; --fg: #e9edf8; --muted: #a3adc8;
+  --line: #22305a; --accent: #8b8cff; --accent-2: #5aa9ff; --code-bg: #060b19; --code-fg: #e6ebff; color-scheme: dark }
+* { box-sizing: border-box }
+html { scroll-behavior: smooth; scroll-padding-top: 4rem }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 46rem; margin: 0 auto; padding-block: 2rem 4rem }
+header.hero { padding-block: 1rem 1.5rem; border-bottom: 1px solid var(--line) }
+.eyebrow { font: 600 .75rem/1 var(--f-body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+h1 { font: 800 clamp(1.9rem, 6vw, 2.8rem)/1.1 var(--f-display); margin: .6rem 0 .8rem; text-wrap: balance;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent }
+h2 { font: 800 1.5rem/1.2 var(--f-display); margin: 0 0 .8rem; text-wrap: balance }
+h3 { font: 700 1.1rem/1.3 var(--f-display); margin: 1.6rem 0 .5rem; color: var(--accent) }
+section { padding-block: 2rem; border-bottom: 1px solid var(--line) }
+p, li { max-width: 65ch }
+a { color: var(--accent-2); text-underline-offset: 2px }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+code { font: .88em var(--f-mono); background: color-mix(in srgb, var(--accent) 10%, transparent); padding: .1em .35em; border-radius: 4px; word-break: break-word }
+ul, ol { padding-left: 1.3rem }
+li { margin-block: .3rem }
+nav.indice { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  border-bottom: 1px solid var(--line); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: .5rem max(16px, env(safe-area-inset-left, 0px)) }
+nav.indice ol { display: flex; gap: .4rem; overflow-x: auto; list-style: none; margin: 0; padding: 0; scrollbar-width: none }
+nav.indice li { margin: 0; flex: none }
+nav.indice a { display: block; font: 600 .8rem/1 var(--f-body); padding: .5rem .7rem; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--fg); text-decoration: none; background: var(--surface) }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
+.enlaces { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem }
+.chip { font: 500 .82rem/1 var(--f-body); padding: .55rem .75rem; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--line); color: var(--fg); text-decoration: none }
+.chip:hover { border-color: var(--accent) }
+.copiable { position: relative; margin-block: .8rem 1.2rem }
+.copiable pre { margin: 0; background: var(--code-bg); color: var(--code-fg); font: .85rem/1.6 var(--f-mono);
+  padding: 2.6rem 1rem 1rem; border-radius: 10px; white-space: pre-wrap; word-break: break-word; overflow-x: auto }
+.copiar { position: absolute; top: .5rem; right: .5rem; font: 600 .78rem/1 var(--f-body); padding: .5rem .8rem; border-radius: 6px;
+  border: 0; cursor: pointer; color: #fff; background: var(--grad) }
+.copiar.ok { background: #15803d }
+footer { color: var(--muted); font-size: .85rem; padding-top: 2rem }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+</style>
+</head>
+<body>
+<nav class="indice" aria-label="Secciones"><ol><li><a href="#como-usarla">1. Cómo usarla</a></li><li><a href="#proveedores-que-hace-cada-uno-y-quien-lo">2. Proveedores</a></li><li><a href="#ficha-del-cliente-rellenala-y-pegala-en-">3. Ficha del cliente</a></li><li><a href="#prompt-maestro-una-vez-al-empezar-el-rep">4. Prompt maestro</a></li><li><a href="#fase-0-cuentas-y-accesos-la-haces-tu-sin">5. Fase 0 · Cuentas y accesos</a></li><li><a href="#fase-1-marca-y-estrategia">6. Fase 1 · Marca y estrategia</a></li><li><a href="#fase-2-esqueleto-y-publicacion-automatic">7. Fase 2 · Esqueleto y…</a></li><li><a href="#fase-3-paginas-y-textos">8. Fase 3 · Páginas y textos</a></li><li><a href="#fase-4-seo-y-visibilidad-en-buscadores-e">9. Fase 4 · SEO y visibilidad…</a></li><li><a href="#fase-5-medicion-y-cookies">10. Fase 5 · Medición y cookies</a></li><li><a href="#fase-6-agenda-propia-con-google-calendar">11. Fase 6 · Agenda propia…</a></li><li><a href="#fase-7-guia-gratis-y-secuencia-de-correo">12. Fase 7 · Guía gratis y…</a></li><li><a href="#fase-8-asistente-de-ia-en-la-web-modulo">13. Fase 8 · Asistente de IA…</a></li><li><a href="#fase-9-crm-y-whatsapp-modulo">14. Fase 9 · CRM y WhatsApp</a></li><li><a href="#fase-10-landings-de-anuncios-y-redes-mod">15. Fase 10 · Landings de…</a></li><li><a href="#fase-11-auditoria-y-entrega">16. Fase 11 · Auditoría y…</a></li><li><a href="#avisos-antes-de-vender-esta-plantilla">17. Avisos antes de vender…</a></li></ol></nav>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Nova Funnels · Prompts por fase · Mismos proveedores</div>
+  <h1>Plantilla web para clientes: prompts por fase</h1>
+  <p>Todo lo que va en un bloque oscuro se copia con un toque en «Copiar». Los enlaces abren en otra pestaña.</p>
+  <div class="enlaces"></div>
+</header>
+<p>Creada el 10/11/2026. Sirve para montarle a un cliente la misma web que tiene <a href="https://soyluisflores.es" target="_blank" rel="noopener">soyluisflores.es</a>, con los mismos proveedores: web rápida, agenda propia, correos automáticos, guía gratis con secuencia, asistente de IA, conexión con su CRM y landings para anuncios.</p>
+<p>Cada fase es un prompt para pegar en <strong>Claude Code</strong> dentro del repositorio del cliente. En cada fase Claude te hace primero las preguntas que le faltan, espera tus respuestas y solo después construye. Al terminar, publica y te deja el paso a paso de lo que te toca hacer en los paneles.</p>
+<section id="como-usarla"><h2>1. Cómo usarla</h2>
+<ol><li>Rellena la <strong>ficha del cliente</strong> (sección 3) con lo que ya sepas. Lo que no sepas, déjalo vacío: Claude te lo preguntará.</li><li>Crea el repositorio del cliente en GitHub (fase 0) y abre Claude Code en él.</li><li>Pega el <strong>prompt maestro</strong> (sección 4) una sola vez: crea el <code>CLAUDE.md</code> con las reglas del proyecto.</li><li>Pega las fases en orden, una por conversación. No pases a la siguiente hasta que la anterior esté publicada y probada.</li><li>Las fases 6 a 10 son módulos: si el cliente no los contrata, sáltalos.</li></ol>
+<p>Tiempo orientativo: fases 0 a 5, una web publicada en 2 o 3 días de trabajo. Cada módulo, medio día a un día más pruebas. [VERIFICAR con tus primeros proyectos y ajusta tu precio a ello.]</p>
+</section><section id="proveedores-que-hace-cada-uno-y-quien-lo"><h2>2. Proveedores: qué hace cada uno y quién lo paga</h2>
+<p>Regla: <strong>las cuentas son del cliente</strong> (con su correo y su tarjeta). Tú entras como invitado o colaborador. Así, si deja de trabajar contigo, no hay que migrar nada y tú no pagas su consumo.</p>
+<p><strong>Imprescindibles</strong></p>
+<ul><li><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>: guarda el código. Cada cambio en <code>main</code> se publica solo.</li><li><a href="https://dash.cloudflare.com/" target="_blank" rel="noopener">Cloudflare</a>: dominio (Registrar), DNS, el Worker que sirve la web, claves secretas, KV (pequeña base de datos) y Workers AI (voz del asistente).</li><li><a href="https://astro.build/" target="_blank" rel="noopener">Astro</a>: el sistema con el que se construye la web. Gratis.</li><li><a href="https://tagmanager.google.com/" target="_blank" rel="noopener">Google Tag Manager</a> y <a href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics 4</a>: medición y conversiones.</li><li><a href="https://search.google.com/search-console" target="_blank" rel="noopener">Search Console</a> y <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener">Bing Webmaster</a>: que Google, Bing, ChatGPT y Copilot encuentren la web.</li><li><a href="https://uptimerobot.com/" target="_blank" rel="noopener">UptimeRobot</a>: aviso si la web se cae.</li></ul>
+<p><strong>Módulos</strong></p>
+<ul><li>Agenda: <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud</a> (credenciales) + <a href="https://calendar.google.com/" target="_blank" rel="noopener">Google Calendar</a> del cliente.</li><li>Correos automáticos y guía gratis: <a href="https://resend.com/" target="_blank" rel="noopener">Resend</a> con el dominio del cliente verificado.</li><li>Asistente de IA: <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Anthropic</a> (Claude Haiku), con límite mensual de gasto.</li><li>CRM: <a href="https://app.gohighlevel.com/" target="_blank" rel="noopener">GoHighLevel</a>, <a href="https://www.activecampaign.com/" target="_blank" rel="noopener">ActiveCampaign</a> o un panel propio en <a href="https://console.firebase.google.com/" target="_blank" rel="noopener">Firebase</a>.</li><li>WhatsApp de recordatorio: <a href="https://console.twilio.com/" target="_blank" rel="noopener">Twilio</a>.</li><li>Redes y anuncios: <a href="https://manychat.com/" target="_blank" rel="noopener">ManyChat</a>, <a href="https://metricool.com/" target="_blank" rel="noopener">Metricool</a>, <a href="https://business.facebook.com/" target="_blank" rel="noopener">Meta Business Suite</a>, <a href="https://ads.google.com/" target="_blank" rel="noopener">Google Ads</a>.</li><li>Ficha local: <a href="https://business.google.com/" target="_blank" rel="noopener">Perfil de Empresa de Google</a>.</li></ul>
+<p>Precios: cambian con frecuencia. Revísalos en la web de cada proveedor el día que hagas el presupuesto y ponlos por escrito en la propuesta. [VERIFICAR]</p>
+</section><section id="ficha-del-cliente-rellenala-y-pegala-en-"><h2>3. Ficha del cliente (rellénala y pégala en la fase 1)</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c1">Copiar</button><pre id="c1">FICHA DEL CLIENTE
+Nombre comercial:
+Razón social y NIF (solo para el aviso legal):
+Ciudad y país que se muestran en la web:
+Dominio (o el que quiere comprar):
+Mercado: España / Latinoamérica / ambos
+Sector y a quién vende:
+Servicios o productos (nombre + una frase de cada uno):
+Qué tiene que hacer el visitante (un solo objetivo: agendar, comprar, escribir por WhatsApp...):
+WhatsApp y correo de contacto:
+Horario de atención y zona horaria:
+Logo, colores y tipografías (o &quot;no tiene&quot;):
+Fotos propias disponibles (sí/no):
+Casos, cifras o testimonios reales con permiso (o &quot;ninguno&quot;):
+Redes sociales (enlaces):
+Módulos contratados: agenda / correos / guía gratis / asistente IA / CRM (cuál) / WhatsApp / landings de anuncios
+¿Trata datos de salud u otros sensibles? (sí/no, cuáles):
+Quién revisa los textos legales (abogado del cliente o pendiente):</pre></div>
+</section><section id="prompt-maestro-una-vez-al-empezar-el-rep"><h2>4. Prompt maestro (una vez, al empezar el repositorio)</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c2">Copiar</button><pre id="c2">Vas a construir la web de un cliente de Nova Funnels con la misma arquitectura que soyluisflores.es: Astro, un Worker de Cloudflare con assets estáticos, publicación automática desde la rama main de GitHub con Workers Builds, y módulos opcionales (agenda con Google Calendar, correos con Resend, guía gratis con doble confirmación, asistente con Claude Haiku, webhook al CRM, landings de campaña).
+
+Antes de nada, crea un CLAUDE.md en la raíz con estas reglas y respétalas en todas las fases:
+1. Hablas conmigo en español. Al empezar cada fase me haces las preguntas que te falten en un solo bloque numerado y esperas mis respuestas. No construyas nada con datos supuestos.
+2. Textos al público en el español del mercado del cliente (España o Latinoamérica neutro). Sin cifras, clientes, casos, reseñas ni fechas inventadas: si falta un dato, escribe [COMPLETAR: qué falta].
+3. Mobile-first, accesible (AA), rápida, un objetivo y un CTA por página.
+4. Ninguna clave en el repositorio. Las claves van en Cloudflare como Secreto; en el repositorio solo sus nombres.
+5. Cada fase termina así: npm run build sin errores, auditoría de dist con 0 problemas, commit en español, push a main (nunca --force) y un resumen con lo publicado y mi paso a paso en los paneles (qué botón tocar, qué copiar y dónde pegarlo).
+6. Mantén un INFORME.html en la raíz (no se publica) con el estado, los enlaces, las claves (solo nombres), los costos y lo pendiente. Actualízalo en cada fase.
+7. El NIF del cliente solo aparece en /aviso-legal. Los textos legales los marcas como pendientes de revisión por un abogado.
+
+Cuando lo tengas, enséñame el CLAUDE.md y espera a que te pase la fase 1.</pre></div>
+</section><section id="fase-0-cuentas-y-accesos-la-haces-tu-sin"><h2>5. Fase 0 · Cuentas y accesos (la haces tú, sin Claude)</h2>
+<ul><li>[ ] El cliente crea su cuenta de GitHub (o una organización) y te invita como colaborador.</li><li>[ ] El cliente crea su cuenta de Cloudflare y te invita como administrador (Manage Account → Members).</li><li>[ ] Dominio comprado en Cloudflare Registrar o con los DNS apuntando a Cloudflare.</li><li>[ ] Cuenta de Google del negocio (para Calendar, Analytics, Tag Manager, Search Console y Perfil de Empresa) con acceso para ti.</li><li>[ ] Según los módulos: Resend, Anthropic, CRM y Twilio a nombre del cliente.</li><li>[ ] Contrato de encargado del tratamiento firmado (artículo 28 del RGPD): tú tratas datos de sus clientes en su nombre.</li></ul>
+</section><section id="fase-1-marca-y-estrategia"><h2>6. Fase 1 · Marca y estrategia</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c3">Copiar</button><pre id="c3">Fase 1: marca y estrategia. Te pego la ficha del cliente:
+[PEGA LA FICHA]
+
+Pregúntame primero lo que falte. Después:
+- Define público, problema principal, oferta, objeciones y el objetivo único de la web.
+- Propón la arquitectura de páginas (home, servicios con una página cada uno, sobre nosotros, contacto, blog si aplica, legales, 404) y qué CTA lleva cada una.
+- Crea el sistema de diseño en tokens (colores con contraste AA, tipografías de Google Fonts, espaciado, radios, movimiento) en un SISTEMA-DISENO.md, con una dirección visual propia del sector, no una plantilla.
+- Guarda los textos base en src/data (un archivo por bloque) para que todas las páginas lean de ahí.
+No construyas páginas todavía. Enséñame la propuesta y espera mi visto bueno.</pre></div>
+</section><section id="fase-2-esqueleto-y-publicacion-automatic"><h2>7. Fase 2 · Esqueleto y publicación automática</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c4">Copiar</button><pre id="c4">Fase 2: esqueleto y publicación.
+Pregúntame: nombre del Worker, dominio, si la web lleva www, y la versión de Node que quieres fijar.
+Después:
+- Proyecto Astro con salida estática, sitemap y layout base con los tokens de la fase 1.
+- wrangler.jsonc con el Worker (main en src/worker/index.ts, assets en ./dist, html_handling drop-trailing-slash, not_found_handling 404-page) y cabeceras de seguridad (CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy).
+- tools/auditar-dist.mjs que revise en dist: un h1 por página, title y description únicos, alt en imágenes, enlaces rotos, canónicas y que el NIF solo esté en /aviso-legal.
+- DESPLIEGUE.md con mi paso a paso: conectar el repositorio en Cloudflare → Workers y Pages → Crear → Importar repositorio, comando de build, y añadir el dominio en Configuración → Dominios y rutas.
+Publica y dame la dirección de prueba workers.dev para comprobarla.</pre></div>
+</section><section id="fase-3-paginas-y-textos"><h2>8. Fase 3 · Páginas y textos</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c5">Copiar</button><pre id="c5">Fase 3: páginas y textos.
+Pregúntame lo que falte de cada servicio (para quién es, qué incluye, cómo se trabaja, preguntas frecuentes) y si hay fotos propias.
+Después:
+- Construye todas las páginas de la arquitectura aprobada leyendo de src/data.
+- Copy en la voz del cliente: beneficios concretos, sin promesas garantizadas ni urgencia artificial. Preguntas frecuentes reales en cada servicio.
+- Contacto con WhatsApp y correo visibles. Si el módulo de agenda está contratado, deja el hueco preparado para la fase 6.
+- Legales: aviso legal, privacidad y cookies con los datos de la ficha, marcados como pendientes de revisión por un abogado. Si el mercado incluye Latinoamérica, añade un aviso de privacidad para Latinoamérica.
+- Prueba en 375, 768 y 1280 px y corrige lo que se rompa.
+Publica.</pre></div>
+</section><section id="fase-4-seo-y-visibilidad-en-buscadores-e"><h2>9. Fase 4 · SEO y visibilidad en buscadores e IA</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c6">Copiar</button><pre id="c6">Fase 4: SEO y GEO. Usa la skill seo-geo-consultant.
+Pregúntame: palabras clave principales, ciudades o países objetivo y competidores conocidos.
+Después:
+- Title, description y un h1 por página; canónicas; sitemap; robots.txt.
+- JSON-LD: Organization o LocalBusiness (sin NIF ni calle si el cliente no quiere), Service por servicio, FAQPage, BreadcrumbList.
+- llms.txt con el resumen de la web para las IA.
+- Imagen para compartir (Open Graph) por página.
+- Dame el paso a paso para dar de alta la web en Search Console y Bing Webmaster, enviar el sitemap y crear el Perfil de Empresa de Google si tiene local o zona de servicio.
+Publica.</pre></div>
+</section><section id="fase-5-medicion-y-cookies"><h2>10. Fase 5 · Medición y cookies</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c7">Copiar</button><pre id="c7">Fase 5: medición. Usa la skill analytics.
+Pregúntame: ID de Tag Manager (GTM-XXXX), ID de GA4 y si habrá anuncios en Meta o Google.
+Después:
+- Banner de cookies con Consent Mode v2: nada se carga hasta que la persona acepta. Tabla real de cookies en la política.
+- PUBLIC_GTM_ID como variable de compilación (no en el repositorio). Dime dónde ponerla en Cloudflare.
+- Plan de medición en MEDICION.md: eventos (clic en WhatsApp, envío de formulario, cita agendada, suscripción a la guía, uso del asistente), cuáles son conversiones y los UTM por canal.
+- Los eventos en el dataLayer y el paso a paso para crear las etiquetas en Tag Manager y comprobarlo en el modo vista previa.
+Publica.</pre></div>
+</section><section id="fase-6-agenda-propia-con-google-calendar"><h2>11. Fase 6 · Agenda propia con Google Calendar (módulo)</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c8">Copiar</button><pre id="c8">Fase 6: agenda propia con Google Calendar y correos de Resend.
+Pregúntame: duración de la cita, horario por día, días bloqueados, antelación mínima y máxima, zona horaria, qué datos pide el formulario, si la cita es por videollamada o presencial, y el remitente de los correos.
+Después:
+- Agendador en la web que muestra huecos reales del calendario y crea el evento (rutas /api del Worker, con límite de peticiones).
+- Correos con Resend: confirmación, aviso al cliente, recordatorios y enlace para cancelar.
+- Horario guardado en un KV de Cloudflare para poder cambiarlo sin publicar.
+- Script tools/autorizar-google.mjs para obtener el refresh token, y AGENDA.md con mi paso a paso: crear el proyecto en Google Cloud, activar Calendar API, pantalla de consentimiento, credenciales OAuth, verificar el dominio en Resend (registros DNS en Cloudflare) y guardar GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN y RESEND_API_KEY como Secreto.
+- Si no hay claves, la web ofrece WhatsApp y correo en su lugar.
+Prueba una cita completa de principio a fin y publica.</pre></div>
+</section><section id="fase-7-guia-gratis-y-secuencia-de-correo"><h2>12. Fase 7 · Guía gratis y secuencia de correos (módulo)</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c9">Copiar</button><pre id="c9">Fase 7: guía gratis con doble confirmación y secuencia. Usa la skill emails.
+Pregúntame: tema de la guía (uno por servicio o una general), cuántos correos y cada cuántos días, y a dónde lleva el último (cita, WhatsApp o compra).
+Después:
+- Formulario con casilla de consentimiento obligatoria, doble confirmación y borrado automático a los 7 días si no confirma.
+- Lista en un KV de Cloudflare, envío con Resend, baja con un clic en cada correo.
+- La guía como página web de la propia web (no PDF suelto).
+- Secuencia con un objetivo por correo; textos en src/worker/secuencia.ts y tabla en EMAIL-MARKETING.md con disparador, salida y métrica de cada correo.
+Prueba una suscripción completa y publica.</pre></div>
+</section><section id="fase-8-asistente-de-ia-en-la-web-modulo"><h2>13. Fase 8 · Asistente de IA en la web (módulo)</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c10">Copiar</button><pre id="c10">Fase 8: asistente de IA con Claude Haiku. Usa la skill claude-api.
+Pregúntame: nombre y tono del asistente, qué puede responder, qué no, cuándo pasa a una persona, y el gasto máximo al mes.
+Después:
+- Chat en la web con la API de Anthropic desde el Worker (ANTHROPIC_API_KEY como Secreto), modelo en una variable.
+- Lo que sabe se genera solo desde src/data y el blog. Nunca inventa precios, horarios ni disponibilidad: si no está en los datos, lo dice y ofrece contacto.
+- Aviso visible de que se habla con una IA, enlace a privacidad y opción de hablar con una persona.
+- Topes: límite por minuto, límite diario de conversaciones y respuestas fijas sin IA para las preguntas más comunes.
+- Si el módulo de agenda está activo, puede proponer y agendar la cita.
+- AGENTE.md con el system prompt, los límites y 10 casos de prueba difíciles (pide un precio que no existe, insulta, pide datos de otro cliente, habla de salud...). Pásalos todos antes de publicar.
+Publica.</pre></div>
+</section><section id="fase-9-crm-y-whatsapp-modulo"><h2>14. Fase 9 · CRM y WhatsApp (módulo)</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c11">Copiar</button><pre id="c11">Fase 9: conexión con el CRM y WhatsApp.
+Pregúntame: qué CRM usa (GoHighLevel, ActiveCampaign o panel propio en Firebase), qué campos y etiquetas quiere, en qué etapa entra cada lead, y si quiere recordatorio por WhatsApp.
+Después:
+- Cada cita, suscripción y conversación con datos de contacto se envía al CRM por webhook firmado (URL y secreto como Secreto en Cloudflare), con reintento y sin duplicados (clave por correo o teléfono).
+- Origen del lead (página, UTM, sección) en cada envío.
+- Si hay WhatsApp: recordatorio con Twilio 1 hora antes, con plantilla aprobada por Meta y consentimiento en el formulario.
+- Paso a paso para crear el webhook entrante en el CRM, mapear los campos y hacer una prueba.
+Prueba un lead de principio a fin y publica.</pre></div>
+</section><section id="fase-10-landings-de-anuncios-y-redes-mod"><h2>15. Fase 10 · Landings de anuncios y redes (módulo)</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c12">Copiar</button><pre id="c12">Fase 10: landings de campaña. Usa las skills cro y web-funnel-builder.
+Pregúntame: qué servicios se anuncian, en qué plataformas (Meta, Google, TikTok) y la oferta de cada landing.
+Después:
+- Una landing por servicio en /diagnostico/[servicio] con la identidad de la web, sin cabecera ni pie completos, barra fija de reserva en celular y pie legal.
+- noindex, follow, canónica hacia la página del servicio y fuera del sitemap.
+- Conversiones en Tag Manager para Meta y Google Ads, y FUNNELS.md con los enlaces con UTM de cada campaña.
+- Enlace de la bio y respuesta de ManyChat apuntando a la guía o a la landing, con UTM propios.
+Publica.</pre></div>
+</section><section id="fase-11-auditoria-y-entrega"><h2>16. Fase 11 · Auditoría y entrega</h2>
+<div class="copiable"><button type="button" class="copiar" data-c="c13">Copiar</button><pre id="c13">Fase 11: auditoría completa y entrega.
+Revisa y corrige: seguridad (cabeceras, claves, rutas que no deben publicarse), celular, tablet y computadora, accesibilidad, velocidad (Lighthouse), SEO y GEO, legales y cookies, y que cada módulo funcione de principio a fin.
+Después:
+- Deja el INFORME.html al día con estado, enlaces, claves (solo nombres), costos mensuales por proveedor y lo pendiente.
+- Dame el paso a paso para crear el monitor en UptimeRobot y el límite de gasto en Anthropic.
+- Escribe un correo de entrega para el cliente con qué tiene, dónde entra y cómo pedir cambios.
+Publica.</pre></div>
+</section><section id="avisos-antes-de-vender-esta-plantilla"><h2>17. Avisos antes de vender esta plantilla</h2>
+<ul><li><strong>Datos personales:</strong> el cliente es el responsable y tú el encargado. Firma el contrato de encargo antes de recoger un solo lead.</li><li><strong>Datos de salud</strong> (clínicas, como Smilbot): el asistente y los formularios no deben pedir síntomas ni historial. Si hace falta, revisión previa de un abogado y evaluación de impacto.</li><li><strong>Asistente de IA:</strong> siempre con aviso de que es una IA y opción de hablar con una persona.</li><li><strong>Textos legales:</strong> las plantillas no sustituyen a un abogado. Déjalo por escrito en la propuesta.</li><li><strong>Mantenimiento:</strong> las claves caducan (el token de Google puede invalidarse) y las APIs cambian. Ofrece un plan mensual en lugar de entregar y desaparecer.</li></ul></section>
+<footer>Generado desde <code>PLANTILLA-WEB-CLIENTES.md</code> del repositorio soyluisfloresoficial/web. Si cambias el .md, ejecuta <code>python3 tools/generar-redes-html.py PLANTILLA-WEB-CLIENTES</code>.</footer>
+</div>
+<script>
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest(".copiar"); if (!b) return;
+  const pre = document.getElementById(b.dataset.c);
+  const t = pre.innerText;
+  try { await navigator.clipboard.writeText(t); }
+  catch (_) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  b.textContent = "Copiado"; b.classList.add("ok");
+  setTimeout(() => { b.textContent = "Copiar"; b.classList.remove("ok"); }, 1800);
+});
+</script>
+</body>
+</html>

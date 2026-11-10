@@ -518,3 +518,37 @@ diagnóstico desde redes, no un número de seguidores.
 - Inventar casos, cifras o testimonios. Si no hay, se demuestra con lo tuyo.
 - Mezclar Smilbot o Nova Funnels en esta cuenta más allá de mostrarlos como
   ejemplo: cada marca con su cuenta.
+
+---
+
+## 14. Proveedores que usas y sus enlaces
+
+**Contenido y redes**
+- HeyGen (avatar y voz): [app.heygen.com](https://app.heygen.com/) · [planes](https://www.heygen.com/pricing)
+- Metricool (programar y medir): [app.metricool.com](https://app.metricool.com/)
+- ManyChat (DM automáticos en Instagram y Facebook): [app.manychat.com](https://app.manychat.com/) · [planes](https://manychat.com/pricing)
+- Canva (carruseles): [canva.com](https://www.canva.com/)
+- CapCut (subtítulos y cortes): [capcut.com](https://www.capcut.com/)
+- Meta Business Suite (Instagram y Facebook): [business.facebook.com](https://business.facebook.com/)
+- TikTok Studio: [tiktok.com/tiktokstudio](https://www.tiktok.com/tiktokstudio)
+- LinkedIn: [tu perfil](https://www.linkedin.com/in/soyluisflores/)
+
+**CRM y seguimiento**
+- GoHighLevel: [app.gohighlevel.com](https://app.gohighlevel.com/)
+- ActiveCampaign: [activecampaign.com](https://www.activecampaign.com/)
+- Twilio (WhatsApp 1 hora antes de la cita, hoy sin activar): [console.twilio.com](https://console.twilio.com/)
+
+**Web y medición**
+- Cloudflare (dominio, Worker `web`, claves, Workers AI): [dash.cloudflare.com](https://dash.cloudflare.com/)
+- GitHub (código; lo que entra en `main` se publica): [soyluisfloresoficial/web](https://github.com/soyluisfloresoficial/web)
+- Anthropic (Flora, gasto y límite mensual): [console.anthropic.com](https://console.anthropic.com/)
+- Resend (correos de la agenda y de la guía): [resend.com](https://resend.com/)
+- Google Cloud (credenciales de Google Calendar): [console.cloud.google.com](https://console.cloud.google.com/)
+- Google Calendar: [calendar.google.com](https://calendar.google.com/)
+- Firebase (tu panel): [console.firebase.google.com](https://console.firebase.google.com/)
+- Tag Manager: [tagmanager.google.com](https://tagmanager.google.com/)
+- Analytics: [analytics.google.com](https://analytics.google.com/)
+- Search Console: [search.google.com/search-console](https://search.google.com/search-console)
+- Bing Webmaster: [bing.com/webmasters](https://www.bing.com/webmasters)
+- Perfil de Empresa de Google: [business.google.com](https://business.google.com/)
+- UptimeRobot (aviso si la web se cae): [uptimerobot.com](https://uptimerobot.com/)

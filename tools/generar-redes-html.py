@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
-"""Genera REDES-SOCIALES.html a partir de REDES-SOCIALES.md.
+"""Genera páginas HTML con botón «Copiar» a partir de las guías .md.
 
-Uso: python3 tools/generar-redes-html.py
+Uso: python3 tools/generar-redes-html.py            (REDES-SOCIALES)
+     python3 tools/generar-redes-html.py PLANTILLA-WEB-CLIENTES
 Vuelve a ejecutarlo cada vez que cambies el .md. Los bloques de código salen
 con botón «Copiar» y las rutas de la web (/guia, /diagnostico...) se enlazan.
 """
-import html, re, pathlib
+import html, re, pathlib, sys
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-md = (RAIZ / "REDES-SOCIALES.md").read_text(encoding="utf-8")
+BASE = sys.argv[1] if len(sys.argv) > 1 else "REDES-SOCIALES"
+DOCS = {
+    "REDES-SOCIALES": ("Ecosistema de redes Luis Flores",
+                       "Marca personal · Instagram · TikTok · LinkedIn · Facebook", True),
+    "PLANTILLA-WEB-CLIENTES": ("Plantilla web para clientes",
+                               "Nova Funnels · Prompts por fase · Mismos proveedores", False),
+}
+TITULO_PAGINA, EYEBROW, ES_REDES = DOCS[BASE]
+md = (RAIZ / f"{BASE}.md").read_text(encoding="utf-8")
 WEB = "https://soyluisflores.es"
 
 ENLACES = [
@@ -40,7 +49,7 @@ def inline(t: str) -> str:
     def code(m):
         c = m.group(1)
         ruta = re.fullmatch(r"(/(guia|diagnostico)[a-z0-9/<>&;-]*)", c)
-        if ruta and "&lt;" not in c:
+        if ES_REDES and ruta and "&lt;" not in c:
             return f'<a href="{WEB}{c}" target="_blank" rel="noopener"><code>{c}</code></a>'
         if c.startswith("@soyluisfloresoficial"):
             return f'<a href="https://www.instagram.com/soyluisfloresoficial/" target="_blank" rel="noopener"><code>{c}</code></a>'
@@ -144,7 +153,7 @@ def corto(h):
 
 
 indice = "".join(f'<li><a href="#{s}">{html.escape(corto(h))}</a></li>' for s, h in toc)
-chips = "".join(f'<a class="chip" href="{u}" target="_blank" rel="noopener">{html.escape(n)}</a>' for n, u in ENLACES)
+chips = "" if not ES_REDES else "".join(f'<a class="chip" href="{u}" target="_blank" rel="noopener">{html.escape(n)}</a>' for n, u in ENLACES)
 
 pagina = f"""<!doctype html>
 <html lang="es">
@@ -152,7 +161,7 @@ pagina = f"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Ecosistema de redes Luis Flores</title>
+<title>{TITULO_PAGINA}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
@@ -215,13 +224,13 @@ footer {{ color: var(--muted); font-size: .85rem; padding-top: 2rem }}
 <nav class="indice" aria-label="Secciones"><ol>{indice}</ol></nav>
 <div class="wrap">
 <header class="hero">
-  <div class="eyebrow">Marca personal · Instagram · TikTok · LinkedIn · Facebook</div>
+  <div class="eyebrow">{EYEBROW}</div>
   <h1>{html.escape(titulo)}</h1>
   <p>Todo lo que va en un bloque oscuro se copia con un toque en «Copiar». Los enlaces abren en otra pestaña.</p>
   <div class="enlaces">{chips}</div>
 </header>
 {cuerpo}
-<footer>Generado desde <code>REDES-SOCIALES.md</code> del repositorio soyluisfloresoficial/web. Si cambias el .md, ejecuta <code>python3 tools/generar-redes-html.py</code>.</footer>
+<footer>Generado desde <code>{BASE}.md</code> del repositorio soyluisfloresoficial/web. Si cambias el .md, ejecuta <code>python3 tools/generar-redes-html.py {BASE}</code>.</footer>
 </div>
 <script>
 document.addEventListener("click", async (e) => {{
@@ -237,5 +246,5 @@ document.addEventListener("click", async (e) => {{
 </body>
 </html>
 """
-(RAIZ / "REDES-SOCIALES.html").write_text(pagina, encoding="utf-8")
-print("REDES-SOCIALES.html generado:", len(toc), "secciones,", ncode, "bloques para copiar")
+(RAIZ / f"{BASE}.html").write_text(pagina, encoding="utf-8")
+print(f"{BASE}.html generado:", len(toc), "secciones,", ncode, "bloques para copiar")
