@@ -387,6 +387,8 @@ const rHtml = await pedir("/servicios/agentes-ia", "text/html,application/xhtml+
 const rSinMd = await pedir("/diagnostico", "text/markdown");
 const r404 = await pedir("/no-existe", "text/html");
 const rBarra = await pedir("/servicios/agentes-ia/?utm_source=ig", "text/html");
+archivos["/404"] = ["<html>404</html>", "text/html"];
+const r404directa = await pedir("/404", "text/html");
 
 prueba("Markdown solo para quien lo pide; las personas reciben el HTML con sus cabeceras", () => {
   assert.equal(prefiereMarkdown("text/markdown"), true);
@@ -410,6 +412,7 @@ prueba("Markdown solo para quien lo pide; las personas reciben el HTML con sus c
   assert.equal(rHtml.headers.get("Vary"), "Accept");
   assert.match(rSinMd.headers.get("Content-Type"), /text\/html/, "sin Markdown, el HTML");
   assert.equal(r404.status, 404);
+  assert.equal(r404directa.status, 404, "/404 pedida directamente también es 404");
   assert.equal(rBarra.status, 301, "barra final: redirección permanente");
   assert.equal(rBarra.headers.get("Location"), "/servicios/agentes-ia?utm_source=ig");
   assert.ok(r404.headers.get("Content-Security-Policy"));

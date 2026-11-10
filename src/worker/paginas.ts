@@ -114,7 +114,10 @@ export async function servirPagina(request: Request, activos: Activos): Promise<
     }
   }
 
-  const r = await activos.fetch(request);
+  const r0 = await activos.fetch(request);
+  // La página de error pedida por su dirección (/404 o /404.html) responde 404,
+  // no 200 (10/11/2026: Search Console la había encontrado).
+  const r = /^\/404(\.html)?$/.test(url.pathname) ? new Response(r0.body, { status: 404, headers: r0.headers }) : r0;
   const tipo = r.headers.get("Content-Type") ?? "";
   const extra: Record<string, string> = {};
   if (tipo.includes("text/html")) extra.Vary = "Accept";

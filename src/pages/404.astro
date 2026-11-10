@@ -7,9 +7,11 @@ const description =
   "La página que buscas no existe o cambió de dirección. Desde aquí puedes ir a los servicios, al blog o agendar una llamada gratis.";
 ---
 
-{/* El 404 no necesita noindex: el propio código de estado ya se lo dice a los
-    buscadores. Lo que sí necesita es ser útil. */}
-<Base title={title} description={description}>
+{/* noindex (10/11/2026): normalmente el código 404 basta, pero la dirección
+    /404 la encontró Google y la página se podía pedir directamente. Ahora el
+    Worker responde 404 también ahí (paginas.ts) y, por si acaso, la página
+    dice noindex. Lo que sí necesita es ser útil. */}
+<Base title={title} description={description} noindex>
   <main class="container-lf pagina404">
     <p class="eyebrow">Error 404</p>
     <h1 class="mt-3">Esta página no existe</h1>
