@@ -50,6 +50,24 @@ volver a empezar la serie.
 | Páginas web | Una web que te trae clientes | `/guia/una-web-que-trae-clientes` |
 | Meta Ads y Google Ads | Antes de invertir en anuncios | `/guia/antes-de-invertir-en-anuncios` |
 | Consultoría de IA | Por dónde empezar con la IA en tu negocio | `/guia/por-donde-empezar-con-ia` |
+| Regalo de Instagram (12/11/2026) | El negocio inteligente: 7 formas de aplicar IA en tu negocio | `/guia/negocio-inteligente` |
+
+### La guía de regalo de Instagram
+
+«El negocio inteligente» se pide en **/negocio-inteligente**, no en una página
+de servicio. Es el destino del mensaje automático de ManyChat cuando alguien
+comenta una publicación. Enlace para pegar en ManyChat:
+
+```
+https://soyluisflores.es/negocio-inteligente?utm_source=ig&utm_medium=manychat&utm_campaign=negocio-inteligente
+```
+
+En el paso 3 trae las siete formas en lugar de cuatro áreas. Su último correo
+lleva a `/diagnostico/consultoria-ia`. Va la última de la lista en
+`src/data/guias.ts` para que la página de Consultoría de IA siga ofreciendo
+su propia guía. En el panel, el lead llega con «Llegó por: Instagram» y con el
+origen corto «Instagram · Guía negocio-inteligente» (`origenCorto()` en
+`src/worker/origen.ts`).
 
 Todas tienen las mismas partes (rediseño del 2/11/2026, para que cualquiera
 las entienda a la primera):

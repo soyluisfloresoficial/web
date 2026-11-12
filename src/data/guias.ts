@@ -763,6 +763,150 @@ const lista: Guia[] = [
     },
     articulo: { texto: "Empezar con IA sin perder tiempo", href: "/blog/empezar-con-ia-sin-perder-tiempo" },
   },
+  // Guía de regalo para Instagram (12/11/2026): se pide en /negocio-inteligente,
+  // al que lleva el mensaje automático de ManyChat cuando alguien comenta una
+  // publicación. Va la última para que guiaDeServicio("consultoria-ia") siga
+  // devolviendo la de consultoría. En vez de cuatro áreas, el paso 3 trae las
+  // siete formas.
+  {
+    slug: "negocio-inteligente",
+    servicio: "consultoria-ia",
+    titulo: "El negocio inteligente:",
+    destacado: "7 formas de aplicar IA en tu negocio",
+    resumen: "Siete formas de usar la IA para ahorrar tiempo, atender mejor a tus clientes y automatizar tareas, aunque no sepas de tecnología.",
+    entrada:
+      "Con pocos cambios puedes ahorrar horas cada semana, contestar antes a tus clientes y dejar de perder ventas por falta de seguimiento. Esta guía junta las siete formas que más ayudan a un negocio pequeño o mediano y un plan de cuatro semanas para ponerlas en marcha de a una.",
+    paraQuien: "Dueños de negocios pequeños y medianos (clínicas, academias, tiendas, restaurantes, profesionales) que quieren usar la IA sin ser expertos en tecnología.",
+    teLlevas: "Sabrás cuáles de las siete formas te convienen primero y tendrás un plan de cuatro semanas para empezar.",
+    tiempo: "15 minutos de lectura y un paso por semana",
+    glosario: [
+      { termino: "IA (inteligencia artificial)", significado: "Herramientas que entienden y escriben texto, responden preguntas u ordenan información, como un asistente." },
+      { termino: "Prompt", significado: "La instrucción que le escribes a la IA. Cuanto más clara, mejor el resultado." },
+      { termino: "CRM", significado: "Una lista ordenada de tus contactos con su estado: nuevo, interesado, cliente." },
+      { termino: "Seguimiento", significado: "Volver a escribir a quien preguntó y todavía no compró." },
+    ],
+    ejemplo: ["Asistente de WhatsApp", "No", "Contesto tarde por la noche", "1"],
+    incluye: [
+      "Tres señales de que la IA ya te puede ayudar",
+      "Las siete formas, con ideas concretas para cada una",
+      "Una hoja para elegir por cuál empezar",
+      "Un plan de cuatro semanas, un paso por semana",
+    ],
+    criterio: {
+      titulo: "La IA ya te puede ayudar si te pasa alguna de estas",
+      puntos: [
+        {
+          titulo: "Contestas tarde",
+          texto: "Quien escribe y no recibe respuesta en pocos minutos suele preguntar en otro lado. Un asistente contesta al momento, a cualquier hora.",
+          pregunta: "¿Cuánto tardas hoy en responder un mensaje que llega de noche o en fin de semana?",
+        },
+        {
+          titulo: "Se te olvida hacer seguimiento",
+          texto: "Muchas ventas se pierden porque nadie volvió a escribir. Un seguimiento automático se acuerda por ti.",
+          pregunta: "¿A cuántas personas que preguntaron el último mes no les volviste a escribir?",
+        },
+        {
+          titulo: "Repites las mismas tareas",
+          texto: "Correos, publicaciones, confirmaciones y respuestas que escribes casi igual cada vez. La IA hace el primer borrador y tú lo revisas.",
+          pregunta: "¿Qué escribes casi igual todas las semanas?",
+        },
+      ],
+    },
+    hoja: {
+      titulo: "Revisa las siete formas en tu negocio",
+      texto: "Anota si ya tienes cada una, qué te cuesta hoy no tenerla y ponle una prioridad de 1 (urgente) a 3 (puede esperar). Empieza por las que marcaste con 1.",
+      columnas: ["Forma", "¿Ya la tienes?", "Qué te cuesta hoy", "Prioridad (1 a 3)"],
+      filas: 7,
+    },
+    ideas: {
+      titulo: "Las 7 formas de aplicar IA en tu negocio",
+      grupos: [
+        {
+          nombre: "1. Usa la IA en tus tareas diarias",
+          icono: "reloj",
+          items: [
+            "Que haga el primer borrador de correos, mensajes y presupuestos",
+            "Ideas, textos y guiones para tus redes",
+            "Resúmenes de reuniones, documentos y audios",
+          ],
+        },
+        {
+          nombre: "2. Ten una web que consiga clientes",
+          icono: "web",
+          items: [
+            "Un titular con el resultado que logra tu cliente",
+            "Opiniones reales y un solo botón principal",
+            "Un formulario corto que guarde cada contacto",
+          ],
+        },
+        {
+          nombre: "3. Un asistente que responda por WhatsApp",
+          icono: "whatsapp",
+          items: [
+            "Horarios, precios y preguntas frecuentes con tus respuestas",
+            "Pide los datos del cliente y manda el enlace para agendar",
+            "Te pasa la conversación con quejas o casos especiales",
+          ],
+        },
+        {
+          nombre: "4. Recupera a los clientes interesados",
+          icono: "tendencia",
+          items: [
+            "Un mensaje a las 24 horas para resolver dudas",
+            "Una opinión o un caso parecido a los 3 días",
+            "Una propuesta de día y hora a los 7 días",
+          ],
+        },
+        {
+          nombre: "5. Automatiza reservas y confirmaciones",
+          icono: "calendario",
+          items: [
+            "Agenda en línea desde tu web, Instagram o WhatsApp",
+            "Confirmación al instante y recordatorio 24 horas antes",
+            "Pedido de opinión en Google después de la cita",
+          ],
+        },
+        {
+          nombre: "6. Organiza los contactos de tu negocio",
+          icono: "usuarios",
+          items: [
+            "Todos en un solo lugar, con su origen y lo que les interesa",
+            "Estados claros: nuevo, interesado, cliente, inactivo",
+            "Etiquetas para mandar el mensaje correcto a cada grupo",
+          ],
+        },
+        {
+          nombre: "7. Empieza paso a paso",
+          icono: "brujula",
+          items: [
+            "Elige dos formas, no las siete a la vez",
+            "Un paso por semana durante un mes",
+            "Mide contactos, citas y ventas al terminar",
+          ],
+        },
+      ],
+    },
+    plan: {
+      titulo: "Cuatro semanas, un paso por semana",
+      pasos: [
+        "Semana 1: junta tus contactos en un solo lugar y escribe tus 20 preguntas frecuentes con su respuesta.",
+        "Semana 2: activa WhatsApp Business y prepara el asistente con esas respuestas.",
+        "Semana 3: revisa tu web con la forma 2 y activa la agenda en línea con recordatorios.",
+        "Semana 4: programa el seguimiento de los interesados y escribe a los contactos inactivos.",
+        "Al terminar el mes, compara contactos nuevos, citas y ventas con el mes anterior.",
+      ],
+      cierre: "Si quieres, lo vemos juntos con tu caso en una llamada gratis.",
+    },
+    alto: {
+      titulo: "Todavía no conviene si…",
+      items: [
+        "Quieres hacer las siete formas la misma semana.",
+        "Todavía no tienes claro qué responder a las preguntas de tus clientes.",
+        "Nadie va a revisar lo que la IA escribe antes de mandarlo.",
+      ],
+    },
+    articulo: { texto: "Empezar con IA sin perder tiempo", href: "/blog/empezar-con-ia-sin-perder-tiempo" },
+  },
 ];
 
 export const GUIAS: Record<string, Guia> = Object.fromEntries(lista.map((g) => [g.slug, g]));

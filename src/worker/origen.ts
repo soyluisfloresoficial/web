@@ -108,6 +108,9 @@ export function describirOrigen(origen: string, tipo: "guia" | "cita" | "mensaje
   } else if (primero === "pagina-guia") {
     seccion = "Página de la guía gratis (/guia)";
     clave = "pagina-guia";
+  } else if (primero === "pagina-negocio-inteligente") {
+    seccion = "Página de la guía de regalo (/negocio-inteligente)";
+    clave = "pagina-negocio-inteligente";
   }
 
   const medio =
@@ -127,6 +130,17 @@ export function lineasOrigen(o: Origen): string[] {
   return [`Origen: ${o.medio}`, `Sección: ${o.seccion}`, `Llegó por: ${o.campana}`];
 }
 
+/**
+ * Origen corto para el campo «origen» del lead en el panel (máximo 60
+ * caracteres): de dónde venía la visita y qué guía pidió, por ejemplo
+ * «Instagram · Guía negocio-inteligente». El panel lo enseña como etiqueta
+ * y permite buscar por él.
+ */
+export function origenCorto(o: Origen, guiaSlug: string): string {
+  const canal = o.campana.startsWith("Visita directa") ? "Web" : o.campana.split(", campaña")[0];
+  return `${canal} · Guía ${guiaSlug}`.slice(0, 60);
+}
+
 /** Nombre legible de una clave de sección, para el resumen semanal. */
 export function nombreSeccion(clave: string): string {
   if (clave === "chat") return "Chat de Flora";
@@ -135,6 +149,7 @@ export function nombreSeccion(clave: string): string {
   if (clave === "blog-articulo") return "Artículos del blog";
   if (clave === "blog-indice") return "Página principal del blog";
   if (clave === "pagina-guia") return "Página /guia";
+  if (clave === "pagina-negocio-inteligente") return "Página /negocio-inteligente";
   if (clave.startsWith("funnel-")) return `Landing de ${nombreServicio(clave.slice(7))}`;
   if (clave.startsWith("servicio-")) return `Servicio ${nombreServicio(clave.slice(9))}`;
   return "Sin dato";

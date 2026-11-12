@@ -201,7 +201,7 @@ prueba("recordatorios, cancelación y aviso se arman sin errores", () => {
 
 const { SECUENCIA, proximoEnvio, confirmarSuscripcion, TEXTO_CONSENTIMIENTO, guiaPedida } = await import("../src/worker/secuencia.ts");
 const { GUIAS, guiaDeServicio } = await import("../src/data/guias.ts");
-const { describirOrigen, nombreSeccion, lineasOrigen: lineasOrigenPrueba } = await import("../src/worker/origen.ts");
+const { describirOrigen, nombreSeccion, origenCorto, lineasOrigen: lineasOrigenPrueba } = await import("../src/worker/origen.ts");
 
 prueba("el origen de cada lead se entiende de un vistazo", () => {
   let o = describirOrigen("blog-articulo · /blog/crm-para-pymes · source=ig · campaign=guias", "guia", "Ordena tus contactos en un CRM");
@@ -220,6 +220,12 @@ prueba("el origen de cada lead se entiende de un vistazo", () => {
   assert.equal(o.seccion, "Página del servicio CRM y seguimiento de leads");
   assert.equal(nombreSeccion(o.clave), "Servicio CRM y seguimiento de leads");
   assert.equal(describirOrigen("", "guia").seccion, "No consta");
+  // Guía de regalo de Instagram (12/11/2026): ManyChat lleva a /negocio-inteligente.
+  o = describirOrigen("pagina-negocio-inteligente · /negocio-inteligente · source=ig · campaign=negocio-inteligente", "guia", "El negocio inteligente");
+  assert.equal(o.seccion, "Página de la guía de regalo (/negocio-inteligente)");
+  assert.equal(nombreSeccion(o.clave), "Página /negocio-inteligente");
+  assert.equal(origenCorto(o, "negocio-inteligente"), "Instagram · Guía negocio-inteligente");
+  assert.equal(origenCorto(describirOrigen("pagina-guia · /guia", "guia"), "que-automatizar-primero"), "Web · Guía que-automatizar-primero");
 });
 // ----------------------------------------------------- Memoria de Flora
 const memoria = await import("../src/worker/memoria.ts");
@@ -307,7 +313,8 @@ prueba("hay una guía completa por cada servicio", () => {
     assert.ok(g.glosario.length >= 2, `glosario en ${g.slug}`);
     assert.equal(g.ejemplo.length, g.hoja.columnas.length, `el ejemplo de ${g.slug} tiene una celda por columna`);
   }
-  assert.equal(Object.keys(GUIAS).length, 9);
+  // Nueve guías de servicio y la de regalo de Instagram (negocio-inteligente).
+  assert.equal(Object.keys(GUIAS).length, 10);
 });
 
 prueba("cada guía se entrega a sí misma y el último correo va al funnel de su servicio", () => {

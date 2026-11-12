@@ -23,6 +23,8 @@ export interface LeadParaPanel {
   nombre: string;
   correo: string;
   mensaje: string;
+  /** Etiqueta corta de campaña para el panel (máx. 60), p. ej. «Instagram · Guía negocio-inteligente». */
+  origen?: string;
 }
 
 export async function enviarAlPanel(env: EnvPanel, lead: LeadParaPanel): Promise<boolean> {
@@ -36,6 +38,7 @@ export async function enviarAlPanel(env: EnvPanel, lead: LeadParaPanel): Promise
         nombre: lead.nombre,
         email: lead.correo,
         mensaje: lead.mensaje.slice(0, 2000),
+        ...(lead.origen ? { origen: lead.origen.slice(0, 60) } : {}),
       }),
     });
     console.log(JSON.stringify({ panel: "lead", estado: r.status }));

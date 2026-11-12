@@ -1,0 +1,134 @@
+---
+/**
+ * /negocio-inteligente (12/11/2026): página para pedir la guía de regalo «El
+ * negocio inteligente: 7 formas de aplicar IA en tu negocio». Es el destino
+ * del mensaje automático de ManyChat cuando alguien comenta una publicación
+ * de Instagram (EMAIL-MARKETING.md). Enlace para ManyChat:
+ * https://soyluisflores.es/negocio-inteligente?utm_source=ig&utm_medium=manychat&utm_campaign=negocio-inteligente
+ *
+ * Usa el mismo formulario y la misma serie que las demás guías: doble
+ * confirmación, la guía en /guia/negocio-inteligente y el lead al panel.
+ */
+import Base from "../layouts/Base.astro";
+import CabeceraPagina from "../components/CabeceraPagina.astro";
+import CapturaGuia from "../components/CapturaGuia.astro";
+import { SITIO } from "../data/servicios";
+import { GUIAS } from "../data/guias";
+
+const g = GUIAS["negocio-inteligente"];
+const url = `${SITIO.url}/negocio-inteligente`;
+const title = "Guía gratis: el negocio inteligente, 7 formas de aplicar IA | Luis Flores";
+const description =
+  "Guía gratis con siete formas de aplicar IA en tu negocio: web, WhatsApp, seguimiento, reservas y contactos, con un plan de cuatro semanas.";
+
+const formas = g.ideas.grupos.map((f) => f.nombre);
+
+const serie = [
+  { dia: "Hoy", texto: "La guía, para empezar esta semana." },
+  { dia: "Día 2", texto: "Lo que pasa cuando respondes tarde a un cliente." },
+  { dia: "Día 4", texto: "Cómo lograr que tus herramientas se pasen los datos solas." },
+  { dia: "Día 7", texto: "Dónde se te escapan los contactos y cómo ordenarlos." },
+  { dia: "Día 10", texto: "Las pocas cifras que te sirven para decidir." },
+  { dia: "Día 14", texto: "Si quieres, lo vemos con tu caso en una llamada gratis." },
+];
+
+const schema = [
+  {
+    "@type": "WebPage",
+    "@id": `${url}#page`,
+    url,
+    name: title,
+    description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es",
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "El negocio inteligente", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "El negocio inteligente" }]}
+      antetitulo="Guía gratis"
+      titulo="El negocio inteligente:"
+      destacado="7 formas de aplicar IA en tu negocio"
+      entradilla="Aprende a ahorrar tiempo, atender mejor a tus clientes y automatizar tareas sin ser experto en tecnología."
+      acento="violeta"
+    />
+
+    <CapturaGuia ubicacion="pagina-negocio-inteligente" guia="negocio-inteligente" titulo="Recíbela gratis en tu correo" />
+
+    <section class="section" aria-labelledby="formas-titulo" data-acento="cian">
+      <div class="container-lf">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Qué vas a aprender</p>
+            <h2 id="formas-titulo" class="subrayado mt-4">Las siete formas de la guía</h2>
+          </div>
+          <p class="lead">Cada una con ideas concretas para tu negocio y, al final, un plan de cuatro semanas para ponerlas en marcha.</p>
+        </div>
+        <ol class="formas mt-10">
+          {formas.map((f) => <li class="card tarjeta card-title">{f}</li>)}
+        </ol>
+      </div>
+    </section>
+
+    <section class="section banda" aria-labelledby="serie-titulo" data-acento="turquesa">
+      <div class="container-lf">
+        <div class="cabecera-seccion">
+          <div>
+            <p class="eyebrow">Qué te llega</p>
+            <h2 id="serie-titulo" class="subrayado mt-4">La guía y cinco correos cortos en dos semanas</h2>
+          </div>
+          <p class="lead">Después la serie termina sola. Puedes darte de baja en cualquier momento.</p>
+        </div>
+        <ol class="serie mt-10">
+          {
+            serie.map((s) => (
+              <li class="card tarjeta">
+                <span class="serie-dia">{s.dia}</span>
+                <p class="card-text mt-3">{s.texto}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .formas,
+  .serie {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (width >= 640px) {
+    .formas,
+    .serie {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (width >= 1024px) {
+    .formas,
+    .serie {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .serie-dia {
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--acento-texto);
+  }
+</style>
