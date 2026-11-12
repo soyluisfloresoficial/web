@@ -80,3 +80,10 @@
 # solo 7 días.
 /voz/*
   Cache-Control: public, max-age=604800
+
+# /guias.json (12/11/2026): la lista de guías que lee la sección «Guías» del
+# panel. Solo lleva lo que ya es público en /guia/<slug>; se permite leerla
+# desde el panel y se guarda poco en caché para que los cambios se vean pronto.
+/guias.json
+  Access-Control-Allow-Origin: https://panel.soyluisflores.es
+  Cache-Control: public, max-age=300
