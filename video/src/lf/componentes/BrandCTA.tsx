@@ -185,8 +185,9 @@ export function BrandCTA({ cta, momentos }: { cta: ConfigCTA; momentos: Momentos
  * burbuja de mensaje que se escribe y se envía (✓✓), la nota y la marca.
  * Pensado con el avatar en la mitad superior (disposición «superior»).
  */
-export function CTAMensaje({ cta, momentos }: { cta: ConfigCTA; momentos: MomentosCTA }) {
+export function CTAMensaje({ cta, momentos, zona }: { cta: ConfigCTA; momentos: MomentosCTA; zona?: { y: number; h: number } }) {
   const f = useCurrentFrame();
+  if (zona) return <CTAMensajeFranja cta={cta} momentos={momentos} zona={zona} />;
   const izq = ZONA_SEGURA.izquierda;
   const ancho = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
   const t1 = prog(f, 4, 14, CURVA.impacto);
@@ -255,6 +256,76 @@ export function CTAMensaje({ cta, momentos }: { cta: ConfigCTA; momentos: Moment
       <div style={{ position: "absolute", left: 0, right: 0, top: 1340, display: "flex", justifyContent: "center", alignItems: "center", gap: 18, opacity: marca }}>
         <Img src={staticFile("logo/monograma-80.webp")} style={{ height: 50, width: "auto" }} />
         <span style={{ fontFamily: FUENTE.display, fontWeight: 700, fontSize: 32, color: COLOR.tinta, letterSpacing: "0.02em" }}>{cta.web ?? ""}</span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Variante compacta del cierre para la franja superior de la pantalla
+ * dividida (avatar abajo al 65 %): tres filas dentro de la zona segura.
+ */
+function CTAMensajeFranja({ cta, momentos, zona }: { cta: ConfigCTA; momentos: MomentosCTA; zona: { y: number; h: number } }) {
+  const f = useCurrentFrame();
+  const izq = ZONA_SEGURA.izquierda;
+  const ancho = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
+  const t1 = prog(f, 3, 12, CURVA.impacto);
+  const t2 = prog(f, 9, 12, CURVA.impacto);
+  const burbuja = prog(f, momentos.comentar, 12, CURVA.impacto);
+  const inicioTecleo = momentos.comentar + 8;
+  const letras = Math.max(0, Math.min(cta.palabra.length, Math.floor((f - inicioTecleo) / 3)));
+  const enviado = f >= inicioTecleo + cta.palabra.length * 3 + 6;
+  const marca = prog(f, momentos.comentar + 24, 14, CURVA.impacto);
+  const latido = 1 + 0.035 * Math.sin(f / 5);
+  return (
+    <div style={{ position: "absolute", left: izq, width: ancho, top: zona.y, height: zona.h, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 26 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 74, color: COLOR.tinta, letterSpacing: "-0.02em", opacity: t1, transform: `translateY(${(1 - t1) * 24}px)` }}>{cta.accion}</span>
+        <span
+          style={{
+            padding: "2px 26px",
+            borderRadius: 18,
+            background: COLOR.cta,
+            color: COLOR.base,
+            fontFamily: FUENTE.display,
+            fontWeight: 800,
+            fontSize: 80,
+            lineHeight: 1.1,
+            opacity: t2,
+            transform: `scale(${(0.7 + 0.3 * t2) * latido}) rotate(-2deg)`,
+            boxShadow: "0 0 50px rgb(0 255 179 / 0.5)",
+          }}
+        >
+          {cta.palabra}
+        </span>
+      </div>
+      <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", opacity: burbuja }}>
+        <span style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 26, lineHeight: 1.3, color: COLOR.suave, maxWidth: 440 }}>{cta.nota}</span>
+        <div
+          style={{
+            minWidth: 250,
+            padding: "14px 22px",
+            borderRadius: "24px 24px 6px 24px",
+            background: "linear-gradient(135deg, rgb(0 194 255 / 0.3), rgb(139 92 246 / 0.3))",
+            border: "1.5px solid rgb(0 194 255 / 0.55)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 14,
+            transform: `translateY(${(1 - burbuja) * 24}px) scale(${0.9 + 0.1 * burbuja})`,
+            transformOrigin: "right bottom",
+          }}
+        >
+          <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 36, color: COLOR.tinta }}>
+            {cta.palabra.slice(0, letras)}
+            {!enviado && f % 20 < 10 && <span style={{ color: COLOR.cta }}>|</span>}
+          </span>
+          <span style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 22, color: enviado ? COLOR.cian : COLOR.apagado }}>{enviado ? "✓✓" : "✓"}</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, opacity: marca }}>
+        <Img src={staticFile("logo/monograma-80.webp")} style={{ height: 44, width: "auto" }} />
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 700, fontSize: 30, color: COLOR.tinta }}>{cta.web ?? ""}</span>
       </div>
     </div>
   );

@@ -37,7 +37,7 @@ export function HeyGenPresenter({
 }) {
   const f = useCurrentFrame();
   const c = cajaEnFrame(f, escenas);
-  if (c.opacidad <= 0.01) return null;
+  // Aunque no se vea (opacidad 0), el video sigue montado: su audio es la voz.
 
   // Tamaño del video para cubrir la caja con el zoom pedido y el golpe de impacto.
   const zoom = c.z * factorZoom(f, golpes);

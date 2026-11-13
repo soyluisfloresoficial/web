@@ -90,7 +90,13 @@ export function PantallaDividida({
     <div style={{ position: "relative", width: ancho, height: alto, opacity: entra, transform: `translateY(${(1 - entra) * 50}px)` }}>
       {/* Presencial */}
       <div style={{ ...panel, left: 0, transform: `translateX(${(1 - entra) * -60}px)` }}>
-        {izquierda.imagen ? <Img src={staticFile(izquierda.imagen)} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <Local f={f} />}
+        {izquierda.imagen ? (
+          <Img src={staticFile(izquierda.imagen)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        ) : (
+          <div style={{ position: "absolute", left: 0, top: 0, width: mitad / (alto / 720), height: 720, transform: `scale(${alto / 720})`, transformOrigin: "top left" }}>
+            <Local f={f} />
+          </div>
+        )}
         {etiqueta(izquierda.etiqueta, "#FFC98A")}
       </div>
       {/* Línea divisoria */}
@@ -98,23 +104,47 @@ export function PantallaDividida({
       {/* Digital */}
       <div style={{ ...panel, left: mitad + 16, background: COLOR.superficie, border: "1px solid rgb(0 194 255 / 0.3)", transform: `translateX(${(1 - entra) * 60}px)` }}>
         {etiqueta(derecha.etiqueta, COLOR.cian)}
-        <div style={{ position: "absolute", left: 16, right: 16, top: 74, bottom: derecha.contador ? 128 : 16, display: "flex", flexDirection: "column", gap: 16, transform: `scale(${zoom})`, transformOrigin: "50% 20%" }}>
+        {derecha.contador && (
+          <div style={{ position: "absolute", right: 14, top: 12, zIndex: 3, display: "flex", alignItems: "center", gap: 10, padding: "4px 6px 4px 14px", borderRadius: 999, background: "rgb(255 92 122 / 0.14)", border: "1px solid rgb(255 92 122 / 0.6)" }}>
+            <span style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 18, color: COLOR.suave }}>{derecha.contador.etiqueta}</span>
+            <span
+              style={{
+                minWidth: 40,
+                height: 40,
+                borderRadius: 20,
+                display: "grid",
+                placeItems: "center",
+                background: COLOR.peligro,
+                color: "#fff",
+                fontFamily: FUENTE.display,
+                fontWeight: 800,
+                fontSize: 26,
+                transform: `scale(${1 + (llegados > 0 ? 0.18 * Math.max(0, 1 - ((f - 10) % PASO_MENSAJE) / 6) : 0)})`,
+              }}
+            >
+              {cuenta}
+            </span>
+          </div>
+        )}
+        <div style={{ position: "absolute", left: 16, right: 16, top: 64, bottom: 14, overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 12, transform: `scale(${zoom})`, transformOrigin: "50% 80%" }}>
           {derecha.mensajes.map((m, i) => {
+            if (f < 10 + i * PASO_MENSAJE) return null;
             const t = prog(f, 10 + i * PASO_MENSAJE, 10, CURVA.impacto);
             return (
               <div
                 key={i}
                 style={{
                   alignSelf: "flex-start",
+                  flexShrink: 0,
                   maxWidth: "94%",
-                  padding: "14px 18px",
+                  padding: "12px 16px",
                   borderRadius: "20px 20px 20px 6px",
                   background: COLOR.superficie2,
                   border: `1px solid ${COLOR.linea}`,
                   fontFamily: FUENTE.texto,
                   fontWeight: 500,
-                  fontSize: 30,
-                  lineHeight: 1.25,
+                  fontSize: 27,
+                  lineHeight: 1.2,
                   color: COLOR.tinta,
                   opacity: t,
                   transform: `translateY(${(1 - t) * 26}px) scale(${0.94 + 0.06 * t})`,
@@ -128,14 +158,6 @@ export function PantallaDividida({
             );
           })}
         </div>
-        {derecha.contador && (
-          <div style={{ position: "absolute", left: 16, right: 16, bottom: 16, height: 98, borderRadius: 18, background: "rgb(255 92 122 / 0.1)", border: "1px solid rgb(255 92 122 / 0.5)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", boxSizing: "border-box" }}>
-            <span style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 20, color: COLOR.suave, lineHeight: 1.2, maxWidth: 210 }}>{derecha.contador.etiqueta}</span>
-            <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 64, color: COLOR.peligro, fontVariantNumeric: "tabular-nums", transform: `scale(${1 + (llegados > 0 ? 0.06 * Math.max(0, 1 - ((f - 10) % PASO_MENSAJE) / 6) : 0)})` }}>
-              {cuenta}
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );

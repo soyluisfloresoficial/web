@@ -45,7 +45,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
     return (
       <AbsoluteFill style={{ opacity: salida }}>
         {config.cta.estilo === "mensaje" ? (
-          <CTAMensaje cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
+          <CTAMensaje cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={disp === "dividida" ? ESCENARIO.dividida : undefined} />
         ) : (
           <BrandCTA cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
         )}
@@ -75,8 +75,10 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
   ) : null;
 
   const titular = escena.titular;
-  const tamTitular = titular?.tamano ?? (c && c.tipo !== "ninguno" ? 64 : 92);
-  const altoTitular = titular ? Math.ceil(titular.texto.length / (ANCHO_UTIL / (tamTitular * 0.55))) * tamTitular * 1.12 + 30 : 0;
+  // En pantalla dividida el titular es una línea compacta sobre el gráfico.
+  const enFranja = disp === "dividida";
+  const tamTitular = enFranja ? Math.min(titular?.tamano ?? 44, 44) : titular?.tamano ?? (c && c.tipo !== "ninguno" ? 64 : 92);
+  const altoTitular = titular ? Math.ceil(titular.texto.length / (ANCHO_UTIL / (tamTitular * 0.55))) * tamTitular * 1.12 + (enFranja ? 14 : 30) : 0;
   // Con el avatar en burbuja, el titular va a su derecha y el contenido
   // aprovecha toda la zona de abajo.
   const alLado = !!titular && disp === "burbuja" && titular.posicion !== "arriba";
@@ -87,8 +89,10 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
   let contenido: ReactNode = null;
   if (c?.tipo === "pantallas") {
     const total = c.pantallas.length;
+    const ancha = enFranja && total === 1;
+    const altoPantalla = ancha ? Math.min(560, altoContenido - 6) : total > 1 ? 430 : 560;
     contenido = (
-      <Encajar w={1000} h={total > 1 ? 760 : 600} maxW={ANCHO_UTIL + 60} maxH={altoContenido}>
+      <Encajar w={ancha ? 936 : 1000} h={ancha ? altoPantalla + 6 : total > 1 ? 760 : 600} maxW={ancha ? 936 : ANCHO_UTIL + 60} maxH={altoContenido}>
         {c.pantallas.map((p, i) => (
           <Sequence key={i} from={Math.round((p.retraso ?? 0) * fps)} layout="none">
             <FloatingScreen
@@ -97,10 +101,10 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
               cursor={p.cursor}
               indice={total > 1 ? i : 0}
               total={total}
-              inclinacion={c.inclinacion}
               entrada={escena.entrada}
-              ancho={total > 1 ? 820 : 900}
-              alto={total > 1 ? 430 : 560}
+              ancho={ancha ? 936 : total > 1 ? 820 : 900}
+              alto={altoPantalla}
+              inclinacion={ancha ? 4 : c.inclinacion}
             />
           </Sequence>
         ))}
@@ -112,14 +116,14 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
         ? undefined
         : Math.round((resolverMomento(c.zoomMensajes, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps);
     contenido = (
-      <Encajar w={936} h={720} maxW={936} maxH={altoContenido}>
-        <PantallaDividida izquierda={c.izquierda} derecha={c.derecha} zoomFrame={zoomFrame} />
+      <Encajar w={936} h={enFranja ? altoContenido : 720} maxW={936} maxH={altoContenido}>
+        <PantallaDividida izquierda={c.izquierda} derecha={c.derecha} zoomFrame={zoomFrame} alto={enFranja ? altoContenido : 720} />
       </Encajar>
     );
   } else if (c?.tipo === "presentacion") {
     contenido = (
       <div style={{ width: ANCHO_UTIL, display: "flex", justifyContent: "center" }}>
-        <Presentacion nombre={c.nombre} linea={c.linea} web={c.web} />
+        <Presentacion nombre={c.nombre} linea={c.linea} web={c.web} escala={enFranja ? 1.35 : 1} />
       </div>
     );
   } else if (c?.tipo === "flujo") {
@@ -144,8 +148,8 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
     );
   } else if (c?.tipo === "sistema") {
     contenido = (
-      <Encajar w={920} h={760} maxW={ANCHO_UTIL + 40} maxH={altoContenido}>
-        <SistemaReveal nodos={c.nodos} titulo={c.titulo} centro={c.centro} />
+      <Encajar w={enFranja ? 936 : 920} h={enFranja ? altoContenido : 760} maxW={enFranja ? 936 : ANCHO_UTIL + 40} maxH={altoContenido}>
+        <SistemaReveal nodos={c.nodos} titulo={c.titulo} centro={c.centro} ancho={enFranja ? 936 : 920} alto={enFranja ? altoContenido : 760} escala={enFranja ? 0.68 : 1} />
       </Encajar>
     );
   }

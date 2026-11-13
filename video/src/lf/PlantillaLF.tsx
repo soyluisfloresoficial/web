@@ -32,8 +32,7 @@ function Aviso({ texto, escenas }: { texto: string; escenas: EscenaResuelta[] })
     <div
       style={{
         position: "absolute",
-        top: ZONA_SEGURA.arriba + 6,
-        right: ZONA_SEGURA.derecha,
+        ...(e.presentador === "dividida" ? { top: 638, left: ZONA_SEGURA.izquierda } : { top: ZONA_SEGURA.arriba + 6, right: ZONA_SEGURA.derecha }),
         zIndex: 25,
         fontFamily: FUENTE.texto,
         fontWeight: 500,
@@ -104,6 +103,7 @@ export function PlantillaLF({ config }: PropsLF) {
           escenas={escenas}
           claves={config.estiloSubtitulos?.claves}
           maxCaracteres={config.estiloSubtitulos?.maxCaracteres}
+          tamano={config.estiloSubtitulos?.tamano}
         />
       )}
       {config.aviso && <Aviso texto={config.aviso} escenas={escenas} />}

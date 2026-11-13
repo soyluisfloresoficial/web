@@ -99,7 +99,7 @@ export function FloatingScreen({
           }}
         >
           {/* Barra de ventana */}
-          <div style={{ height: 52, flexShrink: 0, display: "flex", alignItems: "center", gap: 10, padding: "0 20px", background: COLOR.base2, borderBottom: `1px solid ${COLOR.linea}` }}>
+          <div style={{ height: alto < 440 ? 42 : 52, flexShrink: 0, display: "flex", alignItems: "center", gap: 10, padding: "0 20px", background: COLOR.base2, borderBottom: `1px solid ${COLOR.linea}` }}>
             {[COLOR.peligro, "#FFC857", COLOR.cta].map((c) => (
               <span key={c} style={{ width: 13, height: 13, borderRadius: 7, background: c, opacity: 0.8 }} />
             ))}
@@ -115,7 +115,7 @@ export function FloatingScreen({
                 <Img src={staticFile(fuente.archivo)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               )
             ) : (
-              <Maqueta pantalla={fuente} />
+              <Maqueta pantalla={fuente} compacto={alto < 440} />
             )}
             {cursor && <GuidedCursor cursor={cursor} />}
           </div>

@@ -25,7 +25,9 @@ export const escribemeNegocio: ConfigVideo = {
   sonidoTransiciones: true,
   aviso: "Ejemplo ilustrativo",
   estiloSubtitulos: {
-    maxCaracteres: 34,
+    // Una sola línea en la costura de la pantalla dividida.
+    maxCaracteres: 26,
+    tamano: 56,
     claves: ["clientes", "mensajes", "negocio", "restaurante", "tienda", "web", "asistente", "inteligencia", "artificial", "sistema", "pedidos", "reservas", "consultas", "privado", "opción"],
   },
   cta: {
@@ -61,7 +63,7 @@ export const escribemeNegocio: ConfigVideo = {
       id: "local-y-movil",
       seccion: "problema",
       inicio: { ancla: "entonces dime algo" },
-      presentador: "burbuja",
+      presentador: "dividida",
       titular: { texto: "MIENTRAS ATIENDES, TE ESCRIBEN", destacar: ["escriben"], colorDestacado: "cian", tamano: 50 },
       contenido: {
         tipo: "dividida",
@@ -69,7 +71,7 @@ export const escribemeNegocio: ConfigVideo = {
         derecha: {
           etiqueta: "EN EL MÓVIL",
           mensajes: ["¿Estáis abiertos?", "¿Cuánto cuesta?", "¿Tenéis disponibilidad?", "¿Hacéis pedidos para llevar?"],
-          contador: { etiqueta: "Consultas sin responder", hasta: 4 },
+          contador: { etiqueta: "Sin responder", hasta: 4 },
         },
         zoomMensajes: { ancla: "no puedes responder" },
       },
@@ -93,7 +95,7 @@ export const escribemeNegocio: ConfigVideo = {
       id: "web",
       seccion: "solucion1",
       inicio: { ancla: "una página web", ajuste: 0.6 },
-      presentador: "burbuja",
+      presentador: "dividida",
       entrada: "zoom",
       titular: { texto: "TU NEGOCIO EN INTERNET", destacar: ["internet"], colorDestacado: "cian", tamano: 54 },
       contenido: {
@@ -111,7 +113,7 @@ export const escribemeNegocio: ConfigVideo = {
       id: "asistente",
       seccion: "solucion2",
       inicio: { ancla: "un asistente de" },
-      presentador: "burbuja",
+      presentador: "dividida",
       titular: { texto: "RESPUESTAS AUTOMÁTICAS", destacar: ["automáticas"], colorDestacado: "cian", tamano: 54 },
       contenido: {
         tipo: "pantallas",
@@ -134,7 +136,7 @@ export const escribemeNegocio: ConfigVideo = {
       id: "organizacion",
       seccion: "automatizacion",
       inicio: { ancla: "un sistema que te ayude" },
-      presentador: "burbuja",
+      presentador: "dividida",
       titular: { texto: "MENOS TAREAS REPETITIVAS", destacar: ["repetitivas"], colorDestacado: "cian", tamano: 54 },
       contenido: {
         tipo: "flujo",
@@ -149,7 +151,7 @@ export const escribemeNegocio: ConfigVideo = {
       id: "todo-conectado",
       seccion: "sistema",
       inicio: { ancla: "no necesitas ser experto" },
-      presentador: "burbuja",
+      presentador: "dividida",
       titular: { texto: "TODO CONECTADO, SIN COMPLICARTE", destacar: ["conectado"], colorDestacado: "cian", tamano: 54 },
       contenido: {
         tipo: "sistema",
@@ -165,14 +167,14 @@ export const escribemeNegocio: ConfigVideo = {
       id: "presentacion",
       seccion: "sistema",
       inicio: { ancla: "soy luis flores" },
-      presentador: "tarjeta",
+      presentador: "dividida",
       contenido: { tipo: "presentacion", nombre: "LUIS FLORES", linea: "IA · WEB · AUTOMATIZACIÓN", web: "soyluisflores.es" },
     },
     {
       id: "cta",
       seccion: "cta",
       inicio: { ancla: "quieres saber" },
-      presentador: "superior",
+      presentador: "dividida",
       subtitulos: false,
       contenido: { tipo: "cta" },
     },

@@ -183,10 +183,11 @@ Cada escena termina donde empieza la siguiente. Los zooms y sonidos también adm
 |---|---|---|
 | `completo` | Pantalla completa | Titular sobre el pecho |
 | `superior` | Mitad de arriba | Abajo, 560 px |
+| `dividida` | Abajo, 65 % de la pantalla (1248 px) | Arriba, 35 %: franja segura de 936 × 396 px; subtítulos en una línea en la costura |
 | `burbuja` | Círculo arriba a la izquierda | Toda la zona central; el titular va al lado |
 | `oculto` | No se ve (la voz sigue) | Toda la pantalla |
 
-El avatar es un único video continuo: la voz nunca se corta. Solo cambia la caja donde se ve, con una transición de medio segundo.
+El avatar es un único video continuo: la voz nunca se corta, ni siquiera en `oculto` (el video sigue sonando aunque no se vea; antes del 13/11/2026 se cortaba, ya corregido). Solo cambia la caja donde se ve, con una transición de medio segundo.
 
 ---
 
@@ -309,6 +310,8 @@ Versiones derivadas (FFmpeg, volumen normalizado a −14 LUFS en dos pasadas):
 
 - **Reels y TikTok:** 1080 × 1920, H.264 High, AAC 192 kbps.
 - **WhatsApp:** 720 × 1280, H.264 Main, AAC 128 kbps, unos 7,5 MB (por debajo de 16 MB).
+
+Formato (13/11/2026, a petición del titular): pantalla dividida con el avatar al 65 % abajo y los gráficos al 35 % arriba en todas las escenas de contenido. Sin burbuja.
 
 Pendientes de este anuncio:
 

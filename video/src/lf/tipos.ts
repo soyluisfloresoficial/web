@@ -30,7 +30,7 @@ export const TIMELINE_BASE: Record<Seccion, readonly [number, number]> = {
 export type Momento = number | { ancla: string; ajuste?: number };
 
 /** Dónde va el avatar durante la escena. Los cambios se animan solos. */
-export type Disposicion = "completo" | "superior" | "burbuja" | "tarjeta" | "oculto";
+export type Disposicion = "completo" | "superior" | "dividida" | "burbuja" | "tarjeta" | "oculto";
 
 export type Sonido = {
   /** Archivo dentro de publico/ (por ejemplo "sfx/clic.wav"). */
@@ -205,7 +205,7 @@ export type ConfigVideo = {
   aviso?: string;
   depuracion?: { zonaSegura?: boolean; tiempos?: boolean };
   /** Palabras clave que van en cian en los subtítulos y máximo de caracteres por bloque (≈ 2 líneas). */
-  estiloSubtitulos?: { claves?: string[]; maxCaracteres?: number };
+  estiloSubtitulos?: { claves?: string[]; maxCaracteres?: number; tamano?: number };
   /** Oculta los subtítulos (por ejemplo, para la portada). */
   sinSubtitulos?: boolean;
 };

@@ -27,7 +27,7 @@ export function AutomationFlow({
   const f = useCurrentFrame();
   const n = nodos.length;
   const cabecera = titulo ? 70 : 0;
-  const altoNodo = 116;
+  const altoNodo = Math.min(116, Math.floor((alto - cabecera - Math.max(0, n - 1) * 14) / Math.max(1, n)));
   const hueco = n > 1 ? (alto - cabecera - n * altoNodo) / (n - 1) : 0;
   const paso = Math.max(10, Math.min(36, Math.floor((duracion * 0.7) / Math.max(1, n))));
   const yNodo = (i: number) => cabecera + i * (altoNodo + hueco);
@@ -89,11 +89,11 @@ export function AutomationFlow({
               transform: `translateX(${(1 - entra) * -80}px) scale(${0.94 + 0.06 * entra})`,
             }}
           >
-            <div style={{ width: 92, height: 92, borderRadius: 22, flexShrink: 0, display: "grid", placeItems: "center", background: `rgb(0 194 255 / ${0.1 + 0.12 * activo})`, color: activo > 0.5 ? COLOR.cian : COLOR.suave }}>
+            <div style={{ width: altoNodo - 24, height: altoNodo - 24, borderRadius: 22, flexShrink: 0, display: "grid", placeItems: "center", background: `rgb(0 194 255 / ${0.1 + 0.12 * activo})`, color: activo > 0.5 ? COLOR.cian : COLOR.suave }}>
               <Icono nombre={nodo.icono} tam={46} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 36, color: COLOR.tinta, letterSpacing: "-0.01em" }}>{nodo.titulo}</span>
+              <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: altoNodo < 110 ? 32 : 36, color: COLOR.tinta, letterSpacing: "-0.01em" }}>{nodo.titulo}</span>
               {nodo.detalle && <span style={{ fontFamily: FUENTE.texto, fontWeight: 500, fontSize: 24, color: COLOR.suave }}>{nodo.detalle}</span>}
             </div>
           </div>

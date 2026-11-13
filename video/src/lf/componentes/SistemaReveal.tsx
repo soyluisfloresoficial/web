@@ -15,7 +15,10 @@ export function SistemaReveal({
   centro = { titulo: "Agente IA", icono: "agente" },
   ancho = 920,
   alto = 760,
+  escala = 1,
 }: {
+  /** Tamaño de los nodos (1 = normal). */
+  escala?: number;
   nodos: NodoFlujo[];
   titulo?: string;
   centro?: NodoFlujo;
@@ -25,11 +28,11 @@ export function SistemaReveal({
   const f = useCurrentFrame();
   const mascara = prog(f, 0, 26, CURVA.marca);
   const cx = ancho / 2;
-  const cy = alto / 2 + (titulo ? 30 : 0);
-  const rx = ancho / 2 - 120;
-  const ry = alto / 2 - 110;
+  const cy = alto / 2 + (titulo ? 30 : 0) + (escala < 1 ? 10 : 0);
+  const rx = ancho / 2 - 120 * escala;
+  const ry = alto / 2 - 72 * escala - 8;
   const pos = nodos.map((_, i) => {
-    const a = -Math.PI / 2 + (i * 2 * Math.PI) / nodos.length;
+    const a = (escala < 1 ? 0 : -Math.PI / 2) + (i * 2 * Math.PI) / nodos.length;
     return { x: cx + Math.cos(a) * rx, y: cy + Math.sin(a) * ry };
   });
 
@@ -58,11 +61,11 @@ export function SistemaReveal({
       <div
         style={{
           position: "absolute",
-          left: cx - 110,
-          top: cy - 110,
-          width: 220,
-          height: 220,
-          borderRadius: 60,
+          left: cx - 110 * escala,
+          top: cy - 110 * escala,
+          width: 220 * escala,
+          height: 220 * escala,
+          borderRadius: 60 * escala,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -74,8 +77,8 @@ export function SistemaReveal({
           transform: `scale(${0.6 + 0.4 * prog(f, 4, 16, CURVA.impacto)})`,
         }}
       >
-        <Icono nombre={centro.icono} tam={70} grosor={2} />
-        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 30 }}>{centro.titulo}</span>
+        <Icono nombre={centro.icono} tam={70 * escala} grosor={2} />
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 30 * Math.max(0.85, escala) }}>{centro.titulo}</span>
       </div>
       {nodos.map((n, i) => {
         const t = prog(f, 16 + i * 5, 12, CURVA.impacto);
@@ -84,10 +87,10 @@ export function SistemaReveal({
             key={i}
             style={{
               position: "absolute",
-              left: pos[i].x - 105,
-              top: pos[i].y - 72,
-              width: 210,
-              height: 144,
+              left: pos[i].x - 105 * escala,
+              top: pos[i].y - 72 * escala,
+              width: 210 * escala,
+              height: 144 * escala,
               borderRadius: 28,
               display: "flex",
               flexDirection: "column",
@@ -102,8 +105,8 @@ export function SistemaReveal({
               color: COLOR.cian,
             }}
           >
-            <Icono nombre={n.icono} tam={44} />
-            <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 26, color: COLOR.tinta, textAlign: "center", lineHeight: 1.1, padding: "0 10px" }}>{n.titulo}</span>
+            <Icono nombre={n.icono} tam={44 * escala} />
+            <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 26 * Math.max(0.9, escala), color: COLOR.tinta, textAlign: "center", lineHeight: 1.1, padding: "0 10px" }}>{n.titulo}</span>
           </div>
         );
       })}

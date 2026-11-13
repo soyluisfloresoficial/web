@@ -12,11 +12,11 @@ import { prog } from "../util";
 
 const etiqueta = { fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 22, color: COLOR.apagado, letterSpacing: "0.04em" } as const;
 
-function Chat({ p, f, fps }: { p: Extract<PantallaMaqueta, { tipo: "chat" }>; f: number; fps: number }) {
+function Chat({ p, f, fps, compacto }: { p: Extract<PantallaMaqueta, { tipo: "chat" }>; f: number; fps: number; compacto?: boolean }) {
   const paso = Math.round(fps * 1.1);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 28, height: "100%", boxSizing: "border-box" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 14, paddingBottom: 16, borderBottom: `1px solid ${COLOR.linea}` }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: compacto ? 12 : 16, padding: compacto ? 20 : 28, height: "100%", boxSizing: "border-box" }}>
+      <div style={{ display: compacto ? "none" : "flex", alignItems: "center", gap: 14, paddingBottom: 16, borderBottom: `1px solid ${COLOR.linea}` }}>
         <div style={{ width: 52, height: 52, borderRadius: 26, background: COLOR.superficie2, display: "grid", placeItems: "center", color: COLOR.cian }}>
           <Icono nombre="whatsapp" tam={28} />
         </div>
@@ -190,7 +190,7 @@ function Notificacion({ p, f }: { p: Extract<PantallaMaqueta, { tipo: "notificac
   );
 }
 
-function Web({ p, f }: { p: Extract<PantallaMaqueta, { tipo: "web" }>; f: number }) {
+function Web({ p, f, compacto }: { p: Extract<PantallaMaqueta, { tipo: "web" }>; f: number; compacto?: boolean }) {
   const hero = prog(f, 4, 14, CURVA.impacto);
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -204,23 +204,23 @@ function Web({ p, f }: { p: Extract<PantallaMaqueta, { tipo: "web" }>; f: number
       </div>
       <div
         style={{
-          margin: 18,
+          margin: compacto ? 12 : 18,
           borderRadius: 18,
-          padding: "26px 28px",
+          padding: compacto ? "16px 22px" : "26px 28px",
           background: "linear-gradient(135deg, rgb(0 194 255 / 0.18), rgb(139 92 246 / 0.22))",
           opacity: hero,
           transform: `translateY(${(1 - hero) * 20}px)`,
         }}
       >
-        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 36, lineHeight: 1.1, color: COLOR.tinta }}>{p.lema}</div>
-        <div style={{ marginTop: 16, display: "inline-block", padding: "12px 26px", borderRadius: 12, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 24 }}>{p.boton}</div>
+        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: compacto ? 32 : 36, lineHeight: 1.1, color: COLOR.tinta }}>{p.lema}</div>
+        <div style={{ marginTop: compacto ? 10 : 16, display: "inline-block", padding: "12px 26px", borderRadius: 12, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 24 }}>{p.boton}</div>
       </div>
-      <div style={{ display: "flex", gap: 14, padding: "0 18px" }}>
+      <div style={{ display: "flex", gap: 14, padding: compacto ? "0 12px" : "0 18px" }}>
         {p.secciones.map((s, i) => {
           const t = prog(f, 12 + i * 5, 12, CURVA.impacto);
           return (
             <div key={s} style={{ flex: 1, borderRadius: 14, background: COLOR.superficie2, border: `1px solid ${COLOR.linea}`, padding: 14, opacity: t, transform: `translateY(${(1 - t) * 24}px)` }}>
-              <div style={{ height: 70, borderRadius: 10, background: `linear-gradient(135deg, ${COLOR.superficie}, ${COLOR.linea})`, marginBottom: 10 }} />
+              <div style={{ height: compacto ? 34 : 70, borderRadius: 10, background: `linear-gradient(135deg, ${COLOR.superficie}, ${COLOR.linea})`, marginBottom: 10 }} />
               <div style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 19, color: COLOR.tinta }}>{s}</div>
             </div>
           );
@@ -230,12 +230,12 @@ function Web({ p, f }: { p: Extract<PantallaMaqueta, { tipo: "web" }>; f: number
   );
 }
 
-export function Maqueta({ pantalla }: { pantalla: PantallaMaqueta }) {
+export function Maqueta({ pantalla, compacto }: { pantalla: PantallaMaqueta; compacto?: boolean }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   switch (pantalla.tipo) {
     case "chat":
-      return <Chat p={pantalla} f={f} fps={fps} />;
+      return <Chat p={pantalla} f={f} fps={fps} compacto={compacto} />;
     case "formulario":
       return <Formulario p={pantalla} f={f} />;
     case "crm":
@@ -245,7 +245,7 @@ export function Maqueta({ pantalla }: { pantalla: PantallaMaqueta }) {
     case "notificacion":
       return <Notificacion p={pantalla} f={f} />;
     case "web":
-      return <Web p={pantalla} f={f} />;
+      return <Web p={pantalla} f={f} compacto={compacto} />;
     case "pendiente":
       return <Placeholder texto={pantalla.descripcion} />;
   }
