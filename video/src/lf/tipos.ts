@@ -142,6 +142,11 @@ export type Contenido =
       etiqueta?: string;
     }
   | { tipo: "presentacion"; nombre: string; linea: string; web: string }
+  | {
+      /** Lista de puntos que entran uno a uno cuando la voz dice cada uno. */
+      tipo: "lista";
+      items: { texto: string; icono: Icono; en?: Momento }[];
+    }
   | { tipo: "cta" };
 
 /**
@@ -195,7 +200,7 @@ export type ConfigCTA = {
    */
   momentos?: { seguir?: string; comentar?: string; recurso?: string };
   /** «comentario» (Comenta PALABRA + recurso) o «mensaje» (escríbeme por privado). */
-  estilo?: "comentario" | "mensaje";
+  estilo?: "comentario" | "mensaje" | "seguir";
   /** Para el estilo «mensaje»: línea bajo el texto y web. */
   nota?: string;
   web?: string;

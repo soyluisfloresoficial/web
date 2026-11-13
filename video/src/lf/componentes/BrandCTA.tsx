@@ -330,3 +330,58 @@ function CTAMensajeFranja({ cta, momentos, zona }: { cta: ConfigCTA; momentos: M
     </div>
   );
 }
+
+/**
+ * Cierre «Sígueme» para la franja superior: palabra grande, perfil con el
+ * botón Seguir → Siguiendo ✓ (cuando la voz dice «sígueme») y la marca.
+ */
+export function CTASeguir({ cta, momentos, zona }: { cta: ConfigCTA; momentos: MomentosCTA; zona: { y: number; h: number } }) {
+  const f = useCurrentFrame();
+  const izq = ZONA_SEGURA.izquierda;
+  const ancho = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
+  const t1 = prog(f, momentos.seguir, 12, CURVA.impacto);
+  const t2 = prog(f, momentos.seguir + 8, 12, CURVA.impacto);
+  const pulsado = prog(f, momentos.seguir + 22, 8, CURVA.impacto);
+  const siguiendo = f >= momentos.seguir + 24;
+  const marca = prog(f, momentos.seguir + 30, 14, CURVA.impacto);
+  return (
+    <div style={{ position: "absolute", left: izq, width: ancho, top: zona.y, height: zona.h, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24 }}>
+      <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 104, lineHeight: 1, color: COLOR.tinta, letterSpacing: "-0.03em", opacity: t1, transform: `scale(${0.8 + 0.2 * t1})` }}>
+        {cta.accion}
+      </span>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "12px 14px 12px 24px", borderRadius: 999, background: COLOR.superficie, border: `1.5px solid ${COLOR.linea}`, opacity: t2, transform: `translateY(${(1 - t2) * 24}px)` }}>
+        <Img src={staticFile("logo/monograma-80.webp")} style={{ height: 40, width: "auto" }} />
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 34, color: COLOR.tinta }}>{cta.usuario}</span>
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "10px 24px",
+            borderRadius: 999,
+            fontFamily: FUENTE.display,
+            fontWeight: 800,
+            fontSize: 26,
+            background: siguiendo ? COLOR.superficie2 : COLOR.cta,
+            color: siguiendo ? COLOR.tinta : COLOR.base,
+            border: siguiendo ? `1.5px solid ${COLOR.cta}` : "1.5px solid transparent",
+            transform: `scale(${interpolate(pulsado, [0, 0.5, 1], [1, 0.88, 1])})`,
+            boxShadow: siguiendo ? undefined : "0 0 30px rgb(0 255 179 / 0.45)",
+          }}
+        >
+          {siguiendo ? (
+            <>
+              Siguiendo <Icono nombre="check" tam={24} grosor={2.6} color={COLOR.cta} />
+            </>
+          ) : (
+            "Seguir"
+          )}
+        </span>
+      </div>
+      <span style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 26, color: COLOR.suave, opacity: marca }}>
+        {cta.nota ? `${cta.nota} · ` : ""}
+        {cta.web ?? ""}
+      </span>
+    </div>
+  );
+}

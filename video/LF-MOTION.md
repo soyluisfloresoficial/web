@@ -361,3 +361,15 @@ Reglas de tiempo:
 - **Duración:** ninguna escena dura menos de 1,5 s. Si la voz enumera cosas seguidas, se agrupan en una sola escena.
 - **Ritmo:** no pasan más de 3–4 s sin un cambio visual (un zoom, un mensaje nuevo, un paso del flujo).
 - **Avatar solo:** se deja al avatar solo al menos una vez cada 15–20 s, para que se le vea la cara y el gesto completos.
+
+---
+
+## 13. Video «¿Te faltan horas al día?» · CTA «Sígueme» (13/11/2026)
+
+Configuración: `src/lf/videos/organiza-tu-negocio.ts` (composiciones `LF-OrganizaTuNegocio` y `LF-OrganizaTuNegocio-Portada`, fotograma 98). Avatar de 57,2 s. Imágenes generadas con IA: `ia-panaderia-atendiendo.jpg`, `ia-tareas-noche.jpg` e `ia-negocio-organizado.jpg`.
+
+Componentes nuevos:
+
+- `ListaPuntos` (contenido `lista`): puntos que entran cuando la voz los dice.
+- `CTASeguir` (`cta.estilo: "seguir"`): «SÍGUEME», el perfil con Seguir → Siguiendo ✓ y la web.
+- Halo oscuro detrás de los titulares a pantalla completa y placa oscura en el rótulo de presentación, para leerse sobre fondos claros del avatar.

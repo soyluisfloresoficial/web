@@ -7,11 +7,12 @@ import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig } 
 import { AnimatedCounter, Comparativa } from "./componentes/AnimatedCounter";
 import { AutomationFlow } from "./componentes/AutomationFlow";
 import { BeforeAfterReveal } from "./componentes/BeforeAfterReveal";
-import { BrandCTA, CTAMensaje, type MomentosCTA } from "./componentes/BrandCTA";
+import { BrandCTA, CTAMensaje, CTASeguir, type MomentosCTA } from "./componentes/BrandCTA";
 import { PantallaDividida } from "./componentes/PantallaDividida";
 import { Presentacion } from "./componentes/Presentacion";
 import { Revelacion } from "./componentes/Revelacion";
 import { ImagenReal } from "./componentes/ImagenReal";
+import { ListaPuntos } from "./componentes/ListaPuntos";
 import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
 import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
@@ -45,7 +46,9 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
   if (c?.tipo === "cta") {
     return (
       <AbsoluteFill style={{ opacity: salida }}>
-        {config.cta.estilo === "mensaje" ? (
+        {config.cta.estilo === "seguir" ? (
+          <CTASeguir cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
+        ) : config.cta.estilo === "mensaje" ? (
           <CTAMensaje cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={disp === "dividida" ? ESCENARIO.dividida : undefined} />
         ) : (
           <BrandCTA cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
@@ -121,6 +124,16 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
         <PantallaDividida izquierda={c.izquierda} derecha={c.derecha} zoomFrame={zoomFrame} alto={enFranja ? altoContenido : 720} />
       </Encajar>
     );
+  } else if (c?.tipo === "lista") {
+    const items = c.items.map((it, i) => ({
+      texto: it.texto,
+      icono: it.icono,
+      frame:
+        it.en === undefined
+          ? 6 + i * 12
+          : Math.max(0, Math.round((resolverMomento(it.en, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps)),
+    }));
+    contenido = <ListaPuntos items={items} ancho={ANCHO_UTIL} alto={Math.min(altoContenido, 420)} />;
   } else if (c?.tipo === "imagen") {
     contenido = <ImagenReal archivo={c.archivo} credito={c.credito} movimiento={c.movimiento} etiqueta={c.etiqueta} ancho={936} alto={Math.min(altoContenido, 760)} duracion={dur} />;
   } else if (c?.tipo === "presentacion") {
@@ -171,6 +184,20 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
             justifyContent: alLado ? "flex-start" : "center",
           }}
         >
+          {disp === "completo" && (
+            <div
+              style={{
+                position: "absolute",
+                left: -60,
+                right: -60,
+                top: -50,
+                bottom: -50,
+                background: "radial-gradient(ellipse 62% 58% at 50% 50%, rgb(7 9 13 / 0.62) 0%, rgb(7 9 13 / 0.35) 55%, transparent 100%)",
+                filter: "blur(6px)",
+                pointerEvents: "none",
+              }}
+            />
+          )}
           <KineticText
             texto={titular.texto}
             destacar={titular.destacar}
