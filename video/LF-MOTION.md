@@ -318,3 +318,22 @@ Pendientes de este anuncio:
 - [ ] La foto real del local (opcional): ahora se dibuja con código. Pon una foto propia en `publico/medios/` y añádela en `izquierda.imagen`.
 - [ ] Los mensajes de ejemplo usan «vosotros» («¿Estáis abiertos?», «¿Tenéis…?»), como pediste. Para Latinoamérica conviene una versión con «¿Están abiertos?».
 - [ ] La respuesta a «NEGOCIO» por privado (ManyChat o a mano) tiene que estar lista antes de difundirlo.
+
+---
+
+## 11. Regla del titular: imágenes reales acordes con la voz (13/11/2026)
+
+En todos los videos, los gráficos y las imágenes tienen que ser **reales** y corresponder a lo que dice la voz en ese momento: fotos propias, de banco (Pexels, Pixabay, Unsplash) o generadas con IA (Higgsfield). Las maquetas dibujadas con código se usan para interfaces (chat, web, flujo, calendario), no para sustituir una imagen de personas, locales o productos.
+
+Cómo se hace:
+
+1. Por cada escena, la frase de la voz decide la imagen (por ejemplo, «estás atendiendo clientes» → foto de un dueño atendiendo en su local).
+2. Se descarga o genera, se guarda en `publico/medios/` y se usa con `contenido: { tipo: "imagen", archivo, credito, movimiento, etiqueta }`, o en `izquierda.imagen` de la pantalla dividida.
+3. Fotos de banco: se respeta su licencia y se pone el autor en `credito`. Generadas con IA: personas genéricas, nunca una persona real ni una marca, y el video mantiene la etiqueta de contenido IA al publicarse.
+4. Si una fuente falla, se avisa al titular antes de sustituir la imagen por un dibujo.
+
+Lo que hoy bloquea esta regla (13/11/2026):
+
+- **Unsplash:** el conector responde «Your email address has not been confirmed». Hay que confirmar el correo de la cuenta de Unsplash.
+- **Pexels y Pixabay:** se puede llegar a sus API, pero hace falta una clave gratuita de cada uno. Se guarda como secreto del entorno, nunca en el repositorio.
+- **Higgsfield:** quedan 2,1 créditos (una imagen cuesta 1 con el modelo Nano Banana). El 13/11/2026 una generación falló y cobró el crédito igualmente.

@@ -127,6 +127,20 @@ export type Contenido =
       zoomMensajes?: Momento;
     }
   | { tipo: "revelacion"; titular: string; destacar?: string[] }
+  | {
+      /**
+       * Imagen real (foto propia, de banco o generada con IA) acorde con lo
+       * que dice la voz, con movimiento lento de cámara (Ken Burns).
+       */
+      tipo: "imagen";
+      archivo: string;
+      /** Autor y fuente, por ejemplo «Foto: Ana Pérez · Pexels». */
+      credito?: string;
+      /** Hacia dónde se mueve la cámara. */
+      movimiento?: "acercar" | "alejar" | "izquierda" | "derecha";
+      /** Etiqueta pequeña sobre la imagen, por ejemplo «EN EL LOCAL». */
+      etiqueta?: string;
+    }
   | { tipo: "presentacion"; nombre: string; linea: string; web: string }
   | { tipo: "cta" };
 

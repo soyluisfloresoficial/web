@@ -11,6 +11,7 @@ import { BrandCTA, CTAMensaje, type MomentosCTA } from "./componentes/BrandCTA";
 import { PantallaDividida } from "./componentes/PantallaDividida";
 import { Presentacion } from "./componentes/Presentacion";
 import { Revelacion } from "./componentes/Revelacion";
+import { ImagenReal } from "./componentes/ImagenReal";
 import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
 import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
@@ -120,6 +121,8 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
         <PantallaDividida izquierda={c.izquierda} derecha={c.derecha} zoomFrame={zoomFrame} alto={enFranja ? altoContenido : 720} />
       </Encajar>
     );
+  } else if (c?.tipo === "imagen") {
+    contenido = <ImagenReal archivo={c.archivo} credito={c.credito} movimiento={c.movimiento} etiqueta={c.etiqueta} ancho={936} alto={Math.min(altoContenido, 760)} duracion={dur} />;
   } else if (c?.tipo === "presentacion") {
     contenido = (
       <div style={{ width: ANCHO_UTIL, display: "flex", justifyContent: "center" }}>

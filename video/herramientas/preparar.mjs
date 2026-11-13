@@ -18,7 +18,9 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), "..");
 const publico = join(raiz, "publico");
 const web = join(raiz, "..", "public");
 
-for (const d of ["fonts", "logo", "sfx", "medios"]) mkdirSync(join(publico, d), { recursive: true });
+for (const d of ["fonts", "logo", "sfx", "medios", "ejemplo"]) mkdirSync(join(publico, d), { recursive: true });
+// Imagen de ejemplo para la plantilla maestra (la de compartir de la web).
+if (existsSync(join(web, "og-default.png"))) copyFileSync(join(web, "og-default.png"), join(publico, "ejemplo", "imagen.png"));
 
 let copiados = 0;
 for (const sub of ["fonts", "logo"]) {

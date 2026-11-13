@@ -25,8 +25,10 @@ export const plantillaMaestra: ConfigVideo = {
     {
       id: "problema",
       seccion: "problema",
-      presentador: "superior",
-      contenido: { tipo: "pantallas", pantallas: [{ titulo: "[Pantalla]", fuente: { tipo: "pendiente", descripcion: "Grabación de pantalla del problema" } }] },
+      presentador: "dividida",
+      titular: { texto: "[Titular corto de la escena]", destacar: ["escena"], colorDestacado: "cian" },
+      // Imagen real acorde con la voz: foto propia, de banco o generada con IA.
+      contenido: { tipo: "imagen", archivo: "ejemplo/imagen.png", credito: "[Autor · fuente]", movimiento: "acercar", etiqueta: "[ETIQUETA]" },
     },
     {
       id: "solucion-1",

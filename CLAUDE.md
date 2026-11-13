@@ -62,6 +62,10 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 - **Indexación:** `noindex, follow`, canónica hacia `/contacto` (la general) o `/servicios/[servicio]`, y fuera del sitemap, porque repiten contenido. `/diagnostico` sigue enlazada desde el pie y desde `llms.txt`.
 - **Textos** en `src/data/funnels.ts`; enlaces, parámetros de campaña y conversiones en `FUNNELS.md`.
 
+## Videos para redes (LF Motion System, `video/`)
+
+Regla del titular (13/11/2026): en los videos, las imágenes y los gráficos tienen que ser **reales y acordes con lo que dice la voz** en cada escena: fotos propias, de banco (Pexels, Pixabay, Unsplash, respetando la licencia y con el autor en el crédito) o generadas con IA (personas genéricas, nunca personas reales ni marcas). Los dibujos hechos con código quedan solo para interfaces (chat, web, flujos, calendario). Si una fuente de imágenes falla o falta un crédito o una clave, **avisa al titular antes de sustituirla** por un dibujo. Guía y bloqueos actuales en `video/LF-MOTION.md` (sección 11).
+
 ## Imágenes para compartir
 
 Cada página tiene su imagen para redes (Open Graph) en `public/og/`. Se generan con `node tools/generar-og.mjs` después de `npm run build` (necesita Edge o Chrome en el ordenador). Al añadir un servicio, un artículo o cambiar un título, vuelve a ejecutarlo, compila otra vez y sube las imágenes. Si una página no tiene la suya, usa `og-default.png`.
