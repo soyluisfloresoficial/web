@@ -4,12 +4,12 @@
  * pequeño rebote. Se colocan según la disposición del avatar y se ocultan en
  * las escenas con `subtitulos: false`.
  */
-import { createTikTokStyleCaptions, type Caption } from "@remotion/captions";
+import { createTikTokStyleCaptions, type Caption, type TikTokPage } from "@remotion/captions";
 import { useMemo } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Y_SUBTITULOS } from "../disposicion";
 import { COLOR, CURVA, FUENTE } from "../marca";
-import type { EscenaResuelta } from "../tiempo";
+import { normalizar, type EscenaResuelta } from "../tiempo";
 import { mezclar, prog } from "../util";
 
 /** Quita el punto y la coma finales: en pantalla sobran. */
@@ -20,7 +20,13 @@ export function Subtitles({
   escenas,
   agrupar = 1100,
   tamano = 62,
+  claves = [],
+  maxCaracteres = 0,
 }: {
+  /** Palabras que van siempre en cian. Si hay claves, la palabra activa solo se ilumina. */
+  claves?: string[];
+  /** Máximo de caracteres por bloque (0 = sin límite). 36 ≈ dos líneas. */
+  maxCaracteres?: number;
   subtitulos: Caption[] | null;
   escenas: EscenaResuelta[];
   /** Milisegundos que caben en un bloque. Menos = bloques más cortos. */
@@ -29,13 +35,12 @@ export function Subtitles({
 }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const paginas = useMemo(
-    () =>
-      subtitulos?.length
-        ? createTikTokStyleCaptions({ captions: subtitulos, combineTokensWithinMilliseconds: agrupar }).pages
-        : [],
-    [subtitulos, agrupar],
-  );
+  const paginas = useMemo(() => {
+    if (!subtitulos?.length) return [];
+    const base = createTikTokStyleCaptions({ captions: subtitulos, combineTokensWithinMilliseconds: agrupar }).pages;
+    return maxCaracteres > 0 ? partirPaginas(base, maxCaracteres) : base;
+  }, [subtitulos, agrupar, maxCaracteres]);
+  const setClaves = useMemo(() => new Set(claves.map(normalizar)), [claves]);
   if (!paginas.length) return null;
 
   const ms = (f / fps) * 1000;
@@ -91,13 +96,15 @@ export function Subtitles({
         {pagina.tokens.map((t, k) => {
           const siguiente = pagina.tokens[k + 1]?.fromMs ?? t.toMs + 200;
           const activa = ms >= t.fromMs && ms < Math.min(siguiente, t.toMs + 200);
+          const clave = setClaves.has(normalizar(t.text));
+          const color = setClaves.size ? (clave ? COLOR.cian : activa ? "#FFFFFF" : "rgb(245 248 252 / 0.86)") : activa ? COLOR.cian : COLOR.tinta;
           return (
             <span
               key={k}
               style={{
-                color: activa ? COLOR.cian : COLOR.tinta,
+                color,
                 display: "inline-block",
-                textShadow: activa ? "0 0 22px rgb(0 194 255 / 0.55)" : undefined,
+                textShadow: activa ? (setClaves.size && !clave ? "0 0 18px rgb(255 255 255 / 0.45)" : "0 0 22px rgb(0 194 255 / 0.55)") : undefined,
               }}
             >
               {limpiar(t.text.trim())}
@@ -107,4 +114,29 @@ export function Subtitles({
       </div>
     </div>
   );
+}
+
+/** Parte los bloques largos para que no pasen de N caracteres (≈ dos líneas). */
+function partirPaginas(paginas: TikTokPage[], max: number): TikTokPage[] {
+  const out: TikTokPage[] = [];
+  for (const p of paginas) {
+    let actual: TikTokPage["tokens"] = [];
+    let largo = 0;
+    const cerrar = () => {
+      if (!actual.length) return;
+      const ini = actual[0].fromMs;
+      const fin = actual[actual.length - 1].toMs;
+      out.push({ text: actual.map((t) => t.text).join(""), startMs: ini, durationMs: fin - ini, tokens: actual });
+      actual = [];
+      largo = 0;
+    };
+    for (const t of p.tokens) {
+      const l = t.text.trim().length + 1;
+      if (largo + l > max && actual.length) cerrar();
+      actual.push(t);
+      largo += l;
+    }
+    cerrar();
+  }
+  return out;
 }

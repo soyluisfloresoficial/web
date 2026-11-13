@@ -28,6 +28,7 @@ export const CAJAS: Record<Disposicion, Caja> = {
   completo: { x: 0, y: 0, w: 1080, h: 1920, rArriba: 0, rAbajo: 0, z: 1, fx: 0.5, fy: 0.5, opacidad: 1, anillo: 0 },
   superior: { x: 0, y: 0, w: 1080, h: 880, rArriba: 0, rAbajo: 56, z: 1, fx: 0.5, fy: 0.28, opacidad: 1, anillo: 0.6 },
   burbuja: { x: 72, y: 250, w: 250, h: 250, rArriba: 125, rAbajo: 125, z: 2.3, fx: 0.5, fy: 0.27, opacidad: 1, anillo: 1 },
+  tarjeta: { x: 110, y: 236, w: 860, h: 840, rArriba: 44, rAbajo: 44, z: 1.3, fx: 0.5, fy: 0.3, opacidad: 1, anillo: 1 },
   oculto: { x: 135, y: 313, w: 124, h: 124, rArriba: 62, rAbajo: 62, z: 2.3, fx: 0.5, fy: 0.27, opacidad: 0, anillo: 0 },
 };
 
@@ -36,6 +37,7 @@ export const ESCENARIO: Record<Disposicion, { y: number; h: number }> = {
   completo: { y: 960, h: 340 },
   superior: { y: 920, h: 560 },
   burbuja: { y: 540, h: 760 },
+  tarjeta: { y: 1100, h: 150 },
   oculto: { y: 300, h: 1000 },
 };
 
@@ -44,6 +46,7 @@ export const Y_SUBTITULOS: Record<Disposicion, number> = {
   completo: 1390,
   superior: 826,
   burbuja: 1395,
+  tarjeta: 1385,
   oculto: 1395,
 };
 

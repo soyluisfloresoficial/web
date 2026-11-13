@@ -22,7 +22,7 @@ import { prog } from "./util";
 
 export type PropsLF = { config: ConfigVideo };
 
-const CON_MAQUETA = new Set(["pantallas", "flujo", "sistema", "contador", "comparativa", "antesDespues"]);
+const CON_MAQUETA = new Set(["pantallas", "flujo", "sistema", "contador", "comparativa", "antesDespues", "dividida"]);
 
 function Aviso({ texto, escenas }: { texto: string; escenas: EscenaResuelta[] }) {
   const f = useCurrentFrame();
@@ -98,7 +98,14 @@ export function PlantillaLF({ config }: PropsLF) {
           <Escenario escena={e} config={config} />
         </Sequence>
       ))}
-      <Subtitles subtitulos={config.subtitulos} escenas={escenas} />
+      {!config.sinSubtitulos && (
+        <Subtitles
+          subtitulos={config.subtitulos}
+          escenas={escenas}
+          claves={config.estiloSubtitulos?.claves}
+          maxCaracteres={config.estiloSubtitulos?.maxCaracteres}
+        />
+      )}
       {config.aviso && <Aviso texto={config.aviso} escenas={escenas} />}
       <SoundDesign config={config} escenas={escenas} golpes={golpes} fps={fps} />
       {(config.depuracion?.zonaSegura || config.depuracion?.tiempos) && (

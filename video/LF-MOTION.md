@@ -207,6 +207,10 @@ Todos están en `src/lf/componentes/` y se pueden usar sueltos en otras composic
 | `HeyGenPresenter` | El avatar con sus cuatro disposiciones | `presentador` |
 | `Subtitles` | Subtítulos palabra por palabra; la palabra que suena va en cian | automático |
 | `NotificacionesFlotantes` | Gancho visual: avisos de mensajes que llegan con sonido alrededor del avatar (la mirada queda libre) y un sello «Sin responder» sincronizado con la voz | `capa` |
+| `PantallaDividida` | Presencial frente a digital: el local (dibujado o con foto) y los mensajes que llegan, con contador de consultas pendientes y zoom | `"dividida"` |
+| `Revelacion` | De pantalla desordenada a composición limpia: barrido de luz, rejilla y titular, con acercamiento suave de cámara | `"revelacion"` |
+| `Presentacion` | Rótulo discreto: nombre, especialidad y web, con el avatar en `tarjeta` | `"presentacion"` |
+| `CTAMensaje` | Cierre «escríbeme por privado»: texto grande con la palabra en verde, burbuja que se escribe y se envía (✓✓), logo y web | `cta.estilo: "mensaje"` |
 | `BrandCTA` | Cierre en tres pasos sincronizados con la voz: «Seguir» → «Siguiendo ✓», «Comenta PALABRA» con la caja que se escribe sola y portada 3D del recurso con el logo | `"cta"` |
 | `SoundDesign` | Whoosh en cambios de escena, aviso en cada notificación, impacto en zooms, clic del cursor, pop al seguir y música baja | automático + `sonidos` |
 
@@ -260,13 +264,14 @@ Los tokens están en `src/lf/marca.ts`:
 | `npm run lf:tipos` | Revisa los tipos de TypeScript |
 | `node herramientas/revisar.mjs ID s1 s2…` | Fotogramas sueltos para revisar |
 | `python herramientas/transcribir.py video.mp4 salida.json` | Subtítulos con tiempos por palabra |
+| `node herramientas/generar-musica.mjs salida.wav --duracion 45 --cambio 13.4` | Música propia (100 BPM) que sube de ritmo en el segundo indicado |
 
 ---
 
 ## 8. Licencias
 
 - **Remotion** es gratis para personas y empresas de hasta tres empleados. Si eso cambia, hay que revisar [remotion.dev/license](https://remotion.dev/license).
-- **Efectos de sonido:** los genera `herramientas/preparar.mjs` con síntesis propia, así que no tienen licencia de terceros.
+- **Efectos de sonido y música de fondo:** los generan `herramientas/preparar.mjs` y `herramientas/generar-musica.mjs` con síntesis propia, así que no tienen licencia de terceros. Es una base sencilla; una pista comercial con licencia sonará mejor.
 - **Música y efectos externos:** tienen que tener licencia para redes sociales. Guárdala junto al archivo.
 - **faster-whisper:** licencia MIT. El modelo se descarga la primera vez.
 
@@ -283,3 +288,30 @@ Lo que falta para publicar el piloto y producir en serie:
 - [ ] **Paleta.** Los colores del sistema (cian `#00C2FF`, CTA `#00FFB3`) no son los de la web (azul `#007bff`). Decide si la web adopta los nuevos o el sistema usa los de la web, para no tener dos identidades.
 - [ ] **Gancho.** El titular «¿Podrías atender el doble de clientes?» es una pregunta y la voz no habla del «doble». Si prefieres que coincidan, cambia el texto en `videos/piloto-doble-clientes.ts`.
 - [ ] **Revisión humana.** Mira el MP4 entero con sonido antes de publicar. La transcripción es automática.
+
+---
+
+## 10. Anuncio «¿Estás perdiendo clientes?» · Escríbeme NEGOCIO (13/11/2026)
+
+Configuración: `src/lf/videos/escribeme-negocio.ts`. Composiciones: `LF-EscribemeNegocio` (video) y `LF-EscribemeNegocio-Portada` (sin subtítulos, para la portada).
+
+Exportación (desde `video/`):
+
+```bash
+npx remotion render src/index.ts LF-EscribemeNegocio out/escribeme-negocio_master.mp4 --public-dir=publico --codec=h264 --crf=16 --audio-bitrate=256k
+```
+
+```bash
+npx remotion still src/index.ts LF-EscribemeNegocio-Portada out/escribeme-negocio_portada.png --frame=78 --public-dir=publico
+```
+
+Versiones derivadas (FFmpeg, volumen normalizado a −14 LUFS en dos pasadas):
+
+- **Reels y TikTok:** 1080 × 1920, H.264 High, AAC 192 kbps.
+- **WhatsApp:** 720 × 1280, H.264 Main, AAC 128 kbps, unos 7,5 MB (por debajo de 16 MB).
+
+Pendientes de este anuncio:
+
+- [ ] La foto real del local (opcional): ahora se dibuja con código. Pon una foto propia en `publico/medios/` y añádela en `izquierda.imagen`.
+- [ ] Los mensajes de ejemplo usan «vosotros» («¿Estáis abiertos?», «¿Tenéis…?»), como pediste. Para Latinoamérica conviene una versión con «¿Están abiertos?».
+- [ ] La respuesta a «NEGOCIO» por privado (ManyChat o a mano) tiene que estar lista antes de difundirlo.

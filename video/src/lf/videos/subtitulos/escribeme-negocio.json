@@ -1,0 +1,961 @@
+[
+ {
+  "text": "¿Tienes",
+  "startMs": 0,
+  "endMs": 580,
+  "timestampMs": 290,
+  "confidence": 0.912
+ },
+ {
+  "text": " un",
+  "startMs": 580,
+  "endMs": 740,
+  "timestampMs": 660,
+  "confidence": 0.997
+ },
+ {
+  "text": " restaurante,",
+  "startMs": 740,
+  "endMs": 1240,
+  "timestampMs": 990,
+  "confidence": 0.996
+ },
+ {
+  "text": " una",
+  "startMs": 1400,
+  "endMs": 1540,
+  "timestampMs": 1470,
+  "confidence": 0.995
+ },
+ {
+  "text": " tienda",
+  "startMs": 1540,
+  "endMs": 1860,
+  "timestampMs": 1700,
+  "confidence": 1.0
+ },
+ {
+  "text": " o",
+  "startMs": 1860,
+  "endMs": 2100,
+  "timestampMs": 1980,
+  "confidence": 0.89
+ },
+ {
+  "text": " un",
+  "startMs": 2100,
+  "endMs": 2240,
+  "timestampMs": 2170,
+  "confidence": 0.992
+ },
+ {
+  "text": " pequeño",
+  "startMs": 2240,
+  "endMs": 2500,
+  "timestampMs": 2370,
+  "confidence": 0.999
+ },
+ {
+  "text": " negocio?",
+  "startMs": 2500,
+  "endMs": 2880,
+  "timestampMs": 2690,
+  "confidence": 0.999
+ },
+ {
+  "text": " Entonces",
+  "startMs": 3260,
+  "endMs": 3600,
+  "timestampMs": 3430,
+  "confidence": 0.954
+ },
+ {
+  "text": " dime",
+  "startMs": 3600,
+  "endMs": 3780,
+  "timestampMs": 3690,
+  "confidence": 0.907
+ },
+ {
+  "text": " algo,",
+  "startMs": 3780,
+  "endMs": 4080,
+  "timestampMs": 3930,
+  "confidence": 0.998
+ },
+ {
+  "text": " ¿cuántas",
+  "startMs": 4580,
+  "endMs": 4920,
+  "timestampMs": 4750,
+  "confidence": 0.865
+ },
+ {
+  "text": " veces",
+  "startMs": 4920,
+  "endMs": 5220,
+  "timestampMs": 5070,
+  "confidence": 0.999
+ },
+ {
+  "text": " estás",
+  "startMs": 5220,
+  "endMs": 5480,
+  "timestampMs": 5350,
+  "confidence": 0.977
+ },
+ {
+  "text": " atendiendo",
+  "startMs": 5480,
+  "endMs": 5880,
+  "timestampMs": 5680,
+  "confidence": 0.995
+ },
+ {
+  "text": " clientes",
+  "startMs": 5880,
+  "endMs": 6400,
+  "timestampMs": 6140,
+  "confidence": 0.967
+ },
+ {
+  "text": " y",
+  "startMs": 6400,
+  "endMs": 6580,
+  "timestampMs": 6490,
+  "confidence": 0.911
+ },
+ {
+  "text": " mientras",
+  "startMs": 6580,
+  "endMs": 6860,
+  "timestampMs": 6720,
+  "confidence": 0.861
+ },
+ {
+  "text": " tanto",
+  "startMs": 6860,
+  "endMs": 7180,
+  "timestampMs": 7020,
+  "confidence": 0.999
+ },
+ {
+  "text": " te",
+  "startMs": 7180,
+  "endMs": 7560,
+  "timestampMs": 7370,
+  "confidence": 0.862
+ },
+ {
+  "text": " llegan",
+  "startMs": 7560,
+  "endMs": 7800,
+  "timestampMs": 7680,
+  "confidence": 0.995
+ },
+ {
+  "text": " mensajes",
+  "startMs": 7800,
+  "endMs": 8180,
+  "timestampMs": 7990,
+  "confidence": 0.998
+ },
+ {
+  "text": " que",
+  "startMs": 8180,
+  "endMs": 8340,
+  "timestampMs": 8260,
+  "confidence": 0.997
+ },
+ {
+  "text": " no",
+  "startMs": 8340,
+  "endMs": 8520,
+  "timestampMs": 8430,
+  "confidence": 0.998
+ },
+ {
+  "text": " puedes",
+  "startMs": 8520,
+  "endMs": 8680,
+  "timestampMs": 8600,
+  "confidence": 0.993
+ },
+ {
+  "text": " responder?",
+  "startMs": 8680,
+  "endMs": 9180,
+  "timestampMs": 8930,
+  "confidence": 0.999
+ },
+ {
+  "text": " ¿Y",
+  "startMs": 9480,
+  "endMs": 9580,
+  "timestampMs": 9530,
+  "confidence": 0.607
+ },
+ {
+  "text": " cuando",
+  "startMs": 9580,
+  "endMs": 9800,
+  "timestampMs": 9690,
+  "confidence": 0.972
+ },
+ {
+  "text": " por",
+  "startMs": 9800,
+  "endMs": 10000,
+  "timestampMs": 9900,
+  "confidence": 0.99
+ },
+ {
+  "text": " fin",
+  "startMs": 10000,
+  "endMs": 10100,
+  "timestampMs": 10050,
+  "confidence": 0.994
+ },
+ {
+  "text": " tienes",
+  "startMs": 10100,
+  "endMs": 10340,
+  "timestampMs": 10220,
+  "confidence": 0.996
+ },
+ {
+  "text": " tiempo?",
+  "startMs": 10340,
+  "endMs": 10700,
+  "timestampMs": 10520,
+  "confidence": 0.998
+ },
+ {
+  "text": " Esa",
+  "startMs": 11420,
+  "endMs": 11760,
+  "timestampMs": 11590,
+  "confidence": 0.899
+ },
+ {
+  "text": " persona",
+  "startMs": 11760,
+  "endMs": 11920,
+  "timestampMs": 11840,
+  "confidence": 0.998
+ },
+ {
+  "text": " ya",
+  "startMs": 11920,
+  "endMs": 12140,
+  "timestampMs": 12030,
+  "confidence": 0.995
+ },
+ {
+  "text": " buscó",
+  "startMs": 12140,
+  "endMs": 12380,
+  "timestampMs": 12260,
+  "confidence": 0.979
+ },
+ {
+  "text": " otra",
+  "startMs": 12380,
+  "endMs": 12560,
+  "timestampMs": 12470,
+  "confidence": 0.997
+ },
+ {
+  "text": " opción.",
+  "startMs": 12560,
+  "endMs": 13260,
+  "timestampMs": 12910,
+  "confidence": 0.998
+ },
+ {
+  "text": " Ahora",
+  "startMs": 13360,
+  "endMs": 13640,
+  "timestampMs": 13500,
+  "confidence": 0.971
+ },
+ {
+  "text": " imagina",
+  "startMs": 13640,
+  "endMs": 13960,
+  "timestampMs": 13800,
+  "confidence": 0.994
+ },
+ {
+  "text": " algo",
+  "startMs": 13960,
+  "endMs": 14160,
+  "timestampMs": 14060,
+  "confidence": 0.995
+ },
+ {
+  "text": " diferente.",
+  "startMs": 14160,
+  "endMs": 14620,
+  "timestampMs": 14390,
+  "confidence": 0.999
+ },
+ {
+  "text": " Una",
+  "startMs": 15060,
+  "endMs": 15240,
+  "timestampMs": 15150,
+  "confidence": 0.978
+ },
+ {
+  "text": " página",
+  "startMs": 15240,
+  "endMs": 15560,
+  "timestampMs": 15400,
+  "confidence": 0.999
+ },
+ {
+  "text": " web",
+  "startMs": 15560,
+  "endMs": 15800,
+  "timestampMs": 15680,
+  "confidence": 0.989
+ },
+ {
+  "text": " donde",
+  "startMs": 15800,
+  "endMs": 16020,
+  "timestampMs": 15910,
+  "confidence": 0.978
+ },
+ {
+  "text": " tus",
+  "startMs": 16020,
+  "endMs": 16200,
+  "timestampMs": 16110,
+  "confidence": 0.996
+ },
+ {
+  "text": " clientes",
+  "startMs": 16200,
+  "endMs": 16540,
+  "timestampMs": 16370,
+  "confidence": 0.999
+ },
+ {
+  "text": " puedan",
+  "startMs": 16540,
+  "endMs": 16740,
+  "timestampMs": 16640,
+  "confidence": 0.945
+ },
+ {
+  "text": " encontrar",
+  "startMs": 16740,
+  "endMs": 17160,
+  "timestampMs": 16950,
+  "confidence": 1.0
+ },
+ {
+  "text": " tus",
+  "startMs": 17160,
+  "endMs": 17360,
+  "timestampMs": 17260,
+  "confidence": 0.993
+ },
+ {
+  "text": " productos,",
+  "startMs": 17360,
+  "endMs": 17780,
+  "timestampMs": 17570,
+  "confidence": 0.998
+ },
+ {
+  "text": " servicios",
+  "startMs": 18160,
+  "endMs": 18500,
+  "timestampMs": 18330,
+  "confidence": 0.999
+ },
+ {
+  "text": " y",
+  "startMs": 18500,
+  "endMs": 18900,
+  "timestampMs": 18700,
+  "confidence": 0.918
+ },
+ {
+  "text": " contactar",
+  "startMs": 18900,
+  "endMs": 19320,
+  "timestampMs": 19110,
+  "confidence": 0.997
+ },
+ {
+  "text": " contigo",
+  "startMs": 19320,
+  "endMs": 19640,
+  "timestampMs": 19480,
+  "confidence": 0.997
+ },
+ {
+  "text": " fácilmente.",
+  "startMs": 19640,
+  "endMs": 20220,
+  "timestampMs": 19930,
+  "confidence": 0.994
+ },
+ {
+  "text": " Un",
+  "startMs": 20520,
+  "endMs": 20680,
+  "timestampMs": 20600,
+  "confidence": 0.965
+ },
+ {
+  "text": " asistente",
+  "startMs": 20680,
+  "endMs": 21060,
+  "timestampMs": 20870,
+  "confidence": 0.986
+ },
+ {
+  "text": " de",
+  "startMs": 21060,
+  "endMs": 21180,
+  "timestampMs": 21120,
+  "confidence": 0.999
+ },
+ {
+  "text": " Inteligencia",
+  "startMs": 21180,
+  "endMs": 21580,
+  "timestampMs": 21380,
+  "confidence": 0.812
+ },
+ {
+  "text": " Artificial",
+  "startMs": 21580,
+  "endMs": 22020,
+  "timestampMs": 21800,
+  "confidence": 0.971
+ },
+ {
+  "text": " que",
+  "startMs": 22020,
+  "endMs": 22380,
+  "timestampMs": 22200,
+  "confidence": 0.951
+ },
+ {
+  "text": " responda",
+  "startMs": 22380,
+  "endMs": 22740,
+  "timestampMs": 22560,
+  "confidence": 0.95
+ },
+ {
+  "text": " preguntas",
+  "startMs": 22740,
+  "endMs": 23020,
+  "timestampMs": 22880,
+  "confidence": 0.784
+ },
+ {
+  "text": " habituales,",
+  "startMs": 23020,
+  "endMs": 23760,
+  "timestampMs": 23390,
+  "confidence": 0.998
+ },
+ {
+  "text": " incluso",
+  "startMs": 23780,
+  "endMs": 24100,
+  "timestampMs": 23940,
+  "confidence": 0.998
+ },
+ {
+  "text": " cuando",
+  "startMs": 24100,
+  "endMs": 24320,
+  "timestampMs": 24210,
+  "confidence": 0.998
+ },
+ {
+  "text": " estás",
+  "startMs": 24320,
+  "endMs": 24520,
+  "timestampMs": 24420,
+  "confidence": 0.995
+ },
+ {
+  "text": " ocupado.",
+  "startMs": 24520,
+  "endMs": 24980,
+  "timestampMs": 24750,
+  "confidence": 0.998
+ },
+ {
+  "text": " Y",
+  "startMs": 24980,
+  "endMs": 25300,
+  "timestampMs": 25140,
+  "confidence": 0.054
+ },
+ {
+  "text": " un",
+  "startMs": 25300,
+  "endMs": 25440,
+  "timestampMs": 25370,
+  "confidence": 0.986
+ },
+ {
+  "text": " sistema",
+  "startMs": 25440,
+  "endMs": 25680,
+  "timestampMs": 25560,
+  "confidence": 0.998
+ },
+ {
+  "text": " que",
+  "startMs": 25680,
+  "endMs": 25820,
+  "timestampMs": 25750,
+  "confidence": 0.996
+ },
+ {
+  "text": " te",
+  "startMs": 25820,
+  "endMs": 26000,
+  "timestampMs": 25910,
+  "confidence": 0.984
+ },
+ {
+  "text": " ayude",
+  "startMs": 26000,
+  "endMs": 26180,
+  "timestampMs": 26090,
+  "confidence": 0.992
+ },
+ {
+  "text": " a",
+  "startMs": 26180,
+  "endMs": 26340,
+  "timestampMs": 26260,
+  "confidence": 0.998
+ },
+ {
+  "text": " organizar",
+  "startMs": 26340,
+  "endMs": 26680,
+  "timestampMs": 26510,
+  "confidence": 0.997
+ },
+ {
+  "text": " pedidos,",
+  "startMs": 26680,
+  "endMs": 27120,
+  "timestampMs": 26900,
+  "confidence": 0.995
+ },
+ {
+  "text": " reservas",
+  "startMs": 27380,
+  "endMs": 27740,
+  "timestampMs": 27560,
+  "confidence": 0.997
+ },
+ {
+  "text": " y",
+  "startMs": 27740,
+  "endMs": 27980,
+  "timestampMs": 27860,
+  "confidence": 0.93
+ },
+ {
+  "text": " consultas",
+  "startMs": 27980,
+  "endMs": 28460,
+  "timestampMs": 28220,
+  "confidence": 0.999
+ },
+ {
+  "text": " sin",
+  "startMs": 28460,
+  "endMs": 28660,
+  "timestampMs": 28560,
+  "confidence": 0.786
+ },
+ {
+  "text": " tener",
+  "startMs": 28660,
+  "endMs": 28860,
+  "timestampMs": 28760,
+  "confidence": 0.991
+ },
+ {
+  "text": " que",
+  "startMs": 28860,
+  "endMs": 29040,
+  "timestampMs": 28950,
+  "confidence": 0.998
+ },
+ {
+  "text": " hacerlo",
+  "startMs": 29040,
+  "endMs": 29240,
+  "timestampMs": 29140,
+  "confidence": 0.951
+ },
+ {
+  "text": " todo",
+  "startMs": 29240,
+  "endMs": 29480,
+  "timestampMs": 29360,
+  "confidence": 0.994
+ },
+ {
+  "text": " manualmente.",
+  "startMs": 29480,
+  "endMs": 30260,
+  "timestampMs": 29870,
+  "confidence": 0.998
+ },
+ {
+  "text": " No",
+  "startMs": 30460,
+  "endMs": 30580,
+  "timestampMs": 30520,
+  "confidence": 0.969
+ },
+ {
+  "text": " necesitas",
+  "startMs": 30580,
+  "endMs": 30920,
+  "timestampMs": 30750,
+  "confidence": 0.962
+ },
+ {
+  "text": " ser",
+  "startMs": 30920,
+  "endMs": 31120,
+  "timestampMs": 31020,
+  "confidence": 0.999
+ },
+ {
+  "text": " experto",
+  "startMs": 31120,
+  "endMs": 31420,
+  "timestampMs": 31270,
+  "confidence": 0.987
+ },
+ {
+  "text": " en",
+  "startMs": 31420,
+  "endMs": 31540,
+  "timestampMs": 31480,
+  "confidence": 0.998
+ },
+ {
+  "text": " tecnología",
+  "startMs": 31540,
+  "endMs": 31900,
+  "timestampMs": 31720,
+  "confidence": 0.991
+ },
+ {
+  "text": " para",
+  "startMs": 31900,
+  "endMs": 32200,
+  "timestampMs": 32050,
+  "confidence": 0.996
+ },
+ {
+  "text": " conseguirlo.",
+  "startMs": 32200,
+  "endMs": 32740,
+  "timestampMs": 32470,
+  "confidence": 0.996
+ },
+ {
+  "text": " Soy",
+  "startMs": 32920,
+  "endMs": 33020,
+  "timestampMs": 32970,
+  "confidence": 0.989
+ },
+ {
+  "text": " Luis",
+  "startMs": 33020,
+  "endMs": 33240,
+  "timestampMs": 33130,
+  "confidence": 0.984
+ },
+ {
+  "text": " Flores",
+  "startMs": 33240,
+  "endMs": 33520,
+  "timestampMs": 33380,
+  "confidence": 0.976
+ },
+ {
+  "text": " y",
+  "startMs": 33520,
+  "endMs": 33740,
+  "timestampMs": 33630,
+  "confidence": 0.88
+ },
+ {
+  "text": " ayudo",
+  "startMs": 33740,
+  "endMs": 33920,
+  "timestampMs": 33830,
+  "confidence": 0.906
+ },
+ {
+  "text": " a",
+  "startMs": 33920,
+  "endMs": 34060,
+  "timestampMs": 33990,
+  "confidence": 0.997
+ },
+ {
+  "text": " negocios",
+  "startMs": 34060,
+  "endMs": 34360,
+  "timestampMs": 34210,
+  "confidence": 0.982
+ },
+ {
+  "text": " y",
+  "startMs": 34360,
+  "endMs": 34580,
+  "timestampMs": 34470,
+  "confidence": 0.992
+ },
+ {
+  "text": " emprendedores",
+  "startMs": 34580,
+  "endMs": 35040,
+  "timestampMs": 34810,
+  "confidence": 0.996
+ },
+ {
+  "text": " a",
+  "startMs": 35040,
+  "endMs": 35260,
+  "timestampMs": 35150,
+  "confidence": 0.984
+ },
+ {
+  "text": " mejorar",
+  "startMs": 35260,
+  "endMs": 35480,
+  "timestampMs": 35370,
+  "confidence": 0.998
+ },
+ {
+  "text": " su",
+  "startMs": 35480,
+  "endMs": 35640,
+  "timestampMs": 35560,
+  "confidence": 0.997
+ },
+ {
+  "text": " presencia",
+  "startMs": 35640,
+  "endMs": 35980,
+  "timestampMs": 35810,
+  "confidence": 0.998
+ },
+ {
+  "text": " en",
+  "startMs": 35980,
+  "endMs": 36200,
+  "timestampMs": 36090,
+  "confidence": 0.997
+ },
+ {
+  "text": " internet",
+  "startMs": 36200,
+  "endMs": 36400,
+  "timestampMs": 36300,
+  "confidence": 0.552
+ },
+ {
+  "text": " y",
+  "startMs": 36400,
+  "endMs": 36640,
+  "timestampMs": 36520,
+  "confidence": 0.965
+ },
+ {
+  "text": " simplificar",
+  "startMs": 36640,
+  "endMs": 37080,
+  "timestampMs": 36860,
+  "confidence": 0.987
+ },
+ {
+  "text": " su",
+  "startMs": 37080,
+  "endMs": 37220,
+  "timestampMs": 37150,
+  "confidence": 0.998
+ },
+ {
+  "text": " trabajo",
+  "startMs": 37220,
+  "endMs": 37480,
+  "timestampMs": 37350,
+  "confidence": 0.999
+ },
+ {
+  "text": " con",
+  "startMs": 37480,
+  "endMs": 37700,
+  "timestampMs": 37590,
+  "confidence": 0.997
+ },
+ {
+  "text": " Inteligencia",
+  "startMs": 37700,
+  "endMs": 38080,
+  "timestampMs": 37890,
+  "confidence": 0.78
+ },
+ {
+  "text": " Artificial.",
+  "startMs": 38080,
+  "endMs": 38560,
+  "timestampMs": 38320,
+  "confidence": 0.981
+ },
+ {
+  "text": " ¿Quieres",
+  "startMs": 39020,
+  "endMs": 39240,
+  "timestampMs": 39130,
+  "confidence": 0.975
+ },
+ {
+  "text": " saber",
+  "startMs": 39240,
+  "endMs": 39520,
+  "timestampMs": 39380,
+  "confidence": 0.999
+ },
+ {
+  "text": " qué",
+  "startMs": 39520,
+  "endMs": 39900,
+  "timestampMs": 39710,
+  "confidence": 0.752
+ },
+ {
+  "text": " podríamos",
+  "startMs": 39900,
+  "endMs": 40320,
+  "timestampMs": 40110,
+  "confidence": 0.991
+ },
+ {
+  "text": " mejorar",
+  "startMs": 40320,
+  "endMs": 40620,
+  "timestampMs": 40470,
+  "confidence": 0.994
+ },
+ {
+  "text": " en",
+  "startMs": 40620,
+  "endMs": 40780,
+  "timestampMs": 40700,
+  "confidence": 0.997
+ },
+ {
+  "text": " tu",
+  "startMs": 40780,
+  "endMs": 40880,
+  "timestampMs": 40830,
+  "confidence": 0.993
+ },
+ {
+  "text": " negocio?",
+  "startMs": 40880,
+  "endMs": 41200,
+  "timestampMs": 41040,
+  "confidence": 0.997
+ },
+ {
+  "text": " Escríbeme",
+  "startMs": 41700,
+  "endMs": 42060,
+  "timestampMs": 41880,
+  "confidence": 0.947
+ },
+ {
+  "text": " por",
+  "startMs": 42060,
+  "endMs": 42260,
+  "timestampMs": 42160,
+  "confidence": 0.991
+ },
+ {
+  "text": " privado",
+  "startMs": 42260,
+  "endMs": 42560,
+  "timestampMs": 42410,
+  "confidence": 0.994
+ },
+ {
+  "text": " la",
+  "startMs": 42560,
+  "endMs": 42700,
+  "timestampMs": 42630,
+  "confidence": 0.996
+ },
+ {
+  "text": " palabra",
+  "startMs": 42700,
+  "endMs": 43000,
+  "timestampMs": 42850,
+  "confidence": 0.999
+ },
+ {
+  "text": " negocio.",
+  "startMs": 43000,
+  "endMs": 43600,
+  "timestampMs": 43300,
+  "confidence": 0.604
+ },
+ {
+  "text": " Lo",
+  "startMs": 43840,
+  "endMs": 44000,
+  "timestampMs": 43920,
+  "confidence": 0.961
+ },
+ {
+  "text": " hablamos",
+  "startMs": 44000,
+  "endMs": 44220,
+  "timestampMs": 44110,
+  "confidence": 0.998
+ },
+ {
+  "text": " sin",
+  "startMs": 44220,
+  "endMs": 44440,
+  "timestampMs": 44330,
+  "confidence": 0.998
+ },
+ {
+  "text": " compromiso.",
+  "startMs": 44440,
+  "endMs": 44840,
+  "timestampMs": 44640,
+  "confidence": 0.999
+ }
+]

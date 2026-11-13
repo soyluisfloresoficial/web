@@ -7,7 +7,10 @@ import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig } 
 import { AnimatedCounter, Comparativa } from "./componentes/AnimatedCounter";
 import { AutomationFlow } from "./componentes/AutomationFlow";
 import { BeforeAfterReveal } from "./componentes/BeforeAfterReveal";
-import { BrandCTA, type MomentosCTA } from "./componentes/BrandCTA";
+import { BrandCTA, CTAMensaje, type MomentosCTA } from "./componentes/BrandCTA";
+import { PantallaDividida } from "./componentes/PantallaDividida";
+import { Presentacion } from "./componentes/Presentacion";
+import { Revelacion } from "./componentes/Revelacion";
 import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
 import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
@@ -41,7 +44,19 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
   if (c?.tipo === "cta") {
     return (
       <AbsoluteFill style={{ opacity: salida }}>
-        <BrandCTA cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
+        {config.cta.estilo === "mensaje" ? (
+          <CTAMensaje cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
+        ) : (
+          <BrandCTA cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
+        )}
+      </AbsoluteFill>
+    );
+  }
+
+  if (c?.tipo === "revelacion") {
+    return (
+      <AbsoluteFill style={{ opacity: salida, zIndex: 10 }}>
+        <Revelacion titular={c.titular} destacar={c.destacar} inicioEscenaFrame={escena.desde} />
       </AbsoluteFill>
     );
   }
@@ -91,6 +106,22 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
         ))}
       </Encajar>
     );
+  } else if (c?.tipo === "dividida") {
+    const zoomFrame =
+      c.zoomMensajes === undefined
+        ? undefined
+        : Math.round((resolverMomento(c.zoomMensajes, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps);
+    contenido = (
+      <Encajar w={936} h={720} maxW={936} maxH={altoContenido}>
+        <PantallaDividida izquierda={c.izquierda} derecha={c.derecha} zoomFrame={zoomFrame} />
+      </Encajar>
+    );
+  } else if (c?.tipo === "presentacion") {
+    contenido = (
+      <div style={{ width: ANCHO_UTIL, display: "flex", justifyContent: "center" }}>
+        <Presentacion nombre={c.nombre} linea={c.linea} web={c.web} />
+      </div>
+    );
   } else if (c?.tipo === "flujo") {
     contenido = <AutomationFlow nodos={c.nodos} titulo={c.titulo} ancho={ANCHO_UTIL} alto={Math.min(780, altoContenido)} duracion={dur} />;
   } else if (c?.tipo === "contador") {
@@ -114,7 +145,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
   } else if (c?.tipo === "sistema") {
     contenido = (
       <Encajar w={920} h={760} maxW={ANCHO_UTIL + 40} maxH={altoContenido}>
-        <SistemaReveal nodos={c.nodos} titulo={c.titulo} />
+        <SistemaReveal nodos={c.nodos} titulo={c.titulo} centro={c.centro} />
       </Encajar>
     );
   }
@@ -142,6 +173,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
             tamano={alLado ? Math.min(tamTitular, 60) : tamTitular}
             ancho={alLado ? 1080 - 352 - ZONA_SEGURA.derecha : ANCHO_UTIL}
             alineacion={alLado ? "left" : "center"}
+            colorDestacado={titular.colorDestacado}
           />
         </div>
       )}

@@ -30,7 +30,7 @@ export const TIMELINE_BASE: Record<Seccion, readonly [number, number]> = {
 export type Momento = number | { ancla: string; ajuste?: number };
 
 /** Dónde va el avatar durante la escena. Los cambios se animan solos. */
-export type Disposicion = "completo" | "superior" | "burbuja" | "oculto";
+export type Disposicion = "completo" | "superior" | "burbuja" | "tarjeta" | "oculto";
 
 export type Sonido = {
   /** Archivo dentro de publico/ (por ejemplo "sfx/clic.wav"). */
@@ -50,8 +50,9 @@ export type Zoom = {
 
 export type Titular = {
   texto: string;
-  /** Palabras que van con el degradado de marca. */
+  /** Palabras destacadas (degradado de marca o cian). */
   destacar?: string[];
+  colorDestacado?: "degradado" | "cian";
   posicion?: "arriba" | "centro";
   /** Si es true, cada palabra aparece cuando la voz la dice. */
   sincronizar?: boolean;
@@ -66,6 +67,7 @@ export type PantallaMaqueta =
   | { tipo: "crm"; columnas: { titulo: string; tarjetas: string[] }[]; mover?: { tarjeta: string; a: number } }
   | { tipo: "calendario"; dia: string; huecos: { hora: string; texto?: string; nuevo?: boolean }[] }
   | { tipo: "notificacion"; titulo: string; texto: string }
+  | { tipo: "web"; negocio: string; lema: string; secciones: string[]; boton: string }
   | { tipo: "pendiente"; descripcion: string };
 
 /** Una pantalla puede ser una maqueta, una imagen o una grabación real. */
@@ -115,7 +117,17 @@ export type Contenido =
       antes: { titulo: string; puntos: string[] };
       despues: { titulo: string; puntos: string[] };
     }
-  | { tipo: "sistema"; nodos: NodoFlujo[]; titulo?: string }
+  | { tipo: "sistema"; nodos: NodoFlujo[]; titulo?: string; centro?: NodoFlujo }
+  | {
+      /** Pantalla dividida: lo presencial a la izquierda, lo digital a la derecha. */
+      tipo: "dividida";
+      izquierda: { etiqueta: string; imagen?: string };
+      derecha: { etiqueta: string; mensajes: string[]; contador?: { etiqueta: string; hasta: number } };
+      /** Momento del zoom sobre los mensajes. */
+      zoomMensajes?: Momento;
+    }
+  | { tipo: "revelacion"; titular: string; destacar?: string[] }
+  | { tipo: "presentacion"; nombre: string; linea: string; web: string }
   | { tipo: "cta" };
 
 /**
@@ -168,6 +180,11 @@ export type ConfigCTA = {
    * mostrar el recurso. Sin ellas, los pasos entran escalonados.
    */
   momentos?: { seguir?: string; comentar?: string; recurso?: string };
+  /** «comentario» (Comenta PALABRA + recurso) o «mensaje» (escríbeme por privado). */
+  estilo?: "comentario" | "mensaje";
+  /** Para el estilo «mensaje»: línea bajo el texto y web. */
+  nota?: string;
+  web?: string;
 };
 
 export type ConfigVideo = {
@@ -187,4 +204,8 @@ export type ConfigVideo = {
   /** Texto pequeño fijo, por ejemplo «Ejemplo ilustrativo». */
   aviso?: string;
   depuracion?: { zonaSegura?: boolean; tiempos?: boolean };
+  /** Palabras clave que van en cian en los subtítulos y máximo de caracteres por bloque (≈ 2 líneas). */
+  estiloSubtitulos?: { claves?: string[]; maxCaracteres?: number };
+  /** Oculta los subtítulos (por ejemplo, para la portada). */
+  sinSubtitulos?: boolean;
 };

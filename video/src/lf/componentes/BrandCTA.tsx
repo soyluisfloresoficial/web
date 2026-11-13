@@ -179,3 +179,83 @@ export function BrandCTA({ cta, momentos }: { cta: ConfigCTA; momentos: Momentos
     </div>
   );
 }
+
+/**
+ * Cierre «escríbeme por privado»: texto grande con la palabra en verde, una
+ * burbuja de mensaje que se escribe y se envía (✓✓), la nota y la marca.
+ * Pensado con el avatar en la mitad superior (disposición «superior»).
+ */
+export function CTAMensaje({ cta, momentos }: { cta: ConfigCTA; momentos: MomentosCTA }) {
+  const f = useCurrentFrame();
+  const izq = ZONA_SEGURA.izquierda;
+  const ancho = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
+  const t1 = prog(f, 4, 14, CURVA.impacto);
+  const t2 = prog(f, 10, 14, CURVA.impacto);
+  const burbuja = prog(f, momentos.comentar, 12, CURVA.impacto);
+  const inicioTecleo = momentos.comentar + 8;
+  const letras = Math.max(0, Math.min(cta.palabra.length, Math.floor((f - inicioTecleo) / 3)));
+  const enviado = f >= inicioTecleo + cta.palabra.length * 3 + 6;
+  const marca = prog(f, momentos.comentar + 24, 14, CURVA.impacto);
+  const latido = 1 + 0.035 * Math.sin(f / 5);
+
+  return (
+    <div style={{ position: "absolute", inset: 0 }}>
+      <div style={{ position: "absolute", left: izq, width: ancho, top: 912, textAlign: "center" }}>
+        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 88, lineHeight: 1, color: COLOR.tinta, letterSpacing: "-0.02em", opacity: t1, transform: `translateY(${(1 - t1) * 30}px)` }}>
+          {cta.accion}
+        </div>
+        <div
+          style={{
+            display: "inline-block",
+            marginTop: 14,
+            padding: "6px 34px",
+            borderRadius: 22,
+            background: COLOR.cta,
+            color: COLOR.base,
+            fontFamily: FUENTE.display,
+            fontWeight: 800,
+            fontSize: 112,
+            lineHeight: 1.05,
+            opacity: t2,
+            transform: `scale(${(0.7 + 0.3 * t2) * latido}) rotate(-2deg)`,
+            boxShadow: "0 0 60px rgb(0 255 179 / 0.5)",
+          }}
+        >
+          {cta.palabra}
+        </div>
+      </div>
+
+      {/* Burbuja de mensaje saliente */}
+      <div style={{ position: "absolute", right: ZONA_SEGURA.derecha + 10, top: 1186, opacity: burbuja, transform: `translateY(${(1 - burbuja) * 30}px) scale(${0.9 + 0.1 * burbuja})`, transformOrigin: "right bottom" }}>
+        <div
+          style={{
+            minWidth: 260,
+            padding: "16px 22px",
+            borderRadius: "24px 24px 6px 24px",
+            background: "linear-gradient(135deg, rgb(0 194 255 / 0.3), rgb(139 92 246 / 0.3))",
+            border: "1.5px solid rgb(0 194 255 / 0.55)",
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            justifyContent: "space-between",
+          }}
+        >
+          <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 40, color: COLOR.tinta }}>
+            {cta.palabra.slice(0, letras)}
+            {!enviado && f % 20 < 10 && <span style={{ color: COLOR.cta }}>|</span>}
+          </span>
+          <span style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 22, color: enviado ? COLOR.cian : COLOR.apagado }}>{enviado ? "✓✓" : "✓"}</span>
+        </div>
+      </div>
+      {cta.nota && (
+        <div style={{ position: "absolute", left: izq, top: 1206, width: 420, fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 26, lineHeight: 1.3, color: COLOR.suave, opacity: burbuja }}>{cta.nota}</div>
+      )}
+
+      {/* Marca */}
+      <div style={{ position: "absolute", left: 0, right: 0, top: 1340, display: "flex", justifyContent: "center", alignItems: "center", gap: 18, opacity: marca }}>
+        <Img src={staticFile("logo/monograma-80.webp")} style={{ height: 50, width: "auto" }} />
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 700, fontSize: 32, color: COLOR.tinta, letterSpacing: "0.02em" }}>{cta.web ?? ""}</span>
+      </div>
+    </div>
+  );
+}

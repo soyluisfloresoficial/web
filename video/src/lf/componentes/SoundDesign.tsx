@@ -14,6 +14,7 @@ import { resolverMomento, type EscenaResuelta } from "../tiempo";
 import { momentosCTA } from "../Escenario";
 import { frameClic } from "./GuidedCursor";
 import { PASO_AVISO } from "./NotificacionesFlotantes";
+import { PASO_MENSAJE } from "./PantallaDividida";
 import type { GolpeZoom } from "./ImpactZoom";
 
 type Cue = { frame: number; archivo: string; volumen: number };
@@ -33,6 +34,17 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
       cues.push({ frame: e.desde + m.seguir + 10, archivo: "sfx/pop.wav", volumen: 0.45 });
       cues.push({ frame: e.desde + m.comentar + 10 + config.cta.palabra.length * 3 + 6, archivo: "sfx/clic.wav", volumen: 0.5 });
       cues.push({ frame: Math.max(0, e.desde + m.recurso - 4), archivo: "sfx/whoosh.wav", volumen: 0.3 });
+    }
+    if (e.contenido?.tipo === "dividida" && auto) {
+      e.contenido.derecha.mensajes.forEach((_, i) => cues.push({ frame: e.desde + 10 + i * PASO_MENSAJE, archivo: "sfx/aviso.wav", volumen: 0.28 }));
+    }
+    if (e.contenido?.tipo === "revelacion" && auto) {
+      cues.push({ frame: e.desde + 2, archivo: "sfx/impacto.wav", volumen: 0.45 });
+    }
+    if (e.contenido?.tipo === "flujo" && auto) {
+      const n = e.contenido.nodos.length;
+      const paso = Math.max(10, Math.min(36, Math.floor(((e.hasta - e.desde) * 0.7) / Math.max(1, n))));
+      for (let i = 1; i < n; i++) cues.push({ frame: e.desde + i * paso + 2, archivo: "sfx/clic.wav", volumen: 0.3 });
     }
     if (e.capa?.tipo === "notificaciones" && auto) {
       e.capa.avisos.slice(0, 4).forEach((_, i) => cues.push({ frame: e.desde + 2 + i * PASO_AVISO, archivo: "sfx/aviso.wav", volumen: 0.32 }));

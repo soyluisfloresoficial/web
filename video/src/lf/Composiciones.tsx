@@ -8,6 +8,7 @@ import { PlantillaLF, type PropsLF } from "./PlantillaLF";
 import { duracionDesdeSubtitulos } from "./tiempo";
 import { pilotoDobleClientes } from "./videos/piloto-doble-clientes";
 import { plantillaMaestra } from "./videos/plantilla";
+import { escribemeNegocio, escribemeNegocioPortada } from "./videos/escribeme-negocio";
 
 /** Duración: fija, o la del video del avatar, o el final de la voz + 1,5 s. */
 const calcularMetadatos: CalculateMetadataFunction<PropsLF> = async ({ props }) => {
@@ -37,6 +38,26 @@ export function ComposicionesLF() {
         id="LF-Piloto-DobleClientes"
         component={PlantillaLF}
         defaultProps={{ config: pilotoDobleClientes }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-EscribemeNegocio"
+        component={PlantillaLF}
+        defaultProps={{ config: escribemeNegocio }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-EscribemeNegocio-Portada"
+        component={PlantillaLF}
+        defaultProps={{ config: escribemeNegocioPortada }}
         calculateMetadata={calcularMetadatos}
         durationInFrames={60 * LIENZO.fps}
         fps={LIENZO.fps}

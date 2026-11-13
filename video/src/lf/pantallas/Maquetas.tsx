@@ -190,6 +190,46 @@ function Notificacion({ p, f }: { p: Extract<PantallaMaqueta, { tipo: "notificac
   );
 }
 
+function Web({ p, f }: { p: Extract<PantallaMaqueta, { tipo: "web" }>; f: number }) {
+  const hero = prog(f, 4, 14, CURVA.impacto);
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 26px", borderBottom: `1px solid ${COLOR.linea}` }}>
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 26, color: COLOR.tinta }}>{p.negocio}</span>
+        <span style={{ display: "flex", gap: 18, fontFamily: FUENTE.texto, fontSize: 18, color: COLOR.apagado }}>
+          {p.secciones.slice(0, 3).map((s) => (
+            <span key={s}>{s}</span>
+          ))}
+        </span>
+      </div>
+      <div
+        style={{
+          margin: 18,
+          borderRadius: 18,
+          padding: "26px 28px",
+          background: "linear-gradient(135deg, rgb(0 194 255 / 0.18), rgb(139 92 246 / 0.22))",
+          opacity: hero,
+          transform: `translateY(${(1 - hero) * 20}px)`,
+        }}
+      >
+        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 36, lineHeight: 1.1, color: COLOR.tinta }}>{p.lema}</div>
+        <div style={{ marginTop: 16, display: "inline-block", padding: "12px 26px", borderRadius: 12, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 24 }}>{p.boton}</div>
+      </div>
+      <div style={{ display: "flex", gap: 14, padding: "0 18px" }}>
+        {p.secciones.map((s, i) => {
+          const t = prog(f, 12 + i * 5, 12, CURVA.impacto);
+          return (
+            <div key={s} style={{ flex: 1, borderRadius: 14, background: COLOR.superficie2, border: `1px solid ${COLOR.linea}`, padding: 14, opacity: t, transform: `translateY(${(1 - t) * 24}px)` }}>
+              <div style={{ height: 70, borderRadius: 10, background: `linear-gradient(135deg, ${COLOR.superficie}, ${COLOR.linea})`, marginBottom: 10 }} />
+              <div style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 19, color: COLOR.tinta }}>{s}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function Maqueta({ pantalla }: { pantalla: PantallaMaqueta }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -204,6 +244,8 @@ export function Maqueta({ pantalla }: { pantalla: PantallaMaqueta }) {
       return <Calendario p={pantalla} f={f} />;
     case "notificacion":
       return <Notificacion p={pantalla} f={f} />;
+    case "web":
+      return <Web p={pantalla} f={f} />;
     case "pendiente":
       return <Placeholder texto={pantalla.descripcion} />;
   }

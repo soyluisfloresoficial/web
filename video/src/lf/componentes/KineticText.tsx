@@ -20,7 +20,9 @@ export function KineticText({
   ancho = 900,
   alineacion = "center",
   retraso = 4,
+  colorDestacado = "degradado",
 }: {
+  colorDestacado?: "degradado" | "cian";
   texto: string;
   destacar?: string[];
   sincronizar?: boolean;
@@ -85,8 +87,9 @@ export function KineticText({
               opacity: t,
               transform: `translateY(${(1 - t) * 38}px) scale(${0.9 + 0.1 * t})`,
               filter: t < 1 ? `blur(${(1 - t) * 14}px)` : undefined,
-              textShadow: resaltada ? undefined : "0 6px 30px rgb(0 0 0 / 0.55)",
-              ...(resaltada
+              ...(resaltada && colorDestacado === "cian"
+                ? { color: COLOR.cian, textShadow: "0 0 30px rgb(0 194 255 / 0.55), 0 6px 30px rgb(0 0 0 / 0.55)" }
+                : resaltada
                 ? {
                     backgroundImage: DEGRADADO,
                     WebkitBackgroundClip: "text",
@@ -94,7 +97,7 @@ export function KineticText({
                     color: "transparent",
                     filter: `drop-shadow(0 0 24px rgb(0 194 255 / 0.35))${t < 1 ? ` blur(${(1 - t) * 14}px)` : ""}`,
                   }
-                : {}),
+                : { textShadow: "0 6px 30px rgb(0 0 0 / 0.55)" }),
             }}
           >
             {p}
