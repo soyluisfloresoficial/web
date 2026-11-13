@@ -13,6 +13,11 @@ texto de la pantalla están en `public/video/piloto.vtt`: si cambias un texto de
 video, cámbialo también ahí. La lista de
 efectos está en `SISTEMA-DISENO.md`.
 
+> **LF Motion System (13/11/2026):** sistema de reels verticales con el avatar
+> de HeyGen (subtítulos, pantallas 3D, flujos, CTA y sonido). Guía completa en
+> [`LF-MOTION.md`](LF-MOTION.md). Usa su propia carpeta `publico/` (no se sube a
+> GitHub) para que el avatar nunca acabe en la web.
+
 ## Qué hay
 
 | Composición | Formato | Para qué |

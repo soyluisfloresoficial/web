@@ -1,5 +1,6 @@
 import { Composition } from "remotion";
 import { Piloto, DURACION } from "./Piloto";
+import { ComposicionesLF } from "./lf/Composiciones";
 
 /**
  * Composiciones del proyecto. El piloto (27/10/2026) cuenta la misma historia
@@ -48,5 +49,7 @@ export const Raiz = () => (
       height={1920}
       defaultProps={{ vertical: true, marca: false }}
     />
+    {/* LF Motion System (13/11/2026): reels con avatar de HeyGen. Ver LF-MOTION.md */}
+    <ComposicionesLF />
   </>
 );

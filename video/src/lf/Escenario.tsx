@@ -1,0 +1,140 @@
+/**
+ * Dibuja una escena: el titular cinético y el contenido, colocados en la zona
+ * libre que deja el avatar (disposicion.ts) y escalados para que quepan.
+ */
+import type { ReactNode } from "react";
+import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { AnimatedCounter, Comparativa } from "./componentes/AnimatedCounter";
+import { AutomationFlow } from "./componentes/AutomationFlow";
+import { BeforeAfterReveal } from "./componentes/BeforeAfterReveal";
+import { BrandCTA } from "./componentes/BrandCTA";
+import { FloatingScreen } from "./componentes/FloatingScreen";
+import { KineticText } from "./componentes/KineticText";
+import { SistemaReveal } from "./componentes/SistemaReveal";
+import { ESCENARIO } from "./disposicion";
+import { ZONA_SEGURA } from "./marca";
+import type { ConfigVideo } from "./tipos";
+import type { EscenaResuelta } from "./tiempo";
+
+const ANCHO_UTIL = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
+
+/** Encaja un bloque de tamaño natural (w × h) en el espacio disponible. */
+function Encajar({ w, h, maxW, maxH, children }: { w: number; h: number; maxW: number; maxH: number; children: ReactNode }) {
+  const s = Math.min(1, maxW / w, maxH / h);
+  return (
+    <div style={{ width: w * s, height: h * s, position: "relative" }}>
+      <div style={{ width: w, height: h, transform: `scale(${s})`, transformOrigin: "top left", position: "absolute" }}>{children}</div>
+    </div>
+  );
+}
+
+export function Escenario({ escena, config }: { escena: EscenaResuelta; config: ConfigVideo }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const dur = escena.hasta - escena.desde;
+  const disp = escena.presentador ?? "completo";
+  const zona = ESCENARIO[disp];
+  const salida = interpolate(f, [dur - 7, dur], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const c = escena.contenido;
+
+  if (c?.tipo === "cta") {
+    return (
+      <AbsoluteFill style={{ opacity: salida }}>
+        <BrandCTA cta={config.cta} />
+      </AbsoluteFill>
+    );
+  }
+
+  const titular = escena.titular;
+  const tamTitular = titular?.tamano ?? (c && c.tipo !== "ninguno" ? 64 : 92);
+  const altoTitular = titular ? Math.ceil(titular.texto.length / (ANCHO_UTIL / (tamTitular * 0.55))) * tamTitular * 1.12 + 30 : 0;
+  // Con el avatar en burbuja, el titular va a su derecha y el contenido
+  // aprovecha toda la zona de abajo.
+  const alLado = !!titular && disp === "burbuja" && titular.posicion !== "arriba";
+  const yTitular = titular?.posicion === "arriba" ? ZONA_SEGURA.arriba + 20 : alLado ? 262 : zona.y;
+  const yContenido = titular && titular.posicion !== "arriba" && !alLado ? zona.y + altoTitular : zona.y;
+  const altoContenido = Math.max(200, zona.y + zona.h - yContenido);
+
+  let contenido: ReactNode = null;
+  if (c?.tipo === "pantallas") {
+    const total = c.pantallas.length;
+    contenido = (
+      <Encajar w={1000} h={total > 1 ? 760 : 600} maxW={ANCHO_UTIL + 60} maxH={altoContenido}>
+        {c.pantallas.map((p, i) => (
+          <Sequence key={i} from={Math.round((p.retraso ?? 0) * fps)} layout="none">
+            <FloatingScreen
+              fuente={p.fuente}
+              titulo={p.titulo}
+              cursor={p.cursor}
+              indice={total > 1 ? i : 0}
+              total={total}
+              inclinacion={c.inclinacion}
+              entrada={escena.entrada}
+              ancho={total > 1 ? 820 : 900}
+              alto={total > 1 ? 430 : 560}
+            />
+          </Sequence>
+        ))}
+      </Encajar>
+    );
+  } else if (c?.tipo === "flujo") {
+    contenido = <AutomationFlow nodos={c.nodos} titulo={c.titulo} ancho={ANCHO_UTIL} alto={Math.min(780, altoContenido)} duracion={dur} />;
+  } else if (c?.tipo === "contador") {
+    contenido = (
+      <Encajar w={ANCHO_UTIL} h={400} maxW={ANCHO_UTIL} maxH={altoContenido}>
+        <AnimatedCounter etiqueta={c.etiqueta} desde={c.desde} hasta={c.hasta} prefijo={c.prefijo} sufijo={c.sufijo} nota={c.nota} />
+      </Encajar>
+    );
+  } else if (c?.tipo === "comparativa") {
+    contenido = (
+      <Encajar w={880} h={140 + c.filas.length * 150} maxW={ANCHO_UTIL} maxH={altoContenido}>
+        <Comparativa titulo={c.titulo} filas={c.filas} etiquetas={c.etiquetas} nota={c.nota} />
+      </Encajar>
+    );
+  } else if (c?.tipo === "antesDespues") {
+    contenido = (
+      <Encajar w={900} h={520} maxW={ANCHO_UTIL} maxH={altoContenido}>
+        <BeforeAfterReveal antes={c.antes} despues={c.despues} />
+      </Encajar>
+    );
+  } else if (c?.tipo === "sistema") {
+    contenido = (
+      <Encajar w={920} h={760} maxW={ANCHO_UTIL + 40} maxH={altoContenido}>
+        <SistemaReveal nodos={c.nodos} titulo={c.titulo} />
+      </Encajar>
+    );
+  }
+
+  return (
+    <AbsoluteFill style={{ opacity: salida, zIndex: 10 }}>
+      {titular && (
+        <div
+          style={{
+            position: "absolute",
+            left: alLado ? 352 : ZONA_SEGURA.izquierda,
+            width: alLado ? 1080 - 352 - ZONA_SEGURA.derecha : ANCHO_UTIL,
+            top: yTitular,
+            display: "flex",
+            justifyContent: alLado ? "flex-start" : "center",
+          }}
+        >
+          <KineticText
+            texto={titular.texto}
+            destacar={titular.destacar}
+            sincronizar={titular.sincronizar}
+            subtitulos={config.subtitulos}
+            inicioEscenaFrame={escena.desde}
+            tamano={alLado ? Math.min(tamTitular, 60) : tamTitular}
+            ancho={alLado ? 1080 - 352 - ZONA_SEGURA.derecha : ANCHO_UTIL}
+            alineacion={alLado ? "left" : "center"}
+          />
+        </div>
+      )}
+      {contenido && (
+        <div style={{ position: "absolute", left: 0, right: 0, top: yContenido, height: altoContenido, display: "flex", justifyContent: "center", alignItems: "center" }}>
+          {contenido}
+        </div>
+      )}
+    </AbsoluteFill>
+  );
+}

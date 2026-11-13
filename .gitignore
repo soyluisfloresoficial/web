@@ -22,3 +22,8 @@ video/out/
 
 # Secretos locales de wrangler dev (la clave real va en el panel de Cloudflare)
 .dev.vars
+
+# LF Motion System (video/publico): copias de marca, sonidos generados y medios
+# (avatar, música, grabaciones). Se regeneran con npm run lf:preparar y los
+# medios no se suben: el repositorio es público.
+video/publico/
