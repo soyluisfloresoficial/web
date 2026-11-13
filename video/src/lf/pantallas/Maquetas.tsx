@@ -3,7 +3,7 @@
  * marcas de terceros) y su contenido sale de la configuración del video.
  * Todo aparece por pasos según el fotograma de la escena.
  */
-import { useCurrentFrame, useVideoConfig } from "remotion";
+import { Img, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Icono } from "../componentes/Icono";
 import { Placeholder } from "../componentes/Placeholder";
 import { COLOR, CURVA, FUENTE } from "../marca";
@@ -210,12 +210,23 @@ function Web({ p, f, compacto }: { p: Extract<PantallaMaqueta, { tipo: "web" }>;
           background: "linear-gradient(135deg, rgb(0 194 255 / 0.18), rgb(139 92 246 / 0.22))",
           opacity: hero,
           transform: `translateY(${(1 - hero) * 20}px)`,
+          position: "relative",
+          overflow: "hidden",
+          flexShrink: 0,
         }}
       >
+        {p.imagen && (
+          <>
+            <Img src={staticFile(p.imagen)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: `scale(${1.05 + f * 0.0008})` }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgb(7 9 13 / 0.82) 0%, rgb(7 9 13 / 0.45) 60%, rgb(7 9 13 / 0.1) 100%)" }} />
+          </>
+        )}
+        <div style={{ position: "relative" }}>
         <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: compacto ? 32 : 36, lineHeight: 1.1, color: COLOR.tinta }}>{p.lema}</div>
         <div style={{ marginTop: compacto ? 10 : 16, display: "inline-block", padding: "12px 26px", borderRadius: 12, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 24 }}>{p.boton}</div>
+        </div>
       </div>
-      <div style={{ display: "flex", gap: 14, padding: compacto ? "0 12px" : "0 18px" }}>
+      <div style={{ display: "flex", gap: 14, padding: compacto ? "0 12px" : "0 18px", flex: 1, minHeight: 0, overflow: "hidden" }}>
         {p.secciones.map((s, i) => {
           const t = prog(f, 12 + i * 5, 12, CURVA.impacto);
           return (

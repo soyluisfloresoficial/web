@@ -313,6 +313,8 @@ Versiones derivadas (FFmpeg, volumen normalizado a −14 LUFS en dos pasadas):
 
 Formato (13/11/2026, a petición del titular): pantalla dividida con el avatar al 65 % abajo y los gráficos al 35 % arriba en todas las escenas de contenido. Sin burbuja.
 
+Versión del 13/11/2026 con las reglas 11 y 12: imágenes reales generadas con IA en Higgsfield (GPT Image 2.6, 0,25 créditos por imagen) para el local (`medios/ia-local-atendiendo.jpg`) y la portada de la web (`medios/ia-comida-casera.jpg`). Avatar solo en el gancho, las preguntas, «No necesitas ser experto», la presentación y la pregunta final. Portada: fotograma 80 del gancho, sin subtítulos.
+
 Pendientes de este anuncio:
 
 - [ ] La foto real del local (opcional): ahora se dibuja con código. Pon una foto propia en `publico/medios/` y añádela en `izquierda.imagen`.

@@ -40,8 +40,12 @@ export const escribemeNegocio: ConfigVideo = {
     usuario: "@soyluisfloresoficial",
     momentos: { comentar: "escríbeme" },
   },
+  // Momentos (regla del 13/11/2026): avatar solo en gancho, preguntas, emoción y
+  // presentación; avatar + imagen o gráfica (65/35) cuando la voz nombra algo
+  // concreto; solo gráfica como mucho 2 s.
   escenas: [
     {
+      // Gancho: avatar solo con los avisos y el titular.
       id: "gancho",
       seccion: "gancho",
       inicio: 0,
@@ -60,14 +64,23 @@ export const escribemeNegocio: ConfigVideo = {
       titular: { texto: "¿ESTÁS PERDIENDO CLIENTES?", destacar: ["clientes"], colorDestacado: "cian", tamano: 100 },
     },
     {
-      id: "local-y-movil",
+      // Pregunta al espectador: avatar solo.
+      id: "pregunta",
       seccion: "problema",
       inicio: { ancla: "entonces dime algo" },
+      presentador: "completo",
+      zoom: [{ en: 0.1, escala: 1.08, duracion: 1.2 }],
+    },
+    {
+      // La voz nombra el local y los mensajes: avatar + imagen real del local y el móvil.
+      id: "local-y-movil",
+      seccion: "problema",
+      inicio: { ancla: "estás atendiendo clientes" },
       presentador: "dividida",
       titular: { texto: "MIENTRAS ATIENDES, TE ESCRIBEN", destacar: ["escriben"], colorDestacado: "cian", tamano: 50 },
       contenido: {
         tipo: "dividida",
-        izquierda: { etiqueta: "EN EL LOCAL" },
+        izquierda: { etiqueta: "EN EL LOCAL", imagen: "medios/ia-local-atendiendo.jpg" },
         derecha: {
           etiqueta: "EN EL MÓVIL",
           mensajes: ["¿Estáis abiertos?", "¿Cuánto cuesta?", "¿Tenéis disponibilidad?", "¿Hacéis pedidos para llevar?"],
@@ -77,14 +90,16 @@ export const escribemeNegocio: ConfigVideo = {
       },
     },
     {
+      // Pregunta y emoción: avatar solo con el titular sincronizado.
       id: "otra-opcion",
       seccion: "problema",
-      inicio: { ancla: "esa persona" },
+      inicio: { ancla: "y cuando por fin" },
       presentador: "completo",
       zoom: [{ en: { ancla: "otra opción" }, escala: 1.15, duracion: 1.6 }],
       titular: { texto: "ESA PERSONA YA BUSCÓ OTRA OPCIÓN", destacar: ["otra", "opción"], colorDestacado: "cian", sincronizar: true, tamano: 88 },
     },
     {
+      // Cambio de idea: solo gráfica, 2 s, la voz sigue sonando.
       id: "revelacion",
       seccion: "solucion1",
       inicio: { ancla: "ahora imagina" },
@@ -94,7 +109,7 @@ export const escribemeNegocio: ConfigVideo = {
     {
       id: "web",
       seccion: "solucion1",
-      inicio: { ancla: "una página web", ajuste: 0.6 },
+      inicio: { ancla: "una página web", ajuste: 0.3 },
       presentador: "dividida",
       entrada: "zoom",
       titular: { texto: "TU NEGOCIO EN INTERNET", destacar: ["internet"], colorDestacado: "cian", tamano: 54 },
@@ -103,8 +118,15 @@ export const escribemeNegocio: ConfigVideo = {
         pantallas: [
           {
             titulo: "turestaurante.com · ejemplo",
-            fuente: { tipo: "web", negocio: "Tu restaurante", lema: "Comida casera, todos los días", secciones: ["Menú", "Para llevar", "Reservas"], boton: "Contactar" },
-            cursor: { puntos: [{ x: 80, y: 82 }, { x: 40, y: 52 }, { x: 13, y: 36 }], desde: 1.6, duracion: 1.5, resalte: { ancho: 190, alto: 66 } },
+            fuente: {
+              tipo: "web",
+              negocio: "Tu restaurante",
+              lema: "Comida casera, todos los días",
+              secciones: ["Menú", "Para llevar", "Reservas"],
+              boton: "Contactar",
+              imagen: "medios/ia-comida-casera.jpg",
+            },
+            cursor: { puntos: [{ x: 80, y: 82 }, { x: 40, y: 70 }, { x: 12, y: 62 }], desde: 1.6, duracion: 1.5, resalte: { ancho: 180, alto: 58 } },
           },
         ],
       },
@@ -148,11 +170,12 @@ export const escribemeNegocio: ConfigVideo = {
       },
     },
     {
+      // Las tres soluciones unidas.
       id: "todo-conectado",
       seccion: "sistema",
-      inicio: { ancla: "no necesitas ser experto" },
+      inicio: { ancla: "sin tener que hacerlo" },
       presentador: "dividida",
-      titular: { texto: "TODO CONECTADO, SIN COMPLICARTE", destacar: ["conectado"], colorDestacado: "cian", tamano: 54 },
+      titular: { texto: "TODO CONECTADO", destacar: ["conectado"], colorDestacado: "cian", tamano: 54 },
       contenido: {
         tipo: "sistema",
         centro: { titulo: "Tu negocio", icono: "usuario" },
@@ -164,16 +187,35 @@ export const escribemeNegocio: ConfigVideo = {
       },
     },
     {
+      // Opinión: avatar solo.
+      id: "sin-ser-experto",
+      seccion: "sistema",
+      inicio: { ancla: "no necesitas ser experto" },
+      presentador: "completo",
+      zoom: [{ en: { ancla: "experto" }, escala: 1.1, duracion: 1.4 }],
+      titular: { texto: "NO NECESITAS SER EXPERTO", destacar: ["experto"], colorDestacado: "cian", sincronizar: true, tamano: 84 },
+    },
+    {
+      // Presentación: avatar solo con el rótulo discreto.
       id: "presentacion",
       seccion: "sistema",
       inicio: { ancla: "soy luis flores" },
-      presentador: "dividida",
+      presentador: "completo",
       contenido: { tipo: "presentacion", nombre: "LUIS FLORES", linea: "IA · WEB · AUTOMATIZACIÓN", web: "soyluisflores.es" },
     },
     {
-      id: "cta",
+      // Pregunta final: avatar solo.
+      id: "pregunta-final",
       seccion: "cta",
       inicio: { ancla: "quieres saber" },
+      presentador: "completo",
+      zoom: [{ en: { ancla: "mejorar" }, escala: 1.1, duracion: 1.4 }],
+    },
+    {
+      // Cierre: avatar y CTA.
+      id: "cta",
+      seccion: "cta",
+      inicio: { ancla: "escríbeme" },
       presentador: "dividida",
       subtitulos: false,
       contenido: { tipo: "cta" },

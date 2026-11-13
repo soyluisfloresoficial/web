@@ -67,7 +67,7 @@ export type PantallaMaqueta =
   | { tipo: "crm"; columnas: { titulo: string; tarjetas: string[] }[]; mover?: { tarjeta: string; a: number } }
   | { tipo: "calendario"; dia: string; huecos: { hora: string; texto?: string; nuevo?: boolean }[] }
   | { tipo: "notificacion"; titulo: string; texto: string }
-  | { tipo: "web"; negocio: string; lema: string; secciones: string[]; boton: string }
+  | { tipo: "web"; negocio: string; lema: string; secciones: string[]; boton: string; /** Foto real de portada (en publico/). */ imagen?: string }
   | { tipo: "pendiente"; descripcion: string };
 
 /** Una pantalla puede ser una maqueta, una imagen o una grabación real. */

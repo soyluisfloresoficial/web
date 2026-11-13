@@ -126,7 +126,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
   } else if (c?.tipo === "presentacion") {
     contenido = (
       <div style={{ width: ANCHO_UTIL, display: "flex", justifyContent: "center" }}>
-        <Presentacion nombre={c.nombre} linea={c.linea} web={c.web} escala={enFranja ? 1.35 : 1} />
+        <Presentacion nombre={c.nombre} linea={c.linea} web={c.web} escala={enFranja ? 1.35 : 1.25} />
       </div>
     );
   } else if (c?.tipo === "flujo") {
