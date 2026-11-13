@@ -373,3 +373,10 @@ Componentes nuevos:
 - `ListaPuntos` (contenido `lista`): puntos que entran cuando la voz los dice.
 - `CTASeguir` (`cta.estilo: "seguir"`): «SÍGUEME», el perfil con Seguir → Siguiendo ✓ y la web.
 - Halo oscuro detrás de los titulares a pantalla completa y placa oscura en el rótulo de presentación, para leerse sobre fondos claros del avatar.
+
+**v2 (13/11/2026), mejoras del sistema:**
+
+- **Titulares sincronizados tipo karaoke:** la frase sale entera y centrada, tenue, y cada palabra se enciende cuando la voz la dice.
+- **Encuadre del avatar a pantalla completa:** alterna plano abierto y cerrado (zoom 1,17) en cada corte entre escenas completas, con corte seco y un acercamiento lento del 4 % dentro de cada escena.
+- **Entrada del contenido:** espera 10 fotogramas cuando el avatar cambia de disposición, para que el gráfico no aparezca encima de la cara. La sincronía (titulares, lista, zoom de mensajes y sonidos) se compensa.
+- **Transiciones:** más cortas (salida en 5 fotogramas, entrada de pantallas en 13).

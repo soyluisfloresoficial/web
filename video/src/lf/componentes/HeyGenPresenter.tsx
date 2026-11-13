@@ -11,13 +11,29 @@ import { factorZoom, type GolpeZoom } from "./ImpactZoom";
 import { Placeholder } from "./Placeholder";
 import { prog } from "../util";
 
-const TRANSICION = 14;
+const TRANSICION = 12;
+
+/** Caja de una escena: en pantalla completa alterna plano abierto y cerrado y se acerca despacio. */
+function cajaEscena(escenas: EscenaResuelta[], i: number, frame: number): Caja {
+  const e = escenas[i];
+  const disp = e?.presentador ?? "completo";
+  const base = CAJAS[disp];
+  if (disp !== "completo" || !e) return base;
+  const nCompletas = escenas.slice(0, i).filter((x) => (x.presentador ?? "completo") === "completo").length;
+  const cerrado = nCompletas % 2 === 1;
+  const avance = Math.min(1, Math.max(0, (frame - e.desde) / Math.max(1, e.hasta - e.desde)));
+  return { ...base, z: (cerrado ? 1.17 : 1.0) * (1 + 0.04 * avance), fy: 0.33 };
+}
 
 export function cajaEnFrame(frame: number, escenas: EscenaResuelta[]): Caja {
   const i = Math.max(0, escenas.findIndex((e) => frame >= e.desde && frame < e.hasta));
-  const actual = CAJAS[escenas[i]?.presentador ?? "completo"];
+  const actual = cajaEscena(escenas, i, frame);
   if (i === 0) return actual;
-  const previa = CAJAS[escenas[i - 1].presentador ?? "completo"];
+  const dispPrevia = escenas[i - 1].presentador ?? "completo";
+  const dispActual = escenas[i].presentador ?? "completo";
+  // Entre dos planos a pantalla completa, corte seco (salto de plano), como en los reels.
+  if (dispPrevia === "completo" && dispActual === "completo") return actual;
+  const previa = cajaEscena(escenas, i - 1, escenas[i].desde - 1);
   const t = prog(frame, escenas[i].desde, TRANSICION, CURVA.marca);
   return mezclarCaja(previa, actual, t);
 }

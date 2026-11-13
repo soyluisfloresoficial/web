@@ -11,7 +11,7 @@
 import { Audio, Sequence, staticFile } from "remotion";
 import type { ConfigVideo } from "../tipos";
 import { resolverMomento, type EscenaResuelta } from "../tiempo";
-import { momentosCTA } from "../Escenario";
+import { esperaEntradaDe, momentosCTA } from "../Escenario";
 import { frameClic } from "./GuidedCursor";
 import { PASO_AVISO } from "./NotificacionesFlotantes";
 import { PASO_MENSAJE } from "./PantallaDividida";
@@ -23,10 +23,11 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
   const cues: Cue[] = [];
   const auto = config.sonidoTransiciones !== false;
   for (const e of escenas) {
+    const espera = esperaEntradaDe(e, escenas[e.indice - 1]);
     if (auto && e.indice > 0) cues.push({ frame: Math.max(0, e.desde - 5), archivo: "sfx/whoosh.wav", volumen: 0.28 });
     if (e.contenido?.tipo === "pantallas") {
       for (const p of e.contenido.pantallas) {
-        if (p.cursor && p.cursor.clic !== false) cues.push({ frame: e.desde + Math.round((p.retraso ?? 0) * fps) + frameClic(p.cursor, fps), archivo: "sfx/clic.wav", volumen: 0.55 });
+        if (p.cursor && p.cursor.clic !== false) cues.push({ frame: e.desde + espera + Math.round((p.retraso ?? 0) * fps) + frameClic(p.cursor, fps), archivo: "sfx/clic.wav", volumen: 0.55 });
       }
     }
     if (e.contenido?.tipo === "cta" && auto) {
@@ -36,7 +37,7 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
       cues.push({ frame: Math.max(0, e.desde + m.recurso - 4), archivo: "sfx/whoosh.wav", volumen: 0.3 });
     }
     if (e.contenido?.tipo === "dividida" && auto) {
-      e.contenido.derecha.mensajes.forEach((_, i) => cues.push({ frame: e.desde + 10 + i * PASO_MENSAJE, archivo: "sfx/aviso.wav", volumen: 0.28 }));
+      e.contenido.derecha.mensajes.forEach((_, i) => cues.push({ frame: e.desde + espera + 10 + i * PASO_MENSAJE, archivo: "sfx/aviso.wav", volumen: 0.28 }));
     }
     if (e.contenido?.tipo === "revelacion" && auto) {
       cues.push({ frame: e.desde + 2, archivo: "sfx/impacto.wav", volumen: 0.45 });
@@ -44,7 +45,7 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
     if (e.contenido?.tipo === "flujo" && auto) {
       const n = e.contenido.nodos.length;
       const paso = Math.max(10, Math.min(36, Math.floor(((e.hasta - e.desde) * 0.7) / Math.max(1, n))));
-      for (let i = 1; i < n; i++) cues.push({ frame: e.desde + i * paso + 2, archivo: "sfx/clic.wav", volumen: 0.3 });
+      for (let i = 1; i < n; i++) cues.push({ frame: e.desde + espera + i * paso + 2, archivo: "sfx/clic.wav", volumen: 0.3 });
     }
     if (e.capa?.tipo === "notificaciones" && auto) {
       e.capa.avisos.slice(0, 4).forEach((_, i) => cues.push({ frame: e.desde + 2 + i * PASO_AVISO, archivo: "sfx/aviso.wav", volumen: 0.32 }));

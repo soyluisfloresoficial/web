@@ -37,7 +37,7 @@ export function FloatingScreen({
   entrada?: "deslizar" | "mascara" | "zoom";
 }) {
   const f = useCurrentFrame();
-  const t = prog(f, retraso, 20, CURVA.impacto);
+  const t = prog(f, retraso, 13, CURVA.impacto);
 
   // Profundidad: con dos pantallas, la primera queda atrás a la izquierda.
   const profundidad = total > 1 ? (indice === 0 ? -1 : 1) : 0;

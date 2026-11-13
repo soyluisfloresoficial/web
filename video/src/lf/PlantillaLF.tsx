@@ -94,7 +94,7 @@ export function PlantillaLF({ config }: PropsLF) {
       <HeyGenPresenter avatar={config.avatar} escenas={escenas} golpes={golpes} />
       {escenas.map((e) => (
         <Sequence key={e.id} from={e.desde} durationInFrames={Math.max(1, e.hasta - e.desde)} name={`${e.indice + 1}. ${e.id}`} layout="none">
-          <Escenario escena={e} config={config} />
+          <Escenario escena={e} config={config} previa={escenas[e.indice - 1]} />
         </Sequence>
       ))}
       {!config.sinSubtitulos && (

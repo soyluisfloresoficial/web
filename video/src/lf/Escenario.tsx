@@ -34,13 +34,15 @@ function Encajar({ w, h, maxW, maxH, children }: { w: number; h: number; maxW: n
   );
 }
 
-export function Escenario({ escena, config }: { escena: EscenaResuelta; config: ConfigVideo }) {
+export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; config: ConfigVideo; previa?: EscenaResuelta }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const dur = escena.hasta - escena.desde;
   const disp = escena.presentador ?? "completo";
   const zona = ESCENARIO[disp];
-  const salida = interpolate(f, [dur - 7, dur], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const salida = interpolate(f, [dur - 5, dur], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  // Si el avatar cambia de disposición, el contenido entra cuando ya se ha movido.
+  const esperaEntrada = esperaEntradaDe(escena, previa);
   const c = escena.contenido;
 
   if (c?.tipo === "cta") {
@@ -72,7 +74,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
       selloFrame={
         escena.capa.selloEn === undefined
           ? Math.round(dur * 0.6)
-          : Math.round((resolverMomento(escena.capa.selloEn, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps)
+          : Math.round((resolverMomento(escena.capa.selloEn, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada
       }
       duracion={dur}
     />
@@ -118,7 +120,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
     const zoomFrame =
       c.zoomMensajes === undefined
         ? undefined
-        : Math.round((resolverMomento(c.zoomMensajes, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps);
+        : Math.round((resolverMomento(c.zoomMensajes, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada;
     contenido = (
       <Encajar w={936} h={enFranja ? altoContenido : 720} maxW={936} maxH={altoContenido}>
         <PantallaDividida izquierda={c.izquierda} derecha={c.derecha} zoomFrame={zoomFrame} alto={enFranja ? altoContenido : 720} />
@@ -131,7 +133,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
       frame:
         it.en === undefined
           ? 6 + i * 12
-          : Math.max(0, Math.round((resolverMomento(it.en, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps)),
+          : Math.max(0, Math.round((resolverMomento(it.en, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada),
     }));
     contenido = <ListaPuntos items={items} ancho={ANCHO_UTIL} alto={Math.min(altoContenido, 420)} />;
   } else if (c?.tipo === "imagen") {
@@ -172,6 +174,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
 
   return (
     <AbsoluteFill style={{ opacity: salida, zIndex: 10 }}>
+      <Sequence from={esperaEntrada} layout="none">
       {capa}
       {titular && (
         <div
@@ -203,7 +206,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
             destacar={titular.destacar}
             sincronizar={titular.sincronizar}
             subtitulos={config.subtitulos}
-            inicioEscenaFrame={escena.desde}
+            inicioEscenaFrame={escena.desde + esperaEntrada}
             tamano={alLado ? Math.min(tamTitular, 60) : tamTitular}
             ancho={alLado ? 1080 - 352 - ZONA_SEGURA.derecha : ANCHO_UTIL}
             alineacion={alLado ? "left" : "center"}
@@ -216,6 +219,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
           {contenido}
         </div>
       )}
+      </Sequence>
     </AbsoluteFill>
   );
 }
@@ -232,4 +236,10 @@ export function momentosCTA(config: ConfigVideo, escena: EscenaResuelta, fps: nu
   const comentar = rel(m.comentar, seguir + 20);
   const recurso = rel(m.recurso, comentar + 40);
   return { seguir, comentar, recurso };
+}
+
+/** Fotogramas que espera el contenido de una escena a que el avatar termine de moverse. */
+export function esperaEntradaDe(escena: EscenaResuelta, previa?: EscenaResuelta): number {
+  if (!previa) return 0;
+  return (previa.presentador ?? "completo") !== (escena.presentador ?? "completo") ? 10 : 0;
 }

@@ -77,8 +77,27 @@ export function KineticText({
       }}
     >
       {lista.map((p, i) => {
-        const t = prog(f, tiempos[i], 9, CURVA.impacto);
+        const t = prog(f, tiempos[i], sincronizar ? 6 : 9, CURVA.impacto);
         const resaltada = marcadas.has(normalizar(p));
+        if (sincronizar) {
+          // Karaoke: la frase está entera (centrada) y cada palabra se enciende al decirla.
+          const entrada = prog(f, 0, 8, CURVA.marca);
+          const color = resaltada && t > 0.5 ? COLOR.cian : COLOR.tinta;
+          return (
+            <span
+              key={i}
+              style={{
+                display: "inline-block",
+                color,
+                opacity: entrada * (0.28 + 0.72 * t),
+                transform: `scale(${1 + 0.08 * t * (1 - t) * 4})`,
+                textShadow: t > 0.5 ? (resaltada ? "0 0 30px rgb(0 194 255 / 0.55), 0 6px 30px rgb(0 0 0 / 0.55)" : "0 6px 30px rgb(0 0 0 / 0.55)") : "none",
+              }}
+            >
+              {p}
+            </span>
+          );
+        }
         return (
           <span
             key={i}
