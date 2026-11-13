@@ -1,105 +1,181 @@
 /**
- * Cierre de marca: logo, «Comenta PALABRA», una caja de comentario que se
- * escribe sola, el recurso que se recibe y el usuario para seguir.
+ * Cierre de marca en tres pasos, sincronizados con la voz:
+ *  1. Seguir: el botón «Seguir» junto al avatar pasa a «Siguiendo ✓».
+ *  2. Comentar: «Comenta PALABRA» y la caja de comentario se escribe sola.
+ *  3. Recurso: entra la portada de lo que recibe, en 3D, con el logo.
  * El avatar queda en la burbuja de arriba a la izquierda.
  */
-import { Img, staticFile, useCurrentFrame } from "remotion";
-import { COLOR, CURVA, FUENTE, ZONA_SEGURA } from "../marca";
+import { Img, interpolate, staticFile, useCurrentFrame } from "remotion";
+import { COLOR, CURVA, DEGRADADO, FUENTE, ZONA_SEGURA } from "../marca";
 import type { ConfigCTA } from "../tipos";
 import { prog } from "../util";
+import { Icono } from "./Icono";
 
-export function BrandCTA({ cta }: { cta: ConfigCTA }) {
+export type MomentosCTA = { seguir: number; comentar: number; recurso: number };
+
+export function BrandCTA({ cta, momentos }: { cta: ConfigCTA; momentos: MomentosCTA }) {
   const f = useCurrentFrame();
-  const a = prog(f, 4, 14, CURVA.impacto);
-  const b = prog(f, 12, 14, CURVA.impacto);
-  const c = prog(f, 30, 14, CURVA.impacto);
-  const d = prog(f, 44, 14, CURVA.impacto);
-  const letras = Math.max(0, Math.min(cta.palabra.length, Math.floor((f - 22) / 3)));
-  const enviado = f >= 22 + cta.palabra.length * 3 + 8;
-  const latido = 1 + 0.04 * Math.sin(f / 5);
   const izq = ZONA_SEGURA.izquierda;
   const ancho = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
 
+  // 1. Seguir
+  const perfil = prog(f, 2, 12, CURVA.impacto);
+  const pulsado = prog(f, momentos.seguir + 10, 8, CURVA.impacto);
+  const siguiendo = f >= momentos.seguir + 12;
+
+  // 2. Comentar
+  const titulo = prog(f, momentos.comentar - 4, 12, CURVA.impacto);
+  const caja = prog(f, momentos.comentar + 4, 12, CURVA.impacto);
+  const inicioTecleo = momentos.comentar + 10;
+  const letras = Math.max(0, Math.min(cta.palabra.length, Math.floor((f - inicioTecleo) / 3)));
+  const finTecleo = inicioTecleo + cta.palabra.length * 3;
+  const enviado = f >= finTecleo + 6;
+  const latido = 1 + 0.035 * Math.sin(f / 5);
+
+  // 3. Recurso
+  const portada = prog(f, momentos.recurso, 18, CURVA.impacto);
+  const flota = Math.sin(f / 22) * 8;
+  const brillo = ((f - momentos.recurso) * 2.2) % 260;
+
   return (
     <div style={{ position: "absolute", inset: 0 }}>
-      {/* Seguir: junto a la burbuja del avatar */}
-      <div style={{ position: "absolute", left: 360, top: 300, opacity: a, transform: `translateX(${(1 - a) * 40}px)` }}>
-        <div style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 24, letterSpacing: "0.16em", color: COLOR.suave }}>SÍGUEME</div>
-        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 44, color: COLOR.tinta, marginTop: 4 }}>{cta.usuario}</div>
-      </div>
-
-      {/* Acción principal */}
-      <div style={{ position: "absolute", left: izq, width: ancho, top: 600, textAlign: "center", opacity: b, transform: `scale(${0.85 + 0.15 * b})` }}>
-        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 92, lineHeight: 1, color: COLOR.tinta, letterSpacing: "-0.03em" }}>{cta.accion}</div>
+      {/* 1 · Perfil y botón de seguir, junto a la burbuja */}
+      <div style={{ position: "absolute", left: 352, top: 282, opacity: perfil, transform: `translateX(${(1 - perfil) * 40}px)` }}>
+        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 36, color: COLOR.tinta, letterSpacing: "-0.01em" }}>{cta.usuario}</div>
         <div
           style={{
+            marginTop: 14,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 10,
+            padding: "12px 30px",
+            borderRadius: 14,
+            fontFamily: FUENTE.display,
+            fontWeight: 800,
+            fontSize: 28,
+            background: siguiendo ? COLOR.superficie2 : DEGRADADO,
+            color: siguiendo ? COLOR.tinta : COLOR.base,
+            border: siguiendo ? `1.5px solid ${COLOR.linea}` : "1.5px solid transparent",
+            transform: `scale(${interpolate(pulsado, [0, 0.5, 1], [1, 0.9, 1])})`,
+          }}
+        >
+          {siguiendo ? (
+            <>
+              Siguiendo <Icono nombre="check" tam={26} grosor={2.6} color={COLOR.cta} />
+            </>
+          ) : (
+            "Seguir"
+          )}
+        </div>
+      </div>
+
+      {/* 2 · Comenta PALABRA */}
+      <div style={{ position: "absolute", left: izq, width: ancho, top: 560, textAlign: "center", opacity: titulo, transform: `translateY(${(1 - titulo) * 30}px)` }}>
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 84, color: COLOR.tinta, letterSpacing: "-0.03em", verticalAlign: "middle" }}>{cta.accion} </span>
+        <span
+          style={{
             display: "inline-block",
-            marginTop: 18,
-            padding: "10px 40px",
-            borderRadius: 24,
+            verticalAlign: "middle",
+            marginLeft: 8,
+            padding: "4px 28px",
+            borderRadius: 20,
             background: COLOR.cta,
             color: COLOR.base,
             fontFamily: FUENTE.display,
             fontWeight: 800,
-            fontSize: 120,
-            letterSpacing: "0.02em",
-            transform: `scale(${latido})`,
-            boxShadow: "0 0 60px rgb(0 255 179 / 0.45)",
+            fontSize: 92,
+            transform: `scale(${latido}) rotate(-2deg)`,
+            boxShadow: "0 0 50px rgb(0 255 179 / 0.5)",
           }}
         >
           {cta.palabra}
-        </div>
+        </span>
       </div>
 
-      {/* Caja de comentario que se escribe sola */}
       <div
         style={{
           position: "absolute",
-          left: izq + 20,
-          width: ancho - 40,
-          top: 960,
-          height: 92,
-          borderRadius: 46,
+          left: izq + 30,
+          width: ancho - 60,
+          top: 720,
+          height: 86,
+          borderRadius: 43,
           display: "flex",
           alignItems: "center",
-          padding: "0 14px 0 34px",
+          padding: "0 12px 0 30px",
           boxSizing: "border-box",
           background: COLOR.superficie,
           border: `2px solid ${enviado ? COLOR.cta : COLOR.linea}`,
-          opacity: c,
-          transform: `translateY(${(1 - c) * 40}px)`,
+          opacity: caja,
+          transform: `translateY(${(1 - caja) * 30}px)`,
+          boxShadow: enviado ? "0 0 30px rgb(0 255 179 / 0.25)" : undefined,
         }}
       >
-        <span style={{ flex: 1, fontFamily: FUENTE.texto, fontWeight: 500, fontSize: 32, color: letras ? COLOR.tinta : COLOR.apagado }}>
+        <span style={{ flex: 1, fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 30, color: letras ? COLOR.tinta : COLOR.apagado }}>
           {letras ? cta.palabra.slice(0, letras) : "Añade un comentario…"}
           {!enviado && f % 20 < 10 && <span style={{ color: COLOR.cta }}>|</span>}
         </span>
-        <span
-          style={{
-            padding: "14px 26px",
-            borderRadius: 34,
-            background: enviado ? COLOR.cta : COLOR.superficie2,
-            color: enviado ? COLOR.base : COLOR.suave,
-            fontFamily: FUENTE.display,
-            fontWeight: 800,
-            fontSize: 26,
-          }}
-        >
+        <span style={{ padding: "12px 24px", borderRadius: 32, background: enviado ? COLOR.cta : COLOR.superficie2, color: enviado ? COLOR.base : COLOR.suave, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 24 }}>
           {enviado ? "Enviado ✓" : "Publicar"}
         </span>
       </div>
 
-      {/* Recurso */}
-      <div style={{ position: "absolute", left: izq, width: ancho, top: 1100, textAlign: "center", opacity: d }}>
-        <div style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 24, letterSpacing: "0.14em", color: COLOR.cian }}>Y TE ENVÍO</div>
-        <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 46, lineHeight: 1.15, color: COLOR.tinta, marginTop: 8 }}>{cta.recurso}</div>
+      {/* 3 · Portada del recurso en 3D */}
+      <div style={{ position: "absolute", left: 0, right: 0, top: 860, display: "flex", justifyContent: "center", perspective: 1600, opacity: portada }}>
+        <div
+          style={{
+            width: 560,
+            height: 470,
+            borderRadius: 32,
+            position: "relative",
+            overflow: "hidden",
+            padding: "34px 40px",
+            boxSizing: "border-box",
+            background: "linear-gradient(155deg, #0f1b2e 0%, #17123a 100%)",
+            border: "1.5px solid rgb(0 194 255 / 0.45)",
+            boxShadow: "0 50px 90px rgb(0 0 0 / 0.6), 0 0 60px rgb(139 92 246 / 0.25)",
+            transform: `translateY(${(1 - portada) * 220 + flota}px) rotateX(${8 - 8 * portada + 6}deg) rotateY(${-14 + Math.sin(f / 40) * 3}deg) scale(${0.8 + 0.2 * portada})`,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ padding: "6px 14px", borderRadius: 999, background: "rgb(0 255 179 / 0.14)", color: COLOR.cta, fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 20, letterSpacing: "0.14em" }}>
+              {cta.etiquetaRecurso ?? "GRATIS"}
+            </span>
+            <Img src={staticFile("logo/monograma-80.webp")} style={{ height: 40, width: "auto" }} />
+          </div>
+          {cta.numeroRecurso && (
+            <div
+              style={{
+                fontFamily: FUENTE.display,
+                fontWeight: 800,
+                fontSize: 170,
+                lineHeight: 0.95,
+                marginTop: 18,
+                backgroundImage: DEGRADADO,
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+                letterSpacing: "-0.05em",
+              }}
+            >
+              {cta.numeroRecurso}
+            </div>
+          )}
+          <div style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 40, lineHeight: 1.12, color: COLOR.tinta, marginTop: 10 }}>{cta.recurso}</div>
+          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+            <Img src={staticFile("logo/nombre-180.webp")} style={{ height: 22, width: "auto", opacity: 0.85 }} />
+          </div>
+          {/* Brillo que cruza la portada */}
+          <div style={{ position: "absolute", inset: 0, background: `linear-gradient(115deg, transparent ${brillo - 60}%, rgb(255 255 255 / 0.10) ${brillo - 45}%, transparent ${brillo - 30}%)` }} />
+        </div>
       </div>
-
-      {/* Logo */}
-      <div style={{ position: "absolute", left: 0, right: 0, top: 1350, display: "flex", justifyContent: "center", alignItems: "center", gap: 18, opacity: d }}>
-        <Img src={staticFile("logo/monograma-80.webp")} style={{ height: 56, width: "auto" }} />
-        <Img src={staticFile("logo/nombre-360.webp")} style={{ height: 44, width: "auto" }} />
-      </div>
+      {cta.entrega && (
+        <div style={{ position: "absolute", left: izq, width: ancho, top: 1370, textAlign: "center", fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 26, color: COLOR.suave, opacity: prog(f, momentos.recurso + 14, 12) }}>
+          {cta.entrega}
+        </div>
+      )}
     </div>
   );
 }

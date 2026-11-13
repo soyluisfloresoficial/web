@@ -7,14 +7,15 @@ import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig } 
 import { AnimatedCounter, Comparativa } from "./componentes/AnimatedCounter";
 import { AutomationFlow } from "./componentes/AutomationFlow";
 import { BeforeAfterReveal } from "./componentes/BeforeAfterReveal";
-import { BrandCTA } from "./componentes/BrandCTA";
+import { BrandCTA, type MomentosCTA } from "./componentes/BrandCTA";
+import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
 import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
 import { SistemaReveal } from "./componentes/SistemaReveal";
 import { ESCENARIO } from "./disposicion";
 import { ZONA_SEGURA } from "./marca";
 import type { ConfigVideo } from "./tipos";
-import type { EscenaResuelta } from "./tiempo";
+import { buscarAncla, resolverMomento, type EscenaResuelta } from "./tiempo";
 
 const ANCHO_UTIL = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
 
@@ -40,10 +41,23 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
   if (c?.tipo === "cta") {
     return (
       <AbsoluteFill style={{ opacity: salida }}>
-        <BrandCTA cta={config.cta} />
+        <BrandCTA cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
       </AbsoluteFill>
     );
   }
+
+  const capa = escena.capa?.tipo === "notificaciones" ? (
+    <NotificacionesFlotantes
+      avisos={escena.capa.avisos}
+      sello={escena.capa.sello}
+      selloFrame={
+        escena.capa.selloEn === undefined
+          ? Math.round(dur * 0.6)
+          : Math.round((resolverMomento(escena.capa.selloEn, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps)
+      }
+      duracion={dur}
+    />
+  ) : null;
 
   const titular = escena.titular;
   const tamTitular = titular?.tamano ?? (c && c.tipo !== "ninguno" ? 64 : 92);
@@ -107,6 +121,7 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
 
   return (
     <AbsoluteFill style={{ opacity: salida, zIndex: 10 }}>
+      {capa}
       {titular && (
         <div
           style={{
@@ -137,4 +152,18 @@ export function Escenario({ escena, config }: { escena: EscenaResuelta; config: 
       )}
     </AbsoluteFill>
   );
+}
+
+/** Fotogramas (relativos a la escena del CTA) de seguir, comentar y recurso. */
+export function momentosCTA(config: ConfigVideo, escena: EscenaResuelta, fps: number): MomentosCTA {
+  const ini = escena.desde / fps;
+  const m = config.cta.momentos ?? {};
+  const rel = (frase: string | undefined, porDefecto: number) => {
+    const t = frase ? buscarAncla(config.subtitulos, frase, ini * 1000 - 300) : null;
+    return t === null ? porDefecto : Math.max(0, Math.round((t - ini) * fps));
+  };
+  const seguir = rel(m.seguir, 4);
+  const comentar = rel(m.comentar, seguir + 20);
+  const recurso = rel(m.recurso, comentar + 40);
+  return { seguir, comentar, recurso };
 }

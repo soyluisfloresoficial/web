@@ -25,8 +25,12 @@ export const pilotoDobleClientes: ConfigVideo = {
   cta: {
     accion: "Comenta",
     palabra: "GUÍA",
-    recurso: "7 formas prácticas de aplicar IA en tu negocio",
-    usuario: "@soyluisflores_", // VERIFICAR: usuario real en cada red
+    etiquetaRecurso: "GUÍA GRATIS",
+    numeroRecurso: "7",
+    recurso: "formas prácticas de aplicar IA en tu negocio",
+    entrega: "Te llega por mensaje directo",
+    usuario: "@soyluisfloresoficial",
+    momentos: { seguir: "sígueme", comentar: "comenta", recurso: "te comparto" },
   },
   escenas: [
     {
@@ -35,6 +39,18 @@ export const pilotoDobleClientes: ConfigVideo = {
       inicio: 0,
       presentador: "completo",
       zoom: [{ en: 0.1, escala: 1.14, duracion: 1.8 }],
+      // Gancho visual: llegan mensajes de noche y se quedan sin responder.
+      capa: {
+        tipo: "notificaciones",
+        avisos: [
+          { remitente: "Nuevo mensaje", texto: "¿Tienen cita mañana?", hora: "23:41" },
+          { remitente: "Nuevo mensaje", texto: "Hola, quiero información", hora: "23:47" },
+          { remitente: "Nuevo mensaje", texto: "¿Siguen atendiendo?", hora: "23:52" },
+          { remitente: "Nuevo mensaje", texto: "¿Me pueden escribir?", hora: "00:06" },
+        ],
+        sello: "Sin responder",
+        selloEn: { ancla: "clientes" },
+      },
       titular: { texto: "¿Podrías atender el doble de clientes?", destacar: ["doble"], tamano: 96 },
       subtitulos: false,
     },

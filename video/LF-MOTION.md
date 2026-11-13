@@ -124,8 +124,15 @@ Todo está en un objeto `ConfigVideo` (`src/lf/tipos.ts`). Los componentes no se
   duracion: "auto",                     // o segundos fijos
   musica: null,                         // { archivo: "medios/musica.mp3", volumen: 0.1 }
   sonidoTransiciones: true,
-  aviso: "Ejemplo ilustrativo",         // sale cuando hay maquetas
-  cta: { accion: "Comenta", palabra: "GUÍA", recurso: "...", usuario: "@..." },
+  aviso: "Ejemplo ilustrativo",         // texto pequeño y tenue cuando hay maquetas
+  cta: {
+    accion: "Comenta", palabra: "GUÍA",
+    etiquetaRecurso: "GUÍA GRATIS", numeroRecurso: "7", recurso: "formas prácticas…",
+    entrega: "Te llega por mensaje directo",
+    usuario: "@soyluisfloresoficial",
+    // Frases de la voz que activan cada paso del cierre.
+    momentos: { seguir: "sígueme", comentar: "comenta", recurso: "te comparto" },
+  },
   escenas: [ ... ],
 }
 ```
@@ -160,6 +167,7 @@ Cada escena termina donde empieza la siguiente. Los zooms y sonidos también adm
   seccion: "solucion2",
   inicio: { ancla: "un asistente que puede" },
   presentador: "burbuja",         // completo | superior | burbuja | oculto
+  capa: { tipo: "notificaciones", avisos: [...], sello: "Sin responder", selloEn: { ancla: "clientes" } },
   zoom: [{ en: { ancla: "cuánto tiempo" }, escala: 1.15, duracion: 2 }],
   titular: { texto: "...", destacar: ["palabra"], sincronizar: true },
   contenido: { tipo: "pantallas", pantallas: [ ... ] },
@@ -198,8 +206,9 @@ Todos están en `src/lf/componentes/` y se pueden usar sueltos en otras composic
 | `GuidedCursor` | Cursor que recorre puntos, hace clic y resalta el botón | `cursor` dentro de una pantalla |
 | `HeyGenPresenter` | El avatar con sus cuatro disposiciones | `presentador` |
 | `Subtitles` | Subtítulos palabra por palabra; la palabra que suena va en cian | automático |
-| `BrandCTA` | Cierre: seguir, «Comenta PALABRA», caja de comentario animada, recurso y logo | `"cta"` |
-| `SoundDesign` | Whoosh en cambios de escena, impacto en zooms, clic del cursor, pop en el CTA y música baja | automático + `sonidos` |
+| `NotificacionesFlotantes` | Gancho visual: avisos de mensajes que llegan con sonido alrededor del avatar (la mirada queda libre) y un sello «Sin responder» sincronizado con la voz | `capa` |
+| `BrandCTA` | Cierre en tres pasos sincronizados con la voz: «Seguir» → «Siguiendo ✓», «Comenta PALABRA» con la caja que se escribe sola y portada 3D del recurso con el logo | `"cta"` |
+| `SoundDesign` | Whoosh en cambios de escena, aviso en cada notificación, impacto en zooms, clic del cursor, pop al seguir y música baja | automático + `sonidos` |
 
 **Maquetas de interfaz** (`src/lf/pantallas/Maquetas.tsx`):
 
@@ -268,7 +277,7 @@ Los tokens están en `src/lf/marca.ts`:
 Lo que falta para publicar el piloto y producir en serie:
 
 - [ ] **Recurso de la palabra GUÍA.** El CTA promete «7 formas prácticas de aplicar IA en tu negocio». Ese recurso tiene que existir y entregarse solo (ManyChat) antes de publicar. `[COMPLETAR]`
-- [ ] **Usuario en redes.** El cierre dice `@soyluisflores_`. `[VERIFICAR: que sea el mismo en Instagram, TikTok, YouTube y LinkedIn]`
+- [x] **Usuario de Instagram:** `@soyluisfloresoficial` (13/11/2026). `[VERIFICAR: que sea el mismo en TikTok, YouTube y LinkedIn]`
 - [ ] **Música con licencia.** El piloto sale sin música (`musica: null`). Pon un archivo en `publico/medios/` y añádelo a la configuración.
 - [ ] **Grabaciones reales.** Todas las pantallas del piloto son maquetas de ejemplo. Para demostraciones de tus sistemas, graba la pantalla y úsala con `{ tipo: "archivo", archivo: "medios/grabacion.mp4" }`, sin datos de clientes.
 - [ ] **Paleta.** Los colores del sistema (cian `#00C2FF`, CTA `#00FFB3`) no son los de la web (azul `#007bff`). Decide si la web adopta los nuevos o el sistema usa los de la web, para no tener dos identidades.

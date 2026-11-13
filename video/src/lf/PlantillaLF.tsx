@@ -32,20 +32,16 @@ function Aviso({ texto, escenas }: { texto: string; escenas: EscenaResuelta[] })
     <div
       style={{
         position: "absolute",
-        top: ZONA_SEGURA.arriba,
+        top: ZONA_SEGURA.arriba + 6,
         right: ZONA_SEGURA.derecha,
         zIndex: 25,
-        padding: "8px 16px",
-        borderRadius: 999,
-        background: "rgb(7 9 13 / 0.6)",
-        border: "1px solid rgb(255 255 255 / 0.12)",
         fontFamily: FUENTE.texto,
-        fontWeight: 600,
-        fontSize: 20,
-        letterSpacing: "0.12em",
-        textTransform: "uppercase",
+        fontWeight: 500,
+        fontSize: 16,
+        letterSpacing: "0.08em",
         color: COLOR.suave,
-        opacity: prog(f, e.desde, 10),
+        textShadow: "0 1px 6px rgb(0 0 0 / 0.6)",
+        opacity: 0.55 * prog(f, e.desde, 10),
       }}
     >
       {texto}

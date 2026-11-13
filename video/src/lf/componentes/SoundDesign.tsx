@@ -11,7 +11,9 @@
 import { Audio, Sequence, staticFile } from "remotion";
 import type { ConfigVideo } from "../tipos";
 import { resolverMomento, type EscenaResuelta } from "../tiempo";
+import { momentosCTA } from "../Escenario";
 import { frameClic } from "./GuidedCursor";
+import { PASO_AVISO } from "./NotificacionesFlotantes";
 import type { GolpeZoom } from "./ImpactZoom";
 
 type Cue = { frame: number; archivo: string; volumen: number };
@@ -26,7 +28,15 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
         if (p.cursor && p.cursor.clic !== false) cues.push({ frame: e.desde + Math.round((p.retraso ?? 0) * fps) + frameClic(p.cursor, fps), archivo: "sfx/clic.wav", volumen: 0.55 });
       }
     }
-    if (e.contenido?.tipo === "cta" && auto) cues.push({ frame: e.desde + 14, archivo: "sfx/pop.wav", volumen: 0.45 });
+    if (e.contenido?.tipo === "cta" && auto) {
+      const m = momentosCTA(config, e, fps);
+      cues.push({ frame: e.desde + m.seguir + 10, archivo: "sfx/pop.wav", volumen: 0.45 });
+      cues.push({ frame: e.desde + m.comentar + 10 + config.cta.palabra.length * 3 + 6, archivo: "sfx/clic.wav", volumen: 0.5 });
+      cues.push({ frame: Math.max(0, e.desde + m.recurso - 4), archivo: "sfx/whoosh.wav", volumen: 0.3 });
+    }
+    if (e.capa?.tipo === "notificaciones" && auto) {
+      e.capa.avisos.slice(0, 4).forEach((_, i) => cues.push({ frame: e.desde + 2 + i * PASO_AVISO, archivo: "sfx/aviso.wav", volumen: 0.32 }));
+    }
     for (const s of e.sonidos ?? []) {
       const seg = resolverMomento(s.en, config.subtitulos, e.desde / fps, e.desde / fps);
       cues.push({ frame: Math.round(seg * fps), archivo: s.archivo, volumen: s.volumen ?? 0.5 });

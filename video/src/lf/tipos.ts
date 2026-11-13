@@ -118,9 +118,24 @@ export type Contenido =
   | { tipo: "sistema"; nodos: NodoFlujo[]; titulo?: string }
   | { tipo: "cta" };
 
+/**
+ * Capa ilustrativa que va encima del avatar, fuera de la zona de contenido.
+ * «notificaciones»: avisos de mensajes que llegan uno tras otro y se quedan
+ * sin responder (gancho visual de los primeros segundos).
+ */
+export type Capa = {
+  tipo: "notificaciones";
+  avisos: { remitente: string; texto: string; hora: string }[];
+  /** Texto del sello que aparece en todos a la vez, por ejemplo «Sin responder». */
+  sello?: string;
+  /** Momento en que aparece el sello (segundos de la escena o ancla). */
+  selloEn?: Momento;
+};
+
 export type Escena = {
   id: string;
   seccion: Seccion;
+  capa?: Capa;
   /** Si no se indica, se usa el inicio de la sección en el timeline base escalado. */
   inicio?: Momento;
   presentador?: Disposicion;
@@ -142,6 +157,17 @@ export type ConfigCTA = {
   /** Qué recibe a cambio. */
   recurso: string;
   usuario: string;
+  /** Línea pequeña bajo el recurso, por ejemplo «Te llega por mensaje directo». */
+  entrega?: string;
+  /** Etiqueta de la portada del recurso, por ejemplo «GUÍA GRATIS». */
+  etiquetaRecurso?: string;
+  /** Número grande de la portada (opcional), por ejemplo "7". */
+  numeroRecurso?: string;
+  /**
+   * Frases de la voz que activan cada paso del cierre: seguir, comentar y
+   * mostrar el recurso. Sin ellas, los pasos entran escalonados.
+   */
+  momentos?: { seguir?: string; comentar?: string; recurso?: string };
 };
 
 export type ConfigVideo = {

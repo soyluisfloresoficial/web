@@ -86,9 +86,16 @@ const impacto = generar(0.7, (t) => {
 // Pop: burbuja que sube de tono.
 const pop = generar(0.18, (t) => Math.sin(2 * Math.PI * (380 + 900 * t) * t) * Math.exp(-t * 22));
 
-for (const [nombre, m] of Object.entries({ whoosh, clic, impacto, pop })) {
+// Aviso: doble tono corto, como la notificación de un mensaje.
+const aviso = generar(0.32, (t) => {
+  const tono = t < 0.11 ? 1318.5 : 1760;
+  const local = t < 0.11 ? t : t - 0.11;
+  return Math.sin(2 * Math.PI * tono * t) * Math.exp(-local * 18) * (t < 0.11 ? 0.8 : 1);
+});
+
+for (const [nombre, m] of Object.entries({ whoosh, clic, impacto, pop, aviso })) {
   writeFileSync(join(publico, "sfx", `${nombre}.wav`), wav(m));
 }
 
-console.log(`Listo: ${copiados} archivos de marca copiados y 4 efectos en publico/sfx.`);
+console.log(`Listo: ${copiados} archivos de marca copiados y 5 efectos en publico/sfx.`);
 console.log("Coloca el avatar, la música y las grabaciones en publico/medios/.");
