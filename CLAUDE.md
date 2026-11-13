@@ -66,6 +66,8 @@ Los cambios hechos a mano en el panel de Cloudflare no pasan por GitHub y se pie
 
 Regla del titular (13/11/2026): en los videos, las imágenes y los gráficos tienen que ser **reales y acordes con lo que dice la voz** en cada escena: fotos propias, de banco (Pexels, Pixabay, Unsplash, respetando la licencia y con el autor en el crédito) o generadas con IA (personas genéricas, nunca personas reales ni marcas). Los dibujos hechos con código quedan solo para interfaces (chat, web, flujos, calendario). Si una fuente de imágenes falla o falta un crédito o una clave, **avisa al titular antes de sustituirla** por un dibujo. Guía y bloqueos actuales en `video/LF-MOTION.md` (sección 11).
 
+Regla de momentos (13/11/2026): respeta cuándo va **el avatar solo** (gancho, preguntas, emoción, presentación) y cuándo **el avatar hablando con la imagen o gráfica** (pantalla dividida 65/35 cuando la voz nombra algo concreto). La imagen entra cuando la voz dice su palabra clave y se va cuando cambia la idea. Solo gráfica, como mucho 2 s y sin cortar la voz. Criterios completos en `video/LF-MOTION.md` (sección 12).
+
 ## Imágenes para compartir
 
 Cada página tiene su imagen para redes (Open Graph) en `public/og/`. Se generan con `node tools/generar-og.mjs` después de `npm run build` (necesita Edge o Chrome en el ordenador). Al añadir un servicio, un artículo o cambiar un título, vuelve a ejecutarlo, compila otra vez y sube las imágenes. Si una página no tiene la suya, usa `og-default.png`.

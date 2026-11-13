@@ -337,3 +337,25 @@ Lo que hoy bloquea esta regla (13/11/2026):
 - **Unsplash:** el conector responde «Your email address has not been confirmed». Hay que confirmar el correo de la cuenta de Unsplash.
 - **Pexels y Pixabay:** se puede llegar a sus API, pero hace falta una clave gratuita de cada uno. Se guarda como secreto del entorno, nunca en el repositorio.
 - **Higgsfield:** quedan 2,1 créditos (una imagen cuesta 1 con el modelo Nano Banana). El 13/11/2026 una generación falló y cobró el crédito igualmente.
+
+---
+
+## 12. Regla del titular: momentos y espacios del avatar (13/11/2026)
+
+Las imágenes y los gráficos acompañan a la voz; no la tapan ni la adelantan. Cada escena se decide con este criterio:
+
+| Momento de la voz | Qué se ve | Disposición |
+|---|---|---|
+| Gancho de apertura, preguntas al espectador, frases de emoción o de opinión | **El avatar solo**, con zoom de impacto y, como mucho, un titular corto | `completo` |
+| La voz nombra algo concreto que se puede enseñar (un mensaje, una web, un local, un producto, un proceso, una herramienta) | **El avatar hablando y la imagen o gráfica a la vez**: avatar abajo al 65 %, imagen arriba al 35 % | `dividida` |
+| Cambio de idea o revelación breve | **Solo la gráfica**, como mucho 2 s, y la voz sigue sonando | `oculto` |
+| «Soy Luis Flores…» (presentación) | **El avatar** con el rótulo discreto | `completo` o `tarjeta` |
+| Cierre (CTA) | **El avatar** y el CTA, sin más elementos | `dividida` o `superior` |
+
+Reglas de tiempo:
+
+- **Entrada:** cada imagen entra cuando la voz dice su palabra clave (ancla en los subtítulos), nunca antes, y se va cuando la voz cambia de idea.
+- **Cortes:** se hacen al inicio de una frase o en una pausa, nunca a mitad de palabra.
+- **Duración:** ninguna escena dura menos de 1,5 s. Si la voz enumera cosas seguidas, se agrupan en una sola escena.
+- **Ritmo:** no pasan más de 3–4 s sin un cambio visual (un zoom, un mensaje nuevo, un paso del flujo).
+- **Avatar solo:** se deja al avatar solo al menos una vez cada 15–20 s, para que se le vea la cara y el gesto completos.
