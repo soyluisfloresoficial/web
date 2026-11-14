@@ -4,6 +4,8 @@ import CabeceraPagina from "../components/CabeceraPagina.astro";
 import Icono from "../components/Icono.astro";
 import Agenda from "../components/Agenda.astro";
 import FormularioMensaje from "../components/FormularioMensaje.astro";
+import { Image } from "astro:assets";
+import saludoImg from "../assets/luis-flores-saludando.webp";
 import { SITIO } from "../data/servicios";
 
 const url = `${SITIO.url}/contacto`;
@@ -259,8 +261,22 @@ const schema = [
             ))
           }
         </ul>
-        <div class="formulario-mensaje mt-10">
-          <FormularioMensaje />
+        {/* Retrato saludando junto al formulario (14/11/2026). El formulario
+            manda: en celular la foto va pequeña y encima, sin tapar nada. */}
+        <div class="contacto-mensaje mt-10">
+          <figure class="saludo">
+            <Image
+              src={saludoImg}
+              alt="Luis Carlos Flores saludando con la mano"
+              widths={[200, 360, 560]}
+              sizes="(min-width: 900px) 20rem, 9rem"
+              loading="lazy"
+              class="saludo-foto"
+            />
+          </figure>
+          <div class="formulario-mensaje">
+            <FormularioMensaje />
+          </div>
         </div>
       </div>
     </section>
@@ -433,8 +449,53 @@ const schema = [
   /* ------------------------------------------------------------ Canales */
   /* Formulario corto (09/11/2026): debajo de WhatsApp y correo, centrado. */
   .formulario-mensaje {
+    width: 100%;
     max-width: 40rem;
     margin-inline: auto;
+  }
+  /* Retrato saludando (14/11/2026): recorte con transparencia, sin marco. */
+  .contacto-mensaje {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+  }
+  .saludo {
+    position: relative;
+    width: 9rem;
+    margin: 0;
+  }
+  .saludo::before {
+    content: "";
+    position: absolute;
+    inset: 8% -4% 0;
+    background:
+      radial-gradient(55% 48% at 40% 40%, rgb(0 194 255 / 0.2), transparent 70%),
+      radial-gradient(52% 50% at 66% 62%, rgb(139 92 246 / 0.2), transparent 72%);
+    filter: blur(24px);
+  }
+  .saludo-foto {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1106 / 1422;
+    object-fit: contain;
+    -webkit-mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 88%, transparent 100%);
+  }
+  @media (width >= 900px) {
+    .contacto-mensaje {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 40rem);
+      justify-content: center;
+      align-items: end;
+      gap: 3rem;
+    }
+    .saludo {
+      width: 100%;
+    }
+    .formulario-mensaje {
+      margin-inline: 0;
+    }
   }
 
   .canales {
