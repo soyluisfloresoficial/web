@@ -380,3 +380,16 @@ Componentes nuevos:
 - **Encuadre del avatar a pantalla completa:** alterna plano abierto y cerrado (zoom 1,17) en cada corte entre escenas completas, con corte seco y un acercamiento lento del 4 % dentro de cada escena.
 - **Entrada del contenido:** espera 10 fotogramas cuando el avatar cambia de disposición, para que el gráfico no aparezca encima de la cara. La sincronía (titulares, lista, zoom de mensajes y sonidos) se compensa.
 - **Transiciones:** más cortas (salida en 5 fotogramas, entrada de pantallas en 13).
+
+---
+
+## 14. Regla del titular: copy para redes con cada video definitivo (14/11/2026)
+
+Cada video definitivo se entrega con su copy para TikTok, Instagram, Facebook y LinkedIn, cada uno en su bloque listo para copiar y pegar. El copy:
+
+- se adapta a cada red;
+- es fiel a lo que dice el video, con el mismo CTA;
+- no lleva cifras ni promesas inventadas;
+- recuerda activar la etiqueta de contenido generado con IA.
+
+Se guarda en `video/copys/<id-del-video>.md`.

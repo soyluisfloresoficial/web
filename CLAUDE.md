@@ -68,6 +68,8 @@ Regla del titular (13/11/2026): en los videos, las imágenes y los gráficos tie
 
 Regla de momentos (13/11/2026): respeta cuándo va **el avatar solo** (gancho, preguntas, emoción, presentación) y cuándo **el avatar hablando con la imagen o gráfica** (pantalla dividida 65/35 cuando la voz nombra algo concreto). La imagen entra cuando la voz dice su palabra clave y se va cuando cambia la idea. Solo gráfica, como mucho 2 s y sin cortar la voz. Criterios completos en `video/LF-MOTION.md` (sección 12).
 
+Regla del copy (14/11/2026, estricta): cada vez que entregues un video **definitivo**, entrega también su copy para **TikTok, Instagram, Facebook y LinkedIn**, cada uno en su bloque listo para copiar y pegar, adaptado a la red y fiel a lo que dice el video (mismo CTA). Sin cifras, clientes ni promesas inventadas, y con el aviso de activar la etiqueta de contenido IA. Guárdalo en `video/copys/<id-del-video>.md`.
+
 ## Imágenes para compartir
 
 Cada página tiene su imagen para redes (Open Graph) en `public/og/`. Se generan con `node tools/generar-og.mjs` después de `npm run build` (necesita Edge o Chrome en el ordenador). Al añadir un servicio, un artículo o cambiar un título, vuelve a ejecutarlo, compila otra vez y sube las imágenes. Si una página no tiene la suya, usa `og-default.png`.
