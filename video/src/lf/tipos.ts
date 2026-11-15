@@ -200,6 +200,10 @@ export type Escena = {
   sonidos?: Sonido[];
   /** Transición de entrada del contenido. */
   entrada?: "deslizar" | "mascara" | "zoom";
+  /** Capítulo al que pertenece la escena (enciende el marcador 01 · 02 · 03). */
+  capitulo?: number;
+  /** En pantalla completa, el titular se muestra como rótulo de capítulo de marca (número grande + título). */
+  rotuloCapitulo?: boolean;
 };
 
 export type ConfigCTA = {
@@ -229,6 +233,8 @@ export type ConfigCTA = {
 };
 
 export type ConfigVideo = {
+  /** Capa de marca persistente: firma LF con el usuario y marcador de capítulos. */
+  marca?: { firma?: boolean; capitulos?: number };
   id: string;
   titulo: string;
   /** Video del avatar dentro de publico/ (null = placeholder). */

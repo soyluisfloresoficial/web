@@ -18,6 +18,7 @@ import { AlertaError } from "./componentes/AlertaError";
 import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
 import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
+import { RotuloCapitulo } from "./componentes/RotuloCapitulo";
 import { SistemaReveal } from "./componentes/SistemaReveal";
 import { ESCENARIO } from "./disposicion";
 import { ZONA_SEGURA } from "./marca";
@@ -192,7 +193,17 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
     <AbsoluteFill style={{ opacity: salida, zIndex: 10 }}>
       <Sequence from={esperaEntrada} layout="none">
       {capa}
-      {titular && (
+      {titular && escena.rotuloCapitulo && disp === "completo" && (
+        <RotuloCapitulo
+          numero={escena.capitulo ?? 1}
+          total={config.marca?.capitulos ?? 3}
+          texto={titular.texto}
+          destacar={titular.destacar}
+          subtitulos={config.subtitulos}
+          inicioEscenaFrame={escena.desde + esperaEntrada}
+        />
+      )}
+      {titular && !(escena.rotuloCapitulo && disp === "completo") && (
         <div
           style={{
             position: "absolute",
@@ -231,7 +242,7 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
         </div>
       )}
       {contenido && (
-        <div style={{ position: "absolute", left: 0, right: 0, top: yContenido, height: altoContenido, display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ position: "absolute", left: 0, right: 0, top: yContenido, height: altoContenido, display: "flex", justifyContent: "center", alignItems: c?.tipo === "presentacion" && disp === "completo" ? "flex-start" : "center" }}>
           {contenido}
         </div>
       )}

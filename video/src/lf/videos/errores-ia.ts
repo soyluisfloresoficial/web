@@ -20,6 +20,7 @@ export const erroresIa: ConfigVideo = {
   musica: { archivo: "medios/musica-errores-ia.wav", volumen: 0.1 },
   sonidoTransiciones: true,
   aviso: "Ejemplo ilustrativo",
+  marca: { firma: true, capitulos: 3 },
   estiloSubtitulos: {
     maxCaracteres: 26,
     tamano: 56,
@@ -103,10 +104,13 @@ export const erroresIa: ConfigVideo = {
       inicio: { ancla: "1" },
       presentador: "completo",
       zoom: [{ en: 0.05, escala: 1.12, duracion: 1 }],
-      titular: { texto: "1. INFORMACIÓN INCORRECTA", destacar: ["1", "incorrecta"], colorDestacado: "cian", sincronizar: true, tamano: 92 },
+      capitulo: 1,
+      rotuloCapitulo: true,
+      titular: { texto: "INFORMACIÓN INCORRECTA", destacar: ["incorrecta"], colorDestacado: "cian", sincronizar: true },
     },
     {
       id: "error-1-ejemplo",
+      capitulo: 1,
       seccion: "solucion1",
       inicio: { ancla: "si no configuras" },
       presentador: "dividida",
@@ -138,10 +142,13 @@ export const erroresIa: ConfigVideo = {
       inicio: { ancla: "2" },
       presentador: "completo",
       zoom: [{ en: 0.05, escala: 1.12, duracion: 1 }],
-      titular: { texto: "2. PROMESAS QUE NO PUEDE CUMPLIR", destacar: ["2", "promesas"], colorDestacado: "cian", sincronizar: true, tamano: 86 },
+      capitulo: 2,
+      rotuloCapitulo: true,
+      titular: { texto: "PROMESAS QUE NO PUEDE CUMPLIR", destacar: ["promesas"], colorDestacado: "cian", sincronizar: true },
     },
     {
       id: "error-2-ejemplo",
+      capitulo: 2,
       seccion: "solucion2",
       inicio: { ancla: "por ejemplo" },
       presentador: "dividida",
@@ -173,10 +180,13 @@ export const erroresIa: ConfigVideo = {
       inicio: { ancla: "3" },
       presentador: "completo",
       zoom: [{ en: 0.05, escala: 1.12, duracion: 1 }],
-      titular: { texto: "3. FALTA DE CONTROL", destacar: ["3", "control"], colorDestacado: "cian", sincronizar: true, tamano: 96 },
+      capitulo: 3,
+      rotuloCapitulo: true,
+      titular: { texto: "FALTA DE CONTROL", destacar: ["control"], colorDestacado: "cian", sincronizar: true },
     },
     {
       id: "error-3-ejemplo",
+      capitulo: 3,
       seccion: "automatizacion",
       inicio: { ancla: "tu asistente debe" },
       presentador: "dividida",
@@ -203,6 +213,7 @@ export const erroresIa: ConfigVideo = {
       inicio: { ancla: "la ia puede ayudarte" },
       presentador: "completo",
       zoom: [{ en: { ancla: "muchísimo" }, escala: 1.08, duracion: 1.2 }],
+      titular: { texto: "LA IA PUEDE AYUDARTE MUCHÍSIMO", destacar: ["muchísimo"], colorDestacado: "cian", sincronizar: true, tamano: 84 },
     },
     {
       // Lo que necesita, cada punto cuando la voz lo dice.
@@ -235,6 +246,7 @@ export const erroresIa: ConfigVideo = {
       inicio: { ancla: "quieres una guía" },
       presentador: "completo",
       zoom: [{ en: { ancla: "guía" }, escala: 1.1, duracion: 1 }],
+      titular: { texto: "¿QUIERES UNA GUÍA PARA EMPEZAR?", destacar: ["guía"], colorDestacado: "cian", sincronizar: true, tamano: 84 },
     },
     {
       // Cierre: SÍGUEME + COMENTA GUÍA.
@@ -252,6 +264,7 @@ export const erroresIa: ConfigVideo = {
 export const erroresIaPortada: ConfigVideo = {
   ...erroresIa,
   id: "errores-ia-portada",
+  marca: undefined,
   sinSubtitulos: true,
   aviso: undefined,
   musica: null,

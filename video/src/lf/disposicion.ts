@@ -36,7 +36,7 @@ export const CAJAS: Record<Disposicion, Caja> = {
 
 /** Zona libre para el contenido en cada disposición: [y inicial, alto]. */
 export const ESCENARIO: Record<Disposicion, { y: number; h: number }> = {
-  completo: { y: 960, h: 340 },
+  completo: { y: 1120, h: 360 },
   superior: { y: 920, h: 560 },
   dividida: { y: 236, h: 396 },
   burbuja: { y: 540, h: 760 },

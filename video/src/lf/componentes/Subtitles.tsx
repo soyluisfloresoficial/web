@@ -105,9 +105,13 @@ export function Subtitles({
                 color,
                 display: "inline-block",
                 textShadow: activa ? (setClaves.size && !clave ? "0 0 18px rgb(255 255 255 / 0.45)" : "0 0 22px rgb(0 194 255 / 0.55)") : undefined,
+                position: "relative",
               }}
             >
               {limpiar(t.text.trim())}
+              {activa && (
+                <span style={{ position: "absolute", left: 0, right: 0, bottom: -6, height: 6, borderRadius: 3, background: "linear-gradient(90deg, #00C2FF, #8B5CF6)", boxShadow: "0 0 12px rgb(0 194 255 / 0.6)" }} />
+              )}
             </span>
           );
         })}

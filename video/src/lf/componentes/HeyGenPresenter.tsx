@@ -44,7 +44,10 @@ export function HeyGenPresenter({
   golpes,
   anchoFuente = 1080,
   altoFuente = 1920,
+  etalonaje = false,
 }: {
+  /** Etalonaje de marca: algo más de contraste y viñeta con tinte cian/violeta en los bordes. */
+  etalonaje?: boolean;
   avatar: string | null;
   escenas: EscenaResuelta[];
   golpes: GolpeZoom[];
@@ -90,10 +93,16 @@ export function HeyGenPresenter({
       {avatar ? (
         <OffthreadVideo
           src={staticFile(avatar)}
-          style={{ position: "absolute", left, top, width: W, height: H, maxWidth: "none" }}
+          style={{ position: "absolute", left, top, width: W, height: H, maxWidth: "none", filter: etalonaje ? "contrast(1.07) saturate(1.06) brightness(0.98)" : undefined }}
         />
       ) : (
         <Placeholder texto="Video del avatar de HeyGen" />
+      )}
+      {etalonaje && (
+        <>
+          <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 85% 75% at 50% 42%, transparent 55%, rgb(7 9 13 / 0.55) 100%)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(115deg, rgb(0 194 255 / 0.10) 0%, transparent 35%, transparent 65%, rgb(139 92 246 / 0.12) 100%)", mixBlendMode: "screen" }} />
+        </>
       )}
       {/* Viñeta inferior en modo completo para que los textos se lean sobre la ropa. */}
       <div

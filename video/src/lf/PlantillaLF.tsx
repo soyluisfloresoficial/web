@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import { AbsoluteFill, Sequence, useCurrentFrame, useVideoConfig } from "remotion";
 import { Fondo } from "./componentes/Fondo";
 import { HeyGenPresenter } from "./componentes/HeyGenPresenter";
+import { MarcaLF } from "./componentes/MarcaLF";
 import type { GolpeZoom } from "./componentes/ImpactZoom";
 import { SoundDesign } from "./componentes/SoundDesign";
 import { Subtitles } from "./componentes/Subtitles";
@@ -91,7 +92,7 @@ export function PlantillaLF({ config }: PropsLF) {
   return (
     <AbsoluteFill style={{ background: COLOR.base }}>
       <Fondo />
-      <HeyGenPresenter avatar={config.avatar} escenas={escenas} golpes={golpes} />
+      <HeyGenPresenter avatar={config.avatar} escenas={escenas} golpes={golpes} etalonaje={!!config.marca} />
       {escenas.map((e) => (
         <Sequence key={e.id} from={e.desde} durationInFrames={Math.max(1, e.hasta - e.desde)} name={`${e.indice + 1}. ${e.id}`} layout="none">
           <Escenario escena={e} config={config} previa={escenas[e.indice - 1]} />
@@ -106,6 +107,7 @@ export function PlantillaLF({ config }: PropsLF) {
           tamano={config.estiloSubtitulos?.tamano}
         />
       )}
+      {config.marca && <MarcaLF escenas={escenas} usuario={config.cta.usuario ?? "@soyluisfloresoficial"} firma={config.marca.firma} capitulos={config.marca.capitulos} />}
       {config.aviso && <Aviso texto={config.aviso} escenas={escenas} />}
       <SoundDesign config={config} escenas={escenas} golpes={golpes} fps={fps} />
       {(config.depuracion?.zonaSegura || config.depuracion?.tiempos) && (
