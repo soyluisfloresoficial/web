@@ -5,15 +5,15 @@ Estructura modelada en los reels educativos de referencia (interfaz que funciona
 
 | Tiempo | Locución | Avatar | Gráfico / efecto | Sonido |
 |---|---|---|---|---|
-| 0,0–5,6 | «Tu asistente de IA responde mensajes, atiende clientes y parece funcionar perfectamente…» | Dividida 65/35 | Chat que funciona: el cliente pregunta y el asistente responde. Titular «TU ASISTENTE DE IA» | Música suave |
+| 0,0–5,6 | «Tu asistente de IA responde mensajes, atiende clientes y parece funcionar perfectamente…» | Dividida 65/35 | Imagen real de una dueña tranquila con su tablet + chat que funciona. Titular «TU ASISTENTE DE IA» | Música suave |
 | 5,6–7,3 | «…hasta que empieza a cometer errores.» | Dividida | Mensaje «Te confirmo la cita de las 18:00 ✅», alerta roja **ERROR** con sacudida al decir «cometer errores» y el aviso «Ese hueco no estaba libre» | Impacto y aviso |
 | 7,3–11,5 | «Si estás pensando en utilizar IA en tu negocio, presta atención a estas tres cosas.» | Solo, zoom en «tres cosas» | Titular karaoke «PRESTA ATENCIÓN A ESTAS TRES COSAS» | Whoosh |
 | 11,5–13,2 | «1. Información incorrecta.» | Solo, plano cerrado | Titular grande «1. INFORMACIÓN INCORRECTA» | Cambio de ritmo musical |
-| 13,2–17,4 | «Si no configuras bien sus respuestas, podría dar precios, horarios o condiciones que no son reales.» | Dividida | Chat: el asistente inventa horario y envío gratis; aviso «Horario y condiciones que no son reales» | Whoosh |
+| 13,2–17,4 | «Si no configuras bien sus respuestas, podría dar precios, horarios o condiciones que no son reales.» | Dividida | Imagen real de una clienta frente al local cerrado + chat donde el asistente dice que abren los domingos; aviso «Horario que no es real» | Whoosh |
 | 17,4–19,6 | «2. Promesas que no puede cumplir,» | Solo | Titular grande «2. PROMESAS QUE NO PUEDE CUMPLIR» | Impacto |
-| 19,6–23,0 | «por ejemplo, confirmar una reserva sin comprobar si realmente hay disponibilidad.» | Dividida | Calendario: 18:00 ocupado y la reserva del asistente en rojo, «doble reserva» | Whoosh |
+| 19,6–23,0 | «por ejemplo, confirmar una reserva sin comprobar si realmente hay disponibilidad.» | Dividida | Imagen real de dos clientas en la misma cita + calendario con la doble reserva en rojo | Whoosh |
 | 23,0–24,6 | «3. Falta de control.» | Solo | Titular grande «3. FALTA DE CONTROL» | Impacto |
-| 24,6–27,8 | «Tu asistente debe saber cuándo dejar de responder y pasar la conversación a una persona.» | Dividida | Flujo: caso delicado → el asistente se detiene → pasa a una persona | Clic en cada conexión |
+| 24,6–27,8 | «Tu asistente debe saber cuándo dejar de responder y pasar la conversación a una persona.» | Dividida | Imagen real de un empleado atendiendo + flujo: caso delicado → el asistente se detiene → pasa a una persona | Clic en cada conexión |
 | 27,8–30,3 | «La IA puede ayudarte muchísimo,» | Solo, zoom | — | — |
 | 30,3–33,5 | «…pero necesita información correcta, límites claros y supervisión.» | Dividida | Lista «LO QUE NECESITA»: cada punto entra cuando se dice | — |
 | 33,5–38,1 | «Soy Luis Flores, y aquí te enseño cómo aplicar IA a tu negocio sin complicaciones.» | Solo | Rótulo LUIS FLORES · IA · WEB · AUTOMATIZACIÓN · soyluisflores.es | — |
@@ -25,3 +25,5 @@ Notas:
 - **Interfaces:** son ejemplos ilustrativos, con el aviso discreto en la franja. No hay clientes, precios ni resultados reales.
 - **Subtítulos:** de la voz real, una línea en la unión de la pantalla dividida, con palabras clave en cian.
 - **Portada:** composición `LF-ErroresIA-Portada`, fotograma 75: avatar y «3 ERRORES AL USAR IA EN TU NEGOCIO».
+
+Imágenes generadas con IA (15/11/2026): `ia-negocio-organizado.jpg`, `ia-local-cerrado.jpg`, `ia-doble-reserva.jpg` e `ia-equipo-atiende.jpg`.

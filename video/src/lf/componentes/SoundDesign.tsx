@@ -39,6 +39,11 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
     if (e.contenido?.tipo === "dividida" && auto) {
       e.contenido.derecha.mensajes.forEach((_, i) => cues.push({ frame: e.desde + espera + 10 + i * PASO_MENSAJE, archivo: "sfx/aviso.wav", volumen: 0.28 }));
     }
+    if (e.contenido?.tipo === "imagenYPantalla" && e.contenido.derecha.tipo === "flujo" && auto) {
+      const n = e.contenido.derecha.nodos.length;
+      const paso = Math.max(10, Math.min(36, Math.floor((Math.max(30, e.hasta - e.desde - 6) * 0.7) / Math.max(1, n))));
+      for (let i = 1; i < n; i++) cues.push({ frame: e.desde + espera + 6 + i * paso + 2, archivo: "sfx/clic.wav", volumen: 0.3 });
+    }
     if (e.contenido?.tipo === "revelacion" && auto) {
       cues.push({ frame: e.desde + 2, archivo: "sfx/impacto.wav", volumen: 0.45 });
     }

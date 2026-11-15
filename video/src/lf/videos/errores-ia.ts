@@ -43,20 +43,22 @@ export const erroresIa: ConfigVideo = {
       presentador: "dividida",
       titular: { texto: "TU ASISTENTE DE IA", destacar: ["ia"], colorDestacado: "cian", tamano: 50 },
       contenido: {
-        tipo: "pantallas",
-        pantallas: [
-          {
-            titulo: "Asistente · funcionando · ejemplo",
-            fuente: {
-              tipo: "chat",
-              canal: "Tu negocio",
-              mensajes: [
-                { de: "cliente", texto: "Hola, ¿tienen hueco hoy por la tarde?", hora: "16:02" },
-                { de: "agente", texto: "¡Hola! Soy el asistente virtual. Déjame revisarlo y te ayudo con la reserva.", hora: "16:02" },
-              ],
-            },
+        tipo: "imagenYPantalla",
+        imagen: "medios/ia-negocio-organizado.jpg",
+        credito: "Imagen generada con IA",
+        etiqueta: "TODO EN ORDEN",
+        derecha: {
+          tipo: "pantalla",
+          titulo: "Asistente · ejemplo",
+          fuente: {
+            tipo: "chat",
+            canal: "Tu negocio",
+            mensajes: [
+              { de: "cliente", texto: "¿Tienen hueco hoy por la tarde?", hora: "16:02" },
+              { de: "agente", texto: "¡Hola! Soy el asistente virtual. Lo reviso y te ayudo.", hora: "16:02" },
+            ],
           },
-        ],
+        },
       },
     },
     {
@@ -110,21 +112,23 @@ export const erroresIa: ConfigVideo = {
       presentador: "dividida",
       titular: { texto: "1 · INFORMACIÓN INCORRECTA", destacar: ["incorrecta"], colorDestacado: "cian", tamano: 48 },
       contenido: {
-        tipo: "pantallas",
-        pantallas: [
-          {
-            titulo: "Asistente sin configurar · ejemplo",
-            fuente: {
-              tipo: "chat",
-              canal: "Tu negocio",
-              mensajes: [
-                { de: "cliente", texto: "¿Abren los domingos? ¿El envío es gratis?", hora: "11:20" },
-                { de: "agente", texto: "¡Claro! Abrimos los domingos y el envío siempre es gratis.", hora: "11:20" },
-                { de: "estado", texto: "Horario y condiciones que no son reales" },
-              ],
-            },
+        tipo: "imagenYPantalla",
+        imagen: "medios/ia-local-cerrado.jpg",
+        credito: "Imagen generada con IA",
+        etiqueta: "DOMINGO · CERRADO",
+        derecha: {
+          tipo: "pantalla",
+          titulo: "Asistente sin configurar · ejemplo",
+          fuente: {
+            tipo: "chat",
+            canal: "Tu negocio",
+            mensajes: [
+              { de: "cliente", texto: "¿Abren los domingos?", hora: "11:20" },
+              { de: "agente", texto: "¡Claro! Abrimos todos los domingos.", hora: "11:20" },
+              { de: "estado", texto: "Horario que no es real" },
+            ],
           },
-        ],
+        },
       },
     },
     {
@@ -143,21 +147,23 @@ export const erroresIa: ConfigVideo = {
       presentador: "dividida",
       titular: { texto: "2 · RESERVA SIN COMPROBAR", destacar: ["comprobar"], colorDestacado: "cian", tamano: 48 },
       contenido: {
-        tipo: "pantallas",
-        pantallas: [
-          {
-            titulo: "Calendario · ejemplo",
-            fuente: {
-              tipo: "calendario",
-              dia: "Hoy",
-              huecos: [
-                { hora: "17:00", texto: "Ocupado" },
-                { hora: "18:00", texto: "Ocupado" },
-                { hora: "18:00", texto: "Confirmada por el asistente · doble reserva", conflicto: true },
-              ],
-            },
+        tipo: "imagenYPantalla",
+        imagen: "medios/ia-doble-reserva.jpg",
+        credito: "Imagen generada con IA",
+        etiqueta: "MISMA HORA",
+        derecha: {
+          tipo: "pantalla",
+          titulo: "Calendario · ejemplo",
+          fuente: {
+            tipo: "calendario",
+            dia: "Hoy",
+            huecos: [
+              { hora: "17:00", texto: "Ocupado" },
+              { hora: "18:00", texto: "Ocupado" },
+              { hora: "18:00", texto: "Doble reserva", conflicto: true },
+            ],
           },
-        ],
+        },
       },
     },
     {
@@ -176,12 +182,18 @@ export const erroresIa: ConfigVideo = {
       presentador: "dividida",
       titular: { texto: "3 · PASAR A UNA PERSONA", destacar: ["persona"], colorDestacado: "cian", tamano: 48 },
       contenido: {
-        tipo: "flujo",
-        nodos: [
-          { icono: "whatsapp", titulo: "Llega un caso delicado", detalle: "Una queja o algo fuera de lo habitual" },
-          { icono: "alerta", titulo: "El asistente se detiene", detalle: "No improvisa una respuesta" },
-          { icono: "usuario", titulo: "Pasa a una persona", detalle: "Tu equipo continúa la conversación" },
-        ],
+        tipo: "imagenYPantalla",
+        imagen: "medios/ia-equipo-atiende.jpg",
+        credito: "Imagen generada con IA",
+        etiqueta: "UNA PERSONA SIGUE",
+        derecha: {
+          tipo: "flujo",
+          nodos: [
+            { icono: "whatsapp", titulo: "Caso delicado", detalle: "Queja o algo fuera de lo normal" },
+            { icono: "alerta", titulo: "El asistente se detiene", detalle: "No improvisa" },
+            { icono: "usuario", titulo: "Pasa a una persona", detalle: "Tu equipo continúa" },
+          ],
+        },
       },
     },
     {

@@ -12,6 +12,7 @@ import { PantallaDividida } from "./componentes/PantallaDividida";
 import { Presentacion } from "./componentes/Presentacion";
 import { Revelacion } from "./componentes/Revelacion";
 import { ImagenReal } from "./componentes/ImagenReal";
+import { ImagenYPantalla } from "./componentes/ImagenYPantalla";
 import { ListaPuntos } from "./componentes/ListaPuntos";
 import { AlertaError } from "./componentes/AlertaError";
 import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
@@ -149,6 +150,8 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
           : Math.max(0, Math.round((resolverMomento(it.en, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada),
     }));
     contenido = <ListaPuntos items={items} ancho={ANCHO_UTIL} alto={Math.min(altoContenido, 420)} />;
+  } else if (c?.tipo === "imagenYPantalla") {
+    contenido = <ImagenYPantalla imagen={c.imagen} credito={c.credito} etiqueta={c.etiqueta} derecha={c.derecha} ancho={936} alto={Math.min(altoContenido, 560)} duracion={dur} />;
   } else if (c?.tipo === "imagen") {
     contenido = <ImagenReal archivo={c.archivo} credito={c.credito} movimiento={c.movimiento} etiqueta={c.etiqueta} ancho={936} alto={Math.min(altoContenido, 760)} duracion={dur} />;
   } else if (c?.tipo === "presentacion") {

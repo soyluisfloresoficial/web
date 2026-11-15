@@ -406,3 +406,13 @@ Componentes nuevos:
 - Hueco `conflicto` en la maqueta de calendario (doble reserva).
 - Cierre `cta.estilo: "seguir-comentar"`: SÍGUEME con Seguir → Siguiendo y COMENTA PALABRA con la caja que se escribe sola.
 - En modo compacto, el chat se desplaza como uno real: los mensajes nuevos empujan a los anteriores.
+
+---
+
+## 16. Refuerzo de la regla de imágenes (15/11/2026)
+
+Petición del titular: todos los videos llevan motion graphics y, preferiblemente, imágenes reales referentes a lo que se dice.
+
+- **Escenas con gráfica:** cada una lleva una imagen real acorde (propia, de banco o generada con IA).
+- **Interfaces:** chat, calendario y flujo se muestran junto a esa imagen con el contenido `imagenYPantalla`: imagen con movimiento a la izquierda y la interfaz o el flujo a la derecha.
+- **Antes de montar:** se calcula cuántas imágenes hacen falta. Si faltan créditos o una fuente falla, se avisa al titular antes de montar.

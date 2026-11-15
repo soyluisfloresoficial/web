@@ -143,6 +143,18 @@ export type Contenido =
     }
   | { tipo: "presentacion"; nombre: string; linea: string; web: string }
   | {
+      /**
+       * Imagen real acorde con la voz (izquierda) junto a la interfaz o el
+       * flujo que la explica (derecha). Es la combinación preferida en las
+       * escenas con gráfica.
+       */
+      tipo: "imagenYPantalla";
+      imagen: string;
+      credito?: string;
+      etiqueta?: string;
+      derecha: { tipo: "pantalla"; fuente: FuentePantalla; titulo?: string } | { tipo: "flujo"; nodos: NodoFlujo[] };
+    }
+  | {
       /** Lista de puntos que entran uno a uno cuando la voz dice cada uno. */
       tipo: "lista";
       items: { texto: string; icono: Icono; en?: Momento }[];
