@@ -7,12 +7,13 @@ import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig } 
 import { AnimatedCounter, Comparativa } from "./componentes/AnimatedCounter";
 import { AutomationFlow } from "./componentes/AutomationFlow";
 import { BeforeAfterReveal } from "./componentes/BeforeAfterReveal";
-import { BrandCTA, CTAMensaje, CTASeguir, type MomentosCTA } from "./componentes/BrandCTA";
+import { BrandCTA, CTAMensaje, CTASeguir, CTASeguirComentar, type MomentosCTA } from "./componentes/BrandCTA";
 import { PantallaDividida } from "./componentes/PantallaDividida";
 import { Presentacion } from "./componentes/Presentacion";
 import { Revelacion } from "./componentes/Revelacion";
 import { ImagenReal } from "./componentes/ImagenReal";
 import { ListaPuntos } from "./componentes/ListaPuntos";
+import { AlertaError } from "./componentes/AlertaError";
 import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
 import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
@@ -48,7 +49,9 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
   if (c?.tipo === "cta") {
     return (
       <AbsoluteFill style={{ opacity: salida }}>
-        {config.cta.estilo === "seguir" ? (
+        {config.cta.estilo === "seguir-comentar" ? (
+          <CTASeguirComentar cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
+        ) : config.cta.estilo === "seguir" ? (
           <CTASeguir cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
         ) : config.cta.estilo === "mensaje" ? (
           <CTAMensaje cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={disp === "dividida" ? ESCENARIO.dividida : undefined} />
@@ -77,6 +80,16 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
           : Math.round((resolverMomento(escena.capa.selloEn, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada
       }
       duracion={dur}
+    />
+  ) : escena.capa?.tipo === "alerta" ? (
+    <AlertaError
+      texto={escena.capa.texto}
+      frame={
+        escena.capa.en === undefined
+          ? 6
+          : Math.round((resolverMomento(escena.capa.en, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada
+      }
+      zona={ESCENARIO[disp]}
     />
   ) : null;
 

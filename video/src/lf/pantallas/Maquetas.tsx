@@ -15,7 +15,7 @@ const etiqueta = { fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 22, colo
 function Chat({ p, f, fps, compacto }: { p: Extract<PantallaMaqueta, { tipo: "chat" }>; f: number; fps: number; compacto?: boolean }) {
   const paso = Math.round(fps * 1.1);
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: compacto ? 12 : 16, padding: compacto ? 20 : 28, height: "100%", boxSizing: "border-box" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: compacto ? 12 : 16, padding: compacto ? 20 : 28, height: "100%", boxSizing: "border-box", justifyContent: compacto ? "flex-end" : undefined, overflow: "hidden" }}>
       <div style={{ display: compacto ? "none" : "flex", alignItems: "center", gap: 14, paddingBottom: 16, borderBottom: `1px solid ${COLOR.linea}` }}>
         <div style={{ width: 52, height: 52, borderRadius: 26, background: COLOR.superficie2, display: "grid", placeItems: "center", color: COLOR.cian }}>
           <Icono nombre="whatsapp" tam={28} />
@@ -29,6 +29,7 @@ function Chat({ p, f, fps, compacto }: { p: Extract<PantallaMaqueta, { tipo: "ch
         const aparece = 8 + i * paso;
         // Antes de cada respuesta del agente, «escribiendo…».
         const escribiendo = m.de === "agente" && f >= aparece - 18 && f < aparece;
+        if (compacto && f < aparece - (m.de === "agente" ? 18 : 0)) return null;
         const t = prog(f, aparece, 10, CURVA.impacto);
         if (m.de === "estado") {
           const pulso = 0.55 + 0.45 * Math.abs(Math.sin((f - aparece) / 9));
@@ -40,7 +41,7 @@ function Chat({ p, f, fps, compacto }: { p: Extract<PantallaMaqueta, { tipo: "ch
         }
         const delCliente = m.de === "cliente";
         return (
-          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: delCliente ? "flex-start" : "flex-end" }}>
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: delCliente ? "flex-start" : "flex-end", flexShrink: 0 }}>
             {escribiendo ? (
               <div style={{ padding: "16px 22px", borderRadius: 22, background: "rgb(0 194 255 / 0.14)", display: "flex", gap: 8 }}>
                 {[0, 1, 2].map((d) => (
@@ -145,7 +146,18 @@ function Calendario({ p, f }: { p: Extract<PantallaMaqueta, { tipo: "calendario"
         <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 30, color: COLOR.tinta }}>{p.dia}</span>
       </div>
       {p.huecos.map((h, i) => {
-        const t = h.nuevo ? prog(f, 26, 14, CURVA.impacto) : 1;
+        const t = h.nuevo || h.conflicto ? prog(f, h.conflicto ? 34 : 26, 14, CURVA.impacto) : 1;
+        if (h.conflicto) {
+          const temblor = t > 0 && t < 1 ? Math.sin(f * 2.5) * 4 * (1 - t) : 0;
+          return (
+            <div key={i} style={{ display: "flex", gap: 16, alignItems: "center", transform: `translateX(${temblor}px)` }}>
+              <span style={{ ...etiqueta, width: 90 }}>{h.hora}</span>
+              <div style={{ flex: 1, minHeight: 52, borderRadius: 12, padding: "10px 16px", boxSizing: "border-box", background: `rgb(255 92 122 / ${0.16 * t})`, border: `1.5px solid rgb(255 92 122 / ${t})`, fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 22, color: COLOR.peligro, opacity: t, transform: `scale(${0.9 + 0.1 * t})` }}>
+                {h.texto}
+              </div>
+            </div>
+          );
+        }
         return (
           <div key={i} style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <span style={{ ...etiqueta, width: 90 }}>{h.hora}</span>

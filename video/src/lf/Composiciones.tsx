@@ -10,6 +10,7 @@ import { pilotoDobleClientes } from "./videos/piloto-doble-clientes";
 import { plantillaMaestra } from "./videos/plantilla";
 import { escribemeNegocio, escribemeNegocioPortada } from "./videos/escribeme-negocio";
 import { organizaTuNegocio, organizaTuNegocioPortada } from "./videos/organiza-tu-negocio";
+import { erroresIa, erroresIaPortada } from "./videos/errores-ia";
 
 /** Duración: fija, o la del video del avatar, o el final de la voz + 1,5 s. */
 const calcularMetadatos: CalculateMetadataFunction<PropsLF> = async ({ props }) => {
@@ -79,6 +80,26 @@ export function ComposicionesLF() {
         id="LF-OrganizaTuNegocio-Portada"
         component={PlantillaLF}
         defaultProps={{ config: organizaTuNegocioPortada }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-ErroresIA"
+        component={PlantillaLF}
+        defaultProps={{ config: erroresIa }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-ErroresIA-Portada"
+        component={PlantillaLF}
+        defaultProps={{ config: erroresIaPortada }}
         calculateMetadata={calcularMetadatos}
         durationInFrames={60 * LIENZO.fps}
         fps={LIENZO.fps}

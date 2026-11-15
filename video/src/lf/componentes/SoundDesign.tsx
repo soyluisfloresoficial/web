@@ -47,6 +47,11 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
       const paso = Math.max(10, Math.min(36, Math.floor(((e.hasta - e.desde) * 0.7) / Math.max(1, n))));
       for (let i = 1; i < n; i++) cues.push({ frame: e.desde + espera + i * paso + 2, archivo: "sfx/clic.wav", volumen: 0.3 });
     }
+    if (e.capa?.tipo === "alerta" && auto) {
+      const seg = e.capa.en === undefined ? e.desde / fps + 0.2 : resolverMomento(e.capa.en, config.subtitulos, e.desde / fps, e.desde / fps);
+      cues.push({ frame: Math.round(seg * fps), archivo: "sfx/impacto.wav", volumen: 0.5 });
+      cues.push({ frame: Math.round(seg * fps) + 2, archivo: "sfx/aviso.wav", volumen: 0.35 });
+    }
     if (e.capa?.tipo === "notificaciones" && auto) {
       e.capa.avisos.slice(0, 4).forEach((_, i) => cues.push({ frame: e.desde + 2 + i * PASO_AVISO, archivo: "sfx/aviso.wav", volumen: 0.32 }));
     }

@@ -393,3 +393,16 @@ Cada video definitivo se entrega con su copy para TikTok, Instagram, Facebook y 
 - recuerda activar la etiqueta de contenido generado con IA.
 
 Se guarda en `video/copys/<id-del-video>.md`.
+
+---
+
+## 15. Reel «3 errores al usar IA en tu negocio» (15/11/2026)
+
+Configuración: `src/lf/videos/errores-ia.ts` (composiciones `LF-ErroresIA` y `LF-ErroresIA-Portada`). Storyboard en `storyboards/errores-ia.md` y copy en `copys/errores-ia.md`.
+
+Componentes nuevos:
+
+- Capa `alerta` (`AlertaError`): destello rojo, sacudida y sello sincronizados con una frase.
+- Hueco `conflicto` en la maqueta de calendario (doble reserva).
+- Cierre `cta.estilo: "seguir-comentar"`: SÍGUEME con Seguir → Siguiendo y COMENTA PALABRA con la caja que se escribe sola.
+- En modo compacto, el chat se desplaza como uno real: los mensajes nuevos empujan a los anteriores.

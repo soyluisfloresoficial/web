@@ -65,7 +65,7 @@ export type PantallaMaqueta =
   | { tipo: "chat"; canal: string; mensajes: { de: "cliente" | "agente" | "estado"; texto: string; hora?: string }[] }
   | { tipo: "formulario"; titulo: string; campos: { etiqueta: string; valor: string }[]; boton: string }
   | { tipo: "crm"; columnas: { titulo: string; tarjetas: string[] }[]; mover?: { tarjeta: string; a: number } }
-  | { tipo: "calendario"; dia: string; huecos: { hora: string; texto?: string; nuevo?: boolean }[] }
+  | { tipo: "calendario"; dia: string; huecos: { hora: string; texto?: string; nuevo?: boolean; /** Reserva en conflicto (doble reserva). */ conflicto?: boolean }[] }
   | { tipo: "notificacion"; titulo: string; texto: string }
   | { tipo: "web"; negocio: string; lema: string; secciones: string[]; boton: string; /** Foto real de portada (en publico/). */ imagen?: string }
   | { tipo: "pendiente"; descripcion: string };
@@ -154,7 +154,17 @@ export type Contenido =
  * «notificaciones»: avisos de mensajes que llegan uno tras otro y se quedan
  * sin responder (gancho visual de los primeros segundos).
  */
-export type Capa = {
+export type Capa =
+  | CapaNotificaciones
+  | {
+      /** Alerta de error: destello rojo, sacudida y sello grande sobre la franja de gráficos. */
+      tipo: "alerta";
+      texto: string;
+      /** Momento de la alerta (segundos de la escena o ancla). */
+      en?: Momento;
+    };
+
+export type CapaNotificaciones = {
   tipo: "notificaciones";
   avisos: { remitente: string; texto: string; hora: string }[];
   /** Texto del sello que aparece en todos a la vez, por ejemplo «Sin responder». */
@@ -200,7 +210,7 @@ export type ConfigCTA = {
    */
   momentos?: { seguir?: string; comentar?: string; recurso?: string };
   /** «comentario» (Comenta PALABRA + recurso) o «mensaje» (escríbeme por privado). */
-  estilo?: "comentario" | "mensaje" | "seguir";
+  estilo?: "comentario" | "mensaje" | "seguir" | "seguir-comentar";
   /** Para el estilo «mensaje»: línea bajo el texto y web. */
   nota?: string;
   web?: string;

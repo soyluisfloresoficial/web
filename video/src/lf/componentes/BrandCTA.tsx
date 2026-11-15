@@ -385,3 +385,81 @@ export function CTASeguir({ cta, momentos, zona }: { cta: ConfigCTA; momentos: M
     </div>
   );
 }
+
+/**
+ * Cierre «SÍGUEME + COMENTA PALABRA» para la franja superior: primero el
+ * perfil con Seguir → Siguiendo ✓ (al decir «sígueme») y después
+ * «Comenta PALABRA» con la caja que se escribe sola (al decir «comenta»).
+ */
+export function CTASeguirComentar({ cta, momentos, zona }: { cta: ConfigCTA; momentos: MomentosCTA; zona: { y: number; h: number } }) {
+  const f = useCurrentFrame();
+  const izq = ZONA_SEGURA.izquierda;
+  const ancho = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
+  const t1 = prog(f, momentos.seguir, 10, CURVA.impacto);
+  const pulsado = prog(f, momentos.seguir + 14, 8, CURVA.impacto);
+  const siguiendo = f >= momentos.seguir + 16;
+  const t2 = prog(f, momentos.comentar, 10, CURVA.impacto);
+  const inicioTecleo = momentos.comentar + 8;
+  const letras = Math.max(0, Math.min(cta.palabra.length, Math.floor((f - inicioTecleo) / 3)));
+  const enviado = f >= inicioTecleo + cta.palabra.length * 3 + 6;
+  const latido = 1 + 0.035 * Math.sin(f / 5);
+  return (
+    <div style={{ position: "absolute", left: izq, width: ancho, top: zona.y, height: zona.h, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 22 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, opacity: t1, transform: `translateY(${(1 - t1) * 24}px)` }}>
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 70, color: COLOR.tinta, letterSpacing: "-0.02em" }}>SÍGUEME</span>
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "10px 22px",
+            borderRadius: 999,
+            fontFamily: FUENTE.display,
+            fontWeight: 800,
+            fontSize: 26,
+            background: siguiendo ? COLOR.superficie2 : DEGRADADO,
+            color: siguiendo ? COLOR.tinta : COLOR.base,
+            border: siguiendo ? `1.5px solid ${COLOR.cian}` : "1.5px solid transparent",
+            transform: `scale(${interpolate(pulsado, [0, 0.5, 1], [1, 0.88, 1])})`,
+          }}
+        >
+          {siguiendo ? (
+            <>
+              Siguiendo <Icono nombre="check" tam={24} grosor={2.6} color={COLOR.cian} />
+            </>
+          ) : (
+            "Seguir"
+          )}
+        </span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, opacity: t2, transform: `scale(${0.85 + 0.15 * t2})` }}>
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 70, color: COLOR.tinta, letterSpacing: "-0.02em" }}>COMENTA</span>
+        <span style={{ padding: "2px 24px", borderRadius: 18, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 76, lineHeight: 1.1, transform: `scale(${latido}) rotate(-2deg)`, boxShadow: "0 0 50px rgb(0 255 179 / 0.5)" }}>
+          {cta.palabra}
+        </span>
+      </div>
+      <div
+        style={{
+          width: ancho - 80,
+          height: 76,
+          borderRadius: 38,
+          display: "flex",
+          alignItems: "center",
+          padding: "0 10px 0 28px",
+          boxSizing: "border-box",
+          background: COLOR.superficie,
+          border: `2px solid ${enviado ? COLOR.cta : COLOR.linea}`,
+          opacity: t2,
+        }}
+      >
+        <span style={{ flex: 1, fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 28, color: letras ? COLOR.tinta : COLOR.apagado }}>
+          {letras ? cta.palabra.slice(0, letras) : "Añade un comentario…"}
+          {!enviado && f % 20 < 10 && <span style={{ color: COLOR.cta }}>|</span>}
+        </span>
+        <span style={{ padding: "10px 22px", borderRadius: 30, background: enviado ? COLOR.cta : COLOR.superficie2, color: enviado ? COLOR.base : COLOR.suave, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 22 }}>
+          {enviado ? "Enviado ✓" : "Publicar"}
+        </span>
+      </div>
+    </div>
+  );
+}
