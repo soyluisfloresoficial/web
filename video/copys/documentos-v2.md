@@ -61,3 +61,32 @@ He preparado una checklist gratuita para organizar los archivos antes de conecta
 
 #InteligenciaArtificial #Productividad #Automatizacion
 ```
+
+## WhatsApp (sin comentarios: el CTA es escribir DOCUMENTOS)
+Enlace con el mensaje ya escrito: https://wa.me/34631654919?text=DOCUMENTOS
+
+### Estado (texto corto sobre el video)
+```
+¿Le harías preguntas a tus documentos? 📂
+Escríbeme DOCUMENTOS y te envío la checklist gratis 👇
+wa.me/34631654919?text=DOCUMENTOS
+```
+
+### Canal o grupo
+```
+¿Y si pudieras hacerle preguntas a todos los documentos de tu empresa? 📂
+
+Contratos, manuales, procedimientos… y tú buscando una sola condición. Con IA conectada a tus documentos preguntas y te responde citando de qué archivo sale la información.
+
+Ojo: solo con documentos autorizados y verificando lo importante.
+
+Te preparé una checklist gratuita para organizar tus archivos antes de conectarlos a una IA. Escríbeme DOCUMENTOS y te la envío 👇
+https://wa.me/34631654919?text=DOCUMENTOS
+```
+
+### Mensaje directo a un contacto
+```
+¡Hola! Te comparto este video corto sobre cómo la IA puede consultar los documentos de un negocio y responder citando de dónde saca la información.
+
+Si te sirve, tengo una checklist gratuita para organizar los archivos antes de conectarlos a una IA. Respóndeme DOCUMENTOS y te la paso 📂
+```
