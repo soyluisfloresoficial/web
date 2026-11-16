@@ -2,6 +2,9 @@
 
 Avatar HeyGen: `publico/medios/avatar-documentos.mp4` (720×1280, 25 fps, 43,5 s). Config: `src/lf/videos/documentos.ts`.
 
+## Versión 2 (16/11/2026): la explicación es la protagonista
+El avatar sale solo en el gancho (0–3,5 s), la pregunta «¿vas a abrir los archivos uno por uno?» (10,5–12,7 s) y el cierre (36,1–43,5 s): unos 13 s de 43,5. El resto va a pantalla completa: fotos reales de fondo (B-roll) con titulares y listas, la demo del buscador ampliada con la cámara siguiendo cada fase, y el esquema «Búsqueda + IA». El avatar se funde al entrar y salir. La tabla de abajo es la versión 1.
+
 ## Montaje (tiempos de la voz real)
 | Tiempo | Voz | Disposición | Visual |
 |---|---|---|---|

@@ -210,6 +210,8 @@ export type Escena = {
   sonidos?: Sonido[];
   /** Transición de entrada del contenido. */
   entrada?: "deslizar" | "mascara" | "zoom";
+  /** Plano de recurso a pantalla completa detrás del titular y el contenido (foto o video real). */
+  fondo?: { archivo: string; credito?: string; movimiento?: "acercar" | "alejar" | "izquierda" | "derecha" };
   /** Capítulo al que pertenece la escena (enciende el marcador 01 · 02 · 03). */
   capitulo?: number;
   /** En pantalla completa, el titular se muestra como rótulo de capítulo de marca (número grande + título). */

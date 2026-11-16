@@ -20,6 +20,7 @@ import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
 import { RotuloCapitulo } from "./componentes/RotuloCapitulo";
 import { BuscadorDocumentos } from "./componentes/BuscadorDocumentos";
+import { BRoll } from "./componentes/BRoll";
 import { SistemaReveal } from "./componentes/SistemaReveal";
 import { ESCENARIO } from "./disposicion";
 import { ZONA_SEGURA } from "./marca";
@@ -165,8 +166,9 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
         respuesta={c.respuesta}
         citas={c.citas}
         fases={{ pregunta: rel(c.momentos.pregunta), busca: rel(c.momentos.busca), respuesta: rel(c.momentos.respuesta), citas: rel(c.momentos.citas) }}
-        ancho={936}
-        alto={Math.min(altoContenido, 560)}
+        ancho={disp === "oculto" ? 760 : 936}
+        alto={disp === "oculto" ? 540 : Math.min(altoContenido, 560)}
+        escala={disp === "oculto" ? 1.2 : 1}
       />
     );
   } else if (c?.tipo === "imagen") {
@@ -207,6 +209,7 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
 
   return (
     <AbsoluteFill style={{ opacity: salida, zIndex: 10 }}>
+      {escena.fondo && <BRoll archivo={escena.fondo.archivo} credito={escena.fondo.credito} movimiento={escena.fondo.movimiento} duracion={dur} />}
       <Sequence from={esperaEntrada} layout="none">
       {capa}
       {titular && escena.rotuloCapitulo && disp === "completo" && (
@@ -284,5 +287,9 @@ export function momentosCTA(config: ConfigVideo, escena: EscenaResuelta, fps: nu
 /** Fotogramas que espera el contenido de una escena a que el avatar termine de moverse. */
 export function esperaEntradaDe(escena: EscenaResuelta, previa?: EscenaResuelta): number {
   if (!previa) return 0;
-  return (previa.presentador ?? "completo") !== (escena.presentador ?? "completo") ? 10 : 0;
+  const a = previa.presentador ?? "completo";
+  const b = escena.presentador ?? "completo";
+  if (a === b) return 0;
+  // El avatar se funde (no se mueve) al entrar o salir de la explicación a pantalla completa.
+  return a === "oculto" || b === "oculto" ? 4 : 10;
 }

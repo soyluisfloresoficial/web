@@ -41,7 +41,7 @@ export const ESCENARIO: Record<Disposicion, { y: number; h: number }> = {
   dividida: { y: 236, h: 396 },
   burbuja: { y: 540, h: 760 },
   tarjeta: { y: 1100, h: 150 },
-  oculto: { y: 300, h: 1000 },
+  oculto: { y: 330, h: 980 },
 };
 
 /** Centro vertical de los subtítulos en cada disposición. */

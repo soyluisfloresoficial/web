@@ -22,7 +22,10 @@ export function BuscadorDocumentos({
   fases,
   ancho,
   alto,
+  escala = 1,
 }: {
+  /** Escala final del panel (a pantalla completa se amplía y la cámara va a cada fase). */
+  escala?: number;
   documentos: string[];
   pregunta: string;
   resaltar: number[];
@@ -38,7 +41,7 @@ export function BuscadorDocumentos({
   const cuerpo = alto - cabecera - 20;
   const anchoLista = Math.round(ancho * 0.4);
   const anchoDerecha = ancho - anchoLista - 46;
-  const filaAlto = Math.min(44, Math.floor((cuerpo - (documentos.length - 1) * 6) / documentos.length));
+  const filaAlto = Math.min(60, Math.floor((cuerpo - (documentos.length - 1) * 6) / documentos.length));
 
   // Pregunta escrita letra a letra.
   const letras = Math.floor(interpolate(f, [fases.pregunta, fases.pregunta + 34], [0, pregunta.length], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
@@ -50,11 +53,34 @@ export function BuscadorDocumentos({
   const palabrasResp = respuesta.split(" ");
   const nPalabras = Math.floor(interpolate(f, [fases.respuesta + 4, fases.respuesta + 40], [0, palabrasResp.length], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
 
+  // Cámara: a pantalla completa se acerca a la parte que importa en cada fase.
+  const fasesCam = [
+    { t: 0, z: 1, ox: 50, oy: 50 },
+    { t: fases.pregunta, z: 1.05, ox: 62, oy: 20 },
+    { t: fases.busca, z: 1.05, ox: 38, oy: 50 },
+    { t: fases.respuesta, z: 1.04, ox: 62, oy: 65 },
+    { t: fases.citas + 30, z: 1, ox: 50, oy: 50 },
+  ];
+  const camara = (() => {
+    if (escala === 1) return { z: 1, ox: 50, oy: 50 };
+    let a = fasesCam[0];
+    let b = fasesCam[0];
+    for (const c of fasesCam) {
+      if (f >= c.t) {
+        a = b;
+        b = c;
+      }
+    }
+    const k = prog(f, b.t, 14, CURVA.marca);
+    return { z: a.z + (b.z - a.z) * k, ox: a.ox + (b.ox - a.ox) * k, oy: a.oy + (b.oy - a.oy) * k };
+  })();
   return (
+    <div style={{ width: ancho * escala, height: alto * escala, display: "flex", alignItems: "center", justifyContent: "center" }}>
     <div
       style={{
         width: ancho,
         height: alto,
+        flexShrink: 0,
         borderRadius: 26,
         background: `linear-gradient(160deg, #0A2540 0%, ${COLOR.base2} 70%)`,
         border: "1px solid rgb(0 194 255 / 0.25)",
@@ -62,7 +88,8 @@ export function BuscadorDocumentos({
         overflow: "hidden",
         position: "relative",
         opacity: entrada,
-        transform: `translateY(${(1 - entrada) * 30}px) scale(${0.96 + 0.04 * entrada})`,
+        transform: `translateY(${(1 - entrada) * 30}px) scale(${(0.96 + 0.04 * entrada) * escala * camara.z})`,
+        transformOrigin: `${camara.ox}% ${camara.oy}%`,
         fontFamily: FUENTE.texto,
       }}
     >
@@ -191,6 +218,7 @@ export function BuscadorDocumentos({
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -37,82 +37,70 @@ export const documentos: ConfigVideo = {
   },
   escenas: [
     {
-      // Gancho: avatar solo y titular corto.
+      // Gancho: el avatar, con movimiento desde el primer fotograma (momento clave 1).
       id: "gancho",
       seccion: "gancho",
       inicio: 0,
       presentador: "completo",
-      zoom: [{ en: { ancla: "documentos de tu empresa" }, escala: 1.1, duracion: 1.2 }],
+      zoom: [{ en: 0, escala: 1.08, duracion: 0.6 }, { en: { ancla: "documentos de tu empresa" }, escala: 1.1, duracion: 1.2 }],
       titular: { texto: "¿Y SI PUDIERAS HACERLE PREGUNTAS A TUS DOCUMENTOS?", destacar: ["preguntas", "documentos"], colorDestacado: "cian", sincronizar: true, tamano: 78 },
     },
     {
-      // «cientos de contratos, manuales y procedimientos… en diferentes carpetas»
+      // Explicación a pantalla completa: pilas reales de archivos.
       id: "carpetas",
       seccion: "problema",
       inicio: { ancla: "imagina tener" },
-      presentador: "dividida",
-      titular: { texto: "CIENTOS DE DOCUMENTOS", destacar: ["documentos"], colorDestacado: "cian", tamano: 48 },
+      presentador: "oculto",
+      fondo: { archivo: "medios/foto-pilas-archivos.jpg", credito: "Foto: rawpixel · CC0", movimiento: "acercar" },
+      titular: { texto: "CIENTOS DE DOCUMENTOS", destacar: ["documentos"], colorDestacado: "cian", tamano: 84 },
       contenido: {
-        tipo: "imagenYPantalla",
-        imagen: "medios/foto-pilas-archivos.jpg",
-        credito: "Foto: rawpixel · CC0",
-        etiqueta: "EN CARPETAS",
-        derecha: {
-          tipo: "flujo",
-          nodos: [
-            { icono: "formulario", titulo: "Contratos", detalle: "Carpeta 1" },
-            { icono: "formulario", titulo: "Manuales", detalle: "Carpeta 2" },
-            { icono: "formulario", titulo: "Procedimientos", detalle: "Carpeta 3" },
-          ],
-        },
+        tipo: "lista",
+        items: [
+          { texto: "Contratos", icono: "formulario", en: { ancla: "contratos" } },
+          { texto: "Manuales", icono: "formulario", en: { ancla: "manuales" } },
+          { texto: "Procedimientos", icono: "formulario", en: { ancla: "procedimientos" } },
+        ],
       },
     },
     {
-      // «Ahora necesitas encontrar una condición específica»
       id: "buscar-a-mano",
       seccion: "problema",
       inicio: { ancla: "ahora necesitas" },
-      presentador: "dividida",
-      titular: { texto: "UNA CONDICIÓN ESPECÍFICA", destacar: ["específica"], colorDestacado: "cian", tamano: 48 },
-      contenido: { tipo: "imagen", archivo: "medios/foto-busqueda-agobio.jpg", credito: "Foto: rawpixel · CC0", movimiento: "acercar", etiqueta: "BUSCANDO A MANO" },
+      presentador: "oculto",
+      fondo: { archivo: "medios/foto-busqueda-agobio.jpg", credito: "Foto: rawpixel · CC0", movimiento: "alejar" },
+      titular: { texto: "BUSCAR UNA SOLA CONDICIÓN", destacar: ["condición"], colorDestacado: "cian", tamano: 84 },
     },
     {
-      // Pregunta al espectador: avatar solo.
+      // Pregunta directa al espectador (momento clave 2).
       id: "uno-por-uno",
       seccion: "problema",
       inicio: { ancla: "vas a abrir" },
       presentador: "completo",
-      zoom: [{ en: { ancla: "uno por uno" }, escala: 1.1, duracion: 1 }],
+      zoom: [{ en: { ancla: "uno por uno" }, escala: 1.12, duracion: 1 }],
       titular: { texto: "¿VAS A ABRIR LOS ARCHIVOS UNO POR UNO?", destacar: ["uno"], colorDestacado: "cian", sincronizar: true, tamano: 80 },
     },
     {
-      // «Con un sistema de inteligencia artificial conectado a tus documentos»
       id: "sistema",
       seccion: "solucion1",
       inicio: { ancla: "con un sistema" },
-      presentador: "dividida",
-      titular: { texto: "IA CONECTADA A TUS DOCUMENTOS", destacar: ["ia"], colorDestacado: "cian", tamano: 48 },
+      presentador: "oculto",
+      fondo: { archivo: "medios/foto-consulta-ia.jpg", credito: "Foto: Direct Media · StockSnap · CC0", movimiento: "derecha" },
+      titular: { texto: "IA CONECTADA A TUS DOCUMENTOS", destacar: ["ia"], colorDestacado: "cian", tamano: 80 },
       contenido: {
-        tipo: "imagenYPantalla",
-        imagen: "medios/foto-consulta-ia.jpg",
-        credito: "Foto: Direct Media · StockSnap · CC0",
-        etiqueta: "UNA PREGUNTA",
-        derecha: {
-          tipo: "flujo",
-          nodos: [
-            { icono: "formulario", titulo: "Tus documentos", detalle: "Solo los autorizados" },
-            { icono: "agente", titulo: "Sistema de IA", detalle: "Busca y redacta" },
-            { icono: "usuario", titulo: "Tu pregunta", detalle: "En lenguaje normal" },
-          ],
-        },
+        tipo: "flujo",
+        nodos: [
+          { icono: "formulario", titulo: "Tus documentos", detalle: "Solo los autorizados" },
+          { icono: "agente", titulo: "Sistema de IA", detalle: "Busca y redacta" },
+          { icono: "usuario", titulo: "Tu pregunta", detalle: "En lenguaje normal" },
+        ],
       },
     },
     {
-      // DEMO: pregunta → búsqueda → respuesta con citas.
+      // DEMO a pantalla completa, la cámara va a cada fase.
       id: "demo",
       seccion: "solucion1",
       inicio: { ancla: "puedes preguntar" },
-      presentador: "dividida",
+      presentador: "oculto",
       sonidos: [
         { en: { ancla: "busca los fragmentos" }, archivo: "sfx/whoosh.wav", volumen: 0.25 },
         { en: { ancla: "prepara una respuesta" }, archivo: "sfx/pop.wav", volumen: 0.35 },
@@ -137,37 +125,38 @@ export const documentos: ConfigVideo = {
       },
     },
     {
-      // Opinión: avatar solo con titular sincronizado.
+      // Cómo funciona: búsqueda + IA = respuesta con fuente.
       id: "tecnologia",
       seccion: "solucion2",
       inicio: { ancla: "no es magia" },
-      presentador: "completo",
-      zoom: [{ en: { ancla: "búsqueda de información" }, escala: 1.08, duracion: 1.2 }],
-      titular: { texto: "BÚSQUEDA DE INFORMACIÓN CON INTELIGENCIA ARTIFICIAL", destacar: ["búsqueda", "inteligencia", "artificial"], colorDestacado: "cian", sincronizar: true, tamano: 76 },
-    },
-    {
-      // Cautela: documentos autorizados y verificación.
-      id: "cautela",
-      seccion: "sistema",
-      inicio: { ancla: "eso sí" },
-      presentador: "dividida",
-      titular: { texto: "ANTES DE USARLO", destacar: ["antes"], colorDestacado: "cian", tamano: 48 },
+      presentador: "oculto",
+      titular: { texto: "BÚSQUEDA + IA", destacar: ["ia"], colorDestacado: "cian", tamano: 96 },
       contenido: {
-        tipo: "imagenYPantalla",
-        imagen: "medios/foto-verificacion.jpg",
-        credito: "Foto: rawpixel · CC0",
-        etiqueta: "VERIFICAR",
-        derecha: {
-          tipo: "flujo",
-          nodos: [
-            { icono: "check", titulo: "Documentos autorizados", detalle: "Solo lo que se puede consultar" },
-            { icono: "usuario", titulo: "Verificación", detalle: "Una persona revisa lo importante" },
-          ],
-        },
+        tipo: "flujo",
+        nodos: [
+          { icono: "formulario", titulo: "Búsqueda", detalle: "Encuentra los fragmentos" },
+          { icono: "agente", titulo: "Inteligencia artificial", detalle: "Redacta la respuesta" },
+          { icono: "check", titulo: "Respuesta con fuente", detalle: "Sabes de qué documento sale" },
+        ],
       },
     },
     {
-      // Vuelta al avatar: «solo una de las aplicaciones».
+      id: "cautela",
+      seccion: "sistema",
+      inicio: { ancla: "eso sí" },
+      presentador: "oculto",
+      fondo: { archivo: "medios/foto-verificacion.jpg", credito: "Foto: rawpixel · CC0", movimiento: "acercar" },
+      titular: { texto: "ANTES DE USARLO", destacar: ["antes"], colorDestacado: "cian", tamano: 84 },
+      contenido: {
+        tipo: "lista",
+        items: [
+          { texto: "Documentos autorizados", icono: "check", en: { ancla: "autorizados" } },
+          { texto: "Verificar lo importante", icono: "usuario", en: { ancla: "verificación" } },
+        ],
+      },
+    },
+    {
+      // Vuelta al avatar para el cierre (momento clave 3).
       id: "aplicaciones",
       seccion: "sistema",
       inicio: { ancla: "y esto es solo" },
@@ -176,7 +165,6 @@ export const documentos: ConfigVideo = {
       titular: { texto: "SOLO UNA DE LAS APLICACIONES", destacar: ["aplicaciones"], colorDestacado: "cian", sincronizar: true, tamano: 80 },
     },
     {
-      // «Soy Luis Flores, sígueme…»: 4 s de cierre (la presentación sola duraría 1 s).
       id: "cta",
       seccion: "cta",
       inicio: { ancla: "soy luis flores" },

@@ -27,6 +27,9 @@ function cajaEscena(escenas: EscenaResuelta[], i: number, frame: number): Caja {
 
 export function cajaEnFrame(frame: number, escenas: EscenaResuelta[]): Caja {
   const i = Math.max(0, escenas.findIndex((e) => frame >= e.desde && frame < e.hasta));
+  if ((escenas[i]?.presentador ?? "completo") === "oculto" && i > 0 && (escenas[i - 1].presentador ?? "completo") === "oculto") {
+    return { ...CAJAS.completo, opacidad: 0 };
+  }
   const actual = cajaEscena(escenas, i, frame);
   if (i === 0) return actual;
   const dispPrevia = escenas[i - 1].presentador ?? "completo";
@@ -35,6 +38,9 @@ export function cajaEnFrame(frame: number, escenas: EscenaResuelta[]): Caja {
   if (dispPrevia === "completo" && dispActual === "completo") return actual;
   const previa = cajaEscena(escenas, i - 1, escenas[i].desde - 1);
   const t = prog(frame, escenas[i].desde, TRANSICION, CURVA.marca);
+  // Hacia o desde «oculto» (explicación a pantalla completa): fundido, sin encoger el avatar.
+  if (dispActual === "oculto") return { ...previa, opacidad: 1 - prog(frame, escenas[i].desde, 8, CURVA.marca) };
+  if (dispPrevia === "oculto") return { ...actual, opacidad: prog(frame, escenas[i].desde, 8, CURVA.marca) };
   return mezclarCaja(previa, actual, t);
 }
 
