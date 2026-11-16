@@ -16,7 +16,10 @@ export function BRoll({
   movimiento = "acercar",
   duracion,
   oscurecer = 0.35,
+  sinFundido = false,
 }: {
+  /** Corte seco: entra ya visible. */
+  sinFundido?: boolean;
   archivo: string;
   credito?: string;
   movimiento?: "acercar" | "alejar" | "izquierda" | "derecha";
@@ -25,7 +28,7 @@ export function BRoll({
   oscurecer?: number;
 }) {
   const f = useCurrentFrame();
-  const entra = prog(f, 0, 10, CURVA.marca);
+  const entra = sinFundido ? 1 : prog(f, 0, 10, CURVA.marca);
   const t = interpolate(f, [0, Math.max(1, duracion)], [0, 1], { extrapolateRight: "clamp" });
   const escala = movimiento === "alejar" ? 1.18 - 0.12 * t : movimiento === "acercar" ? 1.06 + 0.12 * t : 1.14;
   const x = movimiento === "izquierda" ? 3 - 6 * t : movimiento === "derecha" ? -3 + 6 * t : 0;

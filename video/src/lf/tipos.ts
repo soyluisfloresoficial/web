@@ -167,7 +167,9 @@ export type Contenido =
       resaltar: number[];
       respuesta: string;
       citas: { doc: number; ref: string }[];
-      momentos: { pregunta: Momento; busca: Momento; respuesta: Momento; citas: Momento };
+      momentos: { pregunta: Momento; busca: Momento; respuesta: Momento; citas: Momento; agrupar?: Momento };
+      /** Zoom de cámara dentro de un visor sobre la pregunta, la respuesta y las fuentes. */
+      zoomVisor?: boolean;
     }
   | { tipo: "cta" };
 
@@ -238,13 +240,15 @@ export type ConfigCTA = {
    */
   momentos?: { seguir?: string; comentar?: string; recurso?: string };
   /** «comentario» (Comenta PALABRA + recurso) o «mensaje» (escríbeme por privado). */
-  estilo?: "comentario" | "mensaje" | "seguir" | "seguir-comentar";
+  estilo?: "comentario" | "mensaje" | "seguir" | "seguir-comentar" | "comentar-recurso";
   /** Para el estilo «mensaje»: línea bajo el texto y web. */
   nota?: string;
   web?: string;
 };
 
 export type ConfigVideo = {
+  /** «secos»: cortes limpios entre avatar y explicación a pantalla completa (sin fundidos ni oscuros). */
+  cortes?: "secos";
   /** Capa de marca persistente: firma LF con el usuario y marcador de capítulos. */
   marca?: { firma?: boolean; capitulos?: number };
   id: string;

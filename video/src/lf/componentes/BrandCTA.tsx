@@ -463,3 +463,40 @@ export function CTASeguirComentar({ cta, momentos, zona }: { cta: ConfigCTA; mom
     </div>
   );
 }
+
+/**
+ * Cierre en la franja superior (avatar abajo): «COMENTA PALABRA» + qué recibe
+ * + caja de comentario que escribe la palabra. Sin pedir seguir como condición.
+ */
+export function CTAComentarRecurso({ cta, momentos, zona }: { cta: ConfigCTA; momentos: MomentosCTA; zona: { y: number; h: number } }) {
+  const f = useCurrentFrame();
+  const izq = ZONA_SEGURA.izquierda;
+  const ancho = 1080 - ZONA_SEGURA.izquierda - ZONA_SEGURA.derecha;
+  const t1 = prog(f, momentos.comentar, 10, CURVA.impacto);
+  const t2 = prog(f, momentos.comentar + 8, 12, CURVA.impacto);
+  const inicioTecleo = momentos.comentar + 16;
+  const letras = Math.max(0, Math.min(cta.palabra.length, Math.floor((f - inicioTecleo) / 2)));
+  const enviado = f >= inicioTecleo + cta.palabra.length * 2 + 6;
+  return (
+    <div style={{ position: "absolute", left: izq, width: ancho, top: zona.y, height: zona.h, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, opacity: t1, transform: `scale(${0.88 + 0.12 * t1})` }}>
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 60, color: COLOR.tinta, letterSpacing: "-0.02em" }}>COMENTA</span>
+        <span style={{ padding: "2px 20px", borderRadius: 16, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 60, lineHeight: 1.15, transform: "rotate(-2deg)", boxShadow: "0 0 40px rgb(0 255 179 / 0.45)" }}>
+          {cta.palabra}
+        </span>
+      </div>
+      <div style={{ fontFamily: FUENTE.display, fontWeight: 700, fontSize: 32, lineHeight: 1.25, color: COLOR.tinta, textAlign: "center", maxWidth: ancho - 40, opacity: t2, transform: `translateY(${(1 - t2) * 14}px)` }}>
+        {cta.recurso}
+      </div>
+      <div style={{ width: ancho - 120, height: 68, borderRadius: 34, display: "flex", alignItems: "center", padding: "0 10px 0 26px", boxSizing: "border-box", background: COLOR.superficie, border: `2px solid ${enviado ? COLOR.cta : COLOR.linea}`, opacity: t2 }}>
+        <span style={{ flex: 1, fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 26, color: letras ? COLOR.tinta : COLOR.apagado }}>
+          {letras ? cta.palabra.slice(0, letras) : "Añade un comentario…"}
+          {!enviado && f % 20 < 10 && <span style={{ color: COLOR.cta }}>|</span>}
+        </span>
+        <span style={{ padding: "9px 20px", borderRadius: 30, background: enviado ? COLOR.cta : COLOR.superficie2, color: enviado ? COLOR.base : COLOR.suave, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 21 }}>
+          {enviado ? "Enviado ✓" : "Publicar"}
+        </span>
+      </div>
+    </div>
+  );
+}

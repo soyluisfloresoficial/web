@@ -25,7 +25,7 @@ function cajaEscena(escenas: EscenaResuelta[], i: number, frame: number): Caja {
   return { ...base, z: (cerrado ? 1.17 : 1.0) * (1 + 0.04 * avance), fy: 0.33 };
 }
 
-export function cajaEnFrame(frame: number, escenas: EscenaResuelta[]): Caja {
+export function cajaEnFrame(frame: number, escenas: EscenaResuelta[], cortesSecos = false): Caja {
   const i = Math.max(0, escenas.findIndex((e) => frame >= e.desde && frame < e.hasta));
   if ((escenas[i]?.presentador ?? "completo") === "oculto" && i > 0 && (escenas[i - 1].presentador ?? "completo") === "oculto") {
     return { ...CAJAS.completo, opacidad: 0 };
@@ -39,8 +39,8 @@ export function cajaEnFrame(frame: number, escenas: EscenaResuelta[]): Caja {
   const previa = cajaEscena(escenas, i - 1, escenas[i].desde - 1);
   const t = prog(frame, escenas[i].desde, TRANSICION, CURVA.marca);
   // Hacia o desde «oculto» (explicación a pantalla completa): fundido, sin encoger el avatar.
-  if (dispActual === "oculto") return { ...previa, opacidad: 1 - prog(frame, escenas[i].desde, 8, CURVA.marca) };
-  if (dispPrevia === "oculto") return { ...actual, opacidad: prog(frame, escenas[i].desde, 8, CURVA.marca) };
+  if (dispActual === "oculto") return { ...previa, opacidad: cortesSecos ? 0 : 1 - prog(frame, escenas[i].desde, 8, CURVA.marca) };
+  if (dispPrevia === "oculto") return { ...actual, opacidad: cortesSecos ? 1 : prog(frame, escenas[i].desde, 8, CURVA.marca) };
   return mezclarCaja(previa, actual, t);
 }
 
@@ -51,7 +51,9 @@ export function HeyGenPresenter({
   anchoFuente = 1080,
   altoFuente = 1920,
   etalonaje = false,
+  cortesSecos = false,
 }: {
+  cortesSecos?: boolean;
   /** Etalonaje de marca: algo más de contraste y viñeta con tinte cian/violeta en los bordes. */
   etalonaje?: boolean;
   avatar: string | null;
@@ -61,7 +63,7 @@ export function HeyGenPresenter({
   altoFuente?: number;
 }) {
   const f = useCurrentFrame();
-  const c = cajaEnFrame(f, escenas);
+  const c = cajaEnFrame(f, escenas, cortesSecos);
   // Aunque no se vea (opacidad 0), el video sigue montado: su audio es la voz.
 
   // Tamaño del video para cubrir la caja con el zoom pedido y el golpe de impacto.

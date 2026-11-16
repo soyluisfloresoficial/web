@@ -82,7 +82,7 @@ export function Subtitles({
           columnGap: 18,
           padding: "14px 26px",
           borderRadius: 22,
-          background: "rgb(7 9 13 / 0.62)",
+          background: "rgb(7 9 13 / 0.78)",
           boxShadow: "0 10px 40px rgb(0 0 0 / 0.35)",
           fontFamily: FUENTE.display,
           fontWeight: 800,

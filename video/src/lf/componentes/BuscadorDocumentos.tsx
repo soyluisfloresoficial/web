@@ -11,7 +11,7 @@ import { COLOR, CURVA, DEGRADADO, FUENTE } from "../marca";
 import { prog } from "../util";
 import { Icono } from "./Icono";
 
-export type FasesBuscador = { pregunta: number; busca: number; respuesta: number; citas: number };
+export type FasesBuscador = { pregunta: number; busca: number; respuesta: number; citas: number; agrupar?: number };
 
 export function BuscadorDocumentos({
   documentos,
@@ -23,7 +23,10 @@ export function BuscadorDocumentos({
   ancho,
   alto,
   escala = 1,
+  zoomVisor = false,
 }: {
+  /** Visor con zoom suave sobre la pregunta, la búsqueda, la respuesta y las fuentes. */
+  zoomVisor?: boolean;
   /** Escala final del panel (a pantalla completa se amplía y la cámara va a cada fase). */
   escala?: number;
   documentos: string[];
@@ -74,22 +77,79 @@ export function BuscadorDocumentos({
     const k = prog(f, b.t, 14, CURVA.marca);
     return { z: a.z + (b.z - a.z) * k, ox: a.ox + (b.ox - a.ox) * k, oy: a.oy + (b.oy - a.oy) * k };
   })();
+  // Visor: la cámara se centra en cada parte y la amplía (sin bordes vacíos).
+  const xDer = Math.round(ancho * 0.4) + 64 + (ancho - Math.round(ancho * 0.4) - 46) / 2;
+  const focos = [
+    { t: 0, z: 1, x: ancho / 2, y: alto / 2 },
+    { t: fases.pregunta, z: 1.38, x: xDer, y: 100 },
+    { t: fases.busca, z: 1.22, x: Math.round(ancho * 0.22), y: alto / 2 },
+    { t: fases.respuesta, z: 1.32, x: xDer, y: 250 },
+    { t: fases.citas, z: 1.38, x: xDer, y: alto - 120 },
+    { t: fases.citas + 45, z: 1, x: ancho / 2, y: alto / 2 },
+  ];
+  const visor = (() => {
+    let a = focos[0];
+    let b = focos[0];
+    for (const c of focos) {
+      if (f >= c.t) {
+        a = b;
+        b = c;
+      }
+    }
+    const k = prog(f, b.t, 18, CURVA.suave);
+    const z = a.z + (b.z - a.z) * k;
+    const S = escala * z;
+    const Vw = ancho * escala;
+    const Vh = alto * escala;
+    const fx = a.x + (b.x - a.x) * k;
+    const fy = a.y + (b.y - a.y) * k;
+    const tx = Math.min(0, Math.max(Vw - ancho * S, Vw / 2 - fx * S));
+    const ty = Math.min(0, Math.max(Vh - alto * S, Vh / 2 - fy * S));
+    return { S, tx, ty };
+  })();
+  if (zoomVisor) {
+    return (
+      <div
+        style={{
+          width: ancho * escala,
+          height: alto * escala,
+          position: "relative",
+          overflow: "hidden",
+          borderRadius: 30,
+          border: "1.5px solid rgb(0 194 255 / 0.35)",
+          boxShadow: "0 40px 80px rgb(0 0 0 / 0.55), 0 0 50px rgb(0 194 255 / 0.15)",
+          opacity: entrada,
+          transform: `translateY(${(1 - entrada) * 30}px)`,
+        }}
+      >
+        <div style={{ position: "absolute", left: 0, top: 0, transformOrigin: "0 0", transform: `translate(${visor.tx}px, ${visor.ty}px) scale(${visor.S})` }}>
+          {panel(1, { z: 1, ox: 50, oy: 50 }, false)}
+        </div>
+      </div>
+    );
+  }
   return (
     <div style={{ width: ancho * escala, height: alto * escala, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {panel(entrada, camara, true)}
+    </div>
+  );
+
+  function panel(op: number, cam: { z: number; ox: number; oy: number }, conEscala: boolean) {
+    return (
     <div
       style={{
         width: ancho,
         height: alto,
         flexShrink: 0,
-        borderRadius: 26,
         background: `linear-gradient(160deg, #0A2540 0%, ${COLOR.base2} 70%)`,
         border: "1px solid rgb(0 194 255 / 0.25)",
         boxShadow: "0 30px 60px rgb(0 0 0 / 0.5), 0 0 40px rgb(0 194 255 / 0.12)",
         overflow: "hidden",
         position: "relative",
-        opacity: entrada,
-        transform: `translateY(${(1 - entrada) * 30}px) scale(${(0.96 + 0.04 * entrada) * escala * camara.z})`,
-        transformOrigin: `${camara.ox}% ${camara.oy}%`,
+        opacity: op,
+        transform: conEscala ? `translateY(${(1 - op) * 30}px) scale(${(0.96 + 0.04 * op) * escala * cam.z})` : undefined,
+        transformOrigin: `${cam.ox}% ${cam.oy}%`,
+        borderRadius: conEscala ? 26 : 0,
         fontFamily: FUENTE.texto,
       }}
     >
@@ -108,7 +168,7 @@ export function BuscadorDocumentos({
         {/* Documentos: llegan dispersos y se ordenan */}
         <div style={{ width: anchoLista, position: "relative", height: cuerpo }}>
           {documentos.map((d, i) => {
-            const t = prog(f, 2 + i * 3, 18, CURVA.impacto);
+            const t = prog(f, (fases.agrupar ?? 0) + 2 + i * 3, 18, CURVA.impacto);
             const dx = (i % 2 === 0 ? -1 : 1) * (60 + i * 12) * (1 - t);
             const dy = ((i * 37) % 90 - 45) * (1 - t);
             const rot = (i % 2 === 0 ? -14 : 12) * (1 - t);
@@ -219,6 +279,6 @@ export function BuscadorDocumentos({
         </div>
       </div>
     </div>
-    </div>
-  );
+    );
+  }
 }

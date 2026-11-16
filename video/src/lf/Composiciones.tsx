@@ -12,6 +12,7 @@ import { escribemeNegocio, escribemeNegocioPortada } from "./videos/escribeme-ne
 import { organizaTuNegocio, organizaTuNegocioPortada } from "./videos/organiza-tu-negocio";
 import { erroresIa, erroresIaPortada } from "./videos/errores-ia";
 import { documentos, documentosPortada } from "./videos/documentos";
+import { documentosV2, documentosV2Portada, documentosV2Web } from "./videos/documentos-v2";
 
 /** Duración: fija, o la del video del avatar, o el final de la voz + 1,5 s. */
 const calcularMetadatos: CalculateMetadataFunction<PropsLF> = async ({ props }) => {
@@ -81,6 +82,36 @@ export function ComposicionesLF() {
         id="LF-OrganizaTuNegocio-Portada"
         component={PlantillaLF}
         defaultProps={{ config: organizaTuNegocioPortada }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-Documentos-V2"
+        component={PlantillaLF}
+        defaultProps={{ config: documentosV2 }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-Documentos-V2-Web"
+        component={PlantillaLF}
+        defaultProps={{ config: documentosV2Web }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-Documentos-V2-Portada"
+        component={PlantillaLF}
+        defaultProps={{ config: documentosV2Portada }}
         calculateMetadata={calcularMetadatos}
         durationInFrames={60 * LIENZO.fps}
         fps={LIENZO.fps}

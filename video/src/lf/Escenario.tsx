@@ -7,7 +7,7 @@ import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, useVideoConfig } 
 import { AnimatedCounter, Comparativa } from "./componentes/AnimatedCounter";
 import { AutomationFlow } from "./componentes/AutomationFlow";
 import { BeforeAfterReveal } from "./componentes/BeforeAfterReveal";
-import { BrandCTA, CTAMensaje, CTASeguir, CTASeguirComentar, type MomentosCTA } from "./componentes/BrandCTA";
+import { BrandCTA, CTAComentarRecurso, CTAMensaje, CTASeguir, CTASeguirComentar, type MomentosCTA } from "./componentes/BrandCTA";
 import { PantallaDividida } from "./componentes/PantallaDividida";
 import { Presentacion } from "./componentes/Presentacion";
 import { Revelacion } from "./componentes/Revelacion";
@@ -45,7 +45,7 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
   const dur = escena.hasta - escena.desde;
   const disp = escena.presentador ?? "completo";
   const zona = ESCENARIO[disp];
-  const salida = interpolate(f, [dur - 5, dur], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const salida = config.cortes === "secos" ? 1 : interpolate(f, [dur - 5, dur], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   // Si el avatar cambia de disposición, el contenido entra cuando ya se ha movido.
   const esperaEntrada = esperaEntradaDe(escena, previa);
   const c = escena.contenido;
@@ -53,7 +53,9 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
   if (c?.tipo === "cta") {
     return (
       <AbsoluteFill style={{ opacity: salida }}>
-        {config.cta.estilo === "seguir-comentar" ? (
+        {config.cta.estilo === "comentar-recurso" ? (
+          <CTAComentarRecurso cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
+        ) : config.cta.estilo === "seguir-comentar" ? (
           <CTASeguirComentar cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
         ) : config.cta.estilo === "seguir" ? (
           <CTASeguir cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
@@ -165,7 +167,8 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
         resaltar={c.resaltar}
         respuesta={c.respuesta}
         citas={c.citas}
-        fases={{ pregunta: rel(c.momentos.pregunta), busca: rel(c.momentos.busca), respuesta: rel(c.momentos.respuesta), citas: rel(c.momentos.citas) }}
+        fases={{ pregunta: rel(c.momentos.pregunta), busca: rel(c.momentos.busca), respuesta: rel(c.momentos.respuesta), citas: rel(c.momentos.citas), agrupar: c.momentos.agrupar ? rel(c.momentos.agrupar) : 0 }}
+        zoomVisor={c.zoomVisor}
         ancho={disp === "oculto" ? 760 : 936}
         alto={disp === "oculto" ? 540 : Math.min(altoContenido, 560)}
         escala={disp === "oculto" ? 1.2 : 1}
@@ -209,7 +212,7 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
 
   return (
     <AbsoluteFill style={{ opacity: salida, zIndex: 10 }}>
-      {escena.fondo && <BRoll archivo={escena.fondo.archivo} credito={escena.fondo.credito} movimiento={escena.fondo.movimiento} duracion={dur} />}
+      {escena.fondo && <BRoll archivo={escena.fondo.archivo} credito={escena.fondo.credito} movimiento={escena.fondo.movimiento} duracion={dur} sinFundido={config.cortes === "secos"} />}
       <Sequence from={esperaEntrada} layout="none">
       {capa}
       {titular && escena.rotuloCapitulo && disp === "completo" && (
@@ -290,6 +293,7 @@ export function esperaEntradaDe(escena: EscenaResuelta, previa?: EscenaResuelta)
   const a = previa.presentador ?? "completo";
   const b = escena.presentador ?? "completo";
   if (a === b) return 0;
-  // El avatar se funde (no se mueve) al entrar o salir de la explicación a pantalla completa.
-  return a === "oculto" || b === "oculto" ? 4 : 10;
+  // El avatar se funde o corta (no se mueve) al entrar o salir de la explicación a pantalla completa.
+  if (a === "oculto" || b === "oculto") return 2;
+  return 10;
 }
