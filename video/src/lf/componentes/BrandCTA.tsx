@@ -477,10 +477,11 @@ export function CTAComentarRecurso({ cta, momentos, zona }: { cta: ConfigCTA; mo
   const inicioTecleo = momentos.comentar + 16;
   const letras = Math.max(0, Math.min(cta.palabra.length, Math.floor((f - inicioTecleo) / 2)));
   const enviado = f >= inicioTecleo + cta.palabra.length * 2 + 6;
+  const mensaje = cta.caja === "mensaje";
   return (
     <div style={{ position: "absolute", left: izq, width: ancho, top: zona.y, height: zona.h, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, opacity: t1, transform: `scale(${0.88 + 0.12 * t1})` }}>
-        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 60, color: COLOR.tinta, letterSpacing: "-0.02em" }}>COMENTA</span>
+        <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 60, color: COLOR.tinta, letterSpacing: "-0.02em" }}>{cta.accion || "COMENTA"}</span>
         <span style={{ padding: "2px 20px", borderRadius: 16, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 60, lineHeight: 1.15, transform: "rotate(-2deg)", boxShadow: "0 0 40px rgb(0 255 179 / 0.45)" }}>
           {cta.palabra}
         </span>
@@ -490,11 +491,11 @@ export function CTAComentarRecurso({ cta, momentos, zona }: { cta: ConfigCTA; mo
       </div>
       <div style={{ width: ancho - 120, height: 68, borderRadius: 34, display: "flex", alignItems: "center", padding: "0 10px 0 26px", boxSizing: "border-box", background: COLOR.superficie, border: `2px solid ${enviado ? COLOR.cta : COLOR.linea}`, opacity: t2 }}>
         <span style={{ flex: 1, fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 26, color: letras ? COLOR.tinta : COLOR.apagado }}>
-          {letras ? cta.palabra.slice(0, letras) : "Añade un comentario…"}
+          {letras ? cta.palabra.slice(0, letras) : mensaje ? "Mensaje" : "Añade un comentario…"}
           {!enviado && f % 20 < 10 && <span style={{ color: COLOR.cta }}>|</span>}
         </span>
         <span style={{ padding: "9px 20px", borderRadius: 30, background: enviado ? COLOR.cta : COLOR.superficie2, color: enviado ? COLOR.base : COLOR.suave, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 21 }}>
-          {enviado ? "Enviado ✓" : "Publicar"}
+          {enviado ? "Enviado ✓" : mensaje ? "Enviar" : "Publicar"}
         </span>
       </div>
     </div>

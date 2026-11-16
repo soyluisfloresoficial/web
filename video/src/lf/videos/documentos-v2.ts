@@ -191,3 +191,15 @@ export const documentosV2Web: ConfigVideo = {
   id: "documentos-v2-web",
   cta: { ...documentosV2.cta, usuario: "soyluisflores.es" },
 };
+
+/** Variante para WhatsApp: no hay comentarios, la persona responde con DOCUMENTOS. */
+export const documentosV2WhatsApp: ConfigVideo = {
+  ...documentosV2Web,
+  id: "documentos-v2-whatsapp",
+  cta: {
+    ...documentosV2Web.cta,
+    accion: "ESCRÍBEME",
+    caja: "mensaje",
+    recurso: "y te envío una checklist gratuita para organizar tus archivos",
+  },
+};

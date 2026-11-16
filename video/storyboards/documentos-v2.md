@@ -24,4 +24,4 @@ La V1 se conserva (`src/lf/videos/documentos.ts`, `out/documentos_*`). La V2 est
 - La voz dice «sígueme y descubre…» mientras la pantalla pide «Comenta DOCUMENTOS». Para que coincidan, regenerar en HeyGen solo la última frase.
 - Entrega automática: configurar en ManyChat la palabra DOCUMENTOS → enviar el PDF. Hasta que funcione, no publicar el video.
 - Facebook: confirmar la URL o el nombre de la página antes de mencionarla.
-- WhatsApp no tiene comentarios: el CTA allí solo informa.
+- WhatsApp: versión propia con «ESCRÍBEME DOCUMENTOS» y caja de mensaje (LF-Documentos-V2-WhatsApp).

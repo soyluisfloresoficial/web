@@ -230,6 +230,8 @@ export type ConfigCTA = {
   usuario: string;
   /** Línea pequeña bajo el recurso, por ejemplo «Te llega por mensaje directo». */
   entrega?: string;
+  /** Caja animada del cierre: comentario (redes) o mensaje (WhatsApp). */
+  caja?: "comentario" | "mensaje";
   /** Etiqueta de la portada del recurso, por ejemplo «GUÍA GRATIS». */
   etiquetaRecurso?: string;
   /** Número grande de la portada (opcional), por ejemplo "7". */
