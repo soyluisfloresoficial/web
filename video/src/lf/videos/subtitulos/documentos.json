@@ -1,0 +1,940 @@
+[
+ {
+  "text": "Y",
+  "startMs": 0,
+  "endMs": 360,
+  "timestampMs": 180,
+  "confidence": 0.446
+ },
+ {
+  "text": " si",
+  "startMs": 360,
+  "endMs": 500,
+  "timestampMs": 430,
+  "confidence": 0.96
+ },
+ {
+  "text": " pudieras",
+  "startMs": 500,
+  "endMs": 840,
+  "timestampMs": 670,
+  "confidence": 0.99
+ },
+ {
+  "text": " hacerle",
+  "startMs": 840,
+  "endMs": 1260,
+  "timestampMs": 1050,
+  "confidence": 0.982
+ },
+ {
+  "text": " preguntas",
+  "startMs": 1260,
+  "endMs": 1540,
+  "timestampMs": 1400,
+  "confidence": 0.996
+ },
+ {
+  "text": " a",
+  "startMs": 1540,
+  "endMs": 1840,
+  "timestampMs": 1690,
+  "confidence": 0.99
+ },
+ {
+  "text": " todos",
+  "startMs": 1840,
+  "endMs": 1920,
+  "timestampMs": 1880,
+  "confidence": 0.992
+ },
+ {
+  "text": " los",
+  "startMs": 1920,
+  "endMs": 2120,
+  "timestampMs": 2020,
+  "confidence": 0.999
+ },
+ {
+  "text": " documentos",
+  "startMs": 2120,
+  "endMs": 2400,
+  "timestampMs": 2260,
+  "confidence": 0.995
+ },
+ {
+  "text": " de",
+  "startMs": 2400,
+  "endMs": 2520,
+  "timestampMs": 2460,
+  "confidence": 0.997
+ },
+ {
+  "text": " tu",
+  "startMs": 2520,
+  "endMs": 2620,
+  "timestampMs": 2570,
+  "confidence": 0.994
+ },
+ {
+  "text": " empresa,",
+  "startMs": 2620,
+  "endMs": 2940,
+  "timestampMs": 2780,
+  "confidence": 0.994
+ },
+ {
+  "text": " imagina",
+  "startMs": 3460,
+  "endMs": 3600,
+  "timestampMs": 3530,
+  "confidence": 0.976
+ },
+ {
+  "text": " tener",
+  "startMs": 3600,
+  "endMs": 3840,
+  "timestampMs": 3720,
+  "confidence": 0.994
+ },
+ {
+  "text": " cientos",
+  "startMs": 3840,
+  "endMs": 4120,
+  "timestampMs": 3980,
+  "confidence": 0.998
+ },
+ {
+  "text": " de",
+  "startMs": 4120,
+  "endMs": 4400,
+  "timestampMs": 4260,
+  "confidence": 0.999
+ },
+ {
+  "text": " contratos,",
+  "startMs": 4400,
+  "endMs": 4740,
+  "timestampMs": 4570,
+  "confidence": 0.993
+ },
+ {
+  "text": " manuales",
+  "startMs": 5080,
+  "endMs": 5320,
+  "timestampMs": 5200,
+  "confidence": 0.997
+ },
+ {
+  "text": " y",
+  "startMs": 5320,
+  "endMs": 5460,
+  "timestampMs": 5390,
+  "confidence": 0.89
+ },
+ {
+  "text": " procedimientos",
+  "startMs": 5460,
+  "endMs": 5940,
+  "timestampMs": 5700,
+  "confidence": 0.998
+ },
+ {
+  "text": " guardados",
+  "startMs": 5940,
+  "endMs": 6420,
+  "timestampMs": 6180,
+  "confidence": 0.997
+ },
+ {
+  "text": " en",
+  "startMs": 6420,
+  "endMs": 6640,
+  "timestampMs": 6530,
+  "confidence": 0.985
+ },
+ {
+  "text": " diferentes",
+  "startMs": 6640,
+  "endMs": 7000,
+  "timestampMs": 6820,
+  "confidence": 0.998
+ },
+ {
+  "text": " carpetas.",
+  "startMs": 7000,
+  "endMs": 7620,
+  "timestampMs": 7310,
+  "confidence": 0.995
+ },
+ {
+  "text": " Ahora",
+  "startMs": 7720,
+  "endMs": 7980,
+  "timestampMs": 7850,
+  "confidence": 0.978
+ },
+ {
+  "text": " necesitas",
+  "startMs": 7980,
+  "endMs": 8480,
+  "timestampMs": 8230,
+  "confidence": 0.96
+ },
+ {
+  "text": " encontrar",
+  "startMs": 8480,
+  "endMs": 8860,
+  "timestampMs": 8670,
+  "confidence": 0.997
+ },
+ {
+  "text": " una",
+  "startMs": 8860,
+  "endMs": 9140,
+  "timestampMs": 9000,
+  "confidence": 0.997
+ },
+ {
+  "text": " condición",
+  "startMs": 9140,
+  "endMs": 9520,
+  "timestampMs": 9330,
+  "confidence": 0.996
+ },
+ {
+  "text": " específica.",
+  "startMs": 9520,
+  "endMs": 10320,
+  "timestampMs": 9920,
+  "confidence": 0.993
+ },
+ {
+  "text": " ¿Vas",
+  "startMs": 10460,
+  "endMs": 10620,
+  "timestampMs": 10540,
+  "confidence": 0.925
+ },
+ {
+  "text": " a",
+  "startMs": 10620,
+  "endMs": 10720,
+  "timestampMs": 10670,
+  "confidence": 0.992
+ },
+ {
+  "text": " abrir",
+  "startMs": 10720,
+  "endMs": 10820,
+  "timestampMs": 10770,
+  "confidence": 0.998
+ },
+ {
+  "text": " los",
+  "startMs": 10820,
+  "endMs": 11040,
+  "timestampMs": 10930,
+  "confidence": 0.987
+ },
+ {
+  "text": " archivos",
+  "startMs": 11040,
+  "endMs": 11300,
+  "timestampMs": 11170,
+  "confidence": 0.997
+ },
+ {
+  "text": " uno",
+  "startMs": 11300,
+  "endMs": 11480,
+  "timestampMs": 11390,
+  "confidence": 0.925
+ },
+ {
+  "text": " por",
+  "startMs": 11480,
+  "endMs": 11640,
+  "timestampMs": 11560,
+  "confidence": 0.981
+ },
+ {
+  "text": " uno?",
+  "startMs": 11640,
+  "endMs": 11800,
+  "timestampMs": 11720,
+  "confidence": 0.999
+ },
+ {
+  "text": " Mira",
+  "startMs": 11960,
+  "endMs": 12120,
+  "timestampMs": 12040,
+  "confidence": 0.815
+ },
+ {
+  "text": " esto.",
+  "startMs": 12120,
+  "endMs": 12400,
+  "timestampMs": 12260,
+  "confidence": 0.992
+ },
+ {
+  "text": " Con",
+  "startMs": 12680,
+  "endMs": 12800,
+  "timestampMs": 12740,
+  "confidence": 0.977
+ },
+ {
+  "text": " un",
+  "startMs": 12800,
+  "endMs": 12940,
+  "timestampMs": 12870,
+  "confidence": 0.998
+ },
+ {
+  "text": " sistema",
+  "startMs": 12940,
+  "endMs": 13220,
+  "timestampMs": 13080,
+  "confidence": 0.98
+ },
+ {
+  "text": " de",
+  "startMs": 13220,
+  "endMs": 13360,
+  "timestampMs": 13290,
+  "confidence": 0.999
+ },
+ {
+  "text": " inteligencia",
+  "startMs": 13360,
+  "endMs": 13760,
+  "timestampMs": 13560,
+  "confidence": 0.871
+ },
+ {
+  "text": " artificial",
+  "startMs": 13760,
+  "endMs": 14160,
+  "timestampMs": 13960,
+  "confidence": 0.998
+ },
+ {
+  "text": " conectado",
+  "startMs": 14160,
+  "endMs": 14620,
+  "timestampMs": 14390,
+  "confidence": 0.996
+ },
+ {
+  "text": " a",
+  "startMs": 14620,
+  "endMs": 14740,
+  "timestampMs": 14680,
+  "confidence": 0.998
+ },
+ {
+  "text": " tus",
+  "startMs": 14740,
+  "endMs": 14840,
+  "timestampMs": 14790,
+  "confidence": 0.993
+ },
+ {
+  "text": " documentos,",
+  "startMs": 14840,
+  "endMs": 15520,
+  "timestampMs": 15180,
+  "confidence": 0.998
+ },
+ {
+  "text": " puedes",
+  "startMs": 15720,
+  "endMs": 15800,
+  "timestampMs": 15760,
+  "confidence": 0.991
+ },
+ {
+  "text": " preguntar",
+  "startMs": 15800,
+  "endMs": 16740,
+  "timestampMs": 16270,
+  "confidence": 0.998
+ },
+ {
+  "text": " ¿qué",
+  "startMs": 16740,
+  "endMs": 16940,
+  "timestampMs": 16840,
+  "confidence": 0.484
+ },
+ {
+  "text": " condiciones",
+  "startMs": 16940,
+  "endMs": 17280,
+  "timestampMs": 17110,
+  "confidence": 0.99
+ },
+ {
+  "text": " de",
+  "startMs": 17280,
+  "endMs": 17460,
+  "timestampMs": 17370,
+  "confidence": 0.999
+ },
+ {
+  "text": " cancelación",
+  "startMs": 17460,
+  "endMs": 17880,
+  "timestampMs": 17670,
+  "confidence": 0.998
+ },
+ {
+  "text": " aparecen",
+  "startMs": 17880,
+  "endMs": 18220,
+  "timestampMs": 18050,
+  "confidence": 0.988
+ },
+ {
+  "text": " en",
+  "startMs": 18220,
+  "endMs": 18360,
+  "timestampMs": 18290,
+  "confidence": 0.998
+ },
+ {
+  "text": " nuestros",
+  "startMs": 18360,
+  "endMs": 18600,
+  "timestampMs": 18480,
+  "confidence": 0.99
+ },
+ {
+  "text": " contratos?",
+  "startMs": 18600,
+  "endMs": 18980,
+  "timestampMs": 18790,
+  "confidence": 0.997
+ },
+ {
+  "text": " La",
+  "startMs": 19280,
+  "endMs": 19520,
+  "timestampMs": 19400,
+  "confidence": 0.978
+ },
+ {
+  "text": " IA",
+  "startMs": 19520,
+  "endMs": 19860,
+  "timestampMs": 19690,
+  "confidence": 0.932
+ },
+ {
+  "text": " busca",
+  "startMs": 19860,
+  "endMs": 20200,
+  "timestampMs": 20030,
+  "confidence": 0.973
+ },
+ {
+  "text": " los",
+  "startMs": 20200,
+  "endMs": 20400,
+  "timestampMs": 20300,
+  "confidence": 0.998
+ },
+ {
+  "text": " fragmentos",
+  "startMs": 20400,
+  "endMs": 20780,
+  "timestampMs": 20590,
+  "confidence": 0.992
+ },
+ {
+  "text": " relacionados,",
+  "startMs": 20780,
+  "endMs": 21500,
+  "timestampMs": 21140,
+  "confidence": 0.997
+ },
+ {
+  "text": " prepara",
+  "startMs": 21840,
+  "endMs": 22040,
+  "timestampMs": 21940,
+  "confidence": 0.998
+ },
+ {
+  "text": " una",
+  "startMs": 22040,
+  "endMs": 22260,
+  "timestampMs": 22150,
+  "confidence": 0.999
+ },
+ {
+  "text": " respuesta",
+  "startMs": 22260,
+  "endMs": 22580,
+  "timestampMs": 22420,
+  "confidence": 0.998
+ },
+ {
+  "text": " y",
+  "startMs": 22580,
+  "endMs": 23000,
+  "timestampMs": 22790,
+  "confidence": 0.81
+ },
+ {
+  "text": " puede",
+  "startMs": 23000,
+  "endMs": 23200,
+  "timestampMs": 23100,
+  "confidence": 0.998
+ },
+ {
+  "text": " mostrarte",
+  "startMs": 23200,
+  "endMs": 23620,
+  "timestampMs": 23410,
+  "confidence": 0.981
+ },
+ {
+  "text": " exactamente",
+  "startMs": 23620,
+  "endMs": 24160,
+  "timestampMs": 23890,
+  "confidence": 0.989
+ },
+ {
+  "text": " de",
+  "startMs": 24160,
+  "endMs": 24360,
+  "timestampMs": 24260,
+  "confidence": 0.992
+ },
+ {
+  "text": " qué",
+  "startMs": 24360,
+  "endMs": 24420,
+  "timestampMs": 24390,
+  "confidence": 0.958
+ },
+ {
+  "text": " documento",
+  "startMs": 24420,
+  "endMs": 24800,
+  "timestampMs": 24610,
+  "confidence": 0.998
+ },
+ {
+  "text": " ha",
+  "startMs": 24800,
+  "endMs": 24980,
+  "timestampMs": 24890,
+  "confidence": 0.984
+ },
+ {
+  "text": " obtenido",
+  "startMs": 24980,
+  "endMs": 25240,
+  "timestampMs": 25110,
+  "confidence": 0.999
+ },
+ {
+  "text": " la",
+  "startMs": 25240,
+  "endMs": 25420,
+  "timestampMs": 25330,
+  "confidence": 0.999
+ },
+ {
+  "text": " información.",
+  "startMs": 25420,
+  "endMs": 25800,
+  "timestampMs": 25610,
+  "confidence": 0.997
+ },
+ {
+  "text": " No",
+  "startMs": 25800,
+  "endMs": 26300,
+  "timestampMs": 26050,
+  "confidence": 0.797
+ },
+ {
+  "text": " es",
+  "startMs": 26300,
+  "endMs": 26480,
+  "timestampMs": 26390,
+  "confidence": 0.998
+ },
+ {
+  "text": " magia,",
+  "startMs": 26480,
+  "endMs": 26800,
+  "timestampMs": 26640,
+  "confidence": 0.993
+ },
+ {
+  "text": " es",
+  "startMs": 27120,
+  "endMs": 27220,
+  "timestampMs": 27170,
+  "confidence": 0.993
+ },
+ {
+  "text": " tecnología",
+  "startMs": 27220,
+  "endMs": 27660,
+  "timestampMs": 27440,
+  "confidence": 0.995
+ },
+ {
+  "text": " que",
+  "startMs": 27660,
+  "endMs": 27900,
+  "timestampMs": 27780,
+  "confidence": 0.995
+ },
+ {
+  "text": " combina",
+  "startMs": 27900,
+  "endMs": 28100,
+  "timestampMs": 28000,
+  "confidence": 0.998
+ },
+ {
+  "text": " búsqueda",
+  "startMs": 28100,
+  "endMs": 28460,
+  "timestampMs": 28280,
+  "confidence": 0.988
+ },
+ {
+  "text": " de",
+  "startMs": 28460,
+  "endMs": 28620,
+  "timestampMs": 28540,
+  "confidence": 0.999
+ },
+ {
+  "text": " información",
+  "startMs": 28620,
+  "endMs": 29000,
+  "timestampMs": 28810,
+  "confidence": 0.996
+ },
+ {
+  "text": " con",
+  "startMs": 29000,
+  "endMs": 29380,
+  "timestampMs": 29190,
+  "confidence": 0.978
+ },
+ {
+  "text": " inteligencia",
+  "startMs": 29380,
+  "endMs": 29880,
+  "timestampMs": 29630,
+  "confidence": 0.947
+ },
+ {
+  "text": " artificial.",
+  "startMs": 29880,
+  "endMs": 30280,
+  "timestampMs": 30080,
+  "confidence": 0.998
+ },
+ {
+  "text": " Eso",
+  "startMs": 31180,
+  "endMs": 31300,
+  "timestampMs": 31240,
+  "confidence": 0.952
+ },
+ {
+  "text": " sí,",
+  "startMs": 31300,
+  "endMs": 31580,
+  "timestampMs": 31440,
+  "confidence": 0.909
+ },
+ {
+  "text": " los",
+  "startMs": 31820,
+  "endMs": 31920,
+  "timestampMs": 31870,
+  "confidence": 0.998
+ },
+ {
+  "text": " documentos",
+  "startMs": 31920,
+  "endMs": 32280,
+  "timestampMs": 32100,
+  "confidence": 0.997
+ },
+ {
+  "text": " deben",
+  "startMs": 32280,
+  "endMs": 32420,
+  "timestampMs": 32350,
+  "confidence": 0.997
+ },
+ {
+  "text": " estar",
+  "startMs": 32420,
+  "endMs": 32660,
+  "timestampMs": 32540,
+  "confidence": 0.997
+ },
+ {
+  "text": " autorizados,",
+  "startMs": 32660,
+  "endMs": 33320,
+  "timestampMs": 32990,
+  "confidence": 0.998
+ },
+ {
+  "text": " y",
+  "startMs": 33640,
+  "endMs": 33720,
+  "timestampMs": 33680,
+  "confidence": 0.984
+ },
+ {
+  "text": " las",
+  "startMs": 33720,
+  "endMs": 33880,
+  "timestampMs": 33800,
+  "confidence": 0.997
+ },
+ {
+  "text": " respuestas",
+  "startMs": 33880,
+  "endMs": 34200,
+  "timestampMs": 34040,
+  "confidence": 0.995
+ },
+ {
+  "text": " importantes",
+  "startMs": 34200,
+  "endMs": 34640,
+  "timestampMs": 34420,
+  "confidence": 0.998
+ },
+ {
+  "text": " necesitan",
+  "startMs": 34640,
+  "endMs": 35120,
+  "timestampMs": 34880,
+  "confidence": 0.996
+ },
+ {
+  "text": " verificación,",
+  "startMs": 35120,
+  "endMs": 35680,
+  "timestampMs": 35400,
+  "confidence": 0.99
+ },
+ {
+  "text": " y",
+  "startMs": 36080,
+  "endMs": 36180,
+  "timestampMs": 36130,
+  "confidence": 0.987
+ },
+ {
+  "text": " esto",
+  "startMs": 36180,
+  "endMs": 36300,
+  "timestampMs": 36240,
+  "confidence": 0.978
+ },
+ {
+  "text": " es",
+  "startMs": 36300,
+  "endMs": 36460,
+  "timestampMs": 36380,
+  "confidence": 0.979
+ },
+ {
+  "text": " solo",
+  "startMs": 36460,
+  "endMs": 36600,
+  "timestampMs": 36530,
+  "confidence": 0.641
+ },
+ {
+  "text": " una",
+  "startMs": 36600,
+  "endMs": 36800,
+  "timestampMs": 36700,
+  "confidence": 0.992
+ },
+ {
+  "text": " de",
+  "startMs": 36800,
+  "endMs": 36900,
+  "timestampMs": 36850,
+  "confidence": 0.998
+ },
+ {
+  "text": " las",
+  "startMs": 36900,
+  "endMs": 37060,
+  "timestampMs": 36980,
+  "confidence": 0.996
+ },
+ {
+  "text": " aplicaciones",
+  "startMs": 37060,
+  "endMs": 37460,
+  "timestampMs": 37260,
+  "confidence": 0.997
+ },
+ {
+  "text": " que",
+  "startMs": 37460,
+  "endMs": 37640,
+  "timestampMs": 37550,
+  "confidence": 0.998
+ },
+ {
+  "text": " puedes",
+  "startMs": 37640,
+  "endMs": 37820,
+  "timestampMs": 37730,
+  "confidence": 0.992
+ },
+ {
+  "text": " implementar",
+  "startMs": 37820,
+  "endMs": 38280,
+  "timestampMs": 38050,
+  "confidence": 0.998
+ },
+ {
+  "text": " en",
+  "startMs": 38280,
+  "endMs": 38380,
+  "timestampMs": 38330,
+  "confidence": 0.999
+ },
+ {
+  "text": " un",
+  "startMs": 38380,
+  "endMs": 38520,
+  "timestampMs": 38450,
+  "confidence": 0.997
+ },
+ {
+  "text": " negocio.",
+  "startMs": 38520,
+  "endMs": 38900,
+  "timestampMs": 38710,
+  "confidence": 0.999
+ },
+ {
+  "text": " Soy",
+  "startMs": 39320,
+  "endMs": 39420,
+  "timestampMs": 39370,
+  "confidence": 0.977
+ },
+ {
+  "text": " Luis",
+  "startMs": 39420,
+  "endMs": 39660,
+  "timestampMs": 39540,
+  "confidence": 0.976
+ },
+ {
+  "text": " Flores,",
+  "startMs": 39660,
+  "endMs": 39960,
+  "timestampMs": 39810,
+  "confidence": 0.978
+ },
+ {
+  "text": " sígueme",
+  "startMs": 40380,
+  "endMs": 40580,
+  "timestampMs": 40480,
+  "confidence": 0.939
+ },
+ {
+  "text": " y",
+  "startMs": 40580,
+  "endMs": 40860,
+  "timestampMs": 40720,
+  "confidence": 0.983
+ },
+ {
+  "text": " descubre",
+  "startMs": 40860,
+  "endMs": 41120,
+  "timestampMs": 40990,
+  "confidence": 0.988
+ },
+ {
+  "text": " lo",
+  "startMs": 41120,
+  "endMs": 41260,
+  "timestampMs": 41190,
+  "confidence": 0.997
+ },
+ {
+  "text": " que",
+  "startMs": 41260,
+  "endMs": 41380,
+  "timestampMs": 41320,
+  "confidence": 0.998
+ },
+ {
+  "text": " realmente",
+  "startMs": 41380,
+  "endMs": 41720,
+  "timestampMs": 41550,
+  "confidence": 0.989
+ },
+ {
+  "text": " puedes",
+  "startMs": 41720,
+  "endMs": 41940,
+  "timestampMs": 41830,
+  "confidence": 0.995
+ },
+ {
+  "text": " hacer",
+  "startMs": 41940,
+  "endMs": 42160,
+  "timestampMs": 42050,
+  "confidence": 0.998
+ },
+ {
+  "text": " con",
+  "startMs": 42160,
+  "endMs": 42400,
+  "timestampMs": 42280,
+  "confidence": 0.998
+ },
+ {
+  "text": " inteligencia",
+  "startMs": 42400,
+  "endMs": 42800,
+  "timestampMs": 42600,
+  "confidence": 0.93
+ },
+ {
+  "text": " artificial.",
+  "startMs": 42800,
+  "endMs": 43180,
+  "timestampMs": 42990,
+  "confidence": 0.998
+ }
+]

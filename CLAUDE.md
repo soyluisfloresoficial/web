@@ -70,6 +70,8 @@ Regla de momentos (13/11/2026): respeta cuándo va **el avatar solo** (gancho, p
 
 Regla del copy (14/11/2026, estricta): cada vez que entregues un video **definitivo**, entrega también su copy para **TikTok, Instagram, Facebook y LinkedIn**, cada uno en su bloque listo para copiar y pegar, adaptado a la red y fiel a lo que dice el video (mismo CTA). Sin cifras, clientes ni promesas inventadas, y con el aviso de activar la etiqueta de contenido IA. Guárdalo en `video/copys/<id-del-video>.md`.
 
+Regla de la portada (16/11/2026): **cada video que se entregue lleva su portada** (composición `<id>-Portada` en `src/lf/videos/`, exportada en PNG y JPG con el titular del tema), subida con enlace descargable junto al video.
+
 ## Imágenes para compartir
 
 Cada página tiene su imagen para redes (Open Graph) en `public/og/`. Se generan con `node tools/generar-og.mjs` después de `npm run build` (necesita Edge o Chrome en el ordenador). Al añadir un servicio, un artículo o cambiar un título, vuelve a ejecutarlo, compila otra vez y sube las imágenes. Si una página no tiene la suya, usa `og-default.png`.

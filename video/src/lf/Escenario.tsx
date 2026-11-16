@@ -19,6 +19,7 @@ import { NotificacionesFlotantes } from "./componentes/NotificacionesFlotantes";
 import { FloatingScreen } from "./componentes/FloatingScreen";
 import { KineticText } from "./componentes/KineticText";
 import { RotuloCapitulo } from "./componentes/RotuloCapitulo";
+import { BuscadorDocumentos } from "./componentes/BuscadorDocumentos";
 import { SistemaReveal } from "./componentes/SistemaReveal";
 import { ESCENARIO } from "./disposicion";
 import { ZONA_SEGURA } from "./marca";
@@ -153,6 +154,21 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
     contenido = <ListaPuntos items={items} ancho={ANCHO_UTIL} alto={Math.min(altoContenido, 420)} />;
   } else if (c?.tipo === "imagenYPantalla") {
     contenido = <ImagenYPantalla imagen={c.imagen} credito={c.credito} etiqueta={c.etiqueta} derecha={c.derecha} ancho={936} alto={Math.min(altoContenido, 560)} duracion={dur} />;
+  } else if (c?.tipo === "buscadorDocs") {
+    const rel = (m: import("./tipos").Momento) =>
+      Math.max(0, Math.round((resolverMomento(m, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada);
+    contenido = (
+      <BuscadorDocumentos
+        documentos={c.documentos}
+        pregunta={c.pregunta}
+        resaltar={c.resaltar}
+        respuesta={c.respuesta}
+        citas={c.citas}
+        fases={{ pregunta: rel(c.momentos.pregunta), busca: rel(c.momentos.busca), respuesta: rel(c.momentos.respuesta), citas: rel(c.momentos.citas) }}
+        ancho={936}
+        alto={Math.min(altoContenido, 560)}
+      />
+    );
   } else if (c?.tipo === "imagen") {
     contenido = <ImagenReal archivo={c.archivo} credito={c.credito} movimiento={c.movimiento} etiqueta={c.etiqueta} ancho={936} alto={Math.min(altoContenido, 760)} duracion={dur} />;
   } else if (c?.tipo === "presentacion") {

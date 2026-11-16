@@ -23,7 +23,7 @@ import { prog } from "./util";
 
 export type PropsLF = { config: ConfigVideo };
 
-const CON_MAQUETA = new Set(["pantallas", "flujo", "sistema", "contador", "comparativa", "antesDespues", "dividida", "imagen", "imagenYPantalla"]);
+const CON_MAQUETA = new Set(["pantallas", "flujo", "sistema", "contador", "comparativa", "antesDespues", "dividida", "imagen", "imagenYPantalla", "buscadorDocs"]);
 
 function Aviso({ texto, escenas }: { texto: string; escenas: EscenaResuelta[] }) {
   const f = useCurrentFrame();

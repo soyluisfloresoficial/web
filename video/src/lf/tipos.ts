@@ -159,6 +159,16 @@ export type Contenido =
       tipo: "lista";
       items: { texto: string; icono: Icono; en?: Momento }[];
     }
+  | {
+      /** Demo «la IA consulta tus documentos»: agrupar, preguntar, buscar, responder y citar. */
+      tipo: "buscadorDocs";
+      documentos: string[];
+      pregunta: string;
+      resaltar: number[];
+      respuesta: string;
+      citas: { doc: number; ref: string }[];
+      momentos: { pregunta: Momento; busca: Momento; respuesta: Momento; citas: Momento };
+    }
   | { tipo: "cta" };
 
 /**

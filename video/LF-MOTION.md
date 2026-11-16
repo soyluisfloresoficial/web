@@ -334,6 +334,8 @@ Cómo se hace:
 3. Fotos de banco: se respeta su licencia y se pone el autor en `credito`. Generadas con IA: personas genéricas, nunca una persona real ni una marca, y el video mantiene la etiqueta de contenido IA al publicarse.
 4. Si una fuente falla, se avisa al titular antes de sustituir la imagen por un dibujo.
 
+Fuente sin clave (16/11/2026): **Openverse** (api.openverse.org) da fotos reales con licencia y su autor; se usan las de licencia CC0 o comercial (`license_type=commercial`) y se pone la fuente en `credito`. Las descargas de StockSnap necesitan cabecera de navegador (`-A "Mozilla/5.0"`).
+
 Lo que hoy bloquea esta regla (13/11/2026):
 
 - **Unsplash:** el conector responde «Your email address has not been confirmed». Hay que confirmar el correo de la cuenta de Unsplash.
