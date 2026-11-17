@@ -18,7 +18,9 @@ function cajaEscena(escenas: EscenaResuelta[], i: number, frame: number): Caja {
   const e = escenas[i];
   const disp = e?.presentador ?? "completo";
   const base = CAJAS[disp];
-  if (disp !== "completo" || !e) return base;
+  if (!e) return base;
+  const avanceEsc = Math.min(1, Math.max(0, (frame - e.desde) / Math.max(1, e.hasta - e.desde)));
+  if (disp !== "completo") return e.acercamiento ? { ...base, z: base.z * (1 + (e.acercamiento - 1) * avanceEsc) } : base;
   const nCompletas = escenas.slice(0, i).filter((x) => (x.presentador ?? "completo") === "completo").length;
   const cerrado = nCompletas % 2 === 1;
   const avance = Math.min(1, Math.max(0, (frame - e.desde) / Math.max(1, e.hasta - e.desde)));

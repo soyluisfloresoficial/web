@@ -65,7 +65,7 @@ export function calcularSonidos(config: ConfigVideo, escenas: EscenaResuelta[], 
       cues.push({ frame: Math.round(seg * fps), archivo: s.archivo, volumen: s.volumen ?? 0.5 });
     }
   }
-  if (auto) for (const g of golpes) cues.push({ frame: g.frame, archivo: "sfx/impacto.wav", volumen: 0.4 });
+  if (auto && config.sonidoZoom !== false) for (const g of golpes) cues.push({ frame: g.frame, archivo: "sfx/impacto.wav", volumen: 0.4 });
   return cues.sort((a, b) => a.frame - b.frame);
 }
 

@@ -57,6 +57,8 @@ export type Titular = {
   /** Si es true, cada palabra aparece cuando la voz la dice. */
   sincronizar?: boolean;
   tamano?: number;
+  /** En pantalla dividida, permite un titular grande (hasta 72 px) en lugar de la línea compacta. */
+  grande?: boolean;
 };
 
 // ---------------------------------------------------------------- Pantallas
@@ -85,7 +87,7 @@ export type Cursor = {
 };
 
 export type NodoFlujo = { titulo: string; detalle?: string; icono: Icono };
-export type Icono = "formulario" | "agente" | "crm" | "calendario" | "whatsapp" | "correo" | "alerta" | "check" | "usuario" | "reloj";
+export type Icono = "formulario" | "agente" | "crm" | "calendario" | "whatsapp" | "correo" | "alerta" | "check" | "usuario" | "reloj" | "regla" | "tarea" | "registro";
 
 export type Contenido =
   | { tipo: "ninguno" }
@@ -171,6 +173,20 @@ export type Contenido =
       /** Zoom de cámara dentro de un visor sobre la pregunta, la respuesta y las fuentes. */
       zoomVisor?: boolean;
     }
+  | {
+      /** DEMO: formulario que se rellena y activa cinco nodos (datos ficticios). */
+      tipo: "flujoFormulario";
+      titulo: string;
+      campos: { etiqueta: string; valor: string }[];
+      boton: string;
+      enviar: Momento;
+      nodos: { icono: Icono; titulo: string; detalle: string; en: Momento }[];
+    }
+  | {
+      /** Vista previa del flujo en fila (gancho). */
+      tipo: "flujoMini";
+      nodos: { icono: Icono; titulo: string }[];
+    }
   | { tipo: "cta" };
 
 /**
@@ -214,6 +230,8 @@ export type Escena = {
   entrada?: "deslizar" | "mascara" | "zoom";
   /** Plano de recurso a pantalla completa detrás del titular y el contenido (foto o video real). */
   fondo?: { archivo: string; credito?: string; movimiento?: "acercar" | "alejar" | "izquierda" | "derecha" };
+  /** Acercamiento lento y continuo al avatar durante la escena (1.04 = 4 %). */
+  acercamiento?: number;
   /** Capítulo al que pertenece la escena (enciende el marcador 01 · 02 · 03). */
   capitulo?: number;
   /** En pantalla completa, el titular se muestra como rótulo de capítulo de marca (número grande + título). */
@@ -249,6 +267,8 @@ export type ConfigCTA = {
 };
 
 export type ConfigVideo = {
+  /** false: los zooms del avatar no llevan golpe de sonido. */
+  sonidoZoom?: boolean;
   /** «secos»: cortes limpios entre avatar y explicación a pantalla completa (sin fundidos ni oscuros). */
   cortes?: "secos";
   /** Capa de marca persistente: firma LF con el usuario y marcador de capítulos. */

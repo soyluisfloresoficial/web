@@ -21,6 +21,8 @@ import { KineticText } from "./componentes/KineticText";
 import { RotuloCapitulo } from "./componentes/RotuloCapitulo";
 import { BuscadorDocumentos } from "./componentes/BuscadorDocumentos";
 import { BRoll } from "./componentes/BRoll";
+import { FlujoFormulario } from "./componentes/FlujoFormulario";
+import { FlujoMini } from "./componentes/FlujoMini";
 import { SistemaReveal } from "./componentes/SistemaReveal";
 import { ESCENARIO } from "./disposicion";
 import { ZONA_SEGURA } from "./marca";
@@ -102,7 +104,7 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
   const titular = escena.titular;
   // En pantalla dividida el titular es una línea compacta sobre el gráfico.
   const enFranja = disp === "dividida";
-  const tamTitular = enFranja ? Math.min(titular?.tamano ?? 44, 44) : titular?.tamano ?? (c && c.tipo !== "ninguno" ? 64 : 92);
+  const tamTitular = enFranja ? Math.min(titular?.tamano ?? 44, titular?.grande ? 72 : 44) : titular?.tamano ?? (c && c.tipo !== "ninguno" ? 64 : 92);
   const altoTitular = titular ? Math.ceil(titular.texto.length / (ANCHO_UTIL / (tamTitular * 0.55))) * tamTitular * 1.12 + (enFranja ? 14 : 30) : 0;
   // Con el avatar en burbuja, el titular va a su derecha y el contenido
   // aprovecha toda la zona de abajo.
@@ -157,6 +159,22 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
     contenido = <ListaPuntos items={items} ancho={ANCHO_UTIL} alto={Math.min(altoContenido, 420)} />;
   } else if (c?.tipo === "imagenYPantalla") {
     contenido = <ImagenYPantalla imagen={c.imagen} credito={c.credito} etiqueta={c.etiqueta} derecha={c.derecha} ancho={936} alto={Math.min(altoContenido, 560)} duracion={dur} />;
+  } else if (c?.tipo === "flujoFormulario") {
+    const rel = (m: import("./tipos").Momento) =>
+      Math.max(0, Math.round((resolverMomento(m, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada);
+    contenido = (
+      <FlujoFormulario
+        titulo={c.titulo}
+        campos={c.campos}
+        boton={c.boton}
+        enviar={rel(c.enviar)}
+        nodos={c.nodos.map((n) => ({ icono: n.icono, titulo: n.titulo, detalle: n.detalle, frame: rel(n.en) }))}
+        ancho={ANCHO_UTIL + 40}
+        alto={Math.min(altoContenido, 960)}
+      />
+    );
+  } else if (c?.tipo === "flujoMini") {
+    contenido = <FlujoMini nodos={c.nodos} ancho={ANCHO_UTIL} />;
   } else if (c?.tipo === "buscadorDocs") {
     const rel = (m: import("./tipos").Momento) =>
       Math.max(0, Math.round((resolverMomento(m, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps) - esperaEntrada);
@@ -260,6 +278,7 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
             ancho={alLado ? 1080 - 352 - ZONA_SEGURA.derecha : ANCHO_UTIL}
             alineacion={alLado ? "left" : "center"}
             colorDestacado={titular.colorDestacado}
+            retraso={escena.indice === 0 ? 0 : undefined}
           />
         </div>
       )}

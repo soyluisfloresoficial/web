@@ -11,6 +11,9 @@ const TRAZOS: Record<NombreIcono, string> = {
   check: "m5 12.5 4.5 4.5L19 7.5",
   usuario: "M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM4.5 20.5a7.5 7.5 0 0 1 15 0",
   reloj: "M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18ZM12 7v5l3 2",
+  regla: "M4 5h16l-6 7.5V19l-4 2v-8.5L4 5Z",
+  tarea: "M9 3.5h6v3H9zM6.5 5h11v16h-11zM9.5 13l2 2 3.5-4",
+  registro: "M4 6h16M4 11h16M4 16h10M17 15l1.5 1.5L21 14",
 };
 
 export function Icono({ nombre, tam = 32, color = "currentColor", grosor = 1.8 }: { nombre: NombreIcono; tam?: number; color?: string; grosor?: number }) {

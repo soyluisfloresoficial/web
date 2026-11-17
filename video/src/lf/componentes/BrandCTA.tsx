@@ -480,6 +480,9 @@ export function CTAComentarRecurso({ cta, momentos, zona }: { cta: ConfigCTA; mo
   const mensaje = cta.caja === "mensaje";
   return (
     <div style={{ position: "absolute", left: izq, width: ancho, top: zona.y, height: zona.h, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18 }}>
+      {cta.etiquetaRecurso && (
+        <div style={{ padding: "6px 18px", borderRadius: 999, border: `1.5px solid ${COLOR.cta}`, color: COLOR.cta, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 24, letterSpacing: "0.16em", opacity: t1 }}>{cta.etiquetaRecurso}</div>
+      )}
       <div style={{ display: "flex", alignItems: "center", gap: 16, opacity: t1, transform: `scale(${0.88 + 0.12 * t1})` }}>
         <span style={{ fontFamily: FUENTE.display, fontWeight: 800, fontSize: 60, color: COLOR.tinta, letterSpacing: "-0.02em" }}>{cta.accion || "COMENTA"}</span>
         <span style={{ padding: "2px 20px", borderRadius: 16, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 60, lineHeight: 1.15, transform: "rotate(-2deg)", boxShadow: "0 0 40px rgb(0 255 179 / 0.45)" }}>
