@@ -17,6 +17,10 @@ import { enviar, correoAvisos } from "./correo";
 import { maquetar } from "./correo-plantillas";
 import type { EnvAgenda } from "./agenda";
 import { nombreSeccion } from "./origen";
+import { apuntarConversion, type EnvMetricas } from "./metricas";
+
+/** Conversiones que también van a las métricas del panel (metricas.ts). */
+const CONVERSION: Partial<Record<Cifra, string>> = { conversaciones: "chat", citasChat: "cita-chat", citasWeb: "cita-web" };
 
 export type Cifra = "conversaciones" | "tarjetas" | "citasChat" | "citasWeb";
 type Semana = Record<Cifra, number>;
@@ -60,6 +64,8 @@ async function leer(env: EnvAgenda, semana: string): Promise<Semana> {
  * en el mismo segundo puede perderse una. Para un resumen semanal sobra.
  */
 export async function contar(env: EnvAgenda, cifra: Cifra): Promise<void> {
+  const conversion = CONVERSION[cifra];
+  if (conversion) apuntarConversion(env as EnvMetricas, conversion);
   if (!env.AGENDA_CONFIG) return;
   try {
     const semana = semanaIso(Date.now());
@@ -83,6 +89,8 @@ export async function contarSeccion(
   tipo: "correos" | "citas",
   clave: string,
 ): Promise<void> {
+  // Guía confirmada: conversión para las métricas del panel (las citas ya cuentan en contar()).
+  if (tipo === "correos") apuntarConversion(env as EnvMetricas, "guia", clave);
   if (!env.AGENDA_CONFIG) return;
   try {
     const k = `stats:${semanaIso(Date.now())}:secciones`;
