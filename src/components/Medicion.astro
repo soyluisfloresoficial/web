@@ -25,6 +25,8 @@
  *   (Flora la recordó) y chat_forget («Olvidarme»)
  *   y, al confirmar la cita, generate_lead con form_id chat-asistente.
  *   Nunca llevan lo que escribe la persona.
+ * - file_download: descarga de un recurso gratuito (/recursos/<slug>.pdf),
+ *   con file_name (el slug) y cta_location (recurso-descarga o recursos-lista).
  * Todos llevan page_path.
  */
 ---
@@ -55,6 +57,15 @@
         const esAgenda =
           enlace.matches("a.cta, a.cta-cabecera") &&
           (href === "/contacto" || href === "#agenda");
+        if (/^\/recursos\/[^/]+\.pdf$/.test(href)) {
+          w.dataLayer.push({
+            event: "file_download",
+            file_name: href.replace(/^\/recursos\//, "").replace(/\.pdf$/, ""),
+            cta_location: ubicacion(enlace),
+            page_path: location.pathname,
+          });
+          return;
+        }
         const evento = href.includes("wa.me/")
           ? "whatsapp_click"
           : href.startsWith("mailto:")

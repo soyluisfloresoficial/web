@@ -1,0 +1,98 @@
+---
+/**
+ * /recursos (17/11/2026): todos los recursos gratuitos de los CTA de videos y
+ * carruseles, del más nuevo al más antiguo. Ver RECURSOS.md.
+ */
+import Base from "../../layouts/Base.astro";
+import CabeceraPagina from "../../components/CabeceraPagina.astro";
+import Icono from "../../components/Icono.astro";
+import { RECURSOS, pdfRecurso } from "../../data/recursos";
+import { SITIO } from "../../data/servicios";
+
+const url = `${SITIO.url}/recursos`;
+const title = "Recursos gratis: plantillas y checklists | Luis Flores";
+const description =
+  "Plantillas y checklists gratis de mis videos y carruseles sobre automatización e IA para negocios. Descárgalas en PDF, sin registrarte.";
+const lista = [...RECURSOS].sort((a, b) => b.fecha.localeCompare(a.fecha));
+const schema = [
+  {
+    "@type": "CollectionPage",
+    "@id": `${url}#page`,
+    url,
+    name: title,
+    description,
+    isPartOf: { "@id": `${SITIO.url}/#website` },
+    inLanguage: "es",
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITIO.url}/` },
+      { "@type": "ListItem", position: 2, name: "Recursos gratis", item: url },
+    ],
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema}>
+  <main>
+    <CabeceraPagina
+      migas={[{ texto: "Inicio", href: "/" }, { texto: "Recursos gratis" }]}
+      antetitulo="Recursos gratis"
+      titulo="Plantillas y checklists"
+      destacado="de mis videos"
+      entradilla="Cada video o carrusel que ofrece un recurso lo deja aquí. Descárgalo en PDF, sin registrarte."
+      acento="violeta"
+    />
+    <section class="section" aria-labelledby="recursos-lista-t" data-ubicacion="recursos-lista">
+      <div class="container-lf">
+        <h2 id="recursos-lista-t" class="sr-only">Todos los recursos</h2>
+        <ul class="recursos-grid">
+          {
+            lista.map((r) => (
+              <li class="card recursos-tarjeta">
+                <p class="eyebrow">{r.formato} · comenta {r.palabraClave}</p>
+                <h3 class="card-title mt-3">
+                  <a href={`/recursos/${r.slug}`}>{r.titulo}</a>
+                </h3>
+                <p class="card-text mt-3">{r.descripcion}</p>
+                <p class="recursos-origen mt-3">{r.origen}</p>
+                <div class="botones mt-6">
+                  <a class="boton-secundario" href={`/recursos/${r.slug}`}>Ver recurso</a>
+                  <a class="boton-secundario" href={pdfRecurso(r.slug)} download data-recurso={r.slug}>
+                    <Icono nombre="flecha" tamano={16} /> PDF
+                  </a>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .recursos-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  }
+  .recursos-tarjeta {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .recursos-tarjeta .botones {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+  .recursos-origen {
+    font-size: 0.875rem;
+    opacity: 0.75;
+  }
+</style>

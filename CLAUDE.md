@@ -36,6 +36,7 @@ Si el build o la auditoría fallan, **no subas nada** y explica qué ha pasado.
 | Conexión con el panel (panel.soyluisflores.es) | Cada reserva entra como lead por el webhook `webhookFormulario` del panel (`src/worker/panel.ts`). Secretos `PANEL_WEBHOOK_URL` y `PANEL_SECRETO` en Cloudflare, que pone solo `node tools/conectar-panel.mjs`. Pasos en `AGENDA.md` |
 | Asistente de IA: instrucciones y servidor | `src/worker/` y `AGENTE.md`. Lo que sabe se genera solo desde `src/data` y el blog |
 | Plantillas de los correos (confirmación, recordatorios, seguimiento) | `correos/PLANTILLAS.md`. Las 1 a 3 ya las envía la web sola; el resto se pegan a mano en GoHighLevel o ActiveCampaign |
+| Recursos gratis de los CTA (videos y carruseles) | `RECURSOS.md`: contenido en `video/recursos/`, PDF en `public/recursos/`, fichas en `src/data/recursos.ts`, páginas `/recursos` y `/recursos/<slug>` |
 | Contenedor de Google Tag Manager | `gtm/` (ficheros de apoyo; el contenedor real está en tagmanager.google.com) |
 | Reglas de trabajo y preferencias | Este fichero y la memoria de Claude del proyecto |
 
@@ -71,6 +72,8 @@ Regla del titular (13/11/2026): en los videos, las imágenes y los gráficos tie
 Regla de momentos (13/11/2026): respeta cuándo va **el avatar solo** (gancho, preguntas, emoción, presentación) y cuándo **el avatar hablando con la imagen o gráfica** (pantalla dividida 65/35 cuando la voz nombra algo concreto). La imagen entra cuando la voz dice su palabra clave y se va cuando cambia la idea. Solo gráfica, como mucho 2 s y sin cortar la voz. Criterios completos en `video/LF-MOTION.md` (sección 12).
 
 Regla del copy (14/11/2026, estricta): cada vez que entregues un video **definitivo**, entrega también su copy para **TikTok, Instagram, Facebook y LinkedIn**, cada uno en su bloque listo para copiar y pegar, adaptado a la red y fiel a lo que dice el video (mismo CTA). Sin cifras, clientes ni promesas inventadas, y con el aviso de activar la etiqueta de contenido IA. Guárdalo en `video/copys/<id-del-video>.md`.
+
+Regla de los recursos (17/11/2026): **todo recurso gratuito de un CTA (video o carrusel) se publica en la web**: contenido en `video/recursos/<slug>.md`, PDF con `node tools/generar-recursos.mjs <slug>` en `public/recursos/`, ficha en `src/data/recursos.ts` y página `soyluisflores.es/recursos/<slug>`, que es el enlace de ManyChat y WhatsApp. Se publica en `main` como cualquier cambio de la web. Pasos en `RECURSOS.md`.
 
 Regla de la portada (16/11/2026): **cada video que se entregue lleva su portada** (composición `<id>-Portada` en `src/lf/videos/`, exportada en PNG y JPG con el titular del tema), subida con enlace descargable junto al video.
 
