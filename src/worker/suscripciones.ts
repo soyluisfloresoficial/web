@@ -21,7 +21,7 @@ import { tituloGuia } from "../data/guias";
 import { enviarAlPanel, type EnvPanel } from "./panel";
 import { contarSeccion } from "./estadisticas";
 import type { EnvAgenda } from "./agenda";
-import { describirOrigen, lineasOrigen } from "./origen";
+import { describirOrigen, lineasOrigen, origenCorto } from "./origen";
 
 interface KV {
   get(clave: string, tipo: "json"): Promise<unknown>;
@@ -222,6 +222,7 @@ export async function suscripciones(
             ...lineasOrigen(origenGuia),
             "Confirmó su correo y ya recibe la guía y la serie de consejos.",
           ].join("\n"),
+          origen: origenCorto(origenGuia, guiaPedida(s.guia).slug),
         }),
         contarSeccion(env, "correos", origenGuia.clave),
       ]),

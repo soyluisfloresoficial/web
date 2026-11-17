@@ -414,6 +414,11 @@ const pasos = [
     .guia-areas {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+    /* Con un número impar de tarjetas (las siete formas), la última ocupa
+       el ancho entero en vez de quedar sola a la izquierda. */
+    .guia-areas > :last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
   }
   .guia-num {
     font-family: var(--font-display);
