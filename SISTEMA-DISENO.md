@@ -71,6 +71,7 @@ Principios: solo se animan `transform`, `translate`, `scale` y `opacity`. Todo r
 | Transición entre páginas | Todo el sitio | `@view-transition` en CSS. La cabecera y la barra móvil se quedan quietas |
 | Barras del embudo y de la calculadora | Home | `scaleX` desde 0 |
 | Barra de progreso | Artículos del blog | Línea de tiempo de scroll |
+| Espiral de herramientas | Home, sección «Integraciones» (19/11/2026, sustituye a las dos bandas) | 22 tarjetas en una hélice 3D que gira sobre su eje y flota. Solo CSS (`transform`), con dorso oscuro para la parte de atrás. Se para al pasar el ratón y con su botón; con movimiento reducido es una rejilla quieta |
 | Cinta de Möbius | Home, entre «Método» y «Sobre mí» (`CintaMoebius.astro`, 19/11/2026) | Canvas 2D. Gira sola solo mientras está en pantalla. Con el ratón encima se inclina hacia el cursor; se arrastra para girarla, con inercia (en celular, solo en horizontal para no bloquear el scroll). Excepción a «nada que siga al puntero», pedida por el titular. Con movimiento reducido no gira sola, pero se puede arrastrar |
 | Video piloto | Home, sección «Por dentro» (`Showcase.astro`) | MP4 de 15 s sin sonido, hecho con código en `video/`: 16:9 en escritorio y 9:16 en celular (menos de 768 px). Sustituye a las tarjetas con maquetas, que repetían lo mismo; debajo hay un desplegable con la historia en texto. Solo se descarga al llegar a pantalla, arranca solo, se para al salir y tiene botón de pausa. Con movimiento reducido no arranca solo (27/10/2026) |
 

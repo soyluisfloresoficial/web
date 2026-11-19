@@ -350,11 +350,11 @@ const schema = [
 
     {/* ----------------------------------------------------------- Herramientas */}
     {/*
-      Herramientas (28/10/2026): título grande y dos bandas de logos con sus
-      colores, en sentidos contrarios. Es la única animación continua de la
-      web (SISTEMA-DISENO.md): se para al pasar el ratón, con el botón de
-      pausa y con movimiento reducido, donde las bandas pasan a ser una
-      rejilla quieta. Los lectores de pantalla leen una sola lista.
+      Herramientas (28/10/2026; espiral desde el 19/11/2026): título grande y
+      una espiral 3D de tarjetas con los colores de cada marca. Se para al
+      pasar el ratón, con el botón de pausa y con movimiento reducido, donde
+      pasa a ser una rejilla quieta. Los lectores de pantalla leen una sola
+      lista.
     */}
     <section class="seccion-herramientas" aria-labelledby="herramientas-titulo">
       <div class="herramientas-fondo" aria-hidden="true"></div>
@@ -369,35 +369,38 @@ const schema = [
         </p>
       </div>
 
-      <div class="herramientas-filas mt-10" data-herramientas>
-        {
-          [herramientas, [...herramientas].reverse()].map((lista, fila) => (
-            <div class={fila ? "marquee marquee-inversa" : "marquee"}>
-              {[false, true].map((copia) => (
-                <ul
-                  class="marquee-track"
-                  aria-label={copia || fila ? undefined : "Herramientas con las que trabajo"}
-                  aria-hidden={copia || fila ? "true" : undefined}
-                >
-                  {lista.map((h) => (
-                    <li class="herramienta" style={logos[h]?.color ? `--marca: ${logos[h].color}` : undefined}>
-                      <span class="herramienta-logo" aria-hidden="true">
-                        {logos[h]?.d ? (
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" focusable="false">
-                            <path d={logos[h].d} />
-                          </svg>
-                        ) : (
-                          <span class="logo-inicial">{h[0]}</span>
-                        )}
-                      </span>
-                      <span>{h}</span>
-                    </li>
-                  ))}
-                </ul>
-              ))}
-            </div>
-          ))
-        }
+      {/* Espiral 3D de tarjetas (19/11/2026, pedido del titular): una cinta
+          flotante que gira sobre sí misma. Solo CSS (transform), sin
+          JavaScript. Una sola lista para lectores de pantalla; la cara
+          trasera de cada tarjeta es decorativa. Se para al pasar el ratón y
+          con el botón; con movimiento reducido es una rejilla quieta. */}
+      <div class="espiral-zona mt-6" data-herramientas>
+        <div class="espiral-escena">
+          <div class="espiral-flotar">
+            <ul class="espiral" aria-label="Herramientas con las que trabajo" style={`--n: ${herramientas.length}`}>
+              {herramientas.map((h, i) => {
+                const logo = logos[h]?.d ? (
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" focusable="false">
+                    <path d={logos[h].d} />
+                  </svg>
+                ) : (
+                  <span class="logo-inicial">{h[0]}</span>
+                );
+                return (
+                  <li class="tarjeta-ia" style={`--i: ${i};${logos[h]?.color ? ` --marca: ${logos[h].color}` : ""}`}>
+                    <span class="tarjeta-ia-cara">
+                      <span class="herramienta-logo" aria-hidden="true">{logo}</span>
+                      <span class="tarjeta-ia-nombre">{h}</span>
+                    </span>
+                    <span class="tarjeta-ia-dorso" aria-hidden="true">
+                      <span class="herramienta-logo">{logo}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
         <button type="button" class="herramientas-pausa" data-herramientas-pausa aria-pressed="false">
           <svg class="icono-pausa" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"
             ><path d="M8 5v14M16 5v14" /></svg
@@ -867,7 +870,7 @@ const schema = [
 </Base>
 
 <script>
-  // Botón de pausa de las bandas de herramientas.
+  // Botón de pausa de la espiral de herramientas.
   const filas = document.querySelector<HTMLElement>("[data-herramientas]");
   const boton = filas?.querySelector<HTMLButtonElement>("[data-herramientas-pausa]");
   const texto = boton?.querySelector("[data-herramientas-texto]");
@@ -1328,39 +1331,6 @@ const schema = [
   .paso-reparto dd {
     color: var(--color-soft);
     margin: 0.25rem 0 0;
-  }
-
-  .marquee {
-    overflow: hidden;
-    display: flex;
-    gap: 0.75rem;
-    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  }
-
-  .marquee-track {
-    display: flex;
-    gap: 0.75rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: max-content;
-    flex-shrink: 0;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .marquee-track {
-      animation: desplazar 40s linear infinite;
-    }
-    .marquee:hover .marquee-track,
-    .marquee:focus-within .marquee-track {
-      animation-play-state: paused;
-    }
-  }
-
-  @keyframes desplazar {
-    to {
-      transform: translateX(calc(-100% - 0.75rem));
-    }
   }
 
   .faq-item {
@@ -2073,7 +2043,7 @@ const schema = [
     overflow: hidden;
   }
   /* Luz azul arriba, violeta abajo a la derecha y una cuadrícula fina.
-     Todo quieto: el movimiento lo ponen las bandas. */
+     Todo quieto: el movimiento lo pone la espiral. */
   .herramientas-fondo {
     position: absolute;
     inset: 0;
@@ -2108,39 +2078,6 @@ const schema = [
     text-underline-offset: 3px;
   }
 
-  .herramientas-filas {
-    display: grid;
-    gap: 1rem;
-  }
-  .marquee-inversa .marquee-track {
-    animation-direction: reverse;
-    animation-duration: 52s;
-  }
-  .herramientas-filas.en-pausa .marquee-track {
-    animation-play-state: paused;
-  }
-
-  .herramienta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-height: 3.75rem;
-    padding: 0.5rem 1.375rem 0.5rem 0.5rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    background:
-      linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.01)),
-      var(--color-surface);
-    font-family: var(--font-display);
-    font-size: var(--step-0);
-    font-weight: 700;
-    color: var(--color-ink);
-    white-space: nowrap;
-    transition:
-      border-color var(--dur-micro) var(--ease),
-      background-color var(--dur-micro) var(--ease),
-      translate var(--dur-micro) var(--ease);
-  }
   /* El logo, siempre con el color de su marca, dentro de un círculo teñido. */
   .herramienta-logo {
     display: grid;
@@ -2158,32 +2095,6 @@ const schema = [
     font-weight: 800;
     line-height: 1;
   }
-  @media (hover: hover) {
-    .herramienta:hover {
-      translate: 0 -2px;
-      border-color: color-mix(in srgb, var(--marca, var(--color-electric)) 60%, transparent);
-      background:
-        linear-gradient(180deg, color-mix(in srgb, var(--marca, var(--color-electric)) 12%, transparent), transparent),
-        var(--color-surface);
-    }
-  }
-  @media (width < 640px) {
-    .herramienta {
-      min-height: 3.25rem;
-      gap: 0.625rem;
-      padding-right: 1.125rem;
-      font-size: 0.9375rem;
-    }
-    .herramienta-logo {
-      width: 2.25rem;
-      height: 2.25rem;
-    }
-    .herramienta-logo svg {
-      width: 18px;
-      height: 18px;
-    }
-  }
-
   /* Botón de pausa: todo lo que se mueve más de 5 segundos se tiene que
      poder parar (WCAG 2.2.2). 44 px de alto, el mínimo táctil. */
   .herramientas-pausa {
@@ -2222,19 +2133,168 @@ const schema = [
     display: none;
   }
 
-  /* Movimiento reducido: una rejilla quieta, sin copias ni segunda banda. */
-  @media (prefers-reduced-motion: reduce) {
-    .herramientas-filas .marquee {
-      mask-image: none;
-      justify-content: center;
+  /* Espiral de tarjetas (19/11/2026). Cada tarjeta se coloca en una hélice:
+     gira --paso grados, se aleja --radio y sube --subida respecto a la
+     anterior. La hélice entera gira sobre su eje vertical y flota. Solo se
+     anima transform: no recalcula la maquetación. */
+  .espiral-zona {
+    display: grid;
+    --paso: 32.73deg; /* 360 / 11: once tarjetas por vuelta */
+    --radio: 240px;
+    --subida: 19px;
+    --tarjeta: 120px;
+  }
+  .espiral-escena {
+    /* Alto: la subida total de la hélice más dos tarjetas de margen. La
+       máscara recorta al tamaño de la caja, así que tiene que sobrar. */
+    height: calc(22 * var(--subida) + var(--tarjeta) * 2.4);
+    display: grid;
+    place-items: center;
+    perspective: 2200px;
+    perspective-origin: 50% 45%;
+    mask-image:
+      linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent),
+      linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent);
+    mask-composite: intersect;
+  }
+  .espiral-flotar {
+    transform-style: preserve-3d;
+  }
+  .espiral {
+    position: relative;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transform-style: preserve-3d;
+    transform: rotateX(-10deg) rotateZ(-6deg) rotateY(0deg);
+  }
+  .tarjeta-ia {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--tarjeta);
+    height: var(--tarjeta);
+    transform-style: preserve-3d;
+    transform:
+      rotateY(calc(var(--i) * var(--paso)))
+      translateZ(var(--radio))
+      translateY(calc((var(--i) - var(--n) / 2) * var(--subida) * -1))
+      rotateZ(-5deg)
+      translate(-50%, -50%);
+  }
+  .tarjeta-ia-cara,
+  .tarjeta-ia-dorso {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 0.625rem;
+    padding: 0.75rem;
+    border-radius: 1.125rem;
+    border: 1px solid color-mix(in srgb, var(--marca, var(--color-electric)) 38%, var(--color-line));
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .tarjeta-ia-cara {
+    background:
+      radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--marca, var(--color-electric)) 22%, transparent), transparent 70%),
+      linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.01)),
+      var(--color-surface);
+    box-shadow:
+      0 18px 40px -18px color-mix(in srgb, var(--marca, var(--color-electric)) 55%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.08);
+  }
+  /* Dorso: más oscuro y sin nombre, para que la parte de atrás de la
+     espiral se lea como fondo. */
+  .tarjeta-ia-dorso {
+    transform: rotateY(180deg);
+    background: var(--color-navy-2);
+    opacity: 0.55;
+  }
+  .tarjeta-ia-nombre {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--color-ink);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .tarjeta-ia .herramienta-logo {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  @media (width < 640px) {
+    .espiral-zona {
+      --radio: 150px;
+      --subida: 14px;
+      --tarjeta: 84px;
     }
-    .herramientas-filas .marquee-track {
+    .tarjeta-ia-nombre {
+      font-size: 0.8125rem;
+    }
+    .tarjeta-ia .herramienta-logo {
+      width: 2.375rem;
+      height: 2.375rem;
+    }
+    .tarjeta-ia .herramienta-logo svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .espiral {
+      animation: espiral-girar 42s linear infinite;
+    }
+    .espiral-flotar {
+      animation: espiral-flotar 7s ease-in-out infinite alternate;
+    }
+    .espiral-zona:hover :is(.espiral, .espiral-flotar),
+    .espiral-zona.en-pausa :is(.espiral, .espiral-flotar) {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes espiral-girar {
+    to {
+      transform: rotateX(-10deg) rotateZ(-6deg) rotateY(-360deg);
+    }
+  }
+  @keyframes espiral-flotar {
+    from {
+      transform: translateY(-10px);
+    }
+    to {
+      transform: translateY(10px);
+    }
+  }
+
+  /* Movimiento reducido: una rejilla quieta, sin dorsos ni botón. */
+  @media (prefers-reduced-motion: reduce) {
+    .espiral-escena {
+      height: auto;
+      mask-image: none;
+      perspective: none;
+    }
+    .espiral {
       width: auto;
+      height: auto;
+      transform: none;
+      display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 0.75rem;
+      padding-inline: 1rem;
     }
-    .herramientas-filas .marquee-track[aria-hidden="true"],
-    .marquee-inversa,
+    .tarjeta-ia {
+      position: relative;
+      transform: none;
+    }
+    .tarjeta-ia-dorso,
     .herramientas-pausa {
       display: none;
     }
