@@ -1,0 +1,211 @@
+---
+/**
+ * Cinta de Möbius animada (19/11/2026), inspirada en la cinta de energía de
+ * los viajes en el tiempo de Endgame: una sola cara, sin principio ni fin,
+ * hecha de hilos de luz azul → violeta con motas que la recorren.
+ *
+ * Decisiones:
+ * - Canvas 2D con proyección 3D propia: sin librerías ni vídeo (0 KB extra).
+ * - Hilos sumados con «lighter»: donde la cinta se pliega o se cruza, brilla.
+ * - Solo anima mientras está en pantalla y la pestaña es visible. Celular:
+ *   menos hilos y 30 fotogramas por segundo.
+ * - Movimiento reducido: se dibuja una vez, quieta.
+ * - Decorativa: aria-hidden y sin eventos de puntero.
+ */
+---
+
+<div class="moebius" aria-hidden="true">
+  <canvas class="moebius-lienzo" data-moebius></canvas>
+</div>
+
+<script>
+  const lienzo = document.querySelector<HTMLCanvasElement>("[data-moebius]");
+  const ctx = lienzo?.getContext("2d");
+
+  if (lienzo && ctx) {
+    const caja = lienzo.parentElement as HTMLElement;
+    const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const movil = matchMedia("(width < 768px)").matches;
+    const HILOS = movil ? 26 : 56;
+    const PUNTOS = movil ? 120 : 200;
+    const TRAMOS = 10;
+    const MOTAS = movil ? 28 : 60;
+    const FPS = movil ? 30 : 60;
+    const R = 1; // radio de la cinta
+    const ANCHO = 0.46; // semiancho de la cinta
+    const AZUL = [0, 123, 255];
+    const VIOLETA = [139, 92, 246];
+    const HIELO = [207, 227, 255];
+
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+    const medir = () => {
+      const r = caja.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, movil ? 1.5 : 2);
+      w = Math.max(1, Math.round(r.width));
+      h = Math.max(1, Math.round(r.height));
+      lienzo.width = Math.round(w * dpr);
+      lienzo.height = Math.round(h * dpr);
+    };
+    medir();
+
+    // Punto de la cinta: u recorre el lazo (0 a 2π, da dos vueltas de giro
+    // media: u/2) y v el ancho. Después se gira y se proyecta con perspectiva.
+    let ca = 0, sa = 0, cb = 0, sb = 0, cg = 0, sg = 0, escala = 1;
+    const proyectar = (u: number, v: number, salida: number[]) => {
+      const m = R + v * Math.cos(u / 2);
+      const x = m * Math.cos(u);
+      const y = m * Math.sin(u);
+      const z = v * Math.sin(u / 2);
+      // Giro sobre Z (spin), X (inclinación) e Y (vaivén).
+      const x1 = x * cg - y * sg;
+      const y1 = x * sg + y * cg;
+      const y2 = y1 * ca - z * sa;
+      const z2 = y1 * sa + z * ca;
+      const x3 = x1 * cb + z2 * sb;
+      const z3 = -x1 * sb + z2 * cb;
+      const f = 3.4 / (3.4 - z3);
+      salida[0] = w / 2 + x3 * f * escala;
+      salida[1] = h / 2 + y2 * f * escala;
+      salida[2] = z3;
+    };
+
+    const p = [0, 0, 0];
+    const mezcla = (t: number) =>
+      `${Math.round(AZUL[0] + (VIOLETA[0] - AZUL[0]) * t)},${Math.round(AZUL[1] + (VIOLETA[1] - AZUL[1]) * t)},${Math.round(AZUL[2] + (VIOLETA[2] - AZUL[2]) * t)}`;
+
+    // Motas: viajan por la cinta a distinta velocidad.
+    const motas = Array.from({ length: MOTAS }, () => ({
+      u: Math.random() * Math.PI * 2,
+      v: (Math.random() * 2 - 1) * ANCHO,
+      vel: 0.25 + Math.random() * 0.55,
+      r: 0.6 + Math.random() * 1.5,
+      c: Math.random(),
+    }));
+
+    function dibujar(tiempo: number, dt: number) {
+      const t = tiempo / 1000;
+      escala = Math.min(w / 3.6, h / 2.1);
+      ca = Math.cos(1.05 + 0.1 * Math.sin(t * 0.3));
+      sa = Math.sin(1.05 + 0.1 * Math.sin(t * 0.3));
+      cb = Math.cos(0.35 * Math.sin(t * 0.22));
+      sb = Math.sin(0.35 * Math.sin(t * 0.22));
+      cg = Math.cos(t * 0.22);
+      sg = Math.sin(t * 0.22);
+
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx!.globalCompositeOperation = "source-over";
+      ctx!.clearRect(0, 0, w, h);
+      ctx!.globalCompositeOperation = "lighter";
+      ctx!.lineCap = "round";
+      ctx!.lineJoin = "round";
+
+      const paso = (Math.PI * 2) / PUNTOS;
+      const porTramo = PUNTOS / TRAMOS;
+
+      for (let k = 0; k < HILOS; k++) {
+        const q = k / (HILOS - 1);
+        const v = (q * 2 - 1) * ANCHO;
+        const borde = Math.abs(q * 2 - 1);
+        const color = mezcla(q);
+        ctx!.lineWidth = 1;
+        for (let s = 0; s < TRAMOS; s++) {
+          ctx!.beginPath();
+          let zMedia = 0;
+          for (let i = 0; i <= porTramo; i++) {
+            const u = (s * porTramo + i) * paso;
+            proyectar(u, v, p);
+            zMedia += p[2];
+            if (i === 0) ctx!.moveTo(p[0], p[1]);
+            else ctx!.lineTo(p[0], p[1]);
+          }
+          zMedia /= porTramo + 1;
+          // Más cerca de la cámara, más brillo; los bordes de la cinta, más.
+          const fondo = 0.5 + 0.5 * Math.max(-1, Math.min(1, zMedia / 0.6));
+          ctx!.strokeStyle = `rgba(${color},${(0.1 + 0.36 * fondo + 0.14 * borde).toFixed(3)})`;
+          ctx!.stroke();
+        }
+      }
+
+      // Resplandor suave por el centro de la cinta.
+      ctx!.lineWidth = movil ? 10 : 16;
+      ctx!.strokeStyle = "rgba(99,102,241,0.045)";
+      ctx!.beginPath();
+      for (let i = 0; i <= PUNTOS; i++) {
+        proyectar(i * paso, 0, p);
+        if (i === 0) ctx!.moveTo(p[0], p[1]);
+        else ctx!.lineTo(p[0], p[1]);
+      }
+      ctx!.stroke();
+
+      // Motas de luz que recorren la cinta.
+      for (const m of motas) {
+        m.u = (m.u + m.vel * dt) % (Math.PI * 2);
+        proyectar(m.u, m.v, p);
+        const fondo = 0.45 + 0.55 * Math.max(0, Math.min(1, 0.5 + p[2] / 1.2));
+        const pulso = 0.7 + 0.3 * Math.sin(t * 2 + m.c * 20);
+        ctx!.fillStyle = `rgba(${HIELO},${(0.9 * fondo * pulso).toFixed(3)})`;
+        ctx!.beginPath();
+        ctx!.arc(p[0], p[1], m.r * (0.7 + 0.5 * fondo), 0, Math.PI * 2);
+        ctx!.fill();
+      }
+    }
+
+    window.addEventListener("resize", () => {
+      medir();
+      if (quieto) dibujar(2500, 0);
+    });
+
+    if (quieto) {
+      dibujar(2500, 0);
+    } else {
+      let visible = false;
+      let corriendo = false;
+      let ultimo = 0;
+      const marco = (ahora: number) => {
+        if (!visible || document.hidden) {
+          corriendo = false;
+          return;
+        }
+        const dt = Math.min(0.1, (ahora - ultimo) / 1000);
+        if (ahora - ultimo >= 1000 / FPS - 2) {
+          ultimo = ahora;
+          dibujar(ahora, dt);
+        }
+        requestAnimationFrame(marco);
+      };
+      const arrancar = () => {
+        if (corriendo || !visible || document.hidden) return;
+        corriendo = true;
+        ultimo = performance.now();
+        requestAnimationFrame(marco);
+      };
+      new IntersectionObserver(
+        (es) => {
+          visible = es[0].isIntersecting;
+          if (visible) arrancar();
+        },
+        { rootMargin: "80px" },
+      ).observe(caja);
+      document.addEventListener("visibilitychange", arrancar);
+      dibujar(2500, 0);
+    }
+  }
+</script>
+
+<style>
+  .moebius {
+    position: relative;
+    width: 100%;
+    height: clamp(260px, 42vw, 460px);
+    pointer-events: none;
+  }
+  .moebius-lienzo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
