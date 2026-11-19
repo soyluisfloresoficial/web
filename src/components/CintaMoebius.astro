@@ -10,7 +10,10 @@
  * - Solo anima mientras está en pantalla y la pestaña es visible. Celular:
  *   menos hilos y 30 fotogramas por segundo.
  * - Movimiento reducido: se dibuja una vez, quieta.
- * - Decorativa: aria-hidden y sin eventos de puntero.
+ * - Decorativa: aria-hidden. Interactiva (pedido del titular, 19/11/2026):
+ *   con el ratón encima se inclina hacia el cursor; al arrastrarla (ratón o
+ *   dedo) gira y sigue con inercia. En celular solo el arrastre horizontal,
+ *   para no bloquear el scroll vertical.
  */
 ---
 
@@ -84,15 +87,39 @@
       c: Math.random(),
     }));
 
+    // Interacción: giro acumulado por el arrastre, inercia e inclinación
+    // hacia el cursor (suavizada).
+    let giro = 0;
+    let incl = 0;
+    let velGiro = 0;
+    let velIncl = 0;
+    let inclX = 0, inclY = 0, objX = 0, objY = 0;
+    let arrastrando = false;
+
     function dibujar(tiempo: number, dt: number) {
       const t = tiempo / 1000;
-      escala = Math.min(w / 3.6, h / 2.1);
-      ca = Math.cos(1.05 + 0.1 * Math.sin(t * 0.3));
-      sa = Math.sin(1.05 + 0.1 * Math.sin(t * 0.3));
-      cb = Math.cos(0.35 * Math.sin(t * 0.22));
-      sb = Math.sin(0.35 * Math.sin(t * 0.22));
-      cg = Math.cos(t * 0.22);
-      sg = Math.sin(t * 0.22);
+      if (!arrastrando) {
+        giro += velGiro * dt;
+        incl += velIncl * dt;
+        const freno = Math.pow(0.04, dt);
+        velGiro *= freno;
+        velIncl *= freno;
+      }
+      incl = Math.max(-0.7, Math.min(0.7, incl));
+      const suave = 1 - Math.pow(0.002, dt || 0.016);
+      inclX += (objX - inclX) * suave;
+      inclY += (objY - inclY) * suave;
+      const a = 1.05 + 0.1 * Math.sin(t * 0.3) + incl + inclY * 0.35;
+      const b = 0.35 * Math.sin(t * 0.22) + inclX * 0.45;
+      const g = t * 0.22 + giro;
+      // Se ajusta a la inclinación para que, vista de frente, no se corte.
+      escala = Math.min(w / 3.6, h / (1.5 + 2.3 * Math.abs(Math.cos(a))));
+      ca = Math.cos(a);
+      sa = Math.sin(a);
+      cb = Math.cos(b);
+      sb = Math.sin(b);
+      cg = Math.cos(g);
+      sg = Math.sin(g);
 
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx!.globalCompositeOperation = "source-over";
@@ -157,6 +184,58 @@
       if (quieto) dibujar(2500, 0);
     });
 
+    // Puntero. Con movimiento reducido no hay bucle: se redibuja solo
+    // mientras la persona interactúa.
+    let previoX = 0, previoY = 0, previoT = 0;
+    const redibujarQuieto = () => {
+      if (quieto) requestAnimationFrame(() => dibujar(2500, 0.016));
+    };
+    caja.addEventListener("pointermove", (e) => {
+      const r = caja.getBoundingClientRect();
+      if (e.pointerType === "mouse") {
+        objX = ((e.clientX - r.left) / r.width) * 2 - 1;
+        objY = ((e.clientY - r.top) / r.height) * 2 - 1;
+      }
+      if (arrastrando) {
+        const ahora = performance.now();
+        const dx = e.clientX - previoX;
+        const dy = e.pointerType === "mouse" ? e.clientY - previoY : 0;
+        const ds = Math.max(0.008, (ahora - previoT) / 1000);
+        giro += dx * 0.012;
+        incl += dy * 0.008;
+        velGiro = (dx * 0.012) / ds;
+        velIncl = (dy * 0.008) / ds;
+        previoX = e.clientX;
+        previoY = e.clientY;
+        previoT = ahora;
+      }
+      if (quieto && (arrastrando || e.pointerType === "mouse")) {
+        inclX = objX;
+        inclY = objY;
+        redibujarQuieto();
+      }
+    });
+    caja.addEventListener("pointerdown", (e) => {
+      arrastrando = true;
+      velGiro = velIncl = 0;
+      previoX = e.clientX;
+      previoY = e.clientY;
+      previoT = performance.now();
+      caja.setPointerCapture(e.pointerId);
+      caja.classList.add("arrastrando");
+    });
+    const soltar = () => {
+      arrastrando = false;
+      caja.classList.remove("arrastrando");
+      if (quieto) velGiro = velIncl = 0;
+    };
+    caja.addEventListener("pointerup", soltar);
+    caja.addEventListener("pointercancel", soltar);
+    caja.addEventListener("pointerleave", () => {
+      objX = objY = 0;
+      redibujarQuieto();
+    });
+
     if (quieto) {
       dibujar(2500, 0);
     } else {
@@ -199,7 +278,13 @@
     position: relative;
     width: 100%;
     height: clamp(260px, 42vw, 460px);
-    pointer-events: none;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .moebius.arrastrando {
+    cursor: grabbing;
   }
   .moebius-lienzo {
     position: absolute;
