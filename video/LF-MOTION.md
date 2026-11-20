@@ -418,3 +418,12 @@ Petición del titular: todos los videos llevan motion graphics y, preferiblement
 - **Escenas con gráfica:** cada una lleva una imagen real acorde (propia, de banco o generada con IA).
 - **Interfaces:** chat, calendario y flujo se muestran junto a esa imagen con el contenido `imagenYPantalla`: imagen con movimiento a la izquierda y la interfaz o el flujo a la derecha.
 - **Antes de montar:** se calcula cuántas imágenes hacen falta. Si faltan créditos o una fuente falla, se avisa al titular antes de montar.
+
+## 17. Referencia «comandos de estilo» y auditoría (20/11/2026)
+
+Video de referencia del titular analizado fotograma a fotograma. Lo aprendido está en la skill `reel-efectos-motion` (copia en `video/skills/reel-efectos-motion/SKILL.md`):
+
+- Nueve estilos nuevos de escena: UI depth, Swiss grid, Cutout grid, Scrapbook collage, News broadcast, Cinematic trailer, Explainer panel, Glitch HUD y Neon outline.
+- Estructuras: demo de herramienta en pantalla dividida, cuenta atrás de retención, transición por desenfoque, cierre con palabras sueltas e iconos, y CTA de comentario con brillo.
+- Ya existen en LF Motion: zoom digital con visor (`motion visor`), órbita, muro, notas, tarjetas de cristal, frame break (`motion cierre`) y gancho de cristal. Los nueve estilos nuevos se construyen en `EfectosMotion.tsx` cuando un video los necesite.
+- Auditoría obligatoria antes de entregar: hoja cada 0,5 s, ninguna palabra tapada, montada, cortada o fuera de márgenes, subtítulos por frases y pasada como cliente.
