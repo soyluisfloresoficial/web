@@ -27,5 +27,6 @@ Al descargar un PDF se envía el evento `file_download` con `file_name` (el slug
 
 | Recurso | Palabra | Origen | Página |
 |---|---|---|---|
+| Analiza las preguntas de tus clientes con IA | Enlace del perfil | Video · Episodio 04 | `/recursos/plantilla-preguntas-de-clientes` |
 | Diseña tu primera automatización en 5 pasos | FLUJO | Video · Episodio 03 | `/recursos/plantilla-primera-automatizacion` |
 | Organiza tus archivos antes de conectarlos a una IA | DOCUMENTOS | Video · Episodio 01 | `/recursos/checklist-organizar-archivos` |

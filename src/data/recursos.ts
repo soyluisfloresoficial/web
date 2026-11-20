@@ -22,7 +22,7 @@ export type Recurso = {
   formato: "Checklist" | "Plantilla" | "Guía" | "Prompts";
   /** De dónde sale: video o carrusel y su número o título. */
   origen: string;
-  /** Palabra que se comenta o escribe para recibirlo. */
+  /** Palabra que se comenta o escribe para recibirlo (vacía si se descarga desde el enlace del perfil). */
   palabraClave: string;
   /** Servicio relacionado (para la guía y la llamada). Ver src/data/servicios. */
   servicio: string;
@@ -31,6 +31,16 @@ export type Recurso = {
 };
 
 export const RECURSOS: Recurso[] = [
+  {
+    slug: "plantilla-preguntas-de-clientes",
+    titulo: "Analiza las preguntas de tus clientes con IA",
+    descripcion: "Plantilla gratuita para agrupar con IA las preguntas reales de tus clientes, ver cuáles se repiten y descubrir qué información falta en tu web.",
+    formato: "Plantilla",
+    origen: "Video · Episodio 04 «No le pidas ideas a la IA»",
+    palabraClave: "",
+    servicio: "consultoria-ia",
+    fecha: "2026-11-20",
+  },
   {
     slug: "plantilla-primera-automatizacion",
     titulo: "Diseña tu primera automatización en 5 pasos",

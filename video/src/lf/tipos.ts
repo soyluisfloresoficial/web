@@ -187,6 +187,30 @@ export type Contenido =
       tipo: "flujoMini";
       nodos: { icono: Icono; titulo: string }[];
     }
+  | {
+      /** Gancho como escena: palabra 3D detrás de la cabeza y presentador recortado delante. */
+      tipo: "ganchoGlass";
+      palabra: string;
+      recorte: string;
+      tachar?: Momento;
+      nota?: string;
+    }
+  | {
+      /** DEMO: la IA agrupa las preguntas de los clientes (datos de ejemplo). */
+      tipo: "analisisPreguntas";
+      preguntas: string[];
+      peticion: string;
+      grupos: { tema: string; indices: number[]; repetida?: number; total: number }[];
+      falta: string;
+      momentos: { preguntas: Momento; peticion: Momento; agrupar: Momento; repetidas: Momento; falta: Momento };
+    }
+  | {
+      /** Publicaciones genéricas que se tachan («no es esto»). */
+      tipo: "tarjetasTachadas";
+      titulos: string[];
+      etiqueta: string;
+      tachar: Momento;
+    }
   | { tipo: "cta" };
 
 /**
@@ -260,7 +284,7 @@ export type ConfigCTA = {
    */
   momentos?: { seguir?: string; comentar?: string; recurso?: string };
   /** «comentario» (Comenta PALABRA + recurso) o «mensaje» (escríbeme por privado). */
-  estilo?: "comentario" | "mensaje" | "seguir" | "seguir-comentar" | "comentar-recurso";
+  estilo?: "comentario" | "mensaje" | "seguir" | "seguir-comentar" | "comentar-recurso" | "perfil";
   /** Para el estilo «mensaje»: línea bajo el texto y web. */
   nota?: string;
   web?: string;

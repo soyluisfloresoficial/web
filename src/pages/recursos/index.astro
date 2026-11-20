@@ -52,7 +52,7 @@ const schema = [
           {
             lista.map((r) => (
               <li class="card recursos-tarjeta">
-                <p class="eyebrow">{r.formato} · comenta {r.palabraClave}</p>
+                <p class="eyebrow">{r.formato}{r.palabraClave ? ` · comenta ${r.palabraClave}` : " · enlace del perfil"}</p>
                 <h3 class="card-title mt-3">
                   <a href={`/recursos/${r.slug}`}>{r.titulo}</a>
                 </h3>

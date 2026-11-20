@@ -23,6 +23,10 @@ import { BuscadorDocumentos } from "./componentes/BuscadorDocumentos";
 import { BRoll } from "./componentes/BRoll";
 import { FlujoFormulario } from "./componentes/FlujoFormulario";
 import { FlujoMini } from "./componentes/FlujoMini";
+import { GanchoGlass } from "./componentes/GanchoGlass";
+import { AnalisisPreguntas } from "./componentes/AnalisisPreguntas";
+import { TarjetasTachadas } from "./componentes/TarjetasTachadas";
+import { CTAPerfil } from "./componentes/CTAPerfil";
 import { SistemaReveal } from "./componentes/SistemaReveal";
 import { ESCENARIO } from "./disposicion";
 import { ZONA_SEGURA } from "./marca";
@@ -55,7 +59,9 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
   if (c?.tipo === "cta") {
     return (
       <AbsoluteFill style={{ opacity: salida }}>
-        {config.cta.estilo === "comentar-recurso" ? (
+        {config.cta.estilo === "perfil" ? (
+          <CTAPerfil cta={config.cta} inicio={momentosCTA(config, escena, fps).seguir} zona={ESCENARIO[disp]} />
+        ) : config.cta.estilo === "comentar-recurso" ? (
           <CTAComentarRecurso cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
         ) : config.cta.estilo === "seguir-comentar" ? (
           <CTASeguirComentar cta={config.cta} momentos={momentosCTA(config, escena, fps)} zona={ESCENARIO[disp]} />
@@ -66,6 +72,17 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
         ) : (
           <BrandCTA cta={config.cta} momentos={momentosCTA(config, escena, fps)} />
         )}
+      </AbsoluteFill>
+    );
+  }
+
+  const relEsc = (m: import("./tipos").Momento) =>
+    Math.max(0, Math.round((resolverMomento(m, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps));
+
+  if (c?.tipo === "ganchoGlass") {
+    return (
+      <AbsoluteFill style={{ zIndex: 10 }}>
+        <GanchoGlass palabra={c.palabra} recorte={c.recorte} tachar={c.tachar === undefined ? undefined : relEsc(c.tachar)} nota={c.nota} />
       </AbsoluteFill>
     );
   }
@@ -173,6 +190,21 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
         alto={Math.min(altoContenido, 960)}
       />
     );
+  } else if (c?.tipo === "analisisPreguntas") {
+    const r = (m: import("./tipos").Momento) => Math.max(0, relEsc(m) - esperaEntrada);
+    contenido = (
+      <AnalisisPreguntas
+        preguntas={c.preguntas}
+        peticion={c.peticion}
+        grupos={c.grupos}
+        falta={c.falta}
+        fases={{ preguntas: r(c.momentos.preguntas), peticion: r(c.momentos.peticion), agrupar: r(c.momentos.agrupar), repetidas: r(c.momentos.repetidas), falta: r(c.momentos.falta) }}
+        ancho={ANCHO_UTIL + 40}
+        alto={Math.min(altoContenido, 940)}
+      />
+    );
+  } else if (c?.tipo === "tarjetasTachadas") {
+    contenido = <TarjetasTachadas titulos={c.titulos} etiqueta={c.etiqueta} tachar={Math.max(0, relEsc(c.tachar) - esperaEntrada)} ancho={ANCHO_UTIL} />;
   } else if (c?.tipo === "flujoMini") {
     contenido = <FlujoMini nodos={c.nodos} ancho={ANCHO_UTIL} />;
   } else if (c?.tipo === "buscadorDocs") {
