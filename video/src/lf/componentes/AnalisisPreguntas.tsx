@@ -43,11 +43,11 @@ export function AnalisisPreguntas({
 
   // Posición de cada chip: suelto (lista en dos columnas) → dentro de su grupo.
   const posicion = (i: number) => {
-    const suelta = { x: 24 + (i % 2) * ((ancho - 48) / 2 + 8), y: top + Math.floor(i / 2) * 64 };
+    const suelta = { x: 24 + (i % 2) * ((ancho - 48) / 2 + 8), y: top + Math.floor(i / 2) * 72 };
     const g = grupos.findIndex((gr) => gr.indices.includes(i));
     if (g < 0) return { ...suelta, w: (ancho - 64) / 2, dentro: false };
     const k = grupos[g].indices.indexOf(i);
-    const agrup = { x: 24 + g * (colW + 16) + 10, y: top + 64 + k * 60 };
+    const agrup = { x: 24 + g * (colW + 16) + 10, y: top + 60 + k * 72 };
     return {
       x: suelta.x + (agrup.x - suelta.x) * agrupado,
       y: suelta.y + (agrup.y - suelta.y) * agrupado,
@@ -119,32 +119,31 @@ export function AnalisisPreguntas({
               left: pos.x,
               top: pos.y,
               width: pos.w,
-              height: 52,
+              height: 64,
               borderRadius: 12,
               padding: "0 12px",
+              lineHeight: 1.12,
               display: "flex",
               alignItems: "center",
               boxSizing: "border-box",
               background: esRepetida && rep > 0 ? "rgb(255 92 122 / 0.22)" : tinte && agrupado > 0.5 ? `${tinte}2E` : "rgb(255 255 255 / 0.08)",
               border: `1px solid ${esRepetida && rep > 0 ? COLOR.peligro : "rgb(255 255 255 / 0.08)"}`,
-              fontSize: 19,
+              fontSize: 18,
               color: COLOR.tinta,
-              whiteSpace: "nowrap",
               overflow: "hidden",
-              textOverflow: "ellipsis",
               opacity: llega * apaga,
               transform: `translateY(${(1 - llega) * 20}px)`,
             }}
           >
             {p}
             {esRepetida && rep > 0 && (
-              <span style={{ position: "absolute", right: 6, top: 6, padding: "2px 8px", borderRadius: 8, background: COLOR.peligro, color: "#fff", fontFamily: FUENTE.display, fontWeight: 800, fontSize: 15, transform: `scale(${rep})` }}>×5</span>
+              <span style={{ position: "absolute", right: -6, top: -10, padding: "2px 8px", borderRadius: 8, background: COLOR.peligro, color: "#fff", fontFamily: FUENTE.display, fontWeight: 800, fontSize: 15, transform: `scale(${rep})` }}>×5</span>
             )}
           </div>
         );
       })}
       {/* «+11 más» */}
-      <div style={{ position: "absolute", left: 24, top: top + 5 * 64, fontSize: 20, color: COLOR.suave, opacity: prog(f, fases.preguntas + 30, 10) * (1 - agrupado) }}>+ 11 preguntas más</div>
+      <div style={{ position: "absolute", left: 24, top: top + 5 * 72, fontSize: 20, color: COLOR.suave, opacity: prog(f, fases.preguntas + 30, 10) * (1 - agrupado) }}>+ 11 preguntas más</div>
 
       {/* Lo que falta */}
       {(() => {

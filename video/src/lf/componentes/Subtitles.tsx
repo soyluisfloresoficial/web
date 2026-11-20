@@ -38,7 +38,8 @@ export function Subtitles({
   const paginas = useMemo(() => {
     if (!subtitulos?.length) return [];
     const base = createTikTokStyleCaptions({ captions: subtitulos, combineTokensWithinMilliseconds: agrupar }).pages;
-    return maxCaracteres > 0 ? partirPaginas(base, maxCaracteres) : base;
+    // Siempre se corta al final de cada frase: un bloque nunca mezcla dos frases.
+    return partirPaginas(base, maxCaracteres > 0 ? maxCaracteres : Infinity);
   }, [subtitulos, agrupar, maxCaracteres]);
   const setClaves = useMemo(() => new Set(claves.map(normalizar)), [claves]);
   if (!paginas.length) return null;
@@ -120,27 +121,43 @@ export function Subtitles({
   );
 }
 
-/** Parte los bloques largos para que no pasen de N caracteres (≈ dos líneas). */
+/** Palabras que no deben cerrar un bloque (se pasan al siguiente). */
+const DEBILES = new Set(["a", "al", "de", "del", "el", "la", "las", "los", "lo", "le", "un", "una", "y", "o", "que", "te", "en", "con", "por", "para", "mi", "tu", "tus", "su", "es", "se", "no"]);
+
+/**
+ * Rehace los bloques: corta al final de cada frase y en las pausas largas (más de 700 ms),
+ * no pasa de N caracteres y nunca deja un bloque terminado en una palabra débil («a», «de», «que»…).
+ */
 function partirPaginas(paginas: TikTokPage[], max: number): TikTokPage[] {
+  const tokens = paginas.flatMap((p) => p.tokens);
   const out: TikTokPage[] = [];
-  for (const p of paginas) {
-    let actual: TikTokPage["tokens"] = [];
-    let largo = 0;
-    const cerrar = () => {
-      if (!actual.length) return;
-      const ini = actual[0].fromMs;
-      const fin = actual[actual.length - 1].toMs;
-      out.push({ text: actual.map((t) => t.text).join(""), startMs: ini, durationMs: fin - ini, tokens: actual });
-      actual = [];
-      largo = 0;
-    };
-    for (const t of p.tokens) {
-      const l = t.text.trim().length + 1;
-      if (largo + l > max && actual.length) cerrar();
-      actual.push(t);
-      largo += l;
+  let actual: TikTokPage["tokens"] = [];
+  const largo = (ts: TikTokPage["tokens"]) => ts.reduce((n, t) => n + t.text.trim().length + 1, 0);
+  const cerrar = () => {
+    if (!actual.length) return;
+    const ini = actual[0].fromMs;
+    const fin = actual[actual.length - 1].toMs;
+    out.push({ text: actual.map((t) => t.text).join(""), startMs: ini, durationMs: fin - ini, tokens: actual });
+    actual = [];
+  };
+  tokens.forEach((t, i) => {
+    const cierraFrase = /[.?!…]["»”)]?$/u.test(t.text.trim());
+    const cabeConMargen = largo(actual) + t.text.trim().length + 1 <= max + 9;
+    // La última palabra de una frase no se queda sola en un bloque.
+    if (actual.length && largo(actual) + t.text.trim().length + 1 > max && !(cierraFrase && cabeConMargen)) {
+      // Corte por longitud: si el bloque acaba en palabra débil, esa palabra pasa al siguiente.
+      const ultima = actual[actual.length - 1];
+      if (actual.length > 1 && DEBILES.has(limpiar(ultima.text.trim()).toLowerCase())) {
+        actual.pop();
+        cerrar();
+        actual.push(ultima);
+      } else cerrar();
     }
-    cerrar();
-  }
+    actual.push(t);
+    const finFrase = /[.?!…]["»”)]?$/u.test(t.text.trim());
+    const pausa = tokens[i + 1] ? tokens[i + 1].fromMs - t.toMs > 700 : true;
+    if (finFrase || pausa) cerrar();
+  });
+  cerrar();
   return out;
 }

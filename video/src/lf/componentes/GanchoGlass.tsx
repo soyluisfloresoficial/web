@@ -15,7 +15,7 @@ export function GanchoGlass({
   recorte,
   tachar,
   nota,
-  escala = 0.92,
+  escala = 0.8,
 }: {
   palabra: string;
   /** WebM con alfa del presentador (herramientas/recorte.py), desde el segundo 0. */
@@ -36,7 +36,7 @@ export function GanchoGlass({
     <AbsoluteFill style={{ overflow: "hidden" }}>
       <SetMarca />
       {/* Palabra en 3D (detrás del presentador) */}
-      <div style={{ position: "absolute", left: 0, right: 0, top: 250, display: "flex", justifyContent: "center" }}>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 200, display: "flex", justifyContent: "center" }}>
         <div style={{ position: "relative", display: "flex" }}>
           {letras.map((l, i) => {
             const e = prog(f, 2 + i * 3, 12, CURVA.impacto);
@@ -52,7 +52,7 @@ export function GanchoGlass({
                       transform: `translate(${(capas - 1 - k) * 1.6}px, ${(capas - 1 - k) * 2.2}px)`,
                       fontFamily: FUENTE.display,
                       fontWeight: 800,
-                      fontSize: 300,
+                      fontSize: 280,
                       lineHeight: 1,
                       letterSpacing: "-0.04em",
                       color: k === capas - 1 ? "transparent" : `rgb(${10 + k * 4} ${40 + k * 8} ${80 + k * 10})`,

@@ -131,7 +131,7 @@ export function Orbita({ recorte, desde, tarjetas, credito }: { recorte: string;
   const n = tarjetas.length;
   const cx = 540;
   const cy = 1060;
-  const rx = 470;
+  const rx = 300;
   const ry = 110;
   const items = tarjetas.map((t, i) => {
     const ang = (i / n) * Math.PI * 2 + f * 0.018;
@@ -155,11 +155,11 @@ export function Orbita({ recorte, desde, tarjetas, credito }: { recorte: string;
         }}
       >
         {it.t.imagen ? (
-          <div style={{ width: 230, height: 300, borderRadius: 26, overflow: "hidden", border: `4px solid ${color}`, boxShadow: `0 20px 50px rgb(0 0 0 / 0.5), 0 0 30px ${color}55` }}>
+          <div style={{ width: 200, height: 260, borderRadius: 26, overflow: "hidden", border: `4px solid ${color}`, boxShadow: `0 20px 50px rgb(0 0 0 / 0.5), 0 0 30px ${color}55` }}>
             <Img src={staticFile(it.t.imagen)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
         ) : (
-          <div style={{ maxWidth: 360, padding: "16px 22px", borderRadius: "26px 26px 26px 6px", background: "rgb(255 255 255 / 0.92)", color: "#0A1630", fontFamily: FUENTE.display, fontWeight: 800, fontSize: 30, lineHeight: 1.15, boxShadow: `0 20px 50px rgb(0 0 0 / 0.45), inset 6px 0 0 ${color}` }}>
+          <div style={{ width: 280, boxSizing: "border-box", padding: "16px 22px", borderRadius: "26px 26px 26px 6px", background: "rgb(255 255 255 / 0.92)", color: "#0A1630", fontFamily: FUENTE.display, fontWeight: 800, fontSize: 30, lineHeight: 1.15, boxShadow: `0 20px 50px rgb(0 0 0 / 0.45), inset 6px 0 0 ${color}` }}>
             {it.t.texto}
           </div>
         )}
@@ -184,8 +184,8 @@ export function MuroPosts({ recorte, desde, titulos, etiqueta, tachar }: { recor
   const sitios = [
     { x: 70, y: 260, r: -9, detras: true },
     { x: 720, y: 290, r: 8, detras: true },
-    { x: 40, y: 760, r: 6, detras: false },
-    { x: 760, y: 820, r: -7, detras: false },
+    { x: 40, y: 690, r: 6, detras: false },
+    { x: 770, y: 700, r: -7, detras: false },
     { x: 380, y: 230, r: 3, detras: true },
   ];
   const fondos = [
@@ -402,7 +402,7 @@ export function CierrePerfil({ recorte, desde, usuario, enlace, etiqueta, accion
       <div style={{ position: "absolute", left: 0, right: 80, top: 1240, display: "flex", flexDirection: "column", alignItems: "center", gap: 14, opacity: b, transform: `scale(${0.85 + 0.15 * b})` }}>
         <span style={{ padding: "10px 26px", borderRadius: 999, background: COLOR.cta, color: COLOR.base, fontFamily: FUENTE.display, fontWeight: 800, fontSize: 34, letterSpacing: "0.1em", transform: "rotate(-3deg)", boxShadow: "0 0 40px rgb(0 255 179 / 0.45)" }}>{etiqueta}</span>
         <span style={{ padding: "12px 26px", borderRadius: 18, background: "rgb(8 10 30 / 0.85)", color: "#fff", fontFamily: FUENTE.display, fontWeight: 800, fontSize: 46 }}>{accion}</span>
-        <span style={{ fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 28, color: "#fff", textShadow: "0 2px 10px rgb(0 0 0 / 0.6)" }}>{recurso}</span>
+        <span style={{ padding: "8px 20px", borderRadius: 14, background: "rgb(7 9 13 / 0.82)", border: "1px solid rgb(255 255 255 / 0.12)", fontFamily: FUENTE.texto, fontWeight: 600, fontSize: 28, color: "#fff" }}>{recurso}</span>
       </div>
     </AbsoluteFill>
   );
