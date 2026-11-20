@@ -194,6 +194,9 @@ export type Contenido =
       recorte: string;
       tachar?: Momento;
       nota?: string;
+      /** Posición vertical de la palabra (px) y escala del presentador. Para portadas: todo dentro de 240-1680 (recorte 3:4). */
+      arriba?: number;
+      escala?: number;
     }
   | {
       /** DEMO: la IA agrupa las preguntas de los clientes (datos de ejemplo). */

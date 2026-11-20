@@ -123,7 +123,7 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
   if (c?.tipo === "ganchoGlass") {
     return (
       <AbsoluteFill style={{ zIndex: 10 }}>
-        <GanchoGlass palabra={c.palabra} recorte={c.recorte} tachar={c.tachar === undefined ? undefined : relEsc(c.tachar)} nota={c.nota} />
+        <GanchoGlass palabra={c.palabra} recorte={c.recorte} tachar={c.tachar === undefined ? undefined : relEsc(c.tachar)} nota={c.nota} arriba={c.arriba} escala={c.escala} />
       </AbsoluteFill>
     );
   }

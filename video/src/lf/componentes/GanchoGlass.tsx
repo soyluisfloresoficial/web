@@ -16,6 +16,7 @@ export function GanchoGlass({
   tachar,
   nota,
   escala = 0.8,
+  arriba = 200,
 }: {
   palabra: string;
   /** WebM con alfa del presentador (herramientas/recorte.py), desde el segundo 0. */
@@ -25,6 +26,7 @@ export function GanchoGlass({
   /** Etiqueta que aparece con el tachado. */
   nota?: string;
   escala?: number;
+  arriba?: number;
 }) {
   const f = useCurrentFrame();
   const letras = palabra.split("");
@@ -36,7 +38,7 @@ export function GanchoGlass({
     <AbsoluteFill style={{ overflow: "hidden" }}>
       <SetMarca />
       {/* Palabra en 3D (detrás del presentador) */}
-      <div style={{ position: "absolute", left: 0, right: 0, top: 200, display: "flex", justifyContent: "center" }}>
+      <div style={{ position: "absolute", left: 0, right: 0, top: arriba, display: "flex", justifyContent: "center" }}>
         <div style={{ position: "relative", display: "flex" }}>
           {letras.map((l, i) => {
             const e = prog(f, 2 + i * 3, 12, CURVA.impacto);

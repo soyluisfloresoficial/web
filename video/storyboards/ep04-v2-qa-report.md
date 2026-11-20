@@ -17,6 +17,16 @@
 - Datos ficticios marcados (DEMO); interfaces genéricas, sin logos de terceros; foto CC0 con crédito en pantalla. ✔
 - CTA fiel a la voz: plantilla gratis en el enlace del perfil, sin pedir seguir. ✔
 
+## Auditoría de excelencia (20/11/2026, segunda versión)
+- Gancho: «IDEAS» entera por encima de la cabeza (presentador a 0,8). ✔
+- Subtítulos cortados por frases, sin bloques terminados en «a», «de», «que»… ni palabras sueltas. ✔
+- Demo: las preguntas en dos líneas, sin «…». ✔
+- Órbita: tarjetas dentro del cuadro y lejos del borde derecho. ✔
+- Muro: el sello «NO ES ESTO» no tapa ninguna tarjeta. ✔
+- Cierre: el nombre del recurso con fondo propio, legible aunque pase la mano. ✔
+- Portada: todo dentro del recorte 3:4 de la cuadrícula del perfil. ✔
+- Pasada como cliente: el gancho rompe una expectativa, la demo enseña el resultado, el cierre dice qué se lleva y dónde (enlace del perfil → página con plantilla, llamada y WhatsApp). ✔
+
 ## Pendiente
 - Revisión humana con sonido antes de publicar.
 - Bio de Instagram y TikTok con `https://soyluisflores.es/recursos`.

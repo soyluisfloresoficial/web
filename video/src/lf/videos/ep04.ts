@@ -308,4 +308,9 @@ export const ep04v2: ConfigVideo = {
   ],
 };
 export const ep04v2Web: ConfigVideo = { ...ep04v2, id: "ep04-v2-web", cta: { ...ep04v2.cta, usuario: "soyluisflores.es" } };
-export const ep04v2Portada: ConfigVideo = { ...ep04Portada, id: "ep04-v2-portada" };
+export const ep04v2Portada: ConfigVideo = {
+  ...ep04Portada,
+  id: "ep04-v2-portada",
+  // Todo dentro del recorte 3:4 de la cuadrícula del perfil (y 240-1680).
+  escenas: [{ ...ep04Portada.escenas[0], contenido: { tipo: "ganchoGlass", palabra: "IDEAS", recorte: "medios/avatar-ep04-recorte.webm", tachar: 1, nota: "NO EMPIECES POR AQUÍ", arriba: 330, escala: 0.72 } }],
+};
