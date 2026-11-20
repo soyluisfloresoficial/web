@@ -21,7 +21,10 @@ export function KineticText({
   alineacion = "center",
   retraso = 4,
   colorDestacado = "degradado",
+  instantaneo = false,
 }: {
+  /** Corte seco: el texto está entero desde el primer fotograma (con un leve ajuste de escala). */
+  instantaneo?: boolean;
   colorDestacado?: "degradado" | "cian";
   texto: string;
   destacar?: string[];
@@ -77,7 +80,8 @@ export function KineticText({
       }}
     >
       {lista.map((p, i) => {
-        const t = prog(f, tiempos[i], sincronizar ? 6 : 9, CURVA.impacto);
+        const ajuste = instantaneo ? 1 + 0.05 * (1 - prog(f, 0, 7, CURVA.impacto)) : 1;
+        const t = instantaneo && !sincronizar ? 1 : prog(f, tiempos[i], sincronizar ? 6 : 9, CURVA.impacto);
         const resaltada = marcadas.has(normalizar(p));
         if (sincronizar) {
           // Karaoke: la frase está entera (centrada) y cada palabra se enciende al decirla.
@@ -104,7 +108,7 @@ export function KineticText({
             style={{
               display: "inline-block",
               opacity: t,
-              transform: `translateY(${(1 - t) * 38}px) scale(${0.9 + 0.1 * t})`,
+              transform: `translateY(${(1 - t) * 38}px) scale(${(0.9 + 0.1 * t) * ajuste})`,
               filter: t < 1 ? `blur(${(1 - t) * 14}px)` : undefined,
               ...(resaltada && colorDestacado === "cian"
                 ? { color: COLOR.cian, textShadow: "0 0 30px rgb(0 194 255 / 0.55), 0 6px 30px rgb(0 0 0 / 0.55)" }

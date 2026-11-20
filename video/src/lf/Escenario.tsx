@@ -53,7 +53,9 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
   const zona = ESCENARIO[disp];
   const salida = config.cortes === "secos" ? 1 : interpolate(f, [dur - 5, dur], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   // Si el avatar cambia de disposición, el contenido entra cuando ya se ha movido.
-  const esperaEntrada = esperaEntradaDe(escena, previa);
+  // Con cortes secos hacia o desde la explicación, el contenido llega ya en el primer fotograma.
+  const esperaEntrada =
+    config.cortes === "secos" && (disp === "oculto" || (previa?.presentador ?? "completo") === "oculto") ? 0 : esperaEntradaDe(escena, previa);
   const c = escena.contenido;
 
   if (c?.tipo === "cta") {
@@ -310,7 +312,8 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
             ancho={alLado ? 1080 - 352 - ZONA_SEGURA.derecha : ANCHO_UTIL}
             alineacion={alLado ? "left" : "center"}
             colorDestacado={titular.colorDestacado}
-            retraso={escena.indice === 0 ? 0 : undefined}
+            retraso={escena.indice === 0 || config.cortes === "secos" ? 0 : undefined}
+            instantaneo={config.cortes === "secos" && disp === "oculto"}
           />
         </div>
       )}
