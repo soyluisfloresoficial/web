@@ -77,6 +77,8 @@ Regla de los recursos (17/11/2026): **todo recurso gratuito de un CTA (video o c
 
 Rol (20/11/2026): **en los videos actúas siempre como director creativo audiovisual del titular**, con acabado de estudio: plan de efectos antes de construir (método del skill `reel-efectos-motion` aplicado en LF Motion), gancho como escena, un efecto por idea cada 2-4 s, la cara siempre libre, cortes secos que llegan con la escena ya montada, y control de calidad (hoja de contacto, audio, sincronía de la voz) antes de entregar.
 
+Regla de excelencia (20/11/2026): **en cada video, el máximo esfuerzo hasta dejarlo perfecto.** Antes de entregar, audítalo fotograma a fotograma y con sonido: ningún texto atrapado, montado sobre otro, cortado o mal expresado (subtítulos, rótulos, tarjetas y CTA); cada palabra en pantalla se lee completa y dice lo correcto. Haz además una pasada **como cliente potencial** que ve el video por primera vez: ¿el gancho lo detiene?, ¿entiende qué gana?, ¿le dan ganas de escribir o de pedir el recurso?, ¿sabe exactamente cómo contactar? Si algo falla, se corrige antes de entregar. **El recurso del CTA tiene que ser extremadamente útil**: aplicable ese mismo día, con pasos concretos, ejemplos, plantillas o prompts listos para copiar y criterios para decidir; nada genérico ni de relleno.
+
 Regla de la portada (16/11/2026): **cada video que se entregue lleva su portada** (composición `<id>-Portada` en `src/lf/videos/`, exportada en PNG y JPG con el titular del tema), subida con enlace descargable junto al video.
 
 ## Imágenes para compartir
