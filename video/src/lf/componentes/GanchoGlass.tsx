@@ -8,6 +8,7 @@
 import { AbsoluteFill, OffthreadVideo, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { COLOR, CURVA, FUENTE } from "../marca";
 import { prog } from "../util";
+import { SetMarca } from "./EfectosMotion";
 
 export function GanchoGlass({
   palabra,
@@ -33,25 +34,7 @@ export function GanchoGlass({
   const capas = 11;
   return (
     <AbsoluteFill style={{ overflow: "hidden" }}>
-      {/* Set de marca */}
-      <AbsoluteFill style={{ background: `radial-gradient(ellipse 80% 55% at 50% 38%, #123A63 0%, #0A2540 45%, ${COLOR.base} 100%)` }} />
-      <AbsoluteFill style={{ background: "linear-gradient(100deg, transparent 30%, rgb(0 194 255 / 0.10) 48%, transparent 62%)", transform: `translateX(${Math.sin(f / 40) * 60}px)` }} />
-      <div
-        style={{
-          position: "absolute",
-          left: -200,
-          right: -200,
-          bottom: 0,
-          height: 760,
-          backgroundImage: "linear-gradient(rgb(0 194 255 / 0.16) 2px, transparent 2px), linear-gradient(90deg, rgb(0 194 255 / 0.16) 2px, transparent 2px)",
-          backgroundSize: "120px 120px",
-          backgroundPosition: `0 ${f * 1.5}px`,
-          transform: "perspective(700px) rotateX(62deg)",
-          transformOrigin: "bottom center",
-          maskImage: "linear-gradient(to top, #000 10%, transparent 90%)",
-        }}
-      />
-
+      <SetMarca />
       {/* Palabra en 3D (detrás del presentador) */}
       <div style={{ position: "absolute", left: 0, right: 0, top: 250, display: "flex", justifyContent: "center" }}>
         <div style={{ position: "relative", display: "flex" }}>

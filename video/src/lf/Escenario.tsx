@@ -27,6 +27,7 @@ import { GanchoGlass } from "./componentes/GanchoGlass";
 import { AnalisisPreguntas } from "./componentes/AnalisisPreguntas";
 import { TarjetasTachadas } from "./componentes/TarjetasTachadas";
 import { CTAPerfil } from "./componentes/CTAPerfil";
+import { CierrePerfil, DemoConPresentador, MuroPosts, Notas, Orbita, TarjetasCristal, Visor } from "./componentes/EfectosMotion";
 import { SistemaReveal } from "./componentes/SistemaReveal";
 import { ESCENARIO } from "./disposicion";
 import { ZONA_SEGURA } from "./marca";
@@ -80,6 +81,44 @@ export function Escenario({ escena, config, previa }: { escena: EscenaResuelta; 
 
   const relEsc = (m: import("./tipos").Momento) =>
     Math.max(0, Math.round((resolverMomento(m, config.subtitulos, escena.desde / fps, escena.desde / fps) - escena.desde / fps) * fps));
+
+  if (c?.tipo === "motion") {
+    const d = escena.desde;
+    const tm = escena.titular;
+    let capaMotion: ReactNode = null;
+    if (c.efecto === "orbita") capaMotion = <Orbita recorte={c.recorte} desde={d} tarjetas={c.tarjetas} credito={c.credito} />;
+    else if (c.efecto === "muro") capaMotion = <MuroPosts recorte={c.recorte} desde={d} titulos={c.titulos} etiqueta={c.etiqueta} tachar={relEsc(c.tachar)} />;
+    else if (c.efecto === "notas") capaMotion = <Notas notas={c.notas.map((n) => ({ texto: n.texto, frame: relEsc(n.en) }))} />;
+    else if (c.efecto === "visor") capaMotion = <Visor etiqueta={c.etiqueta} />;
+    else if (c.efecto === "tarjetas") capaMotion = <TarjetasCristal recorte={c.recorte} desde={d} tarjetas={c.tarjetas.map((t) => ({ titulo: t.titulo, detalle: t.detalle, tipo: t.tipo, frame: relEsc(t.en) }))} />;
+    else if (c.efecto === "cierre")
+      capaMotion = <CierrePerfil recorte={c.recorte} desde={d} usuario={config.cta.usuario} enlace={config.cta.web ?? ""} etiqueta={config.cta.etiquetaRecurso ?? "PLANTILLA GRATIS"} accion={config.cta.accion} recurso={config.cta.recurso} />;
+    else if (c.efecto === "demo")
+      capaMotion = (
+        <DemoConPresentador recorte={c.recorte} desde={d}>
+          <AnalisisPreguntas
+            preguntas={c.preguntas}
+            peticion={c.peticion}
+            grupos={c.grupos}
+            falta={c.falta}
+            colores={c.colores}
+            fases={{ preguntas: relEsc(c.momentos.preguntas), peticion: relEsc(c.momentos.peticion), agrupar: relEsc(c.momentos.agrupar), repetidas: relEsc(c.momentos.repetidas), falta: relEsc(c.momentos.falta) }}
+            ancho={940}
+            alto={660}
+          />
+        </DemoConPresentador>
+      );
+    return (
+      <AbsoluteFill style={{ zIndex: 10 }}>
+        {capaMotion}
+        {tm && (
+          <div style={{ position: "absolute", left: ZONA_SEGURA.izquierda, width: ANCHO_UTIL, top: tm.posicion === "arriba" ? ZONA_SEGURA.arriba + 20 : 1120, display: "flex", justifyContent: "center" }}>
+            <KineticText texto={tm.texto} destacar={tm.destacar} sincronizar={tm.sincronizar} subtitulos={config.subtitulos} inicioEscenaFrame={escena.desde} tamano={tm.tamano ?? 84} ancho={ANCHO_UTIL} colorDestacado={tm.colorDestacado} retraso={0} instantaneo={config.cortes === "secos"} />
+          </div>
+        )}
+      </AbsoluteFill>
+    );
+  }
 
   if (c?.tipo === "ganchoGlass") {
     return (

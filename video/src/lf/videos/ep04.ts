@@ -186,3 +186,126 @@ export const ep04Portada: ConfigVideo = {
   duracion: 6,
   escenas: [{ ...ep04.escenas[0], sonidos: undefined, contenido: { tipo: "ganchoGlass", palabra: "IDEAS", recorte: "medios/avatar-ep04-recorte.webm", tachar: 1, nota: "NO EMPIECES POR AQUÍ" } }],
 };
+
+/**
+ * V2 (20/11/2026): versión de estudio con el método completo del skill reel-efectos-motion.
+ * El presentador (recortado) está en el centro y los efectos ocurren alrededor, detrás o
+ * delante de él: órbita de preguntas, demo con él delante, visor de cámara, muro de
+ * publicaciones, notas adhesivas, tarjetas de cristal y cierre saliéndose del marco del perfil.
+ * Paleta ilustrativa (ámbar, coral, cielo, lila) sobre la base de marca.
+ */
+const RECORTE = "medios/avatar-ep04-recorte-completo.webm";
+export const ep04v2: ConfigVideo = {
+  ...ep04,
+  id: "ep04-v2",
+  aviso: undefined,
+  escenas: [
+    { ...ep04.escenas[0], contenido: { tipo: "ganchoGlass", palabra: "IDEAS", recorte: RECORTE, tachar: { ancla: "yo no empezaría" }, nota: "NO EMPIECES POR AQUÍ" } },
+    {
+      id: "orbita",
+      seccion: "problema",
+      inicio: { ancla: "le daría" },
+      presentador: "oculto",
+      sonidos: [{ en: { ancla: "preguntas que te hacen" }, archivo: "sfx/whoosh.wav", volumen: 0.22 }],
+      contenido: {
+        tipo: "motion",
+        efecto: "orbita",
+        recorte: RECORTE,
+        credito: "Foto: Kristin Hardwick · StockSnap · CC0",
+        tarjetas: [
+          { texto: "¿Cuánto tardan en entregar?" },
+          { texto: "¿Qué incluye el servicio?" },
+          { texto: "", imagen: "medios/foto-duena-mensajes.jpg" },
+          { texto: "¿Cómo empiezo con ustedes?" },
+          { texto: "¿Emiten factura?" },
+          { texto: "¿Puedo cambiar de plan?" },
+        ],
+      },
+    },
+    {
+      id: "demo",
+      seccion: "solucion1",
+      inicio: { ancla: "mira esta prueba" },
+      presentador: "oculto",
+      sonidos: [
+        { en: { ancla: "agrupe por temas" }, archivo: "sfx/whoosh.wav", volumen: 0.22 },
+        { en: { ancla: "se repiten" }, archivo: "sfx/pop.wav", volumen: 0.3 },
+        { en: { ancla: "información falta" }, archivo: "sfx/clic.wav", volumen: 0.3 },
+      ],
+      contenido: (() => {
+        const d = ep04.escenas[2].contenido as Extract<NonNullable<(typeof ep04.escenas)[number]["contenido"]>, { tipo: "analisisPreguntas" }>;
+        return { tipo: "motion" as const, efecto: "demo" as const, recorte: RECORTE, colores: ["#FFC15E", "#5AD8FF", "#B89CFF"], preguntas: d.preguntas, peticion: d.peticion, grupos: d.grupos, falta: d.falta, momentos: d.momentos };
+      })(),
+    },
+    {
+      id: "interesante",
+      seccion: "solucion2",
+      inicio: { ancla: "aquí viene" },
+      presentador: "completo",
+      zoom: [{ en: { ancla: "aquí viene" }, escala: 1.3, duracion: 1.4 }],
+      sonidos: [{ en: { ancla: "aquí viene" }, archivo: "sfx/clic.wav", volumen: 0.3 }],
+      contenido: { tipo: "motion", efecto: "visor", etiqueta: "1.30x" },
+    },
+    {
+      id: "muro",
+      seccion: "solucion2",
+      inicio: { ancla: "el resultado" },
+      presentador: "oculto",
+      sonidos: [{ en: { ancla: "publicaciones bonitas" }, archivo: "sfx/impacto.wav", volumen: 0.3 }],
+      contenido: { tipo: "motion", efecto: "muro", recorte: RECORTE, titulos: ["10 ideas de contenido", "Frases para motivar", "Tendencias del mes", "Un post bonito", "Ideas virales"], etiqueta: "NO ES ESTO", tachar: { ancla: "publicaciones bonitas" } },
+    },
+    {
+      id: "notas",
+      seccion: "solucion2",
+      inicio: { ancla: "puede mostrar" },
+      presentador: "completo",
+      sonidos: [
+        { en: { ancla: "plazos" }, archivo: "sfx/pop.wav", volumen: 0.28 },
+        { en: { ancla: "tu servicio" }, archivo: "sfx/pop.wav", volumen: 0.28 },
+        { en: { ancla: "cómo empezar" }, archivo: "sfx/pop.wav", volumen: 0.28 },
+      ],
+      contenido: {
+        tipo: "motion",
+        efecto: "notas",
+        notas: [
+          { texto: "¿Tus plazos?", en: { ancla: "plazos" } },
+          { texto: "¿Tu servicio?", en: { ancla: "tu servicio" } },
+          { texto: "¿Cómo empiezo?", en: { ancla: "cómo empezar" } },
+        ],
+      },
+    },
+    {
+      id: "acciones",
+      seccion: "sistema",
+      inicio: { ancla: "eso te da" },
+      presentador: "oculto",
+      sonidos: [
+        { en: { ancla: "mejorar tu web" }, archivo: "sfx/whoosh.wav", volumen: 0.2 },
+        { en: { ancla: "preparar respuestas" }, archivo: "sfx/whoosh.wav", volumen: 0.2 },
+        { en: { ancla: "diseñar una" }, archivo: "sfx/whoosh.wav", volumen: 0.2 },
+      ],
+      contenido: {
+        tipo: "motion",
+        efecto: "tarjetas",
+        recorte: RECORTE,
+        tarjetas: [
+          { titulo: "Mejorar tu web", detalle: "Plazos y primeros pasos claros", tipo: "web", en: { ancla: "mejorar tu web" } },
+          { titulo: "Respuestas útiles", detalle: "Para las dudas que se repiten", tipo: "chat", en: { ancla: "preparar respuestas" } },
+          { titulo: "Una automatización", detalle: "Cuando el proceso está claro", tipo: "flujo", en: { ancla: "diseñar una" } },
+        ],
+      },
+    },
+    { ...ep04.escenas[7] },
+    {
+      id: "cta",
+      seccion: "cta",
+      inicio: { ancla: "si quieres hacer" },
+      presentador: "oculto",
+      subtitulos: false,
+      sonidos: [{ en: { ancla: "descarga la plantilla" }, archivo: "sfx/pop.wav", volumen: 0.35 }],
+      contenido: { tipo: "motion", efecto: "cierre", recorte: RECORTE },
+    },
+  ],
+};
+export const ep04v2Web: ConfigVideo = { ...ep04v2, id: "ep04-v2-web", cta: { ...ep04v2.cta, usuario: "soyluisflores.es" } };
+export const ep04v2Portada: ConfigVideo = { ...ep04Portada, id: "ep04-v2-portada" };

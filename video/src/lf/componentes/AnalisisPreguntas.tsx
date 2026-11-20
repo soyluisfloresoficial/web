@@ -19,7 +19,10 @@ export function AnalisisPreguntas({
   fases,
   ancho,
   alto,
+  colores,
 }: {
+  /** Un color por grupo (temas y notas agrupadas). Si falta, cian. */
+  colores?: string[];
   preguntas: string[];
   peticion: string;
   grupos: { tema: string; indices: number[]; repetida?: number; total: number }[];
@@ -90,8 +93,8 @@ export function AnalisisPreguntas({
       {grupos.map((g, k) => {
         const t = prog(f, fases.agrupar + 4 + k * 4, 12, CURVA.impacto);
         return (
-          <div key={k} style={{ position: "absolute", left: 24 + k * (colW + 16), top, width: colW, height: zona, borderRadius: 18, border: `1.5px solid rgb(0 194 255 / ${0.45 * t})`, background: `rgb(0 194 255 / ${0.06 * t})`, opacity: t }}>
-            <div style={{ padding: "12px 14px", fontFamily: FUENTE.display, fontWeight: 800, fontSize: 25, color: COLOR.cian, display: "flex", justifyContent: "space-between" }}>
+          <div key={k} style={{ position: "absolute", left: 24 + k * (colW + 16), top, width: colW, height: zona, borderRadius: 18, border: `2px solid ${colores?.[k] ?? COLOR.cian}`, background: `${colores?.[k] ?? COLOR.cian}1A`, opacity: t, boxShadow: colores ? `0 0 30px ${colores[k]}33` : undefined }}>
+            <div style={{ padding: "12px 14px", fontFamily: FUENTE.display, fontWeight: 800, fontSize: 25, color: colores?.[k] ?? COLOR.cian, display: "flex", justifyContent: "space-between" }}>
               {g.tema}
               <span style={{ color: COLOR.suave, fontSize: 21 }}>{g.total}</span>
             </div>
@@ -104,6 +107,8 @@ export function AnalisisPreguntas({
         const llega = prog(f, fases.preguntas + i * 3, 10, CURVA.impacto);
         const pos = posicion(i);
         const esRepetida = grupos.some((g) => g.repetida === i);
+        const gi = grupos.findIndex((g) => g.indices.includes(i));
+        const tinte = colores && gi >= 0 ? colores[gi] : null;
         const rep = prog(f, fases.repetidas, 10, CURVA.impacto);
         const apaga = !pos.dentro ? 1 - agrupado * 0.85 : 1;
         return (
@@ -120,7 +125,7 @@ export function AnalisisPreguntas({
               display: "flex",
               alignItems: "center",
               boxSizing: "border-box",
-              background: esRepetida && rep > 0 ? "rgb(255 92 122 / 0.16)" : "rgb(255 255 255 / 0.06)",
+              background: esRepetida && rep > 0 ? "rgb(255 92 122 / 0.22)" : tinte && agrupado > 0.5 ? `${tinte}2E` : "rgb(255 255 255 / 0.08)",
               border: `1px solid ${esRepetida && rep > 0 ? COLOR.peligro : "rgb(255 255 255 / 0.08)"}`,
               fontSize: 19,
               color: COLOR.tinta,

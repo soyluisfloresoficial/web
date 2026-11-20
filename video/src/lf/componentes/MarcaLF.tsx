@@ -21,7 +21,7 @@ export function MarcaLF({ escenas, usuario, firma = true, capitulos = 0 }: { esc
   // Altura de la franja superior del avatar (lejos de la cara y de los subtítulos).
   const yFranja = dividida ? 770 : ZONA_SEGURA.arriba + 18;
   const entradaEscena = prog(f, e.desde, 12);
-  const visibleFirma = firma && !enCta && e.capa?.tipo !== "notificaciones" && e.contenido?.tipo !== "ganchoGlass" ? 1 : 0;
+  const visibleFirma = firma && !enCta && e.capa?.tipo !== "notificaciones" && e.contenido?.tipo !== "ganchoGlass" && !(e.contenido?.tipo === "motion" && e.contenido.efecto === "cierre") ? 1 : 0;
 
   const cap = e.capitulo ?? 0;
   const capPrevio = escenas[i - 1]?.capitulo ?? 0;

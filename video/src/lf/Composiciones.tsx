@@ -13,7 +13,7 @@ import { organizaTuNegocio, organizaTuNegocioPortada } from "./videos/organiza-t
 import { erroresIa, erroresIaPortada } from "./videos/errores-ia";
 import { documentos, documentosPortada } from "./videos/documentos";
 import { ep03, ep03Portada, ep03Web } from "./videos/ep03";
-import { ep04, ep04Portada, ep04Web } from "./videos/ep04";
+import { ep04, ep04Portada, ep04Web, ep04v2, ep04v2Portada, ep04v2Web } from "./videos/ep04";
 import { documentosV2, documentosV2Portada, documentosV2WhatsApp, documentosV2Web } from "./videos/documentos-v2";
 
 /** Duración: fija, o la del video del avatar, o el final de la voz + 1,5 s. */
@@ -84,6 +84,36 @@ export function ComposicionesLF() {
         id="LF-OrganizaTuNegocio-Portada"
         component={PlantillaLF}
         defaultProps={{ config: organizaTuNegocioPortada }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-EP04-V2"
+        component={PlantillaLF}
+        defaultProps={{ config: ep04v2 }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-EP04-V2-Web"
+        component={PlantillaLF}
+        defaultProps={{ config: ep04v2Web }}
+        calculateMetadata={calcularMetadatos}
+        durationInFrames={60 * LIENZO.fps}
+        fps={LIENZO.fps}
+        width={LIENZO.ancho}
+        height={LIENZO.alto}
+      />
+      <Composition
+        id="LF-EP04-V2-Portada"
+        component={PlantillaLF}
+        defaultProps={{ config: ep04v2Portada }}
         calculateMetadata={calcularMetadatos}
         durationInFrames={60 * LIENZO.fps}
         fps={LIENZO.fps}

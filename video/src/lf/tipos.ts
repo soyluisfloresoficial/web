@@ -211,7 +211,28 @@ export type Contenido =
       etiqueta: string;
       tachar: Momento;
     }
+  | ContenidoMotion
   | { tipo: "cta" };
+
+/** Efectos de estudio del skill reel-efectos-motion (componentes/EfectosMotion.tsx). */
+export type ContenidoMotion =
+  | { tipo: "motion"; efecto: "orbita"; recorte: string; tarjetas: { texto: string; imagen?: string }[]; credito?: string }
+  | { tipo: "motion"; efecto: "muro"; recorte: string; titulos: string[]; etiqueta: string; tachar: Momento }
+  | { tipo: "motion"; efecto: "notas"; notas: { texto: string; en: Momento }[] }
+  | { tipo: "motion"; efecto: "visor"; etiqueta?: string }
+  | { tipo: "motion"; efecto: "tarjetas"; recorte: string; tarjetas: { titulo: string; detalle: string; tipo: "web" | "chat" | "flujo"; en: Momento }[] }
+  | { tipo: "motion"; efecto: "cierre"; recorte: string }
+  | {
+      tipo: "motion";
+      efecto: "demo";
+      recorte: string;
+      colores: string[];
+      preguntas: string[];
+      peticion: string;
+      grupos: { tema: string; indices: number[]; repetida?: number; total: number }[];
+      falta: string;
+      momentos: { preguntas: Momento; peticion: Momento; agrupar: Momento; repetidas: Momento; falta: Momento };
+    };
 
 /**
  * Capa ilustrativa que va encima del avatar, fuera de la zona de contenido.
