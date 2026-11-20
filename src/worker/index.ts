@@ -30,10 +30,11 @@ import { secuencia, suscripciones, type EnvSuscripciones } from "./suscripciones
 import { voz, type EnvVoz } from "./voz";
 import { avisarTope } from "./topes";
 import { servirPagina } from "./paginas";
+import { apuntarTiempo, apuntarVista, leerMetricas, type EnvMetricas } from "./metricas";
 import { mensaje } from "./mensaje";
 import { actualizarMemoria, codigoVisitante, leerMemoria, olvidar, separarMemoria, textoMemoria } from "./memoria";
 
-interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz {
+interface Env extends EnvAgenda, EnvSuscripciones, EnvVoz, EnvMetricas {
   ASSETS: { fetch(request: Request): Promise<Response> };
   /** Secreto del Worker, en el panel de Cloudflare. Ver AGENTE.md. */
   ANTHROPIC_API_KEY?: string;
@@ -372,10 +373,16 @@ export default {
       return suscripciones(request, env, json, origenPermitido, ctx);
     }
     if (pathname === "/api/agenda/config") return configAgenda(request, env, json);
+    // Métricas propias (metricas.ts): tiempo en página y lectura para el panel.
+    if (pathname === "/api/m") return apuntarTiempo(request, env);
+    if (pathname === "/api/metricas") return leerMetricas(request, env);
     if (pathname.startsWith("/api/")) return json({ error: "no-existe" }, 404);
     // Cualquier otra ruta: las páginas de la web (y su 404), con la versión
     // Markdown para los agentes de IA que la pidan (paginas.ts).
-    return servirPagina(request, env.ASSETS);
+    const pagina = await servirPagina(request, env.ASSETS);
+    // Cada página vista, sin IP ni cookies y sin hacer esperar a nadie.
+    ctx.waitUntil(apuntarVista(env, request, pagina).catch(() => undefined));
+    return pagina;
   },
 
   // Cron cada 10 minutos (wrangler.jsonc): recordatorios de la agenda,

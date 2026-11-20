@@ -69,6 +69,9 @@
   "ai": { "binding": "AI" },
   // Horario de la agenda que se edita desde el panel (AGENDA.md). Manda
   // sobre los valores de src/data/agenda.ts.
+  // Métricas propias de la web para el panel (src/worker/metricas.ts). Sin IP
+  // ni cookies. El dataset se crea solo con el primer dato.
+  "analytics_engine_datasets": [{ "binding": "METRICAS", "dataset": "web_visitas" }],
   "kv_namespaces": [
     { "binding": "AGENDA_CONFIG", "id": "3daee978984e4ad4a73d76d1e4e8d4fb" },
     // Lista de correo de la guía gratis (EMAIL-MARKETING.md).
