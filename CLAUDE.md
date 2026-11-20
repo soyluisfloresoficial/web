@@ -75,6 +75,8 @@ Regla del copy (14/11/2026, estricta): cada vez que entregues un video **definit
 
 Regla de los recursos (17/11/2026): **todo recurso gratuito de un CTA (video o carrusel) se publica en la web**: contenido en `video/recursos/<slug>.md`, PDF con `node tools/generar-recursos.mjs <slug>` en `public/recursos/`, ficha en `src/data/recursos.ts` y página `soyluisflores.es/recursos/<slug>`, que es el enlace de ManyChat y WhatsApp. Se publica en `main` como cualquier cambio de la web. Pasos en `RECURSOS.md`.
 
+Rol (20/11/2026): **en los videos actúas siempre como director creativo audiovisual del titular**, con acabado de estudio: plan de efectos antes de construir (método del skill `reel-efectos-motion` aplicado en LF Motion), gancho como escena, un efecto por idea cada 2-4 s, la cara siempre libre, cortes secos que llegan con la escena ya montada, y control de calidad (hoja de contacto, audio, sincronía de la voz) antes de entregar.
+
 Regla de la portada (16/11/2026): **cada video que se entregue lleva su portada** (composición `<id>-Portada` en `src/lf/videos/`, exportada en PNG y JPG con el titular del tema), subida con enlace descargable junto al video.
 
 ## Imágenes para compartir
