@@ -10,7 +10,9 @@
  * Para añadir uno: escribe el .md, genera el PDF y añade aquí su ficha.
  */
 
-export type SeccionRecurso = { titulo: string; puntos: string[]; texto: string[] };
+/** Bloques de una sección, en orden: casilla (- [ ]), viñeta (- ), subtítulo (###), prompt (> , varias líneas seguidas) o párrafo. */
+export type BloqueRecurso = { tipo: "casilla" | "vineta" | "subtitulo" | "prompt" | "texto"; texto: string };
+export type SeccionRecurso = { titulo: string; bloques: BloqueRecurso[] };
 
 export type Recurso = {
   slug: string;
@@ -34,7 +36,7 @@ export const RECURSOS: Recurso[] = [
   {
     slug: "plantilla-preguntas-de-clientes",
     titulo: "Analiza las preguntas de tus clientes con IA",
-    descripcion: "Plantilla gratuita para agrupar con IA las preguntas reales de tus clientes, ver cuáles se repiten y descubrir qué información falta en tu web.",
+    descripcion: "Plantilla gratis con prompts listos por tipo de negocio, un ejemplo resuelto y un plan de 7 días para saber qué no entienden tus clientes y qué cambiar primero.",
     formato: "Plantilla",
     origen: "Video · Episodio 04 «No le pidas ideas a la IA»",
     palabraClave: "",
@@ -77,16 +79,25 @@ export function contenidoRecurso(slug: string): { titular: string; entradilla: s
   for (const linea of md.split(/\r?\n/)) {
     const l = linea.trim();
     if (!l) continue;
+    const bloques = secciones.at(-1)?.bloques;
     if (l.startsWith("# ")) titular = l.slice(2);
-    else if (l.startsWith("## ")) secciones.push({ titulo: l.slice(3), puntos: [], texto: [] });
-    else if (l.startsWith("- [ ] ")) secciones.at(-1)?.puntos.push(l.slice(6));
-    else if (!secciones.length && !entradilla) entradilla = l;
-    else if (secciones.length) secciones.at(-1)!.texto.push(l);
-    else cierre.push(l);
+    else if (l.startsWith("## ")) secciones.push({ titulo: l.slice(3), bloques: [] });
+    else if (!bloques) {
+      if (!entradilla) entradilla = l;
+      else cierre.push(l);
+    } else if (l.startsWith("### ")) bloques.push({ tipo: "subtitulo", texto: l.slice(4) });
+    else if (l.startsWith("- [ ] ")) bloques.push({ tipo: "casilla", texto: l.slice(6) });
+    else if (l.startsWith("- ")) bloques.push({ tipo: "vineta", texto: l.slice(2) });
+    else if (l.startsWith(">")) {
+      const t = l.replace(/^>\s?/, "");
+      const previo = bloques.at(-1);
+      if (previo?.tipo === "prompt") previo.texto += `\n${t}`;
+      else bloques.push({ tipo: "prompt", texto: t });
+    } else bloques.push({ tipo: "texto", texto: l });
   }
-  // El último párrafo suelto de la última sección es la nota final.
-  const ultima = secciones.at(-1);
-  if (ultima && ultima.texto.length) cierre.push(...ultima.texto.splice(0));
+  // Los párrafos sueltos al final de la última sección son la nota final.
+  const ultima = secciones.at(-1)?.bloques;
+  while (ultima?.length && ultima.at(-1)!.tipo === "texto") cierre.unshift(ultima.pop()!.texto);
   return { titular, entradilla, secciones, cierre };
 }
 

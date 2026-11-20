@@ -13,7 +13,9 @@ La página muestra el contenido para leerlo en el celular, el botón «Descargar
 1. **Contenido:** `video/recursos/<slug>.md` con este formato:
    - `# Título` (titular del PDF y de la página).
    - Una línea de subtítulo («Recurso gratuito de soyluisflores.es · Episodio NN …»).
-   - `## Sección` y puntos `- [ ] …`. Los párrafos sueltos al final son la nota de cierre.
+   - `## Sección` y, dentro, en el orden que quieras: casillas `- [ ] …`, viñetas `- …`, subtítulos `### …`, párrafos y peticiones para copiar con `> …` (varias líneas `>` seguidas forman una sola petición; en la web llevan botón «Copiar» y en el PDF la caja «COPIA Y PEGA»).
+   - Los párrafos sueltos al final de la última sección son la nota de cierre.
+   - Nivel exigido (regla del 20/11/2026): aplicable el mismo día, con pasos concretos, prompts listos, un ejemplo resuelto (marcado como ficticio si lo es), criterios para decidir y cómo medir si funcionó.
 2. **PDF:** `node tools/generar-recursos.mjs <slug>` → `public/recursos/<slug>.pdf` (marca SOYLUISFLORES, A4). Necesita Edge o Chrome; en la nube, `NAVEGADOR=<ruta>`.
 3. **Ficha:** añade el recurso en `src/data/recursos.ts` (título, descripción de 70 a 160 caracteres, formato, origen, palabra clave, servicio relacionado y fecha).
 4. **Publicar:** `npm run build`, `node tools/auditar-dist.mjs` con 0 problemas, commit y push a `main` (regla de `CLAUDE.md`).
@@ -22,6 +24,8 @@ La página muestra el contenido para leerlo en el celular, el botón «Descargar
 ## Medición
 
 Al descargar un PDF se envía el evento `file_download` con `file_name` (el slug) y `cta_location` (ver `src/components/Medicion.astro`). En GA4 se ve qué recurso se descarga y desde dónde.
+
+Al pulsar «Copiar» en una petición se envía al `dataLayer` el evento `copiar_prompt` con `recurso` (el slug). Para verlo en GA4 hace falta una etiqueta de evento en Google Tag Manager con ese activador personalizado.
 
 ## Recursos publicados
 

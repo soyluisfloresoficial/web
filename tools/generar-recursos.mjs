@@ -37,12 +37,21 @@ const fuenteInter6 = b64(path.join(raiz, "video", "publico", "fonts", "inter-lat
 const logo = b64(path.join(raiz, "video", "publico", "logo", "monograma-80.webp"));
 
 function html(md) {
-  const cuerpo = md
-    .split(/\r?\n/)
-    .map((l) => {
+  // Las líneas «> » seguidas forman una sola caja de petición (prompt).
+  const lineas = [];
+  for (const l of md.split(/\r?\n/)) {
+    if (l.startsWith(">") && lineas.at(-1)?.prompt) lineas.at(-1).prompt.push(l.replace(/^>\s?/, ""));
+    else if (l.startsWith(">")) lineas.push({ prompt: [l.replace(/^>\s?/, "")] });
+    else lineas.push({ l });
+  }
+  const cuerpo = lineas
+    .map(({ l, prompt }) => {
+      if (prompt) return `<div class="prompt"><span>COPIA Y PEGA</span>${prompt.map(esc).join("<br>")}</div>`;
       if (l.startsWith("# ")) return `<h1>${esc(l.slice(2))}</h1>`;
       if (l.startsWith("## ")) return `<h2>${esc(l.slice(3))}</h2>`;
+      if (l.startsWith("### ")) return `<h3>${esc(l.slice(4))}</h3>`;
       if (l.startsWith("- [ ] ")) return `<div class="item"><span class="box"></span>${esc(l.slice(6))}</div>`;
+      if (l.startsWith("- ")) return `<div class="vineta">${esc(l.slice(2))}</div>`;
       if (l.trim()) return `<p>${esc(l)}</p>`;
       return "";
     })
@@ -54,7 +63,7 @@ function html(md) {
 @page{size:A4;margin:0}
 html,body{margin:0;background:#07090D}
 body{color:#F5F8FC;font-family:Inter,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.hoja{padding:32px 46px;min-height:1122px;box-sizing:border-box;background:radial-gradient(circle at 0 0,rgba(0,194,255,.18),transparent 45%),radial-gradient(circle at 100% 100%,rgba(139,92,246,.2),transparent 45%)}
+.hoja{padding:32px 46px;min-height:1122px;box-decoration-break:clone;-webkit-box-decoration-break:clone;box-sizing:border-box;background:radial-gradient(circle at 0 0,rgba(0,194,255,.18),transparent 45%),radial-gradient(circle at 100% 100%,rgba(139,92,246,.2),transparent 45%)}
 .marca{display:flex;align-items:center;gap:10px;font:600 12px Inter;color:#A9B4C6;letter-spacing:.12em}
 .marca img{width:30px;height:30px;border-radius:50%}
 h1{font:800 26px/1.12 Manrope;margin:12px 0 4px}
@@ -62,6 +71,11 @@ h2{font:800 15px Manrope;color:#00C2FF;margin:11px 0 5px;break-after:avoid}
 p{font:400 11.5px/1.4 Inter;color:#A9B4C6;margin:3px 0}
 .item{display:flex;gap:10px;align-items:flex-start;font:400 12.5px/1.35 Inter;padding:5px 10px;margin:3px 0;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);break-inside:avoid}
 .box{flex:0 0 13px;height:13px;border-radius:3px;border:2px solid #00C2FF;margin-top:1px}
+h3{font:800 12.5px Manrope;color:#F5F8FC;margin:8px 0 3px;break-after:avoid}
+.vineta{font:400 12px/1.4 Inter;padding-left:14px;position:relative;margin:2px 0}
+.vineta:before{content:"";position:absolute;left:2px;top:6px;width:5px;height:5px;border-radius:50%;background:#8B5CF6}
+.prompt{font:400 11.5px/1.45 Inter;color:#F5F8FC;padding:9px 12px;margin:4px 0;border-radius:10px;background:rgba(0,194,255,.08);border:1px solid rgba(0,194,255,.4);break-inside:avoid}
+.prompt span{display:block;font:600 9px Inter;letter-spacing:.14em;color:#00C2FF;margin-bottom:3px}
 .pie{margin-top:10px;font:600 11px Inter;color:#6E7A90}
 </style><div class="hoja"><div class="marca"><img src="data:image/webp;base64,${logo}">SOYLUISFLORES.ES · RECURSO GRATUITO</div>${cuerpo}<div class="pie">soyluisflores.es</div></div></html>`;
 }
