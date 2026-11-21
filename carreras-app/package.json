@@ -1,0 +1,27 @@
+{
+  "name": "carreras",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "node scripts/embed.mjs && wrangler dev",
+    "deploy": "node scripts/embed.mjs && wrangler deploy",
+    "check": "node scripts/embed.mjs && tsc",
+    "migrate": "wrangler d1 migrations apply carreras --local",
+    "migrate:remote": "wrangler d1 migrations apply carreras --remote",
+    "build": "node scripts/embed.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hono": "^4.13.19",
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261121.1",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.166.0"
+  },
+  "private": true
+}

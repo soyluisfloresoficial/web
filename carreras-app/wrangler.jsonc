@@ -1,0 +1,10 @@
+{
+  "name": "carreras",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-01-01",
+  "d1_databases": [
+    { "binding": "DB", "database_name": "carreras", "database_id": "ffd1cbea-99b2-4320-89ee-24a14b226510", "migrations_dir": "migrations" }
+  ],
+  "triggers": { "crons": ["0 8 * * 1"] },
+  "vars": { "EMAIL_FROM": "Carreras <avisos@COMPLETAR-tu-dominio.es>", "WHATSAPP_TEMPLATE": "aviso_carreras", "REMINDER_DAYS": "7" }
+}
