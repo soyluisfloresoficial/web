@@ -4,7 +4,7 @@
   "compatibility_date": "2026-01-01",
   "assets": { "directory": "./public", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": ["/api/*"] },
   "d1_databases": [
-    { "binding": "DB", "database_name": "carreras", "database_id": "COMPLETAR-con-wrangler-d1-create", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "carreras", "database_id": "ffd1cbea-99b2-4320-89ee-24a14b226510", "migrations_dir": "migrations" }
   ],
   "triggers": { "crons": ["0 8 * * 1"] },
   "vars": { "EMAIL_FROM": "Carreras <avisos@COMPLETAR-tu-dominio.es>", "WHATSAPP_TEMPLATE": "aviso_carreras", "REMINDER_DAYS": "7" }
