@@ -1,6 +1,7 @@
 import { Composition } from "remotion";
 import { Piloto, DURACION } from "./Piloto";
 import { ComposicionesLF } from "./lf/Composiciones";
+import { AyCaramba, DURACION as DURACION_AYCARAMBA } from "./clientes/AyCaramba";
 
 /**
  * Composiciones del proyecto. El piloto (27/10/2026) cuenta la misma historia
@@ -13,6 +14,7 @@ import { ComposicionesLF } from "./lf/Composiciones";
  */
 export const Raiz = () => (
   <>
+    <Composition id="AyCaramba" component={AyCaramba} durationInFrames={DURACION_AYCARAMBA} fps={30} width={1080} height={1920} />
     <Composition
       id="Piloto"
       component={Piloto}
