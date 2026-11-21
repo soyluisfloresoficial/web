@@ -176,3 +176,14 @@ nav.bn a.fab::before{display:none}
 body.auth{padding-bottom:0}
 .hero .hid{position:relative;z-index:1;display:flex;gap:12px;align-items:center}
 .hero .hid .av{box-shadow:0 0 0 3px rgba(255,255,255,.15)}
+.live{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:1px;box-shadow:0 0 0 0 rgba(15,159,98,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(15,159,98,.55)}70%{box-shadow:0 0 0 7px rgba(15,159,98,0)}100%{box-shadow:0 0 0 0 rgba(15,159,98,0)}}
+@media (prefers-reduced-motion:reduce){.live{animation:none}}
+.sum2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.sum2 .box{border-radius:14px;padding:12px;border:1px solid var(--line)}
+.sum2 .box.bad{background:var(--bad-bg)}.sum2 .box.ok{background:var(--ok-bg)}
+.sum2 .box span{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--ink-2)}.sum2 .box span svg.i{width:15px;height:15px}
+.sum2 .box.bad span svg{color:var(--bad)}.sum2 .box.ok span svg{color:var(--ok)}
+.sum2 .box b{display:block;font-size:1.2rem;margin-top:4px;letter-spacing:-.02em}.sum2 .box small{color:var(--mut);font-weight:600}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.facts span{display:block;font-size:.74rem;color:var(--mut);font-weight:600}.facts b{font-size:.92rem}

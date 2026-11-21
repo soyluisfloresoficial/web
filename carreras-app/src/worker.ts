@@ -78,6 +78,7 @@ app.use("/api/admin/*", auth as never, adminOnly as never);
 app.use("/api/client/*", auth as never);
 app.use("/api/notifications/*", auth as never);
 app.use("/api/me", auth as never);
+app.use("/api/pulse", auth as never);
 app.use("/api/password", auth as never);
 
 // ---- Alta del primer administrador (solo si no hay usuarios y con SETUP_TOKEN)
@@ -166,6 +167,22 @@ async function notify(env: Env, ctx: Ctx, target: { id: string; name: string; em
   if (jobs.length) ctx.waitUntil(Promise.all(jobs));
 }
 
+// ---- Pulso: firma barata de los datos para refrescar la app en vivo
+app.get("/api/pulse", async (c) => {
+  const u = c.get("user");
+  const q = u.role === "admin"
+    ? c.env.DB.prepare(`SELECT (SELECT COUNT(*)||':'||COALESCE(SUM(amount_cents),0) FROM trips)||'|'||(SELECT COUNT(*)||':'||COALESCE(SUM(amount_cents),0) FROM payments)||'|'||
+        (SELECT COUNT(*) FROM trip_requests WHERE status='pending')||'|'||(SELECT COUNT(*) FROM expenses)||'|'||(SELECT COUNT(*) FROM users)||'|'||
+        (SELECT COUNT(*) FROM notifications WHERE user_id=?1 AND read=0) sig`).bind(u.id)
+    : c.env.DB.prepare(`SELECT (SELECT COUNT(*)||':'||COALESCE(SUM(amount_cents),0)||':'||COALESCE(MAX(created_at),'') FROM trips WHERE client_id=?1)||'|'||
+        (SELECT COUNT(*)||':'||COALESCE(SUM(amount_cents),0) FROM payments WHERE client_id=?1)||'|'||
+        (SELECT COUNT(*)||':'||COALESCE(MAX(answered_at),'') FROM trip_requests WHERE client_id=?1)||'|'||
+        (SELECT COUNT(*) FROM notifications WHERE user_id=?1 AND read=0) sig`).bind(u.id);
+  const r = await q.first<{ sig: string }>();
+  const unread = Number(r!.sig.split("|").pop());
+  return c.json({ sig: r!.sig, unread });
+});
+
 app.get("/api/notifications", async (c) => {
   const r = await c.env.DB.prepare("SELECT id,title,body,read,created_at FROM notifications WHERE user_id=? ORDER BY created_at DESC LIMIT 100").bind(c.get("user").id).all();
   return c.json({ items: r.results });
@@ -207,7 +224,18 @@ async function listPayments(db: D1Database, clientId: string) {
 app.get("/api/client/summary", async (c) => {
   const u = c.get("user");
   if (u.role !== "client") return err(c, "Solo clientes", 403);
-  return c.json({ ...(await clientTotals(c.env.DB, u.id)) });
+  const trips = await listTrips(c.env.DB, u.id, "all") as unknown as { trip_date: string; amount_cents: number; paid_cents: number; pending_cents: number }[];
+  const pend = trips.filter((t) => t.pending_cents > 0), paid = trips.filter((t) => t.pending_cents === 0);
+  const last = await c.env.DB.prepare("SELECT pay_date, amount_cents FROM payments WHERE client_id=? ORDER BY pay_date DESC, created_at DESC LIMIT 1").bind(u.id).first<{ pay_date: string; amount_cents: number }>();
+  return c.json({
+    ...(await clientTotals(c.env.DB, u.id)),
+    trips_total: trips.length,
+    trips_pending: pend.length, trips_partial: pend.filter((t) => t.paid_cents > 0).length, trips_paid: paid.length,
+    paid_trips_cents: paid.reduce((a, t) => a + t.amount_cents, 0),
+    oldest_unpaid: pend.length ? pend.map((t) => t.trip_date).sort()[0] : null,
+    last_payment: last || null,
+    month_trips: trips.filter((t) => t.trip_date.startsWith(today().slice(0, 7))).length,
+  });
 });
 app.get("/api/client/trips", async (c) => {
   const u = c.get("user");
@@ -251,7 +279,7 @@ app.get("/api/admin/summary", async (c) => {
 // ---- Admin: clientes
 app.get("/api/admin/clients", async (c) => {
   const r = await c.env.DB.prepare(
-    `SELECT u.id,u.name,u.email,u.phone,u.active,u.notify_email,u.notify_whatsapp,
+    `SELECT u.id,u.name,u.email,u.phone,u.active,u.notify_email,u.notify_whatsapp,u.pass_set,
        COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id),0) charged_cents,
        COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id),0) paid_cents
      FROM users u WHERE u.role='client' ORDER BY u.name`
@@ -260,14 +288,18 @@ app.get("/api/admin/clients", async (c) => {
 });
 app.post("/api/admin/clients", async (c) => {
   const b = await c.req.json().catch(() => ({}));
-  const name = str(b.name, 100), email = str(b.email).toLowerCase(), pass = str(b.password, 200), phone = str(b.phone, 30) || null;
-  if (!name || !/^\S+@\S+\.\S+$/.test(email) || pass.length < 8) return err(c, "Nombre, correo válido y contraseña de al menos 8 caracteres");
+  const name = str(b.name, 100), email = str(b.email).toLowerCase(), phone = str(b.phone, 30) || null;
+  let pass = str(b.password, 200);
+  if (!name || !/^\S+@\S+\.\S+$/.test(email)) return err(c, "Indica nombre y un correo válido");
+  if (pass && pass.length < 8) return err(c, "La contraseña debe tener al menos 8 caracteres");
+  const invite = !pass;
+  if (invite) pass = hex(crypto.getRandomValues(new Uint8Array(32)));
   if (await c.env.DB.prepare("SELECT 1 FROM users WHERE email=?").bind(email).first()) return err(c, "Ese correo ya existe", 409);
   const salt = hex(crypto.getRandomValues(new Uint8Array(16)));
   const id = crypto.randomUUID();
-  await c.env.DB.prepare("INSERT INTO users(id,email,name,phone,role,pass_hash,pass_salt,notify_email,notify_whatsapp,consent_at,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
-    .bind(id, email, name, phone, "client", await hashPass(pass, salt), salt, b.notify_email === false ? 0 : 1, b.notify_whatsapp && phone ? 1 : 0, b.consent ? now() : null, now()).run();
-  return c.json({ id });
+  await c.env.DB.prepare("INSERT INTO users(id,email,name,phone,role,pass_hash,pass_salt,notify_email,notify_whatsapp,consent_at,created_at,pass_set) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
+    .bind(id, email, name, phone, "client", await hashPass(pass, salt), salt, b.notify_email === false ? 0 : 1, b.notify_whatsapp && phone ? 1 : 0, b.consent ? now() : null, now(), invite ? 0 : 1).run();
+  return c.json({ id, ...(invite ? await createInvite(c, id) : {}) });
 });
 app.patch("/api/admin/clients/:id", async (c) => {
   const b = await c.req.json().catch(() => ({}));
@@ -289,14 +321,14 @@ app.post("/api/admin/clients/:id/password", async (c) => {
   const salt = hex(crypto.getRandomValues(new Uint8Array(16)));
   const id = c.req.param("id");
   await c.env.DB.batch([
-    c.env.DB.prepare("UPDATE users SET pass_hash=?,pass_salt=? WHERE id=? AND role='client'").bind(await hashPass(pass, salt), salt, id),
+    c.env.DB.prepare("UPDATE users SET pass_hash=?,pass_salt=?,pass_set=1 WHERE id=? AND role='client'").bind(await hashPass(pass, salt), salt, id),
     c.env.DB.prepare("DELETE FROM sessions WHERE user_id=?").bind(id),
   ]);
   return c.json({ ok: true });
 });
 app.get("/api/admin/clients/:id", async (c) => {
   const id = c.req.param("id");
-  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,active,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client'").bind(id).first();
+  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,active,notify_email,notify_whatsapp,pass_set FROM users WHERE id=? AND role='client'").bind(id).first();
   if (!cl) return err(c, "Cliente no encontrado", 404);
   return c.json({ client: cl, totals: await clientTotals(c.env.DB, id), trips: await listTrips(c.env.DB, id, "all"), payments: await listPayments(c.env.DB, id) });
 });
@@ -474,6 +506,52 @@ app.post("/api/admin/requests/:id/reject", async (c) => {
   return c.json({ ok: true });
 });
 
+// ---- Invitaciones: enlace de un solo uso para que el cliente elija su contraseña
+const INVITE_DAYS = 7;
+async function createInvite(c: C, userId: string) {
+  const token = hex(crypto.getRandomValues(new Uint8Array(24)));
+  const exp = new Date(Date.now() + INVITE_DAYS * 864e5).toISOString();
+  await c.env.DB.batch([
+    c.env.DB.prepare("DELETE FROM invites WHERE user_id=?").bind(userId),
+    c.env.DB.prepare("INSERT INTO invites(token_hash,user_id,expires_at,created_at) VALUES(?,?,?,?)").bind(await sha256(token), userId, exp, now()),
+  ]);
+  return { invite_url: `${new URL(c.req.url).origin}/invitar/${token}`, invite_expires: exp };
+}
+async function findInvite(c: C, token: string) {
+  if (!/^[0-9a-f]{48}$/.test(token)) return null;
+  return c.env.DB.prepare(
+    `SELECT i.token_hash,u.id,u.name,u.email FROM invites i JOIN users u ON u.id=i.user_id
+     WHERE i.token_hash=? AND i.used_at IS NULL AND i.expires_at>? AND u.active=1 AND u.role='client'`
+  ).bind(await sha256(token), now()).first<{ token_hash: string; id: string; name: string; email: string }>();
+}
+app.post("/api/admin/clients/:id/invite", async (c) => {
+  const id = c.req.param("id");
+  const u = await c.env.DB.prepare("SELECT id FROM users WHERE id=? AND role='client' AND active=1").bind(id).first();
+  if (!u) return err(c, "Cliente no encontrado o inactivo", 404);
+  return c.json(await createInvite(c, id));
+});
+app.get("/api/invite/:token", async (c) => {
+  const i = await findInvite(c, c.req.param("token"));
+  if (!i) return err(c, "Este enlace ya se usó o caducó. Pide uno nuevo a tu conductor.", 404);
+  return c.json({ name: i.name, email: i.email });
+});
+app.post("/api/invite/:token", async (c) => {
+  const i = await findInvite(c, c.req.param("token"));
+  if (!i) return err(c, "Este enlace ya se usó o caducó. Pide uno nuevo a tu conductor.", 404);
+  const b = await c.req.json().catch(() => ({}));
+  const pass = str(b.password, 200);
+  if (pass.length < 8) return err(c, "La contraseña debe tener al menos 8 caracteres");
+  const salt = hex(crypto.getRandomValues(new Uint8Array(16)));
+  await c.env.DB.batch([
+    c.env.DB.prepare("UPDATE users SET pass_hash=?,pass_salt=?,pass_set=1,consent_at=COALESCE(consent_at,?) WHERE id=?").bind(await hashPass(pass, salt), salt, b.consent ? now() : null, i.id),
+    c.env.DB.prepare("UPDATE invites SET used_at=? WHERE token_hash=?").bind(now(), i.token_hash),
+    c.env.DB.prepare("DELETE FROM invites WHERE user_id=? AND token_hash<>?").bind(i.id, i.token_hash),
+    c.env.DB.prepare("DELETE FROM sessions WHERE user_id=?").bind(i.id),
+  ]);
+  await createSession(c, i.id);
+  return c.json({ ok: true });
+});
+
 // ---- Admin: lugares frecuentes (autocompletar)
 app.get("/api/admin/places", async (c) => {
   const r = await c.env.DB.prepare(
@@ -535,6 +613,7 @@ async function weeklyReminders(env: Env, ctx: Ctx) {
   }
   await env.DB.batch([
     env.DB.prepare("DELETE FROM sessions WHERE expires_at<?").bind(now()),
+    env.DB.prepare("DELETE FROM invites WHERE expires_at<?").bind(now()),
     env.DB.prepare("DELETE FROM login_attempts WHERE at<?").bind(new Date(Date.now() - 864e5).toISOString()),
   ]);
   return rows.length;

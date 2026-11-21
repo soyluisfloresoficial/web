@@ -47,6 +47,10 @@ const P = {
   fuel: "M3 22V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17M3 22h12M15 10h2a2 2 0 0 1 2 2v5a2 2 0 0 0 4 0V8l-4-4M7 8h4",
   lock: "M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4",
   calendar: "M3 5h18v16H3zM16 3v4M8 3v4M3 10h18",
+  key: "M21 9a6 6 0 0 1-7.7 5.7L11 17H9v2H7v2H3v-3.6l6.3-6.3A6 6 0 1 1 21 9zM16 8h.01",
+  copy: "M9 9h11v11H9zM5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1",
+  mail: "M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6",
+  share: "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13",
   alert: "M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z",
 };
 const ic = (n, extra = "") => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" ${extra}><path d="${P[n]}"/></svg>`;
@@ -72,10 +76,34 @@ function modal(html, onMount) {
 }
 const empty = (icon, title, text = "") => `<div class="empty"><div class="ic">${ic(icon)}</div><b>${title}</b>${text}</div>`;
 const skeleton = () => `<div class="sk" style="height:170px;border-radius:24px"></div><div class="stats"><div class="sk" style="height:76px"></div><div class="sk" style="height:76px"></div></div><div class="sk" style="height:220px"></div>`;
+// ---------- En vivo: consulta una firma ligera cada 15 s y refresca si algo cambió
+const LIVE = { sig: null, at: null, timer: null, busy: false };
+const hhmm = (d) => d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+function liveStamp() { const el = document.getElementById("livebar"); if (el && LIVE.at) el.textContent = "Actualizado a las " + hhmm(LIVE.at); }
+async function liveCheck(force) {
+  if (!S.me || LIVE.busy || document.hidden || document.querySelector(".modal")) return;
+  LIVE.busy = true;
+  try {
+    const r = await api("/pulse");
+    const changed = LIVE.sig !== null && r.sig !== LIVE.sig;
+    LIVE.sig = r.sig; LIVE.at = new Date();
+    if (changed && !force) { const y = scrollY; await render(true); scrollTo(0, y); toast("Hay novedades: datos actualizados"); }
+    else if (r.unread !== S.unread) { S.unread = r.unread; }
+    liveStamp();
+  } catch { /* sin conexión: se reintenta en el siguiente ciclo */ } finally { LIVE.busy = false; }
+}
+function liveStart() {
+  if (LIVE.timer) return;
+  LIVE.timer = setInterval(() => liveCheck(), 15000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) liveCheck(); });
+  window.addEventListener("focus", () => liveCheck());
+}
 const go = (tab, clientId = null) => { S.tab = tab; S.clientId = clientId; window.scrollTo(0, 0); render(); };
 
 // ---------- Estructura
-async function render() {
+async function render(fromLive) {
+  const inv = location.pathname.match(/^\/invitar\/([0-9a-f]{48})$/);
+  if (inv) return inviteView(inv[1]);
   if (!S.me) {
     try { const r = await api("/me"); S.me = r.user; S.unread = r.unread; } catch { S.me = null; }
   }
@@ -86,7 +114,7 @@ async function render() {
     ? [["inicio", "home", "Inicio"], ["clientes", "users", "Clientes"], ["nuevo", "plus", ""], ["carreras", "car", "Carreras"], ["gastos", "receipt", "Gastos"]]
     : [["inicio", "home", "Inicio"], ["carreras", "car", "Carreras"], ["pedir", "plus", ""], ["pagos", "wallet", "Pagos"], ["avisos", "bell", "Avisos"]];
   $app.innerHTML = `<header class="top"><div class="logo">${ic("car")}</div>
-    <div class="t"><b>${admin ? "Panel de carreras" : "Hola, " + esc(S.me.name.split(" ")[0])}</b><span>${admin ? "Administrador" : "Tu cuenta de carreras"}</span></div>
+    <div class="t"><b>${admin ? "Panel de carreras" : "Hola, " + esc(S.me.name.split(" ")[0])}</b><span><i class="live"></i>${admin ? "Administrador · en vivo" : "En vivo"}</span></div>
     ${admin ? `<button class="iconbtn" id="bell" aria-label="Avisos">${ic("bell")}${S.unread ? `<span class="dot">${S.unread}</span>` : ""}</button>` : ""}
     <button class="iconbtn" id="menu" aria-label="Mi cuenta">${ic("user")}</button></header>
     <main id="view">${skeleton()}</main>
@@ -101,8 +129,10 @@ async function render() {
     const views = admin
       ? { inicio: adminInicio, clientes: adminClientes, carreras: adminCarreras, gastos: adminGastos, avisos: avisosView }
       : { inicio: clienteInicio, carreras: clienteCarreras, pedir: clientePedir, pagos: clientePagos, avisos: avisosView };
-    if (admin && S.clientId) return await clienteDetalle(v);
-    await (views[S.tab] || views.inicio)(v);
+    if (admin && S.clientId) await clienteDetalle(v);
+    else await (views[S.tab] || views.inicio)(v);
+    liveStart();
+    if (!fromLive) { LIVE.sig = null; await liveCheck(true); } else liveStamp();
   } catch (e) { v.innerHTML = `<div class="card">${empty("alert", "No se pudo cargar", esc(e.message))}</div>`; }
 }
 
@@ -118,11 +148,41 @@ function loginView() {
     <form id="f"><label class="f">Correo</label><input name="email" type="email" autocomplete="username" inputmode="email" required>
     <label class="f">Contraseña</label><input name="password" type="password" autocomplete="current-password" required>
     <button class="acc block" style="margin-top:18px">${ic("lock")}Entrar</button></form>
-    <p class="mut" style="text-align:center;margin-top:16px">¿No tienes cuenta o la olvidaste? Pídesela a tu conductor.</p></div>`;
+    <p class="mut" style="text-align:center;margin-top:16px">¿Primera vez? Abre el enlace de invitación que te envió tu conductor.<br>¿Olvidaste la contraseña? Pídele un enlace nuevo.</p></div>`;
   document.getElementById("f").onsubmit = guard(async (e) => {
     e.preventDefault();
     const b = e.target.querySelector("button"); b.disabled = true;
     try { await api("/login", "POST", formData(e.target)); S.me = null; S.tab = "inicio"; render(); } finally { b.disabled = false; }
+  });
+}
+
+async function inviteView(token) {
+  document.body.classList.add("auth");
+  let info;
+  try { info = await api("/invite/" + token); }
+  catch (e) {
+    $app.innerHTML = `<div class="login"><div class="brand"><div class="logo">${ic("car")}</div><b style="font-size:1.1rem">Carreras</b></div>
+      <div class="card">${empty("alert", "Enlace no válido", esc(e.message))}</div><button class="ghost block" id="gl">Ir a iniciar sesión</button></div>`;
+    document.getElementById("gl").onclick = () => { history.replaceState(null, "", "/"); render(); };
+    return;
+  }
+  $app.innerHTML = `<div class="login">
+    <div class="brand"><div class="logo">${ic("car")}</div><div><b style="font-size:1.1rem">Carreras</b><div class="mut">Activa tu cuenta</div></div></div>
+    <h1>Hola, ${esc(info.name.split(" ")[0])}</h1>
+    <p class="mut" style="margin:0 0 6px">Elige una contraseña para tu cuenta. Después entrarás siempre con tu correo y esta contraseña.</p>
+    <form id="f"><label class="f">Tu correo (usuario)</label><input value="${esc(info.email)}" disabled autocomplete="username">
+    <label class="f">Contraseña nueva (mínimo 8 caracteres)</label><input name="password" type="password" minlength="8" autocomplete="new-password" required>
+    <label class="f">Repite la contraseña</label><input name="password2" type="password" minlength="8" autocomplete="new-password" required>
+    <label class="check"><input type="checkbox" name="consent" checked>Acepto recibir avisos de mis carreras y pagos</label>
+    <button class="acc block" style="margin-top:16px">${ic("check")}Activar y entrar</button></form>
+    <p class="mut" style="text-align:center;margin-top:16px">Solo verás tus propias carreras, pagos y avisos.</p></div>`;
+  document.getElementById("f").onsubmit = guard(async (e) => {
+    e.preventDefault();
+    const b = formData(e.target);
+    if (b.password !== b.password2) return toast("Las contraseñas no coinciden");
+    await api("/invite/" + token, "POST", { password: b.password, consent: !!b.consent });
+    history.replaceState(null, "", "/");
+    S.me = null; S.tab = "inicio"; toast("Cuenta activada"); render();
   });
 }
 
@@ -199,6 +259,20 @@ async function clienteInicio(v) {
     <div class="sub">${s.pending_cents > 0 ? plural(t.items.length, "carrera por pagar", "carreras por pagar") : "Estás al día. Gracias."}</div>
     <div class="row"><div><span>Total carreras</span><b>${eur(s.charged_cents)}</b></div><div><span>Pagado</span><b>${eur(s.paid_cents)}</b></div><div><span>Pendiente</span><b>${eur(s.pending_cents)}</b></div></div>
     <div class="acts"><button class="acc sm" id="pedir">${ic("plus")}Pedir carrera</button><button class="glass sm" id="pdf">${ic("download")}Estado de cuenta</button></div></div>
+    <div class="sec"><h2>Tu resumen</h2><span class="mut" id="livebar"></span></div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><span class="mut">Pagado del total</span><b>${s.charged_cents ? Math.round((s.paid_cents / s.charged_cents) * 100) : 100}%</b></div>
+      <div class="bar" style="height:10px"><b style="width:${s.charged_cents ? Math.round((s.paid_cents / s.charged_cents) * 100) : 100}%"></b></div>
+      <div class="sum2">
+        <div class="box bad"><span>${ic("clock")}Por pagar</span><b>${eur(s.pending_cents)}</b><small>${plural(s.trips_pending, "carrera", "carreras")}${s.trips_partial ? ` · ${s.trips_partial} con abono` : ""}</small></div>
+        <div class="box ok"><span>${ic("check")}Pagadas</span><b>${eur(s.paid_trips_cents)}</b><small>${plural(s.trips_paid, "carrera", "carreras")}</small></div>
+      </div>
+      <div class="facts">
+        <div><span>Carrera más antigua sin pagar</span><b>${s.oldest_unpaid ? fdate(s.oldest_unpaid) : "Ninguna"}</b></div>
+        <div><span>Último pago</span><b>${s.last_payment ? `${eur(s.last_payment.amount_cents)} · ${fdate(s.last_payment.pay_date)}` : "Aún no hay"}</b></div>
+        <div><span>Carreras este mes</span><b>${s.month_trips}</b></div>
+        <div><span>Carreras en total</span><b>${s.trips_total}</b></div>
+      </div></div>
     ${pendReq.length ? `<div class="sec"><h2>Solicitudes en espera</h2></div><div class="card flush">${pendReq.map((r) => `<div class="li" style="cursor:default"><div class="av" style="background:var(--warn-bg);color:var(--warn)">${ic("clock")}</div><div class="grow"><div class="name">${esc(r.pickup)} → ${esc(r.dropoff)}</div><div class="mut">${fdateS(r.req_date)}${r.req_time ? " · " + esc(r.req_time) : ""}</div></div>${reqChip(r.status)}</div>`).join("")}</div>` : ""}
     <div class="sec"><h2>Por pagar</h2>${t.items.length ? `<a id="all">Ver todas</a>` : ""}</div>
     <div class="card">${t.items.map((x) => tripCard(x)).join("") || empty("check", "Nada pendiente", "Todas tus carreras están pagadas.")}</div>`;
@@ -306,7 +380,7 @@ async function adminClientes(v) {
   v.innerHTML = `<div class="sec" style="margin-top:8px"><h2>Clientes</h2><span class="mut">${plural(r.items.length, "cliente", "clientes")} · ${eur(debt)} por cobrar</span></div>
     <div class="search">${ic("search")}<input type="search" id="q" placeholder="Buscar por nombre, correo o teléfono"></div>
     <div class="card flush">${r.items.map((c) => `<div class="li" data-q="${esc((c.name + " " + c.email + " " + (c.phone || "")).toLowerCase())}" data-c="${c.id}">${avatar(c.name)}
-      <div class="grow"><div class="name">${esc(c.name)}${c.active ? "" : ` <span class="chip n">Inactivo</span>`}</div><div class="mut">${esc(c.phone || c.email)}</div></div>
+      <div class="grow"><div class="name">${esc(c.name)}${c.active ? "" : ` <span class="chip n">Inactivo</span>`}${c.active && !c.pass_set ? ` <span class="chip info">Sin activar</span>` : ""}</div><div class="mut">${esc(c.phone || c.email)}</div></div>
       <div style="text-align:right"><span class="amt ${c.pending_cents > 0 ? "bad" : "ok"}">${eur(c.pending_cents)}</span><div class="mut" style="font-size:.74rem">${c.pending_cents > 0 ? "pendiente" : "al día"}</div></div><span class="chev">${ic("chev")}</span></div>`).join("") || empty("users", "Aún no tienes clientes", "Crea el primero con el botón de abajo.")}</div>
     <button class="acc block" id="nc" style="margin-top:6px">${ic("plus")}Nuevo cliente</button>`;
   v.querySelectorAll("[data-c]").forEach((el) => (el.onclick = () => go("clientes", el.dataset.c)));
@@ -336,7 +410,7 @@ async function clienteDetalle(v) {
   const c = d.client, p = d.totals.pending_cents;
   const waText = `Hola ${c.name.split(" ")[0]}, te escribo por las carreras. Tu saldo pendiente es de ${eur(p)}. Puedes ver el detalle en tu cuenta: ${location.origin}`;
   v.innerHTML = `<button class="ghost sm" id="back" style="margin:6px 0 2px">${ic("back")}Clientes</button>
-    <div class="hero"><div class="hid">${avatar(c.name, "lg")}<div style="flex:1;min-width:0"><b style="font-size:1.15rem;display:block">${esc(c.name)}</b><span style="opacity:.75;font-size:.82rem">${esc(c.phone || c.email)}</span></div>${c.active ? "" : `<span class="chip n">Inactivo</span>`}</div>
+    <div class="hero"><div class="hid">${avatar(c.name, "lg")}<div style="flex:1;min-width:0"><b style="font-size:1.15rem;display:block">${esc(c.name)}</b><span style="opacity:.75;font-size:.82rem">${esc(c.phone || c.email)}</span></div>${c.active ? (c.pass_set ? "" : `<span class="chip info">Sin activar</span>`) : `<span class="chip n">Inactivo</span>`}<button class="glass sm" id="ed" aria-label="Editar cliente">${ic("edit")}</button></div>
       <div class="lbl" style="margin-top:14px">Saldo pendiente</div><div class="big">${bigEur(p)}</div>
       <div class="row"><div><span>Cargado</span><b>${eur(d.totals.charged_cents)}</b></div><div><span>Pagado</span><b>${eur(d.totals.paid_cents)}</b></div><div><span>Carreras</span><b>${d.trips.length}</b></div></div></div>
     <div class="tiles">
@@ -347,7 +421,7 @@ async function clienteDetalle(v) {
       <button class="tile" id="rem"><span class="ic">${ic("bell")}</span>Recordar</button>
       <button class="tile" id="pdf"><span class="ic">${ic("file")}</span>Estado</button>
       <button class="tile" id="csv"><span class="ic">${ic("download")}</span>CSV</button>
-      <button class="tile" id="ed"><span class="ic">${ic("edit")}</span>Editar</button></div>
+      <button class="tile" id="acc"><span class="ic">${ic("key")}</span>Acceso</button></div>
     <div id="segw"></div><div class="card" id="list"></div>`;
   const drawList = () => {
     const L = v.querySelector("#list");
@@ -369,6 +443,11 @@ async function clienteDetalle(v) {
   v.querySelector("#wa").onclick = () => { const ph = String(c.phone || "").replace(/\D/g, ""); if (!ph) return toast("Este cliente no tiene teléfono"); window.open(`https://wa.me/${ph}?text=${encodeURIComponent(waText)}`, "_blank", "noopener"); };
   v.querySelector("#rem").onclick = guard(async () => { await api(`/admin/clients/${c.id}/reminder`, "POST", {}); toast("Recordatorio enviado"); });
   v.querySelector("#ed").onclick = () => clientEdit(c);
+  v.querySelector("#acc").onclick = guard(async () => {
+    if (!c.active) return toast("Activa la cuenta del cliente primero");
+    if (c.pass_set && !confirm(`${c.name} ya tiene contraseña. ¿Generar un enlace nuevo para que elija otra? La actual seguirá valiendo hasta que la cambie.`)) return;
+    shareAccess(c, await api(`/admin/clients/${c.id}/invite`, "POST", {}));
+  });
   v.querySelector("#pdf").onclick = () => printStatement(c.name, d.totals, d.trips, d.payments);
   v.querySelector("#csv").onclick = () => {
     const q = (s) => `"${String(s ?? "").replace(/"/g, '""')}"`;
@@ -491,19 +570,43 @@ function expenseForm(categories) {
     m.querySelector("#f").onsubmit = guard(async (e) => { e.preventDefault(); await api("/admin/expenses", "POST", formData(e.target)); m.remove(); toast("Gasto guardado"); if (S.tab !== "gastos") go("gastos"); else render(); });
   });
 }
+function shareAccess(c, r) {
+  const first = c.name.split(" ")[0];
+  const exp = new Date(r.invite_expires).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
+  const msg = `Hola ${first}, te creé tu cuenta para ver tus carreras, lo pendiente y tus pagos. Entra en este enlace y elige tu contraseña (vale hasta el ${exp}): ${r.invite_url}\n\nDespués entra siempre en ${location.origin} con tu correo (${c.email}) y tu contraseña.`;
+  const ph = String(c.phone || "").replace(/\D/g, "");
+  modal(`<div style="text-align:center"><div class="logo" style="width:56px;height:56px;border-radius:18px;margin:4px auto 10px">${ic("key")}</div>
+    <h2>Acceso listo para ${esc(first)}</h2><p class="mut" style="margin:4px 0 0">Envíale este enlace. Lo abre, elige su contraseña y queda dentro. Vale hasta el ${exp} y sirve una sola vez.</p></div>
+    <label class="f">Enlace de invitación</label><input id="lk" value="${esc(r.invite_url)}" readonly>
+    <div class="menu">
+      ${ph ? `<button data-a="wa"><span class="ic" style="color:#139E4B">${ic("chat")}</span><span>Enviar por WhatsApp<small>Al ${esc(c.phone)}</small></span></button>` : ""}
+      <button data-a="mail"><span class="ic">${ic("mail")}</span><span>Enviar por correo<small>${esc(c.email)}</small></span></button>
+      <button data-a="copy"><span class="ic">${ic("copy")}</span><span>Copiar mensaje<small>Para pegarlo donde quieras</small></span></button>
+      ${navigator.share ? `<button data-a="share"><span class="ic">${ic("share")}</span><span>Compartir<small>Telegram, SMS…</small></span></button>` : ""}
+    </div><button class="ghost block" id="done" style="margin-top:12px">Listo</button>`, (m) => {
+    const act = {
+      wa: () => window.open(`https://wa.me/${ph}?text=${encodeURIComponent(msg)}`, "_blank", "noopener"),
+      mail: () => { location.href = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent("Tu cuenta de carreras")}&body=${encodeURIComponent(msg)}`; },
+      copy: async () => { try { await navigator.clipboard.writeText(msg); toast("Mensaje copiado"); } catch { m.querySelector("#lk").select(); toast("Copia el enlace manualmente"); } },
+      share: () => navigator.share({ title: "Tu cuenta de carreras", text: msg }).catch(() => {}),
+    };
+    m.querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => act[b.dataset.a]()));
+    m.querySelector("#done").onclick = () => { m.remove(); go("clientes", c.id); };
+  });
+}
+
 function clientForm() {
-  modal(`<h2>Nuevo cliente</h2><form id="f"><label class="f">Nombre</label><input name="name" required>
+  modal(`<h2>Nuevo cliente</h2><form id="f"><p class="mut" style="margin:0">Al crearlo te doy un enlace para que el cliente elija su contraseña.</p><label class="f">Nombre</label><input name="name" required>
     <label class="f">Correo (será su usuario)</label><input name="email" type="email" inputmode="email" required>
     <label class="f">Teléfono con prefijo (ej. 34600111222)</label><input name="phone" inputmode="tel">
-    <label class="f">Contraseña inicial (mínimo 8)</label><input name="password" minlength="8" required>
     <label class="check"><input type="checkbox" name="notify_whatsapp">Avisos por WhatsApp</label>
     <label class="check"><input type="checkbox" name="consent">El cliente aceptó recibir avisos (RGPD)</label>
-    <button class="acc block" style="margin-top:14px">${ic("check")}Crear cliente</button></form>`, (m) => {
+    <button class="acc block" style="margin-top:14px">${ic("key")}Crear y obtener enlace</button></form>`, (m) => {
     m.querySelector("#f").onsubmit = guard(async (e) => {
       e.preventDefault();
       const b = formData(e.target); b.notify_whatsapp = !!b.notify_whatsapp; b.consent = !!b.consent;
       const r = await api("/admin/clients", "POST", b);
-      m.remove(); toast("Cliente creado"); go("clientes", r.id);
+      m.remove(); shareAccess({ id: r.id, name: b.name, email: b.email, phone: b.phone }, r);
     });
   });
 }
