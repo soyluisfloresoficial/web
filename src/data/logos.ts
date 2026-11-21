@@ -95,3 +95,24 @@ export const logos: Record<string, { d: string | null; color: string | null }> =
     "color": "#2F7CF6"
   }
 };
+
+/**
+ * Monograma de las marcas que no tienen logo libre (21/11/2026). Se pinta
+ * con CSS (content: attr(data-monograma)), así no es texto: al copiar la
+ * lista o al leerla un buscador sale solo el nombre de la marca. Antes la
+ * inicial era texto y se copiaba «HHeyGenH».
+ */
+const MONOGRAMAS: Record<string, string> = {
+  GoHighLevel: "GHL",
+  ActiveCampaign: "AC",
+  ManyChat: "MC",
+  HeyGen: "HG",
+  Higgsfield: "Hf",
+  Base44: "B44",
+  Metricool: "Mt",
+};
+
+/** Monograma de una marca: el de la lista o su inicial. */
+export function monograma(marca: string): string {
+  return MONOGRAMAS[marca] ?? marca[0];
+}

@@ -26,7 +26,7 @@ import Agenda from "./Agenda.astro";
 import EscenaFunnel from "./EscenaFunnel.astro";
 import Icono from "./Icono.astro";
 import { SITIO } from "../data/servicios";
-import { logos } from "../data/logos";
+import { logos, monograma } from "../data/logos";
 import type { Pregunta } from "../data/home";
 import type { Bloque } from "../data/funnels";
 import retratoImg from "../assets/luis-flores-sobre-mi-azul.jpg";
@@ -178,7 +178,7 @@ const pasos = [
                         <path d={logos[h].d} />
                       </svg>
                     ) : (
-                      <span class="lc-logo-inicial">{h[0]}</span>
+                      <span class="lc-logo-inicial" data-monograma={monograma(h)} data-largo={monograma(h).length > 2 ? "" : undefined} />
                     )}
                   </span>
                   {h}
@@ -642,10 +642,16 @@ const pasos = [
     background: color-mix(in srgb, var(--marca, var(--color-electric)) 16%, transparent);
     color: var(--marca, var(--color-electric-soft));
   }
-  .lc-logo-inicial {
+  /* Monograma dibujado con CSS: no se copia como texto (21/11/2026). */
+  .lc-logo-inicial::before {
+    content: attr(data-monograma);
     font-family: var(--font-display);
     font-size: 0.8125rem;
     font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .lc-logo-inicial[data-largo]::before {
+    font-size: 0.5625rem;
   }
 
   /* --------------------------------------------------------- Rejillas */
