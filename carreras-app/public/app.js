@@ -221,9 +221,10 @@ function printStatement(name, totals, trips, payments) {
   <div class="box"><div><span class="mut">Total carreras</span><b>${eur(totals.charged_cents)}</b></div><div><span class="mut">Total pagado</span><b>${eur(totals.paid_cents)}</b></div><div><span class="mut">Saldo pendiente</span><b class="bad">${eur(totals.pending_cents)}</b></div></div>
   <h2>Carreras</h2><table><tr><th>Fecha</th><th>Recogida</th><th>Destino</th><th class="n">Importe</th><th class="n">Pendiente</th></tr>${tr || `<tr><td colspan="5" class="mut">Sin carreras</td></tr>`}</table>
   <h2>Pagos</h2><table><tr><th>Fecha</th><th>Método</th><th>Nota</th><th class="n">Importe</th></tr>${pr || `<tr><td colspan="4" class="mut">Sin pagos</td></tr>`}</table>
-  <p><button onclick="print()" style="width:100%;padding:12px;margin-top:20px;font:inherit;font-weight:700">Imprimir o guardar PDF</button></p>
+  <p><button id="imprimir" style="width:100%;padding:12px;margin-top:20px;font:inherit;font-weight:700">Imprimir o guardar PDF</button></p>
   </body></html>`);
   w.document.close();
+  w.document.getElementById("imprimir").onclick = () => w.print();
 }
 
 // ---------- Formularios admin

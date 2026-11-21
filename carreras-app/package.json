@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "check": "tsc",
+    "dev": "node scripts/embed.mjs && wrangler dev",
+    "deploy": "node scripts/embed.mjs && wrangler deploy",
+    "check": "node scripts/embed.mjs && tsc",
     "migrate": "wrangler d1 migrations apply carreras --local",
-    "migrate:remote": "wrangler d1 migrations apply carreras --remote"
+    "migrate:remote": "wrangler d1 migrations apply carreras --remote",
+    "build": "node scripts/embed.mjs"
   },
   "keywords": [],
   "author": "",

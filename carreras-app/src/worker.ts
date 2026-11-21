@@ -1,9 +1,9 @@
 import { Hono, type Context } from "hono";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
+import { FILES } from "./static";
 
 type Env = {
   DB: D1Database;
-  ASSETS: Fetcher;
   SETUP_TOKEN?: string;
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
@@ -399,6 +399,19 @@ app.get("/api/admin/report", async (c) => {
 });
 
 app.all("/api/*", (c) => err(c, "No encontrado", 404));
+// ---- Archivos de la app (embebidos en el Worker); cualquier otra ruta devuelve la app
+app.get("*", (c) => {
+  const f = FILES[c.req.path] || FILES["/index.html"];
+  const html = f.type.startsWith("text/html");
+  return new Response(f.body, { headers: {
+    "Content-Type": f.type,
+    "Cache-Control": html ? "no-cache" : "public, max-age=300",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "same-origin",
+    ...(html ? { "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY" } : {}),
+  } });
+});
+
 app.onError((e, c) => { console.error(e); return c.json({ error: "Error del servidor" }, 500); });
 
 // ---- Recordatorio automático: cada lunes, a quien tenga carreras sin pagar de hace más de REMINDER_DAYS días
