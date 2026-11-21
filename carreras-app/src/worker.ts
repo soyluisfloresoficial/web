@@ -176,7 +176,7 @@ app.post("/api/notifications/read", async (c) => {
 });
 
 // ---- Consultas compartidas
-const TRIP_SQL = `SELECT t.id,t.client_id,t.trip_date,t.pickup,t.dropoff,t.amount_cents,t.notes,
+const TRIP_SQL = `SELECT t.id,t.client_id,t.trip_date,t.trip_time,t.pickup,t.dropoff,t.amount_cents,t.notes,
   COALESCE((SELECT SUM(a.amount_cents) FROM allocations a WHERE a.trip_id=t.id),0) paid_cents,
   (SELECT MAX(p.pay_date) FROM allocations a JOIN payments p ON p.id=a.payment_id WHERE a.trip_id=t.id) last_pay_date
   FROM trips t`;
@@ -189,7 +189,7 @@ async function clientTotals(db: D1Database, clientId: string) {
 }
 async function listTrips(db: D1Database, clientId: string | null, status: string) {
   const where = clientId ? "WHERE t.client_id=?" : "";
-  const rows = (await db.prepare(`${TRIP_SQL} ${where} ORDER BY t.trip_date DESC, t.created_at DESC LIMIT 1000`).bind(...(clientId ? [clientId] : [])).all<Record<string, number | string>>()).results;
+  const rows = (await db.prepare(`${TRIP_SQL} ${where} ORDER BY t.trip_date DESC, t.trip_time DESC, t.created_at DESC LIMIT 1000`).bind(...(clientId ? [clientId] : [])).all<Record<string, number | string>>()).results;
   const out = rows.map((t) => ({ ...t, pending_cents: (t.amount_cents as number) - (t.paid_cents as number) }));
   if (status === "pending") return out.filter((t) => t.pending_cents > 0);
   if (status === "paid") return out.filter((t) => t.pending_cents === 0);
@@ -224,7 +224,10 @@ app.get("/api/client/payments", async (c) => {
 app.get("/api/admin/summary", async (c) => {
   const month = today().slice(0, 7);
   const db = c.env.DB;
-  const [tot, m, top] = await Promise.all([
+  const months: string[] = [];
+  const d0 = new Date(today().slice(0, 7) + "-01T12:00:00Z");
+  for (let i = 5; i >= 0; i--) { const d = new Date(d0); d.setUTCMonth(d.getUTCMonth() - i); months.push(d.toISOString().slice(0, 7)); }
+  const [tot, m, top, ser, req] = await Promise.all([
     db.prepare(`SELECT COALESCE((SELECT SUM(amount_cents) FROM trips),0) - COALESCE((SELECT SUM(amount_cents) FROM payments),0) pending`).first<{ pending: number }>(),
     db.prepare(`SELECT COALESCE((SELECT SUM(amount_cents) FROM trips WHERE trip_date LIKE ?1||'%'),0) charged,
                        COALESCE((SELECT COUNT(*) FROM trips WHERE trip_date LIKE ?1||'%'),0) trips,
@@ -233,8 +236,16 @@ app.get("/api/admin/summary", async (c) => {
         COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id),0) - COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id),0) pending_cents,
         (SELECT MIN(t.trip_date) FROM trips t WHERE t.client_id=u.id AND t.amount_cents > COALESCE((SELECT SUM(a.amount_cents) FROM allocations a WHERE a.trip_id=t.id),0)) oldest_unpaid
         FROM users u WHERE u.role='client' ORDER BY pending_cents DESC LIMIT 5`).all(),
+    db.prepare(`SELECT substr(trip_date,1,7) m, 'c' k, SUM(amount_cents) v FROM trips WHERE trip_date >= ?1 GROUP BY m
+                UNION ALL SELECT substr(pay_date,1,7), 'p', SUM(amount_cents) FROM payments WHERE pay_date >= ?1 GROUP BY 1
+                UNION ALL SELECT substr(exp_date,1,7), 'e', SUM(amount_cents) FROM expenses WHERE exp_date >= ?1 GROUP BY 1`).bind(months[0] + "-01").all<{ m: string; k: string; v: number }>(),
+    db.prepare("SELECT COUNT(*) n FROM trip_requests WHERE status='pending'").first<{ n: number }>(),
   ]);
-  return c.json({ pending_cents: tot!.pending, month_charged_cents: m!.charged, month_trips: m!.trips, month_collected_cents: m!.collected, top_debtors: top.results.filter((r) => (r.pending_cents as number) > 0) });
+  const series = months.map((mm) => {
+    const g = (k: string) => ser.results.find((r) => r.m === mm && r.k === k)?.v || 0;
+    return { month: mm, charged_cents: g("c"), collected_cents: g("p"), expenses_cents: g("e") };
+  });
+  return c.json({ pending_cents: tot!.pending, month_charged_cents: m!.charged, month_trips: m!.trips, month_collected_cents: m!.collected, month_expenses_cents: series[5].expenses_cents, series, pending_requests: req!.n, top_debtors: top.results.filter((r) => (r.pending_cents as number) > 0) });
 });
 
 // ---- Admin: clientes
@@ -303,9 +314,10 @@ app.post("/api/admin/clients/:id/reminder", async (c) => {
 // ---- Admin: carreras
 app.get("/api/admin/trips", async (c) => c.json({ items: await listTrips(c.env.DB, null, c.req.query("status") || "all") }));
 function tripFields(b: Record<string, unknown>) {
+  const tt = str(b.trip_time, 5), trip_time = /^\d{2}:\d{2}$/.test(tt) ? tt : null;
   const trip_date = str(b.trip_date, 10) || today(), pickup = str(b.pickup), dropoff = str(b.dropoff), amount = cents(b.amount), notes = str(b.notes, 500) || null;
   if (!isDate(trip_date) || !pickup || !dropoff || !(amount > 0)) return null;
-  return { trip_date, pickup, dropoff, amount, notes };
+  return { trip_date, trip_time, pickup, dropoff, amount, notes };
 }
 app.post("/api/admin/trips", async (c) => {
   const b = await c.req.json().catch(() => ({}));
@@ -313,8 +325,8 @@ app.post("/api/admin/trips", async (c) => {
   const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(str(b.client_id, 60)).first<Target>();
   if (!f || !cl) return err(c, "Revisa cliente, fecha, lugares e importe");
   const id = crypto.randomUUID();
-  await c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,pickup,dropoff,amount_cents,notes,created_at) VALUES(?,?,?,?,?,?,?,?)")
-    .bind(id, cl.id, f.trip_date, f.pickup, f.dropoff, f.amount, f.notes, now()).run();
+  await c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,trip_time,pickup,dropoff,amount_cents,notes,created_at) VALUES(?,?,?,?,?,?,?,?,?)")
+    .bind(id, cl.id, f.trip_date, f.trip_time, f.pickup, f.dropoff, f.amount, f.notes, now()).run();
   if (b.notify !== false) {
     const t = await clientTotals(c.env.DB, cl.id);
     await notify(c.env, c.executionCtx, cl, "Nueva carrera registrada", `${f.trip_date}: de ${f.pickup} a ${f.dropoff} por ${eur(f.amount)}. Saldo pendiente: ${eur(t.pending_cents)}.`);
@@ -327,7 +339,7 @@ app.patch("/api/admin/trips/:id", async (c) => {
   const id = c.req.param("id");
   const paid = await c.env.DB.prepare("SELECT COALESCE(SUM(amount_cents),0) p FROM allocations WHERE trip_id=?").bind(id).first<{ p: number }>();
   if (f.amount < paid!.p) return err(c, "El importe no puede ser menor a lo ya pagado de esta carrera");
-  await c.env.DB.prepare("UPDATE trips SET trip_date=?,pickup=?,dropoff=?,amount_cents=?,notes=? WHERE id=?").bind(f.trip_date, f.pickup, f.dropoff, f.amount, f.notes, id).run();
+  await c.env.DB.prepare("UPDATE trips SET trip_date=?,trip_time=?,pickup=?,dropoff=?,amount_cents=?,notes=? WHERE id=?").bind(f.trip_date, f.trip_time, f.pickup, f.dropoff, f.amount, f.notes, id).run();
   return c.json({ ok: true });
 });
 app.delete("/api/admin/trips/:id", async (c) => {
@@ -373,6 +385,95 @@ app.delete("/api/admin/payments/:id", async (c) => {
   return c.json({ ok: true });
 });
 
+// ---- Gastos del vehículo (solo admin)
+const EXP_CATS = ["Combustible", "Mantenimiento", "Peajes", "Parking", "Seguro", "Lavado", "Otros"];
+app.get("/api/admin/expenses", async (c) => {
+  const month = str(c.req.query("month"), 7) || today().slice(0, 7);
+  if (!/^\d{4}-\d{2}$/.test(month)) return err(c, "Mes inválido");
+  const r = await c.env.DB.prepare("SELECT id,exp_date,category,amount_cents,note FROM expenses WHERE exp_date LIKE ?||'%' ORDER BY exp_date DESC, created_at DESC").bind(month).all<{ category: string; amount_cents: number }>();
+  const by: Record<string, number> = {};
+  for (const e of r.results) by[e.category] = (by[e.category] || 0) + e.amount_cents;
+  return c.json({ month, items: r.results, by_category: by, total_cents: r.results.reduce((a, e) => a + e.amount_cents, 0), categories: EXP_CATS });
+});
+app.post("/api/admin/expenses", async (c) => {
+  const b = await c.req.json().catch(() => ({}));
+  const exp_date = str(b.exp_date, 10) || today(), category = EXP_CATS.includes(str(b.category, 30)) ? str(b.category, 30) : "Otros", amount = cents(b.amount), note = str(b.note, 300) || null;
+  if (!isDate(exp_date) || !(amount > 0)) return err(c, "Revisa fecha e importe");
+  const id = crypto.randomUUID();
+  await c.env.DB.prepare("INSERT INTO expenses(id,exp_date,category,amount_cents,note,created_at) VALUES(?,?,?,?,?,?)").bind(id, exp_date, category, amount, note, now()).run();
+  return c.json({ id });
+});
+app.delete("/api/admin/expenses/:id", async (c) => {
+  await c.env.DB.prepare("DELETE FROM expenses WHERE id=?").bind(c.req.param("id")).run();
+  return c.json({ ok: true });
+});
+
+// ---- Solicitudes de carrera (el cliente pide, el admin acepta con importe o rechaza)
+async function admins(db: D1Database) {
+  return (await db.prepare("SELECT id,name,email,phone,notify_email,0 notify_whatsapp FROM users WHERE role='admin' AND active=1").all<Target>()).results;
+}
+app.post("/api/client/requests", async (c) => {
+  const u = c.get("user");
+  if (u.role !== "client") return err(c, "Solo clientes", 403);
+  const b = await c.req.json().catch(() => ({}));
+  const req_date = str(b.req_date, 10) || today(), tt = str(b.req_time, 5), req_time = /^\d{2}:\d{2}$/.test(tt) ? tt : null;
+  const pickup = str(b.pickup), dropoff = str(b.dropoff), note = str(b.note, 300) || null;
+  if (!isDate(req_date) || !pickup || !dropoff) return err(c, "Indica fecha, recogida y destino");
+  if (req_date < today()) return err(c, "La fecha no puede ser pasada");
+  const open = await c.env.DB.prepare("SELECT COUNT(*) n FROM trip_requests WHERE client_id=? AND status='pending'").bind(u.id).first<{ n: number }>();
+  if (open!.n >= 5) return err(c, "Tienes 5 solicitudes pendientes. Espera a que las respondan.", 429);
+  const id = crypto.randomUUID();
+  await c.env.DB.prepare("INSERT INTO trip_requests(id,client_id,req_date,req_time,pickup,dropoff,note,created_at) VALUES(?,?,?,?,?,?,?,?)")
+    .bind(id, u.id, req_date, req_time, pickup, dropoff, note, now()).run();
+  for (const a of await admins(c.env.DB))
+    await notify(c.env, c.executionCtx, a, "Nueva solicitud de carrera", `${u.name} pide carrera el ${req_date}${req_time ? " a las " + req_time : ""}: de ${pickup} a ${dropoff}.`);
+  return c.json({ id });
+});
+app.get("/api/client/requests", async (c) => {
+  const u = c.get("user");
+  if (u.role !== "client") return err(c, "Solo clientes", 403);
+  const r = await c.env.DB.prepare("SELECT id,req_date,req_time,pickup,dropoff,note,status,answer_note,created_at FROM trip_requests WHERE client_id=? ORDER BY created_at DESC LIMIT 50").bind(u.id).all();
+  return c.json({ items: r.results });
+});
+app.post("/api/client/requests/:id/cancel", async (c) => {
+  const u = c.get("user");
+  const r = await c.env.DB.prepare("UPDATE trip_requests SET status='cancelled', answered_at=? WHERE id=? AND client_id=? AND status='pending'").bind(now(), c.req.param("id"), u.id).run();
+  if (!r.meta.changes) return err(c, "No se puede cancelar", 409);
+  return c.json({ ok: true });
+});
+app.get("/api/admin/requests", async (c) => {
+  const st = c.req.query("status") === "all" ? "" : "WHERE r.status='pending'";
+  const r = await c.env.DB.prepare(`SELECT r.*, u.name client_name FROM trip_requests r JOIN users u ON u.id=r.client_id ${st} ORDER BY r.status='pending' DESC, r.req_date, r.req_time LIMIT 100`).all();
+  return c.json({ items: r.results });
+});
+app.post("/api/admin/requests/:id/accept", async (c) => {
+  const b = await c.req.json().catch(() => ({}));
+  const amount = cents(b.amount);
+  if (!(amount > 0)) return err(c, "Indica el importe de la carrera");
+  const r = await c.env.DB.prepare("SELECT * FROM trip_requests WHERE id=? AND status='pending'").bind(c.req.param("id")).first<Record<string, string>>();
+  if (!r) return err(c, "La solicitud ya no está pendiente", 409);
+  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND active=1").bind(r.client_id).first<Target>();
+  if (!cl) return err(c, "Cliente inactivo", 409);
+  const tid = crypto.randomUUID(), note = str(b.note, 300) || null;
+  await c.env.DB.batch([
+    c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,trip_time,pickup,dropoff,amount_cents,notes,created_at) VALUES(?,?,?,?,?,?,?,?,?)").bind(tid, r.client_id, r.req_date, r.req_time, r.pickup, r.dropoff, amount, r.note, now()),
+    c.env.DB.prepare("UPDATE trip_requests SET status='accepted', trip_id=?, answer_note=?, answered_at=? WHERE id=?").bind(tid, note, now(), r.id),
+  ]);
+  const t = await clientTotals(c.env.DB, cl.id);
+  await notify(c.env, c.executionCtx, cl, "Carrera confirmada", `Tu carrera del ${r.req_date}${r.req_time ? " a las " + r.req_time : ""} de ${r.pickup} a ${r.dropoff} está confirmada por ${eur(amount)}.${note ? " " + note : ""} Saldo pendiente: ${eur(t.pending_cents)}.`);
+  return c.json({ trip_id: tid });
+});
+app.post("/api/admin/requests/:id/reject", async (c) => {
+  const b = await c.req.json().catch(() => ({}));
+  const note = str(b.note, 300) || null;
+  const r = await c.env.DB.prepare("SELECT * FROM trip_requests WHERE id=? AND status='pending'").bind(c.req.param("id")).first<Record<string, string>>();
+  if (!r) return err(c, "La solicitud ya no está pendiente", 409);
+  await c.env.DB.prepare("UPDATE trip_requests SET status='rejected', answer_note=?, answered_at=? WHERE id=?").bind(note, now(), r.id).run();
+  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=?").bind(r.client_id).first<Target>();
+  if (cl) await notify(c.env, c.executionCtx, cl, "Carrera no disponible", `No puedo hacer la carrera del ${r.req_date}${r.req_time ? " a las " + r.req_time : ""} de ${r.pickup} a ${r.dropoff}.${note ? " " + note : ""}`);
+  return c.json({ ok: true });
+});
+
 // ---- Admin: lugares frecuentes (autocompletar)
 app.get("/api/admin/places", async (c) => {
   const r = await c.env.DB.prepare(
@@ -408,7 +509,7 @@ app.get("*", (c) => {
     "Cache-Control": html ? "no-cache" : "public, max-age=300",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "same-origin",
-    ...(html ? { "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY" } : {}),
+    ...(html ? { "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY" } : {}),
   } });
 });
 
