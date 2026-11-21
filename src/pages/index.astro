@@ -1391,8 +1391,10 @@ const schema = [
     background: transparent;
   }
   /* En la portada las bandas dejan ver un poco las cintas al hacer scroll. */
+  /* 0,72 (antes 0,84) desde el 21/11/2026: deja ver la cinta cuando guía
+     hacia los botones de agendar de estas secciones. */
   .con-cintas :global(.banda) {
-    background: rgb(10 14 26 / 0.84);
+    background: rgb(10 14 26 / 0.72);
   }
   .hero-luz {
     position: absolute;
