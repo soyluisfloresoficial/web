@@ -11,6 +11,7 @@ type Env = {
   WHATSAPP_PHONE_ID?: string;
   WHATSAPP_TEMPLATE?: string;
   REMINDER_DAYS?: string;
+  GEO_BASE?: string;
 };
 type User = {
   id: string; email: string; name: string; phone: string | null; role: "admin" | "client";
@@ -43,6 +44,10 @@ const err = (c: C, msg: string, status = 400) => c.json({ error: msg }, status a
 const str = (v: unknown, max = 300) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const cents = (v: unknown) => { const n = Math.round(Number(v) * 100); return Number.isFinite(n) ? n : NaN; };
 const isDate = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s));
+const coord = (v: unknown, max: number) => { const n = Number(v); return v !== "" && v !== null && v !== undefined && Number.isFinite(n) && Math.abs(n) <= max ? Math.round(n * 1e6) / 1e6 : null; };
+const coords = (b: Record<string, unknown>) => ({
+  pickup_lat: coord(b.pickup_lat, 90), pickup_lng: coord(b.pickup_lng, 180), dropoff_lat: coord(b.dropoff_lat, 90), dropoff_lng: coord(b.dropoff_lng, 180),
+});
 const phoneE164 = (p: string | null) => (p ? p.replace(/[^\d]/g, "") : "");
 
 async function createSession(c: C, userId: string) {
@@ -193,7 +198,7 @@ app.post("/api/notifications/read", async (c) => {
 });
 
 // ---- Consultas compartidas
-const TRIP_SQL = `SELECT t.id,t.client_id,t.trip_date,t.trip_time,t.pickup,t.dropoff,t.amount_cents,t.notes,
+const TRIP_SQL = `SELECT t.id,t.client_id,t.trip_date,t.trip_time,t.pickup,t.pickup_lat,t.pickup_lng,t.dropoff_lat,t.dropoff_lng,t.dropoff,t.amount_cents,t.notes,
   COALESCE((SELECT SUM(a.amount_cents) FROM allocations a WHERE a.trip_id=t.id),0) paid_cents,
   (SELECT MAX(p.pay_date) FROM allocations a JOIN payments p ON p.id=a.payment_id WHERE a.trip_id=t.id) last_pay_date
   FROM trips t`;
@@ -349,7 +354,7 @@ function tripFields(b: Record<string, unknown>) {
   const tt = str(b.trip_time, 5), trip_time = /^\d{2}:\d{2}$/.test(tt) ? tt : null;
   const trip_date = str(b.trip_date, 10) || today(), pickup = str(b.pickup), dropoff = str(b.dropoff), amount = cents(b.amount), notes = str(b.notes, 500) || null;
   if (!isDate(trip_date) || !pickup || !dropoff || !(amount > 0)) return null;
-  return { trip_date, trip_time, pickup, dropoff, amount, notes };
+  return { trip_date, trip_time, pickup, dropoff, amount, notes, ...coords(b) };
 }
 app.post("/api/admin/trips", async (c) => {
   const b = await c.req.json().catch(() => ({}));
@@ -357,8 +362,8 @@ app.post("/api/admin/trips", async (c) => {
   const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(str(b.client_id, 60)).first<Target>();
   if (!f || !cl) return err(c, "Revisa cliente, fecha, lugares e importe");
   const id = crypto.randomUUID();
-  await c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,trip_time,pickup,dropoff,amount_cents,notes,created_at) VALUES(?,?,?,?,?,?,?,?,?)")
-    .bind(id, cl.id, f.trip_date, f.trip_time, f.pickup, f.dropoff, f.amount, f.notes, now()).run();
+  await c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,trip_time,pickup,dropoff,amount_cents,notes,created_at,pickup_lat,pickup_lng,dropoff_lat,dropoff_lng) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)")
+    .bind(id, cl.id, f.trip_date, f.trip_time, f.pickup, f.dropoff, f.amount, f.notes, now(), f.pickup_lat, f.pickup_lng, f.dropoff_lat, f.dropoff_lng).run();
   if (b.notify !== false) {
     const t = await clientTotals(c.env.DB, cl.id);
     await notify(c.env, c.executionCtx, cl, "Nueva carrera registrada", `${f.trip_date}: de ${f.pickup} a ${f.dropoff} por ${eur(f.amount)}. Saldo pendiente: ${eur(t.pending_cents)}.`);
@@ -371,7 +376,7 @@ app.patch("/api/admin/trips/:id", async (c) => {
   const id = c.req.param("id");
   const paid = await c.env.DB.prepare("SELECT COALESCE(SUM(amount_cents),0) p FROM allocations WHERE trip_id=?").bind(id).first<{ p: number }>();
   if (f.amount < paid!.p) return err(c, "El importe no puede ser menor a lo ya pagado de esta carrera");
-  await c.env.DB.prepare("UPDATE trips SET trip_date=?,trip_time=?,pickup=?,dropoff=?,amount_cents=?,notes=? WHERE id=?").bind(f.trip_date, f.trip_time, f.pickup, f.dropoff, f.amount, f.notes, id).run();
+  await c.env.DB.prepare("UPDATE trips SET trip_date=?,trip_time=?,pickup=?,dropoff=?,amount_cents=?,notes=?,pickup_lat=?,pickup_lng=?,dropoff_lat=?,dropoff_lng=? WHERE id=?").bind(f.trip_date, f.trip_time, f.pickup, f.dropoff, f.amount, f.notes, f.pickup_lat, f.pickup_lng, f.dropoff_lat, f.dropoff_lng, id).run();
   return c.json({ ok: true });
 });
 app.delete("/api/admin/trips/:id", async (c) => {
@@ -454,9 +459,9 @@ app.post("/api/client/requests", async (c) => {
   if (req_date < today()) return err(c, "La fecha no puede ser pasada");
   const open = await c.env.DB.prepare("SELECT COUNT(*) n FROM trip_requests WHERE client_id=? AND status='pending'").bind(u.id).first<{ n: number }>();
   if (open!.n >= 5) return err(c, "Tienes 5 solicitudes pendientes. Espera a que las respondan.", 429);
-  const id = crypto.randomUUID();
-  await c.env.DB.prepare("INSERT INTO trip_requests(id,client_id,req_date,req_time,pickup,dropoff,note,created_at) VALUES(?,?,?,?,?,?,?,?)")
-    .bind(id, u.id, req_date, req_time, pickup, dropoff, note, now()).run();
+  const id = crypto.randomUUID(), k = coords(b);
+  await c.env.DB.prepare("INSERT INTO trip_requests(id,client_id,req_date,req_time,pickup,dropoff,note,created_at,pickup_lat,pickup_lng,dropoff_lat,dropoff_lng) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
+    .bind(id, u.id, req_date, req_time, pickup, dropoff, note, now(), k.pickup_lat, k.pickup_lng, k.dropoff_lat, k.dropoff_lng).run();
   for (const a of await admins(c.env.DB))
     await notify(c.env, c.executionCtx, a, "Nueva solicitud de carrera", `${u.name} pide carrera el ${req_date}${req_time ? " a las " + req_time : ""}: de ${pickup} a ${dropoff}.`);
   return c.json({ id });
@@ -464,7 +469,7 @@ app.post("/api/client/requests", async (c) => {
 app.get("/api/client/requests", async (c) => {
   const u = c.get("user");
   if (u.role !== "client") return err(c, "Solo clientes", 403);
-  const r = await c.env.DB.prepare("SELECT id,req_date,req_time,pickup,dropoff,note,status,answer_note,created_at FROM trip_requests WHERE client_id=? ORDER BY created_at DESC LIMIT 50").bind(u.id).all();
+  const r = await c.env.DB.prepare("SELECT id,req_date,req_time,pickup,dropoff,note,status,answer_note,created_at,pickup_lat,pickup_lng,dropoff_lat,dropoff_lng FROM trip_requests WHERE client_id=? ORDER BY created_at DESC LIMIT 50").bind(u.id).all();
   return c.json({ items: r.results });
 });
 app.post("/api/client/requests/:id/cancel", async (c) => {
@@ -488,7 +493,7 @@ app.post("/api/admin/requests/:id/accept", async (c) => {
   if (!cl) return err(c, "Cliente inactivo", 409);
   const tid = crypto.randomUUID(), note = str(b.note, 300) || null;
   await c.env.DB.batch([
-    c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,trip_time,pickup,dropoff,amount_cents,notes,created_at) VALUES(?,?,?,?,?,?,?,?,?)").bind(tid, r.client_id, r.req_date, r.req_time, r.pickup, r.dropoff, amount, r.note, now()),
+    c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,trip_time,pickup,dropoff,amount_cents,notes,created_at,pickup_lat,pickup_lng,dropoff_lat,dropoff_lng) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)").bind(tid, r.client_id, r.req_date, r.req_time, r.pickup, r.dropoff, amount, r.note, now(), r.pickup_lat ?? null, r.pickup_lng ?? null, r.dropoff_lat ?? null, r.dropoff_lng ?? null),
     c.env.DB.prepare("UPDATE trip_requests SET status='accepted', trip_id=?, answer_note=?, answered_at=? WHERE id=?").bind(tid, note, now(), r.id),
   ]);
   const t = await clientTotals(c.env.DB, cl.id);
@@ -552,6 +557,93 @@ app.post("/api/invite/:token", async (c) => {
   return c.json({ ok: true });
 });
 
+// ---- Direcciones y mapa (OpenStreetMap vía Photon). Pasa por el servidor: el proveedor no ve la IP ni la cuenta del usuario.
+type PhotonF = { properties: Record<string, string>; geometry: { coordinates: [number, number] } };
+function photonLabel(p: Record<string, string>) {
+  const street = p.street ? `${p.street}${p.housenumber ? " " + p.housenumber : ""}` : "";
+  const main = p.name && p.name !== p.street ? p.name : street || p.name || p.locality || p.city || "";
+  const rest = [p.name && p.name !== p.street && street ? street : "", p.city || p.town || p.village || p.locality, p.state && p.state !== (p.city || "") ? p.state : "", p.countrycode !== "ES" ? p.country : ""].filter(Boolean);
+  return { label: main, sub: [...new Set(rest)].join(", ") };
+}
+async function photon(c: C, path: string) {
+  const url = (c.env.GEO_BASE || "https://photon.komoot.io") + path;
+  const cache = (caches as unknown as { default: Cache }).default, key = new Request(url);
+  let r = await cache.match(key);
+  if (!r) {
+    const up = await fetch(url, { headers: { "User-Agent": "CarrerasApp/1.0 (gestion privada de carreras)", Accept: "application/json" } });
+    if (!up.ok) throw new Error("geo " + up.status);
+    r = new Response(up.body, { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=86400" } });
+    c.executionCtx.waitUntil(cache.put(key, r.clone()));
+  }
+  const j = (await r.json()) as { features: PhotonF[] };
+  return j.features.map((f) => { const l = photonLabel(f.properties); return { ...l, address: [l.label, l.sub].filter(Boolean).join(", "), lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] }; });
+}
+app.use("/api/geo/*", auth as never);
+app.get("/api/geo/search", async (c) => {
+  const q = str(c.req.query("q"), 120);
+  if (q.length < 3) return c.json({ items: [] });
+  const lat = coord(c.req.query("lat"), 90), lng = coord(c.req.query("lng"), 180);
+  const bias = lat !== null && lng !== null ? `&lat=${lat.toFixed(3)}&lon=${lng.toFixed(3)}&location_bias_scale=0.4` : "";
+  try { return c.json({ items: await photon(c, `/api/?q=${encodeURIComponent(q)}&limit=6${bias}`) }); }
+  catch { return err(c, "El buscador de direcciones no responde. Escríbela a mano.", 502); }
+});
+app.get("/api/geo/reverse", async (c) => {
+  const lat = coord(c.req.query("lat"), 90), lng = coord(c.req.query("lng"), 180);
+  if (lat === null || lng === null) return err(c, "Coordenadas inválidas");
+  try { const it = await photon(c, `/reverse?lat=${lat.toFixed(5)}&lon=${lng.toFixed(5)}&limit=1`); return c.json({ item: it[0] ? { ...it[0], lat, lng } : { label: `${lat.toFixed(5)}, ${lng.toFixed(5)}`, sub: "", address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`, lat, lng } }); }
+  catch { return err(c, "No pude obtener la dirección de ese punto", 502); }
+});
+
+// ---- Lugares guardados (Casa, Trabajo…) y recientes de cada usuario
+app.use("/api/places", auth as never);
+app.use("/api/places/*", auth as never);
+app.get("/api/places", async (c) => {
+  const u = c.get("user");
+  const saved = (await c.env.DB.prepare("SELECT id,label,address,lat,lng FROM saved_places WHERE user_id=? ORDER BY created_at").bind(u.id).all()).results;
+  const recentSql = u.role === "admin"
+    ? `SELECT address,lat,lng FROM (SELECT pickup address,pickup_lat lat,pickup_lng lng,created_at FROM trips UNION ALL SELECT dropoff,dropoff_lat,dropoff_lng,created_at FROM trips) GROUP BY address ORDER BY COUNT(*) DESC, MAX(created_at) DESC LIMIT 8`
+    : `SELECT address,lat,lng FROM (SELECT pickup address,pickup_lat lat,pickup_lng lng,created_at FROM trips WHERE client_id=?1 UNION ALL SELECT dropoff,dropoff_lat,dropoff_lng,created_at FROM trips WHERE client_id=?1
+        UNION ALL SELECT pickup,pickup_lat,pickup_lng,created_at FROM trip_requests WHERE client_id=?1 UNION ALL SELECT dropoff,dropoff_lat,dropoff_lng,created_at FROM trip_requests WHERE client_id=?1) GROUP BY address ORDER BY MAX(created_at) DESC LIMIT 6`;
+  const st = c.env.DB.prepare(recentSql);
+  const recent = (await (u.role === "admin" ? st : st.bind(u.id)).all()).results;
+  return c.json({ saved, recent });
+});
+app.post("/api/places", async (c) => {
+  const u = c.get("user");
+  const b = await c.req.json().catch(() => ({}));
+  const label = str(b.label, 30), address = str(b.address, 300);
+  if (!label || !address) return err(c, "Indica nombre y dirección");
+  const n = await c.env.DB.prepare("SELECT COUNT(*) n FROM saved_places WHERE user_id=?").bind(u.id).first<{ n: number }>();
+  if (n!.n >= 12) return err(c, "Máximo 12 lugares guardados");
+  const id = crypto.randomUUID();
+  await c.env.DB.prepare("INSERT INTO saved_places(id,user_id,label,address,lat,lng,created_at) VALUES(?,?,?,?,?,?,?)").bind(id, u.id, label, address, coord(b.lat, 90), coord(b.lng, 180), now()).run();
+  return c.json({ id });
+});
+app.delete("/api/places/:id", async (c) => {
+  await c.env.DB.prepare("DELETE FROM saved_places WHERE id=? AND user_id=?").bind(c.req.param("id"), c.get("user").id).run();
+  return c.json({ ok: true });
+});
+
+// ---- Tarifa orientativa (la define el admin; el cliente solo la ve si el admin lo activa)
+async function getSettings(db: D1Database) {
+  const rows = (await db.prepare("SELECT key,value FROM settings").all<{ key: string; value: string }>()).results;
+  const m = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  return { base_eur: Number(m.base_eur ?? 0), per_km_eur: Number(m.per_km_eur ?? 0), min_eur: Number(m.min_eur ?? 0), road_factor: Number(m.road_factor ?? 1.3), show_estimate: m.show_estimate === "1" };
+}
+app.use("/api/settings", auth as never);
+app.get("/api/settings", async (c) => {
+  const s = await getSettings(c.env.DB);
+  if (c.get("user").role !== "admin" && !s.show_estimate) return c.json({ show_estimate: false, road_factor: s.road_factor });
+  return c.json(s);
+});
+app.put("/api/admin/settings", async (c) => {
+  const b = await c.req.json().catch(() => ({}));
+  const num = (v: unknown, max: number) => { const n = Number(String(v ?? "").replace(",", ".")); return Number.isFinite(n) && n >= 0 && n <= max ? String(Math.round(n * 100) / 100) : "0"; };
+  const vals: [string, string][] = [["base_eur", num(b.base_eur, 1000)], ["per_km_eur", num(b.per_km_eur, 100)], ["min_eur", num(b.min_eur, 1000)], ["road_factor", String(Math.min(2, Math.max(1, Number(b.road_factor) || 1.3)))], ["show_estimate", b.show_estimate ? "1" : "0"]];
+  await c.env.DB.batch(vals.map(([k, v]) => c.env.DB.prepare("INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(k, v)));
+  return c.json(await getSettings(c.env.DB));
+});
+
 // ---- Admin: lugares frecuentes (autocompletar)
 app.get("/api/admin/places", async (c) => {
   const r = await c.env.DB.prepare(
@@ -587,7 +679,7 @@ app.get("*", (c) => {
     "Cache-Control": html ? "no-cache" : "public, max-age=300",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "same-origin",
-    ...(html ? { "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY" } : {}),
+    ...(html ? { "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY" } : {}),
   } });
 });
 

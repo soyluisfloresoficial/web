@@ -7,5 +7,7 @@ for (const f of readdirSync("public")) {
   if (!types[ext]) continue;
   files["/" + f] = { type: types[ext], body: readFileSync("public/" + f, "utf8") };
 }
+for (const [pub, src, type] of [["/vendor/leaflet.js", "node_modules/leaflet/dist/leaflet.js", types.js], ["/vendor/leaflet.css", "node_modules/leaflet/dist/leaflet.css", types.css]])
+  files[pub] = { type, body: readFileSync(src, "utf8") };
 writeFileSync("src/static.ts", "// Generado por scripts/embed.mjs. No editar a mano.\nexport const FILES: Record<string, { type: string; body: string }> = " + JSON.stringify(files) + ";\n");
 console.log("Archivos embebidos:", Object.keys(files).join(", "));

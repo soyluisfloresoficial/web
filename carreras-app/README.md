@@ -12,6 +12,13 @@ Stack: Cloudflare Worker + D1 (SQLite) + Hono. Correo con Resend. WhatsApp con l
 - Informe mensual por cliente en Inicio, estado de cuenta imprimible o en PDF (tú y el cliente), buscador de clientes y autocompletado de lugares frecuentes.
 - Contraseñas con PBKDF2, sesión por cookie HttpOnly, bloqueo tras 8 intentos fallidos en 15 minutos.
 
+## Direcciones y mapas
+- Sugerencias de direcciones y «Mi ubicación» con Photon (datos de OpenStreetMap), consultado desde el servidor (el proveedor no ve la IP del cliente). Sin clave ni costo; uso razonable.
+- Mapa con Leaflet (incluido en la app) y teselas de tile.openstreetmap.org con su atribución. Si el uso crece mucho, cambia a un proveedor de teselas con plan (MapTiler, Stadia…).
+- Se guardan coordenadas de recogida y destino; distancia por carretera estimada = línea recta × factor (1,3 por defecto).
+- Tarifa orientativa en «Mi cuenta» (bajada de bandera, € por km, mínimo). Sugiere el importe; el precio final lo decides tú. Opcionalmente se muestra al cliente.
+- En local, el simulador no tiene salida a internet en algunos entornos: `node scripts/geo-dev-proxy.mjs` y `GEO_BASE=http://127.0.0.1:8798` en `.dev.vars`.
+
 ## Puesta en marcha (una vez)
 1. `cd carreras-app && npm install`
 2. `npx wrangler login`

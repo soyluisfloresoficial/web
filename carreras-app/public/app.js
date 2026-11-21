@@ -51,6 +51,12 @@ const P = {
   copy: "M9 9h11v11H9zM5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1",
   mail: "M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6",
   share: "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13",
+  map: "M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14",
+  crosshair: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM22 12h-4M6 12H2M12 6V2M12 22v-4",
+  star: "M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z",
+  swap: "M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4",
+  nav: "M3 11 22 2l-9 19-2-8z",
+  repeat: "M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3",
   alert: "M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z",
 };
 const ic = (n, extra = "") => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" ${extra}><path d="${P[n]}"/></svg>`;
@@ -64,11 +70,12 @@ async function api(path, method = "GET", body) {
   return j;
 }
 const guard = (fn) => async (...a) => { try { await fn(...a); } catch (e) { toast(e.message); } };
-function modal(html, onMount) {
+function modal(html, onMount, onClose) {
   const m = document.createElement("div");
   m.className = "modal";
   m.innerHTML = `<div role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
-  m.addEventListener("click", (e) => { if (e.target === m) m.remove(); });
+  m.close = () => { m.remove(); onClose && onClose(); };
+  m.addEventListener("click", (e) => { if (e.target === m) m.close(); });
   document.body.appendChild(m);
   m.querySelector("input,select")?.focus({ preventScroll: true });
   onMount && onMount(m);
@@ -87,7 +94,9 @@ async function liveCheck(force) {
     const r = await api("/pulse");
     const changed = LIVE.sig !== null && r.sig !== LIVE.sig;
     LIVE.sig = r.sig; LIVE.at = new Date();
-    if (changed && !force) { const y = scrollY; await render(true); scrollTo(0, y); toast("Hay novedades: datos actualizados"); }
+    const typing = S.tab === "pedir" || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "");
+    if (changed && !force && typing) { LIVE.sig = null; LIVE.pendingSig = r.sig; }
+    else if (changed && !force) { const y = scrollY; await render(true); scrollTo(0, y); toast("Hay novedades: datos actualizados"); }
     else if (r.unread !== S.unread) { S.unread = r.unread; }
     liveStamp();
   } catch { /* sin conexión: se reintenta en el siguiente ciclo */ } finally { LIVE.busy = false; }
@@ -191,7 +200,19 @@ function accountModal() {
     <form id="pw"><label class="f">Contraseña actual</label><input name="current" type="password" autocomplete="current-password" required>
     <label class="f">Nueva contraseña (mínimo 10 caracteres)</label><input name="next" type="password" minlength="10" autocomplete="new-password" required>
     <button class="block" style="margin-top:14px">${ic("lock")}Cambiar contraseña</button></form>
-    <button class="danger block" id="out" style="margin-top:10px">${ic("logout")}Cerrar sesión</button>`, (m) => {
+    ${S.me.role === "admin" ? `<form id="tar" class="card" style="margin-top:14px"><b>${ic("euro")} Tarifa orientativa</b><p class="mut" style="margin:4px 0 0">Sirve para sugerir el importe según los km. Tú decides el precio final.</p>
+      <div class="two"><div><label class="f">Bajada de bandera (€)</label><input name="base_eur" type="number" step="0.01" min="0" inputmode="decimal"></div><div><label class="f">Precio por km (€)</label><input name="per_km_eur" type="number" step="0.01" min="0" inputmode="decimal"></div></div>
+      <div class="two"><div><label class="f">Mínimo por carrera (€)</label><input name="min_eur" type="number" step="0.01" min="0" inputmode="decimal"></div><div><label class="f">Factor carretera</label><input name="road_factor" type="number" step="0.05" min="1" max="2" inputmode="decimal"></div></div>
+      <label class="check"><input type="checkbox" name="show_estimate">Mostrar el precio orientativo al cliente al pedir</label>
+      <button class="ghost block" style="margin-top:10px">${ic("check")}Guardar tarifa</button></form>` : ""}
+    <button class="danger block" id="out" style="margin-top:10px">${ic("logout")}Cerrar sesión</button>`, async (m) => {
+    const tar = m.querySelector("#tar");
+    if (tar) {
+      const st = await api("/settings");
+      for (const k of ["base_eur", "per_km_eur", "min_eur", "road_factor"]) tar.querySelector(`[name=${k}]`).value = st[k] ?? "";
+      tar.querySelector("[name=show_estimate]").checked = !!st.show_estimate;
+      tar.onsubmit = guard(async (e) => { e.preventDefault(); const b = formData(tar); b.show_estimate = !!b.show_estimate; S.settings = await api("/admin/settings", "PUT", b); toast("Tarifa guardada"); });
+    }
     m.querySelector("#pw").onsubmit = guard(async (e) => { e.preventDefault(); await api("/password", "POST", formData(e.target)); m.remove(); toast("Contraseña actualizada"); });
     m.querySelector("#out").onclick = guard(async () => { await api("/logout", "POST", {}); S.me = null; m.remove(); render(); });
   });
@@ -218,6 +239,8 @@ function tripCard(t, opts = {}) {
       ${t.pending_cents === 0 && t.last_pay_date ? `<span class="mut">Pagada el ${fdate(t.last_pay_date)}</span>` : ""}
       <span class="grow"></span>
       ${opts.admin ? `<button class="ghost sm" data-edit="${t.id}">${ic("edit")}Editar</button><button class="danger sm" data-del="${t.id}" aria-label="Borrar">${ic("trash")}</button>` : ""}</div>` : ""}
+    ${opts.admin ? `<div class="ft">${navButtons(t)}</div>` : ""}
+    ${opts.repeat ? `<div class="ft"><button class="ghost sm" data-again="${t.id}">${ic("repeat")}Pedir de nuevo</button><button class="ghost sm" data-back="${t.id}">${ic("swap")}Pedir la vuelta</button></div>` : ""}
   </div>`;
 }
 const payItem = (p, admin) => `<div class="li" style="cursor:default"><div class="av" style="background:var(--ok-bg);color:var(--ok)">${ic("check")}</div>
@@ -275,7 +298,8 @@ async function clienteInicio(v) {
       </div></div>
     ${pendReq.length ? `<div class="sec"><h2>Solicitudes en espera</h2></div><div class="card flush">${pendReq.map((r) => `<div class="li" style="cursor:default"><div class="av" style="background:var(--warn-bg);color:var(--warn)">${ic("clock")}</div><div class="grow"><div class="name">${esc(r.pickup)} → ${esc(r.dropoff)}</div><div class="mut">${fdateS(r.req_date)}${r.req_time ? " · " + esc(r.req_time) : ""}</div></div>${reqChip(r.status)}</div>`).join("")}</div>` : ""}
     <div class="sec"><h2>Por pagar</h2>${t.items.length ? `<a id="all">Ver todas</a>` : ""}</div>
-    <div class="card">${t.items.map((x) => tripCard(x)).join("") || empty("check", "Nada pendiente", "Todas tus carreras están pagadas.")}</div>`;
+    <div class="card">${t.items.map((x) => tripCard(x, { repeat: true })).join("") || empty("check", "Nada pendiente", "Todas tus carreras están pagadas.")}</div>`;
+  bindRepeat(v, t.items);
   v.querySelector("#pedir").onclick = () => go("pedir");
   v.querySelector("#all")?.addEventListener("click", () => { cStatus = "all"; go("carreras"); });
   v.querySelector("#pdf").onclick = guard(async () => {
@@ -289,16 +313,26 @@ async function clienteCarreras(v) {
   v.innerHTML = `<div class="sec" style="margin-top:8px"><h2>Mis carreras</h2><span class="mut">${plural(t.items.length, "carrera", "carreras")}</span></div>`;
   v.appendChild(seg(STATUS_OPTS, cStatus, (s) => { cStatus = s; render(); }));
   const c = document.createElement("div"); c.className = "card";
-  c.innerHTML = t.items.map((x) => tripCard(x)).join("") || empty("car", "Sin carreras", "Aquí verás cada viaje con su recogida, destino e importe.");
+  c.innerHTML = t.items.map((x) => tripCard(x, { repeat: true })).join("") || empty("car", "Sin carreras", "Aquí verás cada viaje con su recogida, destino e importe.");
   v.appendChild(c);
+  bindRepeat(v, t.items);
+}
+function bindRepeat(v, trips) {
+  const pick = (t, back) => back
+    ? { pickup: t.dropoff, pickup_lat: t.dropoff_lat, pickup_lng: t.dropoff_lng, dropoff: t.pickup, dropoff_lat: t.pickup_lat, dropoff_lng: t.pickup_lng }
+    : { pickup: t.pickup, pickup_lat: t.pickup_lat, pickup_lng: t.pickup_lng, dropoff: t.dropoff, dropoff_lat: t.dropoff_lat, dropoff_lng: t.dropoff_lng };
+  v.querySelectorAll("[data-again],[data-back]").forEach((b) => (b.onclick = () => {
+    const t = trips.find((x) => x.id === (b.dataset.again || b.dataset.back));
+    S.prefill = pick(t, !!b.dataset.back); go("pedir");
+  }));
 }
 async function clientePedir(v) {
   const r = await api("/client/requests");
   v.innerHTML = `<div class="sec" style="margin-top:8px"><h2>Pedir una carrera</h2></div>
     <form class="card" id="f"><div class="two"><div><label class="f">Fecha</label><input type="date" name="req_date" min="${today()}" value="${today()}" required></div>
     <div><label class="f">Hora</label><input type="time" name="req_time"></div></div>
-    <label class="f">¿Dónde te busco?</label><input name="pickup" placeholder="Dirección o lugar de recogida" required>
-    <label class="f">¿A dónde vas?</label><input name="dropoff" placeholder="Destino" required>
+    ${routeFields(S.prefill || {})}
+    <div class="mut" id="geonote" style="margin-top:6px" hidden></div>
     <label class="f">Nota (opcional)</label><input name="note" placeholder="Ej.: llevo maleta, somos 3">
     <button class="acc block" style="margin-top:16px">${ic("send")}Enviar solicitud</button>
     <p class="mut" style="margin:10px 0 0">Te aviso cuando la confirme, con el importe.</p></form>
@@ -306,6 +340,17 @@ async function clientePedir(v) {
     <div class="card flush">${r.items.map((x) => `<div class="li" style="cursor:default"><div class="grow"><div class="name">${esc(x.pickup)} → ${esc(x.dropoff)}</div>
       <div class="mut">${fdateS(x.req_date)}${x.req_time ? " · " + esc(x.req_time) : ""}${x.answer_note ? " · " + esc(x.answer_note) : ""}</div></div>
       <div style="text-align:right">${reqChip(x.status)}${x.status === "pending" ? `<div><button class="danger sm" style="margin-top:6px" data-cancel="${x.id}">Cancelar</button></div>` : ""}</div></div>`).join("") || empty("inbox", "Sin solicitudes", "Cuando pidas una carrera aparecerá aquí.")}</div>`;
+  const pre = S.prefill; S.prefill = null;
+  const rt = await bindRoute(v.querySelector("#f"));
+  if (!pre || !pre.pickup) {
+    getPos().then(async (pos) => {
+      if (!pos || rt.get("pickup").address) return;
+      try {
+        rt.set("pickup", (await api(`/geo/reverse?lat=${pos.lat}&lng=${pos.lng}`)).item);
+        const n = v.querySelector("#geonote"); n.hidden = false; n.innerHTML = `${ic("crosshair")} Puse tu ubicación actual como recogida. Cámbiala si quieres.`;
+      } catch { /* sin dirección */ }
+    });
+  }
   v.querySelector("#f").onsubmit = guard(async (e) => {
     e.preventDefault();
     await api("/client/requests", "POST", formData(e.target));
@@ -340,6 +385,8 @@ async function adminInicio(v) {
       <div class="row"><div class="grow"><b>${esc(r.client_name)}</b><div class="mut">${fdateS(r.req_date)}${r.req_time ? " · " + esc(r.req_time) : ""}</div></div>${reqChip(r.status)}</div>
       <div class="route" style="margin-top:10px"><div class="rail"><i></i><s></s><u></u></div><div class="pl"><small>Recogida</small>${esc(r.pickup)}</div><div></div><div class="pl"><small>Destino</small>${esc(r.dropoff)}</div></div>
       ${r.note ? `<div class="mut" style="margin-top:8px">“${esc(r.note)}”</div>` : ""}
+      <div class="minimap" data-map="${r.id}"></div>
+      <div class="ft" style="margin-top:10px">${navButtons(r)}</div>
       <div class="acts"><button class="danger" data-rej="${r.id}">${ic("x")}Rechazar</button><button class="ok" data-acc="${r.id}">${ic("check")}Aceptar</button></div></div>`).join("")}` : ""}
     <div class="sec"><h2>Últimos 6 meses</h2></div><div class="card">${barChart(s.series)}</div>
     <div class="sec"><h2>Mayores deudas</h2><a id="vc">Ver clientes</a></div>
@@ -349,6 +396,7 @@ async function adminInicio(v) {
   v.querySelector("#vc").onclick = () => go("clientes");
   v.querySelectorAll("[data-acc]").forEach((b) => (b.onclick = () => acceptRequest(rq.items.find((r) => r.id === b.dataset.acc))));
   v.querySelectorAll("[data-rej]").forEach((b) => (b.onclick = () => rejectRequest(b.dataset.rej)));
+  v.querySelectorAll(".minimap[data-map]").forEach((el) => routeMap(el, rq.items.find((r) => r.id === el.dataset.map)));
   const load = guard(async () => {
     S.month = v.querySelector("#mes").value;
     const r = await api("/admin/report?month=" + S.month);
@@ -360,9 +408,13 @@ async function adminInicio(v) {
   v.querySelector("#mes").onchange = load;
   load();
 }
-function acceptRequest(r) {
+async function acceptRequest(r) {
+  const st = await settings();
+  const km = hasC(r.pickup_lat, r.pickup_lng) && hasC(r.dropoff_lat, r.dropoff_lng) ? kmBetween({ lat: r.pickup_lat, lng: r.pickup_lng }, { lat: r.dropoff_lat, lng: r.dropoff_lng }) * (st.road_factor || 1.3) : null;
+  const sug = km !== null ? estimate(st, km) : null;
   modal(`<h2>Aceptar carrera</h2><p class="mut">${esc(r.client_name)} · ${fdateS(r.req_date)}${r.req_time ? " · " + esc(r.req_time) : ""}<br>${esc(r.pickup)} → ${esc(r.dropoff)}</p>
-    <form id="f"><label class="f">Importe (€)</label><input name="amount" type="number" step="0.01" min="0.01" inputmode="decimal" required>
+    ${km !== null ? `<div class="dist">${ic("map")}<span>≈ <b>${km.toFixed(1).replace(".", ",")} km</b> por carretera (estimado)${sug !== null ? ` · Tarifa sugerida <b>${eur(sug * 100)}</b>` : ` · Configura tu tarifa en «Mi cuenta» para ver un precio sugerido`}</span></div>` : ""}
+    <form id="f"><label class="f">Importe (€)</label><input name="amount" type="number" step="0.01" min="0.01" inputmode="decimal" value="${sug ?? ""}" required>
     <label class="f">Mensaje para el cliente (opcional)</label><input name="note" placeholder="Ej.: paso 10 minutos antes">
     <button class="ok block" style="margin-top:16px">${ic("check")}Confirmar y registrar carrera</button></form>`, (m) => {
     m.querySelector("#f").onsubmit = guard(async (e) => { e.preventDefault(); await api(`/admin/requests/${r.id}/accept`, "POST", formData(e.target)); m.remove(); toast("Carrera confirmada"); render(); });
@@ -496,6 +548,184 @@ function printStatement(name, totals, trips, payments) {
   w.document.getElementById("imprimir").onclick = () => w.print();
 }
 
+// ---------- Direcciones, ubicación y mapa (OpenStreetMap)
+const GEO = { pos: null };
+const DEFAULT_CENTER = { lat: 41.7286, lng: 1.8236 };
+const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+function getPos() {
+  if (GEO.pos) return Promise.resolve(GEO.pos);
+  if (!navigator.geolocation) return Promise.resolve(null);
+  return new Promise((res) => navigator.geolocation.getCurrentPosition(
+    (p) => { GEO.pos = { lat: p.coords.latitude, lng: p.coords.longitude }; res(GEO.pos); },
+    () => res(null), { enableHighAccuracy: true, timeout: 9000, maximumAge: 120000 }));
+}
+let leafletP;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  leafletP = leafletP || new Promise((res, rej) => {
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "/vendor/leaflet.css"; document.head.appendChild(l);
+    const sc = document.createElement("script"); sc.src = "/vendor/leaflet.js"; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc);
+  });
+  return leafletP;
+}
+const tiles = (map) => L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
+const pinIcon = (k) => L.divIcon({ className: "", html: `<div class="mk ${k}"></div>`, iconSize: [22, 22], iconAnchor: [11, 11] });
+const hasC = (lat, lng) => lat !== null && lat !== undefined && lat !== "" && lng !== null && lng !== undefined && lng !== "";
+function kmBetween(a, b) {
+  const R = 6371, r = (x) => (x * Math.PI) / 180, dLat = r(b.lat - a.lat), dLng = r(b.lng - a.lng);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+async function settings() { if (!S.settings) S.settings = await api("/settings").catch(() => ({ show_estimate: false, road_factor: 1.3 })); return S.settings; }
+function estimate(st, km) {
+  if (!st || !(st.per_km_eur > 0 || st.base_eur > 0)) return null;
+  const v = Math.max(st.min_eur || 0, (st.base_eur || 0) + km * (st.per_km_eur || 0));
+  return Math.round(v * 2) / 2;
+}
+const ptText = (lat, lng, text) => (hasC(lat, lng) ? `${lat},${lng}` : text);
+const gmapsUrl = (o) => `https://www.google.com/maps/dir/?api=1${o.from ? "&origin=" + encodeURIComponent(o.from) : ""}&destination=${encodeURIComponent(o.to)}&travelmode=driving`;
+const wazeUrl = (lat, lng, text) => (hasC(lat, lng) ? `https://waze.com/ul?ll=${lat},${lng}&navigate=yes` : `https://waze.com/ul?q=${encodeURIComponent(text)}&navigate=yes`);
+function navButtons(x) {
+  const from = ptText(x.pickup_lat, x.pickup_lng, x.pickup), to = ptText(x.dropoff_lat, x.dropoff_lng, x.dropoff);
+  return `<a class="btn ghost sm" target="_blank" rel="noopener" href="${wazeUrl(x.pickup_lat, x.pickup_lng, x.pickup)}">${ic("nav")}Ir a recogida</a>
+    <a class="btn ghost sm" target="_blank" rel="noopener" href="${gmapsUrl({ from, to })}">${ic("map")}Ver ruta</a>`;
+}
+
+function addrField(prefix, label, v = {}, placeholder = "") {
+  return `<div class="addr" data-p="${prefix}"><label class="f">${label}</label>
+    <div class="addr-in"><span class="mk ${prefix === "pickup" ? "a" : "b"}"></span><input name="${prefix}" value="${esc(v[prefix] || "")}" autocomplete="off" placeholder="${esc(placeholder)}" required>
+    <button type="button" class="addr-x" aria-label="Borrar">${ic("x")}</button></div>
+    <input type="hidden" name="${prefix}_lat" value="${hasC(v[prefix + "_lat"], v[prefix + "_lng"]) ? v[prefix + "_lat"] : ""}"><input type="hidden" name="${prefix}_lng" value="${hasC(v[prefix + "_lat"], v[prefix + "_lng"]) ? v[prefix + "_lng"] : ""}">
+    <div class="sug" hidden></div>
+    <div class="addr-acts"><button type="button" class="ghost sm" data-loc>${ic("crosshair")}Mi ubicación</button><button type="button" class="ghost sm" data-map>${ic("map")}Mapa</button><button type="button" class="ghost sm" data-fav aria-label="Guardar lugar">${ic("star")}Guardar</button></div></div>`;
+}
+const routeFields = (v = {}, labels = ["¿Dónde te busco?", "¿A dónde vas?"]) => `<div class="chips" id="chips"></div>
+  ${addrField("pickup", labels[0], v, "Calle, número o lugar")}
+  <div class="swapw"><button type="button" class="iconbtn" id="swap" aria-label="Intercambiar recogida y destino">${ic("swap")}</button></div>
+  ${addrField("dropoff", labels[1], v, "Calle, número o lugar")}
+  <div class="dist" id="dist" hidden></div>`;
+async function bindRoute(root, { admin = false, onEstimate } = {}) {
+  const st = await settings();
+  const F = (p) => root.querySelector(`.addr[data-p="${p}"]`);
+  const get = (p) => { const w = F(p); return { address: w.querySelector(`[name=${p}]`).value.trim(), lat: w.querySelector(`[name=${p}_lat]`).value, lng: w.querySelector(`[name=${p}_lng]`).value }; };
+  const set = (p, it) => {
+    const w = F(p);
+    w.querySelector(`[name=${p}]`).value = it.address || "";
+    w.querySelector(`[name=${p}_lat]`).value = hasC(it.lat, it.lng) ? it.lat : "";
+    w.querySelector(`[name=${p}_lng]`).value = hasC(it.lat, it.lng) ? it.lng : "";
+    w.querySelector(".sug").hidden = true;
+    update();
+  };
+  let active = "pickup";
+  function update() {
+    const a = get("pickup"), b = get("dropoff"), el = root.querySelector("#dist");
+    if (hasC(a.lat, a.lng) && hasC(b.lat, b.lng)) {
+      const km = kmBetween({ lat: +a.lat, lng: +a.lng }, { lat: +b.lat, lng: +b.lng }) * (st.road_factor || 1.3);
+      const price = (admin || st.show_estimate) ? estimate(st, km) : null;
+      el.hidden = false;
+      el.innerHTML = `${ic("map")}<span>≈ <b>${km < 10 ? km.toFixed(1).replace(".", ",") : Math.round(km)} km</b> por carretera (estimado)${price !== null ? ` · Precio orientativo <b>${eur(price * 100)}</b>` : ""}</span>`;
+      onEstimate && onEstimate(km, price);
+    } else { el.hidden = true; onEstimate && onEstimate(null, null); }
+  }
+  async function drawChips() {
+    const pl = await api("/places").catch(() => ({ saved: [], recent: [] }));
+    const saved = pl.saved.map((x) => ({ ...x, fav: true }));
+    const rec = pl.recent.filter((r) => !saved.some((s) => s.address === r.address)).slice(0, 5);
+    const all = [...saved, ...rec];
+    const box = root.querySelector("#chips");
+    box.innerHTML = all.map((x, i) => `<button type="button" class="pchip ${x.fav ? "fav" : ""}" data-i="${i}" title="${esc(x.address)}">${ic(x.fav ? "star" : "clock")}<span>${esc(x.fav ? x.label : x.address.split(",")[0])}</span>${x.fav ? `<i data-del="${x.id}" aria-label="Quitar">×</i>` : ""}</button>`).join("");
+    box.hidden = !all.length;
+    box.querySelectorAll(".pchip").forEach((b) => (b.onclick = guard(async (e) => {
+      const del = e.target.closest("[data-del]");
+      if (del) { e.stopPropagation(); if (confirm("¿Quitar este lugar guardado?")) { await api("/places/" + del.dataset.del, "DELETE"); drawChips(); } return; }
+      const x = all[b.dataset.i];
+      const target = active === "pickup" && get("pickup").address && !get("dropoff").address ? "dropoff" : active;
+      set(target, x);
+      if (target === "pickup" && !get("dropoff").address) active = "dropoff";
+    })));
+  }
+  root.querySelectorAll(".addr").forEach((w) => {
+    const p = w.dataset.p, inp = w.querySelector(`[name=${p}]`), sug = w.querySelector(".sug");
+    let items = [];
+    const search = debounce(async () => {
+      const q = inp.value.trim();
+      if (q.length < 3) { sug.hidden = true; return; }
+      const pos = GEO.pos || DEFAULT_CENTER;
+      try {
+        const r = await api(`/geo/search?q=${encodeURIComponent(q)}&lat=${pos.lat}&lng=${pos.lng}`);
+        items = r.items;
+        sug.innerHTML = items.map((x, i) => `<button type="button" data-i="${i}">${ic("crosshair")}<span><b>${esc(x.label)}</b><small>${esc(x.sub)}</small></span></button>`).join("") || `<div class="mut" style="padding:10px 12px">Sin resultados. Prueba con el mapa.</div>`;
+        sug.hidden = false;
+        sug.querySelectorAll("[data-i]").forEach((b) => b.addEventListener("mousedown", (e) => { e.preventDefault(); set(p, items[b.dataset.i]); }));
+      } catch (e) { sug.hidden = true; }
+    }, 350);
+    inp.addEventListener("focus", () => { active = p; });
+    inp.addEventListener("input", () => { w.querySelector(`[name=${p}_lat]`).value = ""; w.querySelector(`[name=${p}_lng]`).value = ""; update(); search(); });
+    inp.addEventListener("blur", () => setTimeout(() => (sug.hidden = true), 150));
+    w.querySelector(".addr-x").onclick = () => { set(p, {}); inp.focus(); };
+    w.querySelector("[data-loc]").onclick = guard(async (e) => {
+      const b = e.currentTarget; b.disabled = true;
+      try {
+        const pos = await getPos();
+        if (!pos) return toast("Activa la ubicación del navegador para usar esta opción");
+        set(p, (await api(`/geo/reverse?lat=${pos.lat}&lng=${pos.lng}`)).item);
+      } finally { b.disabled = false; }
+    });
+    w.querySelector("[data-map]").onclick = guard(async () => {
+      const cur = get(p);
+      const start = hasC(cur.lat, cur.lng) ? { lat: +cur.lat, lng: +cur.lng } : GEO.pos || (await getPos()) || DEFAULT_CENTER;
+      const it = await mapPicker(start, p === "pickup" ? "Punto de recogida" : "Punto de destino", p === "pickup" ? "a" : "b");
+      if (it) set(p, it);
+    });
+    w.querySelector("[data-fav]").onclick = guard(async () => {
+      const cur = get(p);
+      if (!cur.address) return toast("Primero escribe o elige una dirección");
+      const label = (prompt("Nombre para este lugar (ej.: Casa, Trabajo, Gimnasio)") || "").trim();
+      if (!label) return;
+      await api("/places", "POST", { label, address: cur.address, lat: cur.lat, lng: cur.lng });
+      toast("Lugar guardado"); drawChips();
+    });
+  });
+  root.querySelector("#swap").onclick = () => { const a = get("pickup"), b = get("dropoff"); set("pickup", b); set("dropoff", a); };
+  drawChips(); update();
+  return { get, set, update };
+}
+async function mapPicker(start, title, kind) {
+  await loadLeaflet();
+  return new Promise((resolve) => {
+    let cur = null, done = false;
+    const m = modal(`<h2>${title}</h2><p class="mut" style="margin:2px 0 10px">Mueve el mapa hasta dejar el pin en el punto exacto.</p>
+      <div class="mapwrap"><div id="pmap"></div><div class="pin ${kind}"></div><button type="button" class="iconbtn locbtn" id="me" aria-label="Mi ubicación">${ic("crosshair")}</button></div>
+      <div class="mapaddr" id="ma"><span class="mut">Buscando dirección…</span></div>
+      <button class="acc block" id="ok" style="margin-top:12px">${ic("check")}Usar esta ubicación</button>`, null, () => { if (!done) resolve(null); });
+    const map = L.map(m.querySelector("#pmap"), { zoomControl: false }).setView([start.lat, start.lng], 17);
+    tiles(map);
+    const ma = m.querySelector("#ma");
+    const upd = debounce(async () => {
+      const c = map.getCenter();
+      ma.innerHTML = `<span class="mut">Buscando dirección…</span>`;
+      try { cur = (await api(`/geo/reverse?lat=${c.lat}&lng=${c.lng}`)).item; ma.innerHTML = `<b>${esc(cur.label)}</b><span class="mut">${esc(cur.sub)}</span>`; }
+      catch { cur = { address: `${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}`, lat: c.lat, lng: c.lng }; ma.innerHTML = `<b>${cur.address}</b>`; }
+    }, 450);
+    map.on("movestart", () => m.querySelector(".pin").classList.add("up"));
+    map.on("moveend", () => { m.querySelector(".pin").classList.remove("up"); upd(); });
+    setTimeout(() => { map.invalidateSize(); upd(); }, 280);
+    m.querySelector("#me").onclick = guard(async () => { const p = await getPos(); if (!p) return toast("Activa la ubicación del navegador"); map.setView([p.lat, p.lng], 17); });
+    m.querySelector("#ok").onclick = () => { if (!cur) return toast("Espera a que cargue la dirección"); done = true; m.remove(); resolve(cur); };
+  });
+}
+async function routeMap(el, x) {
+  if (!hasC(x.pickup_lat, x.pickup_lng) || !hasC(x.dropoff_lat, x.dropoff_lng)) { el.remove(); return; }
+  await loadLeaflet();
+  const a = [+x.pickup_lat, +x.pickup_lng], b = [+x.dropoff_lat, +x.dropoff_lng];
+  const map = L.map(el, { zoomControl: false, attributionControl: true, dragging: true, scrollWheelZoom: false });
+  tiles(map);
+  L.polyline([a, b], { color: "#173563", weight: 3, dashArray: "6 8" }).addTo(map);
+  L.marker(a, { icon: pinIcon("a") }).addTo(map);
+  L.marker(b, { icon: pinIcon("b") }).addTo(map);
+  setTimeout(() => { map.invalidateSize(); map.fitBounds([a, b], { padding: [30, 30], maxZoom: 15 }); }, 250);
+}
+
 // ---------- Formularios admin
 function quickAdd() {
   modal(`<h2>¿Qué quieres registrar?</h2><div class="menu">
@@ -516,20 +746,21 @@ function quickAdd() {
   });
 }
 async function tripForm(trip, clientId) {
-  const [all, pl] = await Promise.all([api("/admin/clients"), api("/admin/places")]);
+  const all = await api("/admin/clients");
   const cl = all.items.filter((c) => c.active);
   if (!cl.length && !trip) return toast("Primero crea un cliente");
   modal(`<h2>${trip ? "Editar carrera" : "Nueva carrera"}</h2><form id="f">
     ${trip ? "" : `<label class="f">Cliente</label><select name="client_id" required>${cl.map((c) => `<option value="${c.id}" ${c.id === clientId ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>`}
     <div class="two"><div><label class="f">Fecha</label><input type="date" name="trip_date" value="${trip?.trip_date || today()}" required></div>
     <div><label class="f">Hora</label><input type="time" name="trip_time" value="${esc(trip?.trip_time || "")}"></div></div>
-    <label class="f">Recogida (dónde lo buscaste)</label><input name="pickup" list="lugares" autocomplete="off" value="${esc(trip?.pickup)}" required>
-    <label class="f">Destino (a dónde fue)</label><input name="dropoff" list="lugares" autocomplete="off" value="${esc(trip?.dropoff)}" required>
-    <datalist id="lugares">${pl.items.map((x) => `<option value="${esc(x)}">`).join("")}</datalist>
+    ${routeFields(trip || {}, ["Recogida (dónde lo buscaste)", "Destino (a dónde fue)"])}
     <label class="f">Importe (€)</label><input name="amount" type="number" step="0.01" min="0.01" inputmode="decimal" value="${trip ? trip.amount_cents / 100 : ""}" required>
     <label class="f">Notas (opcional)</label><input name="notes" value="${esc(trip?.notes)}">
     ${trip ? "" : `<label class="check"><input type="checkbox" name="notify" checked>Avisar al cliente</label>`}
-    <button class="acc block" style="margin-top:14px">${ic("check")}Guardar carrera</button></form>`, (m) => {
+    <button class="acc block" style="margin-top:14px">${ic("check")}Guardar carrera</button></form>`, async (m) => {
+    const amt = m.querySelector("[name=amount]"); let touched = !!trip;
+    amt.addEventListener("input", () => (touched = true));
+    await bindRoute(m.querySelector("#f"), { admin: true, onEstimate: (km, price) => { if (!touched && price !== null) amt.value = price; } });
     m.querySelector("#f").onsubmit = guard(async (e) => {
       e.preventDefault();
       const b = formData(e.target); b.notify = !!b.notify;
