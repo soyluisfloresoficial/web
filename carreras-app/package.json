@@ -1,0 +1,24 @@
+{
+  "name": "carreras",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "tsc",
+    "migrate": "wrangler d1 migrations apply carreras --local",
+    "migrate:remote": "wrangler d1 migrations apply carreras --remote"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hono": "^4.13.19"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261121.1",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.166.0"
+  },
+  "private": true
+}
