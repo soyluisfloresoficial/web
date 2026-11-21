@@ -88,14 +88,14 @@ function accountModal() {
 const tripItem = (t, admin) => {
   const pend = t.pending_cents;
   const st = pend === 0 ? `<span class="badge ok">Pagada</span>` : t.paid_cents > 0 ? `<span class="badge warn">Parcial</span>` : `<span class="badge bad">Pendiente</span>`;
-  return `<div class="item"><div class="row"><div><div class="route">${esc(t.pickup)} → ${esc(t.dropoff)}</div><div class="mut">Recogida → Destino</div>
-    <div class="mut">${fdate(t.trip_date)}${t.notes ? " · " + esc(t.notes) : ""}</div>
+  return `<div class="item"><div class="row"><div><div class="route">${fdate(t.trip_date)}</div><div><span class="mut">Recogida:</span> ${esc(t.pickup)}</div><div><span class="mut">Destino:</span> ${esc(t.dropoff)}</div>
+    ${t.notes ? `<div class="mut">${esc(t.notes)}</div>` : ""}
     ${t.paid_cents > 0 ? `<div class="mut">Pagado ${eur(t.paid_cents)}${pend === 0 && t.last_pay_date ? " el " + fdate(t.last_pay_date) : ""}</div>` : ""}</div>
     <div style="text-align:right"><b>${eur(t.amount_cents)}</b><br>${st}${pend > 0 && t.paid_cents > 0 ? `<div class="mut">Debe ${eur(pend)}</div>` : ""}</div></div>
     ${admin ? `<div style="margin-top:8px;display:flex;gap:6px"><button class="sec sm" data-edit="${t.id}">Editar</button><button class="danger sm" data-del="${t.id}">Borrar</button></div>` : ""}</div>`;
 };
 const payItem = (p, admin) => `<div class="item"><div class="row"><div><b>${eur(p.amount_cents)}</b> · ${esc(p.method)}<div class="mut">${fdate(p.pay_date)}${p.note ? " · " + esc(p.note) : ""}</div>
-  ${p.applied_to ? `<div class="mut">Aplicado a: ${esc(p.applied_to)}</div>` : ""}</div>${admin ? `<button class="danger sm" data-delpay="${p.id}">Anular</button>` : ""}</div></div>`;
+  ${p.applied_to ? `<div class="mut">Aplicado a: ${esc(p.applied_to).replace(/\d{4}-\d{2}-\d{2}/g, (d) => fdate(d)).replace(/ \| /g, "; ")}</div>` : ""}</div>${admin ? `<button class="danger sm" data-delpay="${p.id}">Anular</button>` : ""}</div></div>`;
 
 function statusTabs(cur, cb) {
   const el = document.createElement("div");
@@ -110,7 +110,12 @@ async function clienteInicio(v) {
   const [s, t] = await Promise.all([api("/client/summary"), api("/client/trips?status=pending")]);
   v.innerHTML = `<div class="card"><div class="mut">Saldo pendiente</div><div class="big ${s.pending_cents > 0 ? "bad" : "ok"}">${eur(s.pending_cents)}</div></div>
     <div class="grid"><div class="card"><div class="mut">Total en carreras</div><b>${eur(s.charged_cents)}</b></div><div class="card"><div class="mut">Total pagado</div><b class="ok">${eur(s.paid_cents)}</b></div></div>
+    <p><button class="sec" id="pdf">Descargar estado de cuenta</button></p>
     <h2>Carreras por pagar</h2><div class="card">${t.items.map((x) => tripItem(x, false)).join("") || `<span class="mut">No tienes carreras pendientes.</span>`}</div>`;
+  v.querySelector("#pdf").onclick = guard(async () => {
+    const [all, pays] = await Promise.all([api("/client/trips"), api("/client/payments")]);
+    printStatement(S.me.name, s, all.items, pays.items);
+  });
 }
 let cStatus = "all";
 async function clienteCarreras(v) {
@@ -137,16 +142,28 @@ async function adminInicio(v) {
   v.innerHTML = `<div class="card"><div class="mut">Total por cobrar</div><div class="big ${s.pending_cents > 0 ? "bad" : "ok"}">${eur(s.pending_cents)}</div></div>
     <div class="grid"><div class="card"><div class="mut">Carreras este mes</div><b>${s.month_trips}</b><div class="mut">${eur(s.month_charged_cents)}</div></div>
     <div class="card"><div class="mut">Cobrado este mes</div><b class="ok">${eur(s.month_collected_cents)}</b></div></div>
+    <p><button id="nt" style="width:100%">+ Registrar carrera</button></p>
     <h2>Mayores deudas</h2><div class="card">${s.top_debtors.map((d) => `<div class="item row" data-c="${d.id}" style="cursor:pointer"><div><b>${esc(d.name)}</b>${d.oldest_unpaid ? `<div class="mut">Más antigua sin pagar: ${fdate(d.oldest_unpaid)}</div>` : ""}</div><b class="bad">${eur(d.pending_cents)}</b></div>`).join("") || `<span class="mut">Nadie te debe nada.</span>`}</div>
-    <p><button id="nt">+ Registrar carrera</button></p>`;
+    <h2>Informe mensual</h2><input type="month" id="mes" value="${S.month || today().slice(0, 7)}"><div id="inf"></div>`;
   v.querySelectorAll("[data-c]").forEach((el) => (el.onclick = () => { S.clientId = el.dataset.c; render(); }));
   v.querySelector("#nt").onclick = () => tripForm();
+  const load = guard(async () => {
+    S.month = v.querySelector("#mes").value;
+    const r = await api("/admin/report?month=" + S.month);
+    v.querySelector("#inf").innerHTML = `<div class="card"><div class="grid" style="grid-template-columns:repeat(3,1fr)">
+      <div><div class="mut">Carreras</div><b>${r.totals.trips}</b></div><div><div class="mut">Cargado</div><b>${eur(r.totals.charged_cents)}</b></div><div><div class="mut">Cobrado</div><b class="ok">${eur(r.totals.collected_cents)}</b></div></div>
+      ${r.rows.map((x) => `<div class="item row" data-c="${x.id}" style="cursor:pointer"><div><b>${esc(x.name)}</b><div class="mut">${x.trips} ${x.trips === 1 ? "carrera" : "carreras"} · cargado ${eur(x.charged_cents)} · cobrado ${eur(x.collected_cents)}</div></div><div style="text-align:right;white-space:nowrap"><div class="mut">Debe hoy</div><b class="${x.pending_cents > 0 ? "bad" : "ok"}">${eur(x.pending_cents)}</b></div></div>`).join("") || `<div class="item mut">Sin movimientos ese mes.</div>`}</div>`;
+    v.querySelectorAll("#inf [data-c]").forEach((el) => (el.onclick = () => { S.clientId = el.dataset.c; render(); }));
+  });
+  v.querySelector("#mes").onchange = load;
+  load();
 }
 async function adminClientes(v) {
   const r = await api("/admin/clients");
-  v.innerHTML = `<p><button id="nc">+ Nuevo cliente</button></p><div class="card">${r.items.map((c) => `<div class="item row" data-c="${c.id}" style="cursor:pointer"><div><b>${esc(c.name)}</b>${c.active ? "" : ` <span class="badge">Inactivo</span>`}<div class="mut">${esc(c.email)}</div></div><b class="${c.pending_cents > 0 ? "bad" : "ok"}">${eur(c.pending_cents)}</b></div>`).join("") || `<span class="mut">Aún no tienes clientes.</span>`}</div>`;
+  v.innerHTML = `<p><button id="nc" style="width:100%">+ Nuevo cliente</button></p><input type="search" id="q" placeholder="Buscar cliente por nombre, correo o teléfono"><div class="card">${r.items.map((c) => `<div class="item row" data-q="${esc((c.name + " " + c.email + " " + (c.phone || "")).toLowerCase())}" data-c="${c.id}" style="cursor:pointer"><div><b>${esc(c.name)}</b>${c.active ? "" : ` <span class="badge">Inactivo</span>`}<div class="mut">${esc(c.email)}</div></div><b class="${c.pending_cents > 0 ? "bad" : "ok"}">${eur(c.pending_cents)}</b></div>`).join("") || `<span class="mut">Aún no tienes clientes.</span>`}</div>`;
   v.querySelectorAll("[data-c]").forEach((el) => (el.onclick = () => { S.clientId = el.dataset.c; render(); }));
   v.querySelector("#nc").onclick = clientForm;
+  v.querySelector("#q").oninput = (e) => { const q = e.target.value.trim().toLowerCase(); v.querySelectorAll("[data-q]").forEach((el) => (el.style.display = el.dataset.q.includes(q) ? "" : "none")); };
 }
 let aStatus = "pending";
 async function adminCarreras(v) {
@@ -173,7 +190,7 @@ async function clienteDetalle(v) {
     <button class="sec sm" id="ed">Editar</button></div>
     <div class="big ${d.totals.pending_cents > 0 ? "bad" : "ok"}" style="margin-top:8px">${eur(d.totals.pending_cents)}</div>
     <div class="mut">Cargado ${eur(d.totals.charged_cents)} · Pagado ${eur(d.totals.paid_cents)}</div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="nt">+ Carrera</button><button id="np">+ Pago</button><button class="sec" id="rem">Recordar saldo</button><button class="sec" id="csv">CSV</button></div>
+    <div class="acciones"><button id="nt">+ Carrera</button><button id="np">+ Pago</button><button class="sec" id="rem">Recordar saldo</button><button class="sec" id="pdf">Estado de cuenta</button><button class="sec" id="csv">CSV</button></div>
     <h2>Carreras</h2><div class="card">${d.trips.map((x) => tripItem(x, true)).join("") || `<span class="mut">Sin carreras.</span>`}</div>
     <h2>Pagos</h2><div class="card">${d.payments.map((x) => payItem(x, true)).join("") || `<span class="mut">Sin pagos.</span>`}</div>`;
   v.querySelector("#back").onclick = () => { S.clientId = null; render(); };
@@ -181,6 +198,7 @@ async function clienteDetalle(v) {
   v.querySelector("#np").onclick = () => payForm(c.id, d.trips.filter((t) => t.pending_cents > 0), d.totals.pending_cents);
   v.querySelector("#rem").onclick = guard(async () => { await api(`/admin/clients/${c.id}/reminder`, "POST", {}); toast("Recordatorio enviado"); });
   v.querySelector("#ed").onclick = () => clientEdit(c);
+  v.querySelector("#pdf").onclick = () => printStatement(c.name, d.totals, d.trips, d.payments);
   v.querySelector("#csv").onclick = () => {
     const q = (s) => `"${String(s ?? "").replace(/"/g, '""')}"`;
     const rows = [["Fecha", "Recogida", "Destino", "Importe", "Pagado", "Pendiente"], ...d.trips.map((t) => [t.trip_date, t.pickup, t.dropoff, t.amount_cents / 100, t.paid_cents / 100, t.pending_cents / 100])];
@@ -191,14 +209,34 @@ async function clienteDetalle(v) {
   bindTripActions(v, d.trips);
 }
 
+// ---------- Estado de cuenta imprimible (se guarda como PDF desde el móvil)
+function printStatement(name, totals, trips, payments) {
+  const w = window.open("", "_blank");
+  if (!w) return toast("Permite las ventanas emergentes para descargarlo");
+  const tr = trips.slice().sort((a, b) => a.trip_date.localeCompare(b.trip_date)).map((t) => `<tr><td>${fdate(t.trip_date)}</td><td>${esc(t.pickup)}</td><td>${esc(t.dropoff)}</td><td class="n">${eur(t.amount_cents)}</td><td class="n">${eur(t.pending_cents)}</td></tr>`).join("");
+  const pr = payments.slice().sort((a, b) => a.pay_date.localeCompare(b.pay_date)).map((p) => `<tr><td>${fdate(p.pay_date)}</td><td>${esc(p.method)}</td><td>${esc(p.note || "")}</td><td class="n">${eur(p.amount_cents)}</td></tr>`).join("");
+  w.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Estado de cuenta · ${esc(name)}</title>
+  <style>body{font:13px/1.4 system-ui,sans-serif;color:#0f172a;margin:24px}h1{font-size:20px;margin:0}h2{font-size:15px;margin:22px 0 6px}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #e2e8f0;padding:6px 4px;text-align:left;vertical-align:top}th{font-size:11px;color:#64748b;text-transform:uppercase}.n{text-align:right;white-space:nowrap}.box{display:flex;gap:24px;margin-top:12px}.box b{display:block;font-size:18px}.bad{color:#dc2626}.mut{color:#64748b}@media print{button{display:none}}</style></head><body>
+  <h1>Estado de cuenta</h1><div class="mut">${esc(name)} · ${new Date().toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}</div>
+  <div class="box"><div><span class="mut">Total carreras</span><b>${eur(totals.charged_cents)}</b></div><div><span class="mut">Total pagado</span><b>${eur(totals.paid_cents)}</b></div><div><span class="mut">Saldo pendiente</span><b class="bad">${eur(totals.pending_cents)}</b></div></div>
+  <h2>Carreras</h2><table><tr><th>Fecha</th><th>Recogida</th><th>Destino</th><th class="n">Importe</th><th class="n">Pendiente</th></tr>${tr || `<tr><td colspan="5" class="mut">Sin carreras</td></tr>`}</table>
+  <h2>Pagos</h2><table><tr><th>Fecha</th><th>Método</th><th>Nota</th><th class="n">Importe</th></tr>${pr || `<tr><td colspan="4" class="mut">Sin pagos</td></tr>`}</table>
+  <p><button onclick="print()" style="width:100%;padding:12px;margin-top:20px;font:inherit;font-weight:700">Imprimir o guardar PDF</button></p>
+  </body></html>`);
+  w.document.close();
+}
+
 // ---------- Formularios admin
 async function tripForm(trip, clientId) {
-  const cl = (await api("/admin/clients")).items.filter((c) => c.active);
+  const [all, pl] = await Promise.all([api("/admin/clients"), api("/admin/places")]);
+  const cl = all.items.filter((c) => c.active);
+  if (!cl.length && !trip) return toast("Primero crea un cliente");
   modal(`<h2>${trip ? "Editar" : "Nueva"} carrera</h2><form id="f">
     ${trip ? "" : `<label>Cliente</label><select name="client_id" required>${cl.map((c) => `<option value="${c.id}" ${c.id === clientId ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>`}
     <label>Fecha</label><input type="date" name="trip_date" value="${trip?.trip_date || today()}" required>
-    <label>Lugar de recogida (donde lo buscaste)</label><input name="pickup" value="${esc(trip?.pickup)}" required>
-    <label>Lugar de destino (a dónde fue)</label><input name="dropoff" value="${esc(trip?.dropoff)}" required>
+    <label>Lugar de recogida (donde lo buscaste)</label><input name="pickup" list="lugares" autocomplete="off" value="${esc(trip?.pickup)}" required>
+    <label>Lugar de destino (a dónde fue)</label><input name="dropoff" list="lugares" autocomplete="off" value="${esc(trip?.dropoff)}" required>
+    <datalist id="lugares">${pl.items.map((x) => `<option value="${esc(x)}">`).join("")}</datalist>
     <label>Importe (€)</label><input name="amount" type="number" step="0.01" min="0.01" inputmode="decimal" value="${trip ? trip.amount_cents / 100 : ""}" required>
     <label>Notas (opcional)</label><input name="notes" value="${esc(trip?.notes)}">
     ${trip ? "" : `<label><input type="checkbox" name="notify" checked style="width:auto;margin-right:8px">Avisar al cliente</label>`}

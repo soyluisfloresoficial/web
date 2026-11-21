@@ -10,6 +10,7 @@ type Env = {
   WHATSAPP_TOKEN?: string;
   WHATSAPP_PHONE_ID?: string;
   WHATSAPP_TEMPLATE?: string;
+  REMINDER_DAYS?: string;
 };
 type User = {
   id: string; email: string; name: string; phone: string | null; role: "admin" | "client";
@@ -138,9 +139,11 @@ app.post("/api/password", async (c) => {
 });
 
 // ---- Notificaciones (app + correo + WhatsApp)
-async function notify(c: C, target: { id: string; name: string; email: string; phone: string | null; notify_email: number; notify_whatsapp: number }, title: string, body: string) {
-  await c.env.DB.prepare("INSERT INTO notifications(id,user_id,title,body,created_at) VALUES(?,?,?,?,?)").bind(crypto.randomUUID(), target.id, title, body, now()).run();
-  const e = c.env;
+type Ctx = { waitUntil(p: Promise<unknown>): void };
+type Target = { id: string; name: string; email: string; phone: string | null; notify_email: number; notify_whatsapp: number };
+async function notify(env: Env, ctx: Ctx, target: { id: string; name: string; email: string; phone: string | null; notify_email: number; notify_whatsapp: number }, title: string, body: string) {
+  await env.DB.prepare("INSERT INTO notifications(id,user_id,title,body,created_at) VALUES(?,?,?,?,?)").bind(crypto.randomUUID(), target.id, title, body, now()).run();
+  const e = env;
   const jobs: Promise<unknown>[] = [];
   if (target.notify_email && e.RESEND_API_KEY && e.EMAIL_FROM) {
     jobs.push(fetch("https://api.resend.com/emails", {
@@ -160,7 +163,7 @@ async function notify(c: C, target: { id: string; name: string; email: string; p
       }),
     }).catch(() => null));
   }
-  if (jobs.length) c.executionCtx.waitUntil(Promise.all(jobs));
+  if (jobs.length) ctx.waitUntil(Promise.all(jobs));
 }
 
 app.get("/api/notifications", async (c) => {
@@ -288,11 +291,12 @@ app.get("/api/admin/clients/:id", async (c) => {
 });
 app.post("/api/admin/clients/:id/reminder", async (c) => {
   const id = c.req.param("id");
-  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(id).first<Parameters<typeof notify>[1]>();
+  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(id).first<Target>();
   if (!cl) return err(c, "Cliente no encontrado", 404);
   const t = await clientTotals(c.env.DB, id);
   if (t.pending_cents <= 0) return err(c, "Este cliente no tiene saldo pendiente");
-  await notify(c, cl, "Recordatorio de saldo pendiente", `Tienes un saldo pendiente de ${eur(t.pending_cents)}.`);
+  await notify(c.env, c.executionCtx, cl, "Recordatorio de saldo pendiente", `Tienes un saldo pendiente de ${eur(t.pending_cents)}.`);
+  await c.env.DB.prepare("UPDATE users SET last_reminder_at=? WHERE id=?").bind(now(), id).run();
   return c.json({ ok: true });
 });
 
@@ -306,14 +310,14 @@ function tripFields(b: Record<string, unknown>) {
 app.post("/api/admin/trips", async (c) => {
   const b = await c.req.json().catch(() => ({}));
   const f = tripFields(b);
-  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(str(b.client_id, 60)).first<Parameters<typeof notify>[1]>();
+  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(str(b.client_id, 60)).first<Target>();
   if (!f || !cl) return err(c, "Revisa cliente, fecha, lugares e importe");
   const id = crypto.randomUUID();
   await c.env.DB.prepare("INSERT INTO trips(id,client_id,trip_date,pickup,dropoff,amount_cents,notes,created_at) VALUES(?,?,?,?,?,?,?,?)")
     .bind(id, cl.id, f.trip_date, f.pickup, f.dropoff, f.amount, f.notes, now()).run();
   if (b.notify !== false) {
     const t = await clientTotals(c.env.DB, cl.id);
-    await notify(c, cl, "Nueva carrera registrada", `${f.trip_date}: de ${f.pickup} a ${f.dropoff} por ${eur(f.amount)}. Saldo pendiente: ${eur(t.pending_cents)}.`);
+    await notify(c.env, c.executionCtx, cl, "Nueva carrera registrada", `${f.trip_date}: de ${f.pickup} a ${f.dropoff} por ${eur(f.amount)}. Saldo pendiente: ${eur(t.pending_cents)}.`);
   }
   return c.json({ id });
 });
@@ -338,7 +342,7 @@ app.delete("/api/admin/trips/:id", async (c) => {
 app.post("/api/admin/payments", async (c) => {
   const b = await c.req.json().catch(() => ({}));
   const amount = cents(b.amount), method = str(b.method, 40) || "Efectivo", pay_date = str(b.pay_date, 10) || today(), note = str(b.note, 300) || null;
-  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(str(b.client_id, 60)).first<Parameters<typeof notify>[1]>();
+  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,notify_email,notify_whatsapp FROM users WHERE id=? AND role='client' AND active=1").bind(str(b.client_id, 60)).first<Target>();
   if (!cl || !(amount > 0) || !isDate(pay_date)) return err(c, "Revisa cliente, fecha e importe");
   const only = str(b.trip_id, 60);
   const pend = (await listTrips(c.env.DB, cl.id, "pending")).reverse() as unknown as { id: string; pending_cents: number }[];
@@ -357,7 +361,7 @@ app.post("/api/admin/payments", async (c) => {
   await c.env.DB.batch(stmts);
   if (b.notify !== false) {
     const t = await clientTotals(c.env.DB, cl.id);
-    await notify(c, cl, "Pago recibido", `Hemos registrado tu pago de ${eur(amount)} (${method}) del ${pay_date}. Saldo pendiente: ${eur(t.pending_cents)}.`);
+    await notify(c.env, c.executionCtx, cl, "Pago recibido", `Hemos registrado tu pago de ${eur(amount)} (${method}) del ${pay_date}. Saldo pendiente: ${eur(t.pending_cents)}.`);
   }
   return c.json({ id: pid });
 });
@@ -369,7 +373,60 @@ app.delete("/api/admin/payments/:id", async (c) => {
   return c.json({ ok: true });
 });
 
+// ---- Admin: lugares frecuentes (autocompletar)
+app.get("/api/admin/places", async (c) => {
+  const r = await c.env.DB.prepare(
+    `SELECT place, COUNT(*) n FROM (SELECT pickup place FROM trips UNION ALL SELECT dropoff FROM trips) GROUP BY place ORDER BY n DESC LIMIT 40`
+  ).all<{ place: string }>();
+  return c.json({ items: r.results.map((x) => x.place) });
+});
+
+// ---- Admin: informe mensual por cliente
+app.get("/api/admin/report", async (c) => {
+  const month = str(c.req.query("month"), 7) || today().slice(0, 7);
+  if (!/^\d{4}-\d{2}$/.test(month)) return err(c, "Mes inválido");
+  const r = await c.env.DB.prepare(
+    `SELECT u.id,u.name,
+       (SELECT COUNT(*) FROM trips WHERE client_id=u.id AND trip_date LIKE ?1||'%') trips,
+       COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id AND trip_date LIKE ?1||'%'),0) charged_cents,
+       COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id AND pay_date LIKE ?1||'%'),0) collected_cents,
+       COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id),0) - COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id),0) pending_cents
+     FROM users u WHERE u.role='client' ORDER BY charged_cents DESC, u.name`
+  ).bind(month).all<{ trips: number; charged_cents: number; collected_cents: number; pending_cents: number }>();
+  const rows = r.results.filter((x) => x.trips || x.collected_cents || x.pending_cents);
+  const sum = (k: "trips" | "charged_cents" | "collected_cents" | "pending_cents") => rows.reduce((a, x) => a + x[k], 0);
+  return c.json({ month, rows, totals: { trips: sum("trips"), charged_cents: sum("charged_cents"), collected_cents: sum("collected_cents"), pending_cents: sum("pending_cents") } });
+});
+
 app.all("/api/*", (c) => err(c, "No encontrado", 404));
 app.onError((e, c) => { console.error(e); return c.json({ error: "Error del servidor" }, 500); });
 
-export default app;
+// ---- Recordatorio automático: cada lunes, a quien tenga carreras sin pagar de hace más de REMINDER_DAYS días
+async function weeklyReminders(env: Env, ctx: Ctx) {
+  const days = Number(env.REMINDER_DAYS || 7);
+  const limitDate = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+  const lastOk = new Date(Date.now() - 6 * 864e5).toISOString();
+  const rows = (await env.DB.prepare(
+    `SELECT u.id,u.name,u.email,u.phone,u.notify_email,u.notify_whatsapp,
+       COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id),0) - COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id),0) pending_cents
+     FROM users u
+     WHERE u.role='client' AND u.active=1 AND (u.last_reminder_at IS NULL OR u.last_reminder_at < ?2)
+       AND EXISTS (SELECT 1 FROM trips t WHERE t.client_id=u.id AND t.trip_date <= ?1
+                   AND t.amount_cents > COALESCE((SELECT SUM(a.amount_cents) FROM allocations a WHERE a.trip_id=t.id),0))`
+  ).bind(limitDate, lastOk).all<Target & { pending_cents: number }>()).results;
+  for (const r of rows) {
+    if (r.pending_cents <= 0) continue;
+    await notify(env, ctx, r, "Recordatorio de saldo pendiente", `Tienes un saldo pendiente de ${eur(r.pending_cents)}. Puedes ver el detalle de cada carrera en tu cuenta.`);
+    await env.DB.prepare("UPDATE users SET last_reminder_at=? WHERE id=?").bind(now(), r.id).run();
+  }
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM sessions WHERE expires_at<?").bind(now()),
+    env.DB.prepare("DELETE FROM login_attempts WHERE at<?").bind(new Date(Date.now() - 864e5).toISOString()),
+  ]);
+  return rows.length;
+}
+
+export default {
+  fetch: app.fetch,
+  scheduled: (_e: ScheduledController, env: Env, ctx: ExecutionContext) => ctx.waitUntil(weeklyReminders(env, ctx)),
+};
