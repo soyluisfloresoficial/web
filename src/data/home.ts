@@ -29,30 +29,68 @@ export const publicos = [
   { titulo: "Agencias y pequeñas empresas", texto: "Procesos que aguantan cuando creces." },
 ];
 
-export const herramientas = [
-  "Claude",
-  "Make",
-  "Gemini",
-  "n8n",
-  "HeyGen",
-  "GoHighLevel",
-  "ChatGPT",
-  "ManyChat",
-  "Higgsfield",
-  "ActiveCampaign",
-  "Lovable",
-  "Airtable",
-  "Zapier",
-  "Base44",
-  "Stripe",
-  "Canva",
-  "WhatsApp",
-  "Gamma",
-  "Firebase",
-  "Meta Ads",
-  "Metricool",
-  "Google Ads",
+/**
+ * Herramientas por categoría (23/11/2026, pedido del titular: que se
+ * entienda de un vistazo). En computadora son órbitas con la IA en el
+ * centro; en celular y tableta, grupos con título. El color es el del anillo
+ * y el del título de cada grupo.
+ */
+export interface CategoriaHerramientas {
+  id: string;
+  nombre: string;
+  /** Nombre corto, en el centro de su órbita (computadora). */
+  corto: string;
+  /** Para qué sirven, en pocas palabras. */
+  texto: string;
+  color: string;
+  herramientas: string[];
+}
+
+export const categoriasHerramientas: CategoriaHerramientas[] = [
+  {
+    id: "ia",
+    nombre: "Inteligencia artificial",
+    corto: "IA",
+    texto: "El cerebro: entiende, responde y redacta.",
+    color: "#8b5cf6",
+    herramientas: ["Claude", "ChatGPT", "Gemini", "Perplexity", "Grok"],
+  },
+  {
+    id: "automatizacion",
+    nombre: "Automatización y datos",
+    corto: "Automatización",
+    texto: "Conecta tus herramientas y mueve los datos solos.",
+    color: "#2dd4bf",
+    herramientas: ["Make", "n8n", "Zapier", "Airtable", "Firebase"],
+  },
+  {
+    id: "ventas",
+    nombre: "CRM, mensajes y cobros",
+    corto: "CRM y cobros",
+    texto: "Atiende, da seguimiento y cobra.",
+    color: "#007bff",
+    herramientas: ["GoHighLevel", "ActiveCampaign", "ManyChat", "WhatsApp", "Stripe"],
+  },
+  {
+    id: "contenido",
+    nombre: "Contenido, voz y webs",
+    corto: "Contenido",
+    texto: "Crea videos, voces, diseños y páginas.",
+    color: "#f472b6",
+    herramientas: ["HeyGen", "Higgsfield", "ElevenLabs", "Canva", "Gamma", "Lovable", "Base44"],
+  },
+  {
+    id: "anuncios",
+    nombre: "Anuncios y redes",
+    corto: "Anuncios",
+    texto: "Atrae clientes y mide qué funciona.",
+    color: "#f59e0b",
+    herramientas: ["Meta Ads", "Google Ads", "Metricool"],
+  },
 ];
+
+/** Todas las herramientas, en el orden de las categorías. */
+export const herramientas = categoriasHerramientas.flatMap((c) => c.herramientas);
 
 export const estandares = [
   {

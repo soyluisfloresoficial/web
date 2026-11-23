@@ -87,6 +87,27 @@ export const HERRAMIENTAS: Herramienta[] = [
     servicios: ["agentes-ia", "consultoria-ia"],
   },
   {
+    nombre: "Perplexity",
+    grupo: "Conversaciones e IA",
+    queEs: "Buscador con IA que responde citando sus fuentes.",
+    paraQue: "Investigar y contrastar información antes de decidir.",
+    servicios: ["consultoria-ia"],
+  },
+  {
+    nombre: "Grok",
+    grupo: "Conversaciones e IA",
+    queEs: "Modelos de IA de xAI.",
+    paraQue: "Consultas y redacción; elijo el modelo según el caso.",
+    servicios: ["consultoria-ia"],
+  },
+  {
+    nombre: "ElevenLabs",
+    grupo: "Conversaciones e IA",
+    queEs: "Voces e IA de audio.",
+    paraQue: "Voces naturales para videos y agentes de voz.",
+    servicios: ["agentes-ia"],
+  },
+  {
     nombre: "Stripe",
     grupo: "Cobros y publicidad",
     queEs: "Plataforma de cobros online: pagos, suscripciones y enlaces de pago.",
