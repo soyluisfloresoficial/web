@@ -129,7 +129,8 @@ app.post("/api/logout", async (c) => {
 app.get("/api/me", async (c) => {
   const u = c.get("user");
   const n = await c.env.DB.prepare("SELECT COUNT(*) n FROM notifications WHERE user_id=? AND read=0").bind(u.id).first<{ n: number }>();
-  return c.json({ user: { id: u.id, name: u.name, email: u.email, role: u.role }, unread: n!.n });
+  const av = await c.env.DB.prepare("SELECT avatar_v FROM users WHERE id=?").bind(u.id).first<{ avatar_v: number }>();
+  return c.json({ user: { id: u.id, name: u.name, email: u.email, role: u.role, avatar_v: av?.avatar_v || 0 }, unread: n!.n });
 });
 
 app.post("/api/password", async (c) => {
@@ -265,7 +266,7 @@ app.get("/api/admin/summary", async (c) => {
     db.prepare(`SELECT COALESCE((SELECT SUM(amount_cents) FROM trips WHERE trip_date LIKE ?1||'%'),0) charged,
                        COALESCE((SELECT COUNT(*) FROM trips WHERE trip_date LIKE ?1||'%'),0) trips,
                        COALESCE((SELECT SUM(amount_cents) FROM payments WHERE pay_date LIKE ?1||'%'),0) collected`).bind(month).first<{ charged: number; trips: number; collected: number }>(),
-    db.prepare(`SELECT u.id,u.name,
+    db.prepare(`SELECT u.id,u.name,u.avatar_v,
         COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id),0) - COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id),0) pending_cents,
         (SELECT MIN(t.trip_date) FROM trips t WHERE t.client_id=u.id AND t.amount_cents > COALESCE((SELECT SUM(a.amount_cents) FROM allocations a WHERE a.trip_id=t.id),0)) oldest_unpaid
         FROM users u WHERE u.role='client' ORDER BY pending_cents DESC LIMIT 5`).all(),
@@ -284,7 +285,7 @@ app.get("/api/admin/summary", async (c) => {
 // ---- Admin: clientes
 app.get("/api/admin/clients", async (c) => {
   const r = await c.env.DB.prepare(
-    `SELECT u.id,u.name,u.email,u.phone,u.active,u.notify_email,u.notify_whatsapp,u.pass_set,
+    `SELECT u.id,u.name,u.email,u.phone,u.active,u.notify_email,u.notify_whatsapp,u.pass_set,u.avatar_v,u.created_at,
        COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id),0) charged_cents,
        COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id),0) paid_cents
      FROM users u WHERE u.role='client' ORDER BY u.name`
@@ -314,8 +315,15 @@ app.patch("/api/admin/clients/:id", async (c) => {
   const name = str(b.name, 100) || (cur.name as string);
   const phone = b.phone !== undefined ? str(b.phone, 30) || null : (cur.phone as string | null);
   const flag = (v: unknown, d: unknown) => (v === undefined ? (d as number) : v ? 1 : 0);
-  await c.env.DB.prepare("UPDATE users SET name=?,phone=?,active=?,notify_email=?,notify_whatsapp=? WHERE id=?")
-    .bind(name, phone, flag(b.active, cur.active), flag(b.notify_email, cur.notify_email), flag(b.notify_whatsapp, cur.notify_whatsapp), id).run();
+  let email = cur.email as string;
+  if (b.email !== undefined && str(b.email).toLowerCase() !== email) {
+    email = str(b.email).toLowerCase();
+    if (!/^\S+@\S+\.\S+$/.test(email)) return err(c, "Correo no válido");
+    if (await c.env.DB.prepare("SELECT 1 FROM users WHERE email=? AND id<>?").bind(email, id).first()) return err(c, "Ese correo ya lo usa otra cuenta", 409);
+  }
+  const note = b.admin_note !== undefined ? str(b.admin_note, 1000) || null : (cur.admin_note as string | null);
+  await c.env.DB.prepare("UPDATE users SET name=?,phone=?,email=?,admin_note=?,active=?,notify_email=?,notify_whatsapp=? WHERE id=?")
+    .bind(name, phone, email, note, flag(b.active, cur.active), flag(b.notify_email, cur.notify_email), flag(b.notify_whatsapp, cur.notify_whatsapp), id).run();
   if (b.active === false) await c.env.DB.prepare("DELETE FROM sessions WHERE user_id=?").bind(id).run();
   return c.json({ ok: true });
 });
@@ -333,7 +341,7 @@ app.post("/api/admin/clients/:id/password", async (c) => {
 });
 app.get("/api/admin/clients/:id", async (c) => {
   const id = c.req.param("id");
-  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,active,notify_email,notify_whatsapp,pass_set FROM users WHERE id=? AND role='client'").bind(id).first();
+  const cl = await c.env.DB.prepare("SELECT id,name,email,phone,active,notify_email,notify_whatsapp,pass_set,avatar_v,admin_note,created_at,consent_at FROM users WHERE id=? AND role='client'").bind(id).first();
   if (!cl) return err(c, "Cliente no encontrado", 404);
   return c.json({ client: cl, totals: await clientTotals(c.env.DB, id), trips: await listTrips(c.env.DB, id, "all"), payments: await listPayments(c.env.DB, id) });
 });
@@ -480,7 +488,7 @@ app.post("/api/client/requests/:id/cancel", async (c) => {
 });
 app.get("/api/admin/requests", async (c) => {
   const st = c.req.query("status") === "all" ? "" : "WHERE r.status='pending'";
-  const r = await c.env.DB.prepare(`SELECT r.*, u.name client_name FROM trip_requests r JOIN users u ON u.id=r.client_id ${st} ORDER BY r.status='pending' DESC, r.req_date, r.req_time LIMIT 100`).all();
+  const r = await c.env.DB.prepare(`SELECT r.*, u.name client_name, u.avatar_v client_avatar_v FROM trip_requests r JOIN users u ON u.id=r.client_id ${st} ORDER BY r.status='pending' DESC, r.req_date, r.req_time LIMIT 100`).all();
   return c.json({ items: r.results });
 });
 app.post("/api/admin/requests/:id/accept", async (c) => {
@@ -644,6 +652,114 @@ app.put("/api/admin/settings", async (c) => {
   return c.json(await getSettings(c.env.DB));
 });
 
+// ---- Perfil propio (cliente y administrador): datos, preferencias y foto
+app.use("/api/profile", auth as never);
+app.use("/api/profile/*", auth as never);
+app.use("/api/avatar/*", auth as never);
+app.use("/api/driver", auth as never);
+app.get("/api/profile", async (c) => {
+  const p = await c.env.DB.prepare("SELECT id,name,email,phone,role,notify_email,notify_whatsapp,avatar_v,created_at,consent_at FROM users WHERE id=?").bind(c.get("user").id).first();
+  return c.json({ profile: p });
+});
+app.patch("/api/profile", async (c) => {
+  const u = c.get("user");
+  const b = await c.req.json().catch(() => ({}));
+  const cur = await c.env.DB.prepare("SELECT * FROM users WHERE id=?").bind(u.id).first<Record<string, unknown>>();
+  const name = str(b.name, 100) || (cur!.name as string);
+  const phone = b.phone !== undefined ? str(b.phone, 30) || null : (cur!.phone as string | null);
+  let email = cur!.email as string;
+  if (b.email !== undefined && str(b.email).toLowerCase() !== email) {
+    email = str(b.email).toLowerCase();
+    if (!/^\S+@\S+\.\S+$/.test(email)) return err(c, "Correo no válido");
+    if (!safeEq(await hashPass(str(b.current, 200), cur!.pass_salt as string), cur!.pass_hash as string)) return err(c, "Para cambiar el correo escribe tu contraseña actual", 403);
+    if (await c.env.DB.prepare("SELECT 1 FROM users WHERE email=? AND id<>?").bind(email, u.id).first()) return err(c, "Ese correo ya lo usa otra cuenta", 409);
+  }
+  const flag = (v: unknown, d: unknown) => (v === undefined ? (d as number) : v ? 1 : 0);
+  await c.env.DB.prepare("UPDATE users SET name=?,phone=?,email=?,notify_email=?,notify_whatsapp=? WHERE id=?")
+    .bind(name, phone, email, flag(b.notify_email, cur!.notify_email), flag(b.notify_whatsapp, cur!.notify_whatsapp) && phone ? 1 : 0, u.id).run();
+  return c.json({ ok: true });
+});
+app.put("/api/profile/avatar", async (c) => {
+  const u = c.get("user");
+  const b = await c.req.json().catch(() => ({}));
+  const m = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(String(b.data || ""));
+  if (!m) return err(c, "Imagen no válida (JPG, PNG o WebP)");
+  if (m[2].length > 300_000) return err(c, "La imagen es demasiado grande");
+  await c.env.DB.batch([
+    c.env.DB.prepare("INSERT INTO avatars(user_id,mime,data,updated_at) VALUES(?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET mime=excluded.mime,data=excluded.data,updated_at=excluded.updated_at").bind(u.id, m[1], m[2], now()),
+    c.env.DB.prepare("UPDATE users SET avatar_v=avatar_v+1 WHERE id=?").bind(u.id),
+  ]);
+  const v = await c.env.DB.prepare("SELECT avatar_v FROM users WHERE id=?").bind(u.id).first<{ avatar_v: number }>();
+  return c.json({ avatar_v: v!.avatar_v });
+});
+app.delete("/api/profile/avatar", async (c) => {
+  const u = c.get("user");
+  await c.env.DB.batch([c.env.DB.prepare("DELETE FROM avatars WHERE user_id=?").bind(u.id), c.env.DB.prepare("UPDATE users SET avatar_v=0 WHERE id=?").bind(u.id)]);
+  return c.json({ avatar_v: 0 });
+});
+// Fotos: cada uno ve la suya; el admin ve todas; los clientes ven la del admin (su conductor)
+app.get("/api/avatar/:id", async (c) => {
+  const u = c.get("user"), id = c.req.param("id");
+  if (u.role !== "admin" && u.id !== id) {
+    const t = await c.env.DB.prepare("SELECT role FROM users WHERE id=?").bind(id).first<{ role: string }>();
+    if (t?.role !== "admin") return err(c, "No disponible", 404);
+  }
+  const a = await c.env.DB.prepare("SELECT mime,data FROM avatars WHERE user_id=?").bind(id).first<{ mime: string; data: string }>();
+  if (!a) return err(c, "Sin foto", 404);
+  const bin = Uint8Array.from(atob(a.data), (ch) => ch.charCodeAt(0));
+  return new Response(bin, { headers: { "Content-Type": a.mime, "Cache-Control": "private, max-age=604800", "X-Content-Type-Options": "nosniff" } });
+});
+
+// ---- Perfil del negocio (lo edita el admin; los clientes ven conductor, vehículo y cómo pagar)
+const BIZ_KEYS = ["biz_name", "biz_phone", "vehicle", "plate", "bizum", "iban", "pay_note"] as const;
+async function getBusiness(db: D1Database) {
+  const rows = (await db.prepare(`SELECT key,value FROM settings WHERE key IN (${BIZ_KEYS.map(() => "?").join(",")})`).bind(...BIZ_KEYS).all<{ key: string; value: string }>()).results;
+  const m = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  return Object.fromEntries(BIZ_KEYS.map((k) => [k, m[k] || ""])) as Record<(typeof BIZ_KEYS)[number], string>;
+}
+app.get("/api/driver", async (c) => {
+  const a = await c.env.DB.prepare("SELECT id,name,phone,avatar_v FROM users WHERE role='admin' AND active=1 ORDER BY created_at LIMIT 1").first<{ id: string; name: string; phone: string | null; avatar_v: number }>();
+  const biz = await getBusiness(c.env.DB);
+  return c.json({ driver: a ? { id: a.id, name: a.name, avatar_v: a.avatar_v, phone: biz.biz_phone || a.phone || "" } : null, business: biz });
+});
+app.put("/api/admin/business", async (c) => {
+  const b = await c.req.json().catch(() => ({}));
+  const lim: Record<string, number> = { biz_name: 80, biz_phone: 30, vehicle: 80, plate: 15, bizum: 30, iban: 40, pay_note: 300 };
+  await c.env.DB.batch(BIZ_KEYS.map((k) => c.env.DB.prepare("INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(k, str(b[k], lim[k]))));
+  return c.json(await getBusiness(c.env.DB));
+});
+
+// ---- RGPD del cliente: descargar sus datos y pedir la baja
+app.get("/api/client/export", async (c) => {
+  const u = c.get("user");
+  if (u.role !== "client") return err(c, "Solo clientes", 403);
+  const q = (sql: string) => c.env.DB.prepare(sql).bind(u.id).all().then((r) => r.results);
+  const data = {
+    generado: now(),
+    perfil: await c.env.DB.prepare("SELECT name,email,phone,notify_email,notify_whatsapp,created_at,consent_at FROM users WHERE id=?").bind(u.id).first(),
+    carreras: await q("SELECT trip_date,trip_time,pickup,dropoff,amount_cents,notes FROM trips WHERE client_id=? ORDER BY trip_date"),
+    pagos: await q("SELECT pay_date,amount_cents,method,note FROM payments WHERE client_id=? ORDER BY pay_date"),
+    solicitudes: await q("SELECT req_date,req_time,pickup,dropoff,note,status,created_at FROM trip_requests WHERE client_id=? ORDER BY created_at"),
+    lugares_guardados: await q("SELECT label,address FROM saved_places WHERE user_id=?"),
+    avisos: await q("SELECT title,body,created_at FROM notifications WHERE user_id=? ORDER BY created_at"),
+  };
+  return new Response(JSON.stringify(data, null, 2), { headers: { "Content-Type": "application/json; charset=utf-8", "Content-Disposition": 'attachment; filename="mis-datos-carreras.json"' } });
+});
+app.post("/api/client/delete-request", async (c) => {
+  const u = c.get("user");
+  if (u.role !== "client") return err(c, "Solo clientes", 403);
+  const t = await clientTotals(c.env.DB, u.id);
+  for (const a of await admins(c.env.DB))
+    await notify(c.env, c.executionCtx, a, "Solicitud de baja", `${u.name} (${u.email}) pide eliminar su cuenta.${t.pending_cents > 0 ? " Tiene un saldo pendiente de " + eur(t.pending_cents) + "." : ""}`);
+  return c.json({ ok: true });
+});
+
+// ---- Admin: próximas carreras (hoy y siguientes)
+app.get("/api/admin/upcoming", async (c) => {
+  const r = await c.env.DB.prepare(`${TRIP_SQL.replace("FROM trips t", ", u.name client_name, u.avatar_v client_avatar_v FROM trips t JOIN users u ON u.id=t.client_id")} WHERE t.trip_date >= ? ORDER BY t.trip_date, t.trip_time LIMIT 10`).bind(today()).all<Record<string, number>>();
+  return c.json({ items: r.results.map((t) => ({ ...t, pending_cents: t.amount_cents - t.paid_cents })) });
+});
+
 // ---- Admin: lugares frecuentes (autocompletar)
 app.get("/api/admin/places", async (c) => {
   const r = await c.env.DB.prepare(
@@ -657,7 +773,7 @@ app.get("/api/admin/report", async (c) => {
   const month = str(c.req.query("month"), 7) || today().slice(0, 7);
   if (!/^\d{4}-\d{2}$/.test(month)) return err(c, "Mes inválido");
   const r = await c.env.DB.prepare(
-    `SELECT u.id,u.name,
+    `SELECT u.id,u.name,u.avatar_v,
        (SELECT COUNT(*) FROM trips WHERE client_id=u.id AND trip_date LIKE ?1||'%') trips,
        COALESCE((SELECT SUM(amount_cents) FROM trips WHERE client_id=u.id AND trip_date LIKE ?1||'%'),0) charged_cents,
        COALESCE((SELECT SUM(amount_cents) FROM payments WHERE client_id=u.id AND pay_date LIKE ?1||'%'),0) collected_cents,
@@ -679,7 +795,7 @@ app.get("*", (c) => {
     "Cache-Control": html ? "no-cache" : "public, max-age=300",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "same-origin",
-    ...(html ? { "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY" } : {}),
+    ...(html ? { "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; img-src 'self' data: blob: https://tile.openstreetmap.org; connect-src 'self'; frame-ancestors 'none'", "X-Frame-Options": "DENY" } : {}),
   } });
 });
 

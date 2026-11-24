@@ -14,7 +14,11 @@ const today = () => { const d = new Date(); return new Date(d.getTime() - d.getT
 const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
 const initials = (n) => String(n || "?").replace(/\(.*?\)/g, "").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 const AVC = ["#3B6FD8", "#0F9F62", "#C2410C", "#7C3AED", "#DB2777", "#0E7490", "#B45309", "#4F46E5"];
-const avatar = (n, cls = "") => { let h = 0; for (const ch of String(n)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return `<div class="av ${cls}" style="background:${AVC[h % AVC.length]}">${esc(initials(n))}</div>`; };
+const avatar = (n, cls = "", id = null, v = 0) => {
+  if (id && v > 0) return `<img class="av ${cls}" src="/api/avatar/${esc(id)}?v=${Number(v)}" alt="" loading="lazy">`;
+  let h = 0; for (const ch of String(n)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return `<div class="av ${cls}" style="background:${AVC[h % AVC.length]}">${esc(initials(n))}</div>`;
+};
 const formData = (el) => Object.fromEntries(new FormData(el).entries());
 
 // ---------- Iconos (trazos propios, 24×24)
@@ -57,6 +61,9 @@ const P = {
   swap: "M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4",
   nav: "M3 11 22 2l-9 19-2-8z",
   repeat: "M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3",
+  camera: "M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8",
+  filter: "M22 3H2l8 9.46V19l4 2v-8.54z",
+  sort: "M3 6h18M6 12h12M10 18h4",
   alert: "M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z",
 };
 const ic = (n, extra = "") => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" ${extra}><path d="${P[n]}"/></svg>`;
@@ -125,19 +132,19 @@ async function render(fromLive) {
   $app.innerHTML = `<header class="top"><div class="logo">${ic("car")}</div>
     <div class="t"><b>${admin ? "Panel de carreras" : "Hola, " + esc(S.me.name.split(" ")[0])}</b><span><i class="live"></i>${admin ? "Administrador · en vivo" : "En vivo"}</span></div>
     ${admin ? `<button class="iconbtn" id="bell" aria-label="Avisos">${ic("bell")}${S.unread ? `<span class="dot">${S.unread}</span>` : ""}</button>` : ""}
-    <button class="iconbtn" id="menu" aria-label="Mi cuenta">${ic("user")}</button></header>
+    <button class="me-btn" id="menu" aria-label="Mi perfil">${avatar(S.me.name, "sm", S.me.id, S.me.avatar_v)}</button></header>
     <main id="view">${skeleton()}</main>
     <nav class="bn"><div class="in">${tabs.map(([k, i, l]) => k === "nuevo" || k === "pedir"
-      ? `<a href="#" data-t="${k}" class="fab" aria-label="${k === "nuevo" ? "Añadir" : "Pedir carrera"}"><span class="c">${ic(i)}</span>${k === "pedir" ? "Pedir" : ""}</a>`
+      ? `<a href="#" data-t="${k}" class="fab" aria-label="${k === "nuevo" ? "Añadir" : "Pedir carrera"}"><span class="c" data-l="${k === "nuevo" ? "Añadir" : "Pedir carrera"}">${ic(i)}</span><span class="fl">${k === "pedir" ? "Pedir" : ""}</span></a>`
       : `<a href="#" data-t="${k}" class="${S.tab === k ? "on" : ""}">${ic(i)}${l}${k === "avisos" && S.unread ? `<span class="dot" style="position:absolute;top:0;right:calc(50% - 20px);background:var(--bad);color:#fff;border-radius:9px;font-size:.62rem;padding:1px 5px">${S.unread}</span>` : ""}</a>`).join("")}</div></nav>`;
   $app.querySelectorAll("nav a").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); if (a.dataset.t === "nuevo") return quickAdd(); go(a.dataset.t); }));
-  document.getElementById("menu").onclick = accountModal;
+  document.getElementById("menu").onclick = () => go("perfil");
   document.getElementById("bell")?.addEventListener("click", () => go("avisos"));
   const v = document.getElementById("view");
   try {
     const views = admin
-      ? { inicio: adminInicio, clientes: adminClientes, carreras: adminCarreras, gastos: adminGastos, avisos: avisosView }
-      : { inicio: clienteInicio, carreras: clienteCarreras, pedir: clientePedir, pagos: clientePagos, avisos: avisosView };
+      ? { inicio: adminInicio, clientes: adminClientes, carreras: adminCarreras, gastos: adminGastos, avisos: avisosView, perfil: perfilView }
+      : { inicio: clienteInicio, carreras: clienteCarreras, pedir: clientePedir, pagos: clientePagos, avisos: avisosView, perfil: perfilView };
     if (admin && S.clientId) await clienteDetalle(v);
     else await (views[S.tab] || views.inicio)(v);
     liveStart();
@@ -195,27 +202,91 @@ async function inviteView(token) {
   });
 }
 
-function accountModal() {
-  modal(`<div class="row" style="margin-bottom:10px">${avatar(S.me.name, "lg")}<div class="grow"><h2>${esc(S.me.name)}</h2><div class="mut">${esc(S.me.email)}</div></div></div>
-    <form id="pw"><label class="f">Contraseña actual</label><input name="current" type="password" autocomplete="current-password" required>
-    <label class="f">Nueva contraseña (mínimo 10 caracteres)</label><input name="next" type="password" minlength="10" autocomplete="new-password" required>
-    <button class="block" style="margin-top:14px">${ic("lock")}Cambiar contraseña</button></form>
-    ${S.me.role === "admin" ? `<form id="tar" class="card" style="margin-top:14px"><b>${ic("euro")} Tarifa orientativa</b><p class="mut" style="margin:4px 0 0">Sirve para sugerir el importe según los km. Tú decides el precio final.</p>
-      <div class="two"><div><label class="f">Bajada de bandera (€)</label><input name="base_eur" type="number" step="0.01" min="0" inputmode="decimal"></div><div><label class="f">Precio por km (€)</label><input name="per_km_eur" type="number" step="0.01" min="0" inputmode="decimal"></div></div>
-      <div class="two"><div><label class="f">Mínimo por carrera (€)</label><input name="min_eur" type="number" step="0.01" min="0" inputmode="decimal"></div><div><label class="f">Factor carretera</label><input name="road_factor" type="number" step="0.05" min="1" max="2" inputmode="decimal"></div></div>
-      <label class="check"><input type="checkbox" name="show_estimate">Mostrar el precio orientativo al cliente al pedir</label>
-      <button class="ghost block" style="margin-top:10px">${ic("check")}Guardar tarifa</button></form>` : ""}
-    <button class="danger block" id="out" style="margin-top:10px">${ic("logout")}Cerrar sesión</button>`, async (m) => {
-    const tar = m.querySelector("#tar");
-    if (tar) {
-      const st = await api("/settings");
-      for (const k of ["base_eur", "per_km_eur", "min_eur", "road_factor"]) tar.querySelector(`[name=${k}]`).value = st[k] ?? "";
-      tar.querySelector("[name=show_estimate]").checked = !!st.show_estimate;
-      tar.onsubmit = guard(async (e) => { e.preventDefault(); const b = formData(tar); b.show_estimate = !!b.show_estimate; S.settings = await api("/admin/settings", "PUT", b); toast("Tarifa guardada"); });
-    }
-    m.querySelector("#pw").onsubmit = guard(async (e) => { e.preventDefault(); await api("/password", "POST", formData(e.target)); m.remove(); toast("Contraseña actualizada"); });
-    m.querySelector("#out").onclick = guard(async () => { await api("/logout", "POST", {}); S.me = null; m.remove(); render(); });
+// ---------- Perfil (cliente y administrador)
+function resizeImage(file, size = 320) {
+  return new Promise((res, rej) => {
+    if (!/^image\//.test(file.type)) return rej(new Error("Elige una imagen"));
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const s0 = Math.min(img.width, img.height), cv = document.createElement("canvas");
+      cv.width = cv.height = size;
+      cv.getContext("2d").drawImage(img, (img.width - s0) / 2, (img.height - s0) / 2, s0, s0, 0, 0, size, size);
+      URL.revokeObjectURL(url); res(cv.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => rej(new Error("No pude leer la imagen"));
+    img.src = url;
   });
+}
+async function perfilView(v) {
+  const admin = S.me.role === "admin";
+  const [{ profile: p }, st, biz] = await Promise.all([api("/profile"), admin ? api("/settings") : null, admin ? api("/driver") : null]);
+  const b = biz?.business || {};
+  v.innerHTML = `<div class="hero prof"><div class="hid">
+      <label class="avedit" title="Cambiar foto">${avatar(p.name, "xl", p.id, p.avatar_v)}<span class="cam">${ic("camera")}</span><input type="file" id="foto" accept="image/*" hidden></label>
+      <div style="flex:1;min-width:0"><b style="font-size:1.2rem;display:block">${esc(p.name)}</b><span style="opacity:.75;font-size:.85rem">${esc(p.email)}</span>
+      <div style="margin-top:6px"><span class="chip ${admin ? "" : "ok"}" style="${admin ? "background:var(--acc);color:var(--acc-ink)" : ""}">${admin ? "Administrador" : "Cliente"}</span></div></div></div>
+      <div class="acts"><button class="glass sm" id="fotob">${ic("camera")}${p.avatar_v ? "Cambiar foto" : "Subir foto"}</button>${p.avatar_v ? `<button class="glass sm" id="fotox">${ic("trash")}Quitar foto</button>` : ""}</div></div>
+
+    <div class="sec"><h2>Datos personales</h2></div>
+    <form class="card" id="datos"><label class="f">Nombre</label><input name="name" value="${esc(p.name)}" required>
+      <label class="f">Correo (tu usuario)</label><input name="email" type="email" value="${esc(p.email)}" required>
+      <div id="emailpw" hidden><label class="f">Contraseña actual (para cambiar el correo)</label><input name="current" type="password" autocomplete="current-password"></div>
+      <label class="f">Teléfono con prefijo</label><input name="phone" value="${esc(p.phone || "")}" inputmode="tel" placeholder="34600111222">
+      ${admin ? "" : `<label class="check"><input type="checkbox" name="notify_email" ${p.notify_email ? "checked" : ""}>Recibir avisos por correo</label>
+      <label class="check"><input type="checkbox" name="notify_whatsapp" ${p.notify_whatsapp ? "checked" : ""}>Recibir avisos por WhatsApp</label>`}
+      <button class="block" style="margin-top:14px">${ic("check")}Guardar datos</button></form>
+
+    ${admin ? `<div class="sec"><h2>Mi negocio</h2><span class="mut">Lo ven tus clientes</span></div>
+    <form class="card" id="biz"><label class="f">Nombre comercial</label><input name="biz_name" value="${esc(b.biz_name)}" placeholder="Ej.: Taxi Luis">
+      <label class="f">Teléfono de contacto para clientes</label><input name="biz_phone" value="${esc(b.biz_phone)}" inputmode="tel" placeholder="34600111222">
+      <div class="two"><div><label class="f">Vehículo</label><input name="vehicle" value="${esc(b.vehicle)}" placeholder="Ej.: Toyota Corolla gris"></div><div><label class="f">Matrícula</label><input name="plate" value="${esc(b.plate)}" placeholder="1234 ABC"></div></div>
+      <label class="f">Bizum (número)</label><input name="bizum" value="${esc(b.bizum)}" inputmode="tel">
+      <label class="f">IBAN para transferencias</label><input name="iban" value="${esc(b.iban)}" placeholder="ES00 0000 0000 0000 0000 0000">
+      <label class="f">Nota de pago (opcional)</label><input name="pay_note" value="${esc(b.pay_note)}" placeholder="Ej.: indica tu nombre en el concepto">
+      <button class="block" style="margin-top:14px">${ic("check")}Guardar negocio</button></form>
+
+    <div class="sec"><h2>Tarifa orientativa</h2></div>
+    <form class="card" id="tar"><p class="mut" style="margin:0">Sugiere el importe según los km. Tú decides el precio final.</p>
+      <div class="two"><div><label class="f">Bajada de bandera (€)</label><input name="base_eur" type="number" step="0.01" min="0" inputmode="decimal" value="${st.base_eur ?? ""}"></div><div><label class="f">Precio por km (€)</label><input name="per_km_eur" type="number" step="0.01" min="0" inputmode="decimal" value="${st.per_km_eur ?? ""}"></div></div>
+      <div class="two"><div><label class="f">Mínimo por carrera (€)</label><input name="min_eur" type="number" step="0.01" min="0" inputmode="decimal" value="${st.min_eur ?? ""}"></div><div><label class="f">Factor carretera</label><input name="road_factor" type="number" step="0.05" min="1" max="2" inputmode="decimal" value="${st.road_factor ?? 1.3}"></div></div>
+      <label class="check"><input type="checkbox" name="show_estimate" ${st.show_estimate ? "checked" : ""}>Mostrar el precio orientativo al cliente al pedir</label>
+      <button class="ghost block" style="margin-top:10px">${ic("check")}Guardar tarifa</button></form>` : ""}
+
+    <div class="sec"><h2>Seguridad</h2></div>
+    <form class="card" id="pw"><label class="f">Contraseña actual</label><input name="current" type="password" autocomplete="current-password" required>
+      <label class="f">Nueva contraseña (mínimo 10 caracteres)</label><input name="next" type="password" minlength="10" autocomplete="new-password" required>
+      <button class="ghost block" style="margin-top:14px">${ic("lock")}Cambiar contraseña</button></form>
+
+    ${admin ? "" : `<div class="sec"><h2>Tus datos</h2></div>
+    <div class="card"><p class="mut" style="margin:0 0 10px">Puedes descargar todo lo que guardo de ti o pedir que elimine tu cuenta.</p>
+      <div class="two"><a class="btn ghost" href="/api/client/export" download>${ic("download")}Descargar mis datos</a><button class="danger" id="baja">${ic("trash")}Pedir la baja</button></div></div>`}
+    <div class="mut" style="text-align:center;margin:16px 0 6px">Cuenta creada el ${fdate(String(p.created_at).slice(0, 10))}</div>
+    <button class="danger block" id="out">${ic("logout")}Cerrar sesión</button>`;
+  const foto = v.querySelector("#foto");
+  v.querySelector("#fotob").onclick = () => foto.click();
+  foto.onchange = guard(async () => {
+    const f = foto.files[0]; if (!f) return;
+    const r = await api("/profile/avatar", "PUT", { data: await resizeImage(f) });
+    S.me.avatar_v = r.avatar_v; toast("Foto actualizada"); render();
+  });
+  v.querySelector("#fotox")?.addEventListener("click", guard(async () => { await api("/profile/avatar", "DELETE"); S.me.avatar_v = 0; toast("Foto quitada"); render(); }));
+  const em = v.querySelector("#datos [name=email]");
+  em.oninput = () => (v.querySelector("#emailpw").hidden = em.value.trim().toLowerCase() === p.email);
+  v.querySelector("#datos").onsubmit = guard(async (e) => {
+    e.preventDefault();
+    const b = formData(e.target);
+    if (!admin) { b.notify_email = !!b.notify_email; b.notify_whatsapp = !!b.notify_whatsapp; }
+    await api("/profile", "PATCH", b);
+    S.me.name = b.name; S.me.email = b.email.toLowerCase(); toast("Datos guardados"); render();
+  });
+  v.querySelector("#biz")?.addEventListener("submit", guard(async (e) => { e.preventDefault(); await api("/admin/business", "PUT", formData(e.target)); toast("Datos del negocio guardados"); }));
+  v.querySelector("#tar")?.addEventListener("submit", guard(async (e) => { e.preventDefault(); const b = formData(e.target); b.show_estimate = !!b.show_estimate; S.settings = await api("/admin/settings", "PUT", b); toast("Tarifa guardada"); }));
+  v.querySelector("#pw").onsubmit = guard(async (e) => { e.preventDefault(); await api("/password", "POST", formData(e.target)); e.target.reset(); toast("Contraseña actualizada"); });
+  v.querySelector("#baja")?.addEventListener("click", guard(async () => {
+    if (!confirm("¿Pedir que se elimine tu cuenta? Te contactaré para cerrarla. Si tienes saldo pendiente, habrá que saldarlo antes.")) return;
+    await api("/client/delete-request", "POST", {}); toast("Solicitud enviada");
+  }));
+  v.querySelector("#out").onclick = guard(async () => { await api("/logout", "POST", {}); S.me = null; render(); });
 }
 
 // ---------- Componentes
@@ -275,8 +346,25 @@ function barChart(series) {
 }
 
 // ---------- Cliente
+function driverCard(dr, opts = {}) {
+  if (!dr || !dr.driver) return "";
+  const d = dr.driver, b = dr.business, ph = String(d.phone || "").replace(/\D/g, "");
+  const pay = b.bizum || b.iban;
+  return `<div class="card drv">
+    ${opts.payOnly ? "" : `<div class="row">${avatar(d.name, "lg", d.id, d.avatar_v)}<div class="grow"><span class="mut">Tu conductor</span><b style="display:block;font-size:1.05rem">${esc(b.biz_name || d.name)}</b>
+      ${b.vehicle || b.plate ? `<span class="mut">${ic("car")} ${esc(b.vehicle)}${b.plate ? ` · <b class="plate">${esc(b.plate)}</b>` : ""}</span>` : ""}</div></div>
+    ${ph ? `<div class="two" style="margin-top:12px"><a class="btn ghost" href="tel:+${ph}">${ic("phone")}Llamar</a><a class="btn ghost" href="https://wa.me/${ph}" target="_blank" rel="noopener">${ic("chat")}WhatsApp</a></div>` : ""}`}
+    ${pay ? `<div class="paybox"><b>${ic("wallet")} Cómo pagarme</b>
+      ${b.bizum ? `<div class="payrow"><span><small>Bizum</small>${esc(b.bizum)}</span><button type="button" class="ghost sm" data-copy="${esc(b.bizum)}">${ic("copy")}Copiar</button></div>` : ""}
+      ${b.iban ? `<div class="payrow"><span><small>Transferencia (IBAN)</small>${esc(b.iban)}</span><button type="button" class="ghost sm" data-copy="${esc(b.iban.replace(/\s/g, ""))}">${ic("copy")}Copiar</button></div>` : ""}
+      ${b.pay_note ? `<div class="mut" style="margin-top:6px">${esc(b.pay_note)}</div>` : ""}</div>` : ""}
+  </div>`;
+}
+function bindCopy(v) {
+  v.querySelectorAll("[data-copy]").forEach((b) => (b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.copy); toast("Copiado"); } catch { toast(b.dataset.copy); } }));
+}
 async function clienteInicio(v) {
-  const [s, t, rq] = await Promise.all([api("/client/summary"), api("/client/trips?status=pending"), api("/client/requests")]);
+  const [s, t, rq, dr] = await Promise.all([api("/client/summary"), api("/client/trips?status=pending"), api("/client/requests"), api("/driver").catch(() => null)]);
   const pendReq = rq.items.filter((r) => r.status === "pending");
   v.innerHTML = `<div class="hero"><div class="lbl">${ic("wallet")}Saldo pendiente</div><div class="big">${bigEur(s.pending_cents)}</div>
     <div class="sub">${s.pending_cents > 0 ? plural(t.items.length, "carrera por pagar", "carreras por pagar") : "Estás al día. Gracias."}</div>
@@ -296,10 +384,11 @@ async function clienteInicio(v) {
         <div><span>Carreras este mes</span><b>${s.month_trips}</b></div>
         <div><span>Carreras en total</span><b>${s.trips_total}</b></div>
       </div></div>
+    ${dr && dr.driver ? `<div class="sec"><h2>Tu conductor</h2></div>${driverCard(dr)}` : ""}
     ${pendReq.length ? `<div class="sec"><h2>Solicitudes en espera</h2></div><div class="card flush">${pendReq.map((r) => `<div class="li" style="cursor:default"><div class="av" style="background:var(--warn-bg);color:var(--warn)">${ic("clock")}</div><div class="grow"><div class="name">${esc(r.pickup)} → ${esc(r.dropoff)}</div><div class="mut">${fdateS(r.req_date)}${r.req_time ? " · " + esc(r.req_time) : ""}</div></div>${reqChip(r.status)}</div>`).join("")}</div>` : ""}
     <div class="sec"><h2>Por pagar</h2>${t.items.length ? `<a id="all">Ver todas</a>` : ""}</div>
     <div class="card">${t.items.map((x) => tripCard(x, { repeat: true })).join("") || empty("check", "Nada pendiente", "Todas tus carreras están pagadas.")}</div>`;
-  bindRepeat(v, t.items);
+  bindRepeat(v, t.items); bindCopy(v);
   v.querySelector("#pedir").onclick = () => go("pedir");
   v.querySelector("#all")?.addEventListener("click", () => { cStatus = "all"; go("carreras"); });
   v.querySelector("#pdf").onclick = guard(async () => {
@@ -359,11 +448,13 @@ async function clientePedir(v) {
   v.querySelectorAll("[data-cancel]").forEach((b) => (b.onclick = guard(async () => { await api(`/client/requests/${b.dataset.cancel}/cancel`, "POST", {}); toast("Solicitud cancelada"); render(); })));
 }
 async function clientePagos(v) {
-  const [p, s] = await Promise.all([api("/client/payments"), api("/client/summary")]);
+  const [p, s, dr] = await Promise.all([api("/client/payments"), api("/client/summary"), api("/driver").catch(() => null)]);
   v.innerHTML = `<div class="stats" style="margin-top:8px"><div class="stat"><div class="k">${ic("check")}Total pagado</div><div class="v ok">${eur(s.paid_cents)}</div></div>
     <div class="stat"><div class="k">${ic("wallet")}Pendiente</div><div class="v ${s.pending_cents > 0 ? "bad" : "ok"}">${eur(s.pending_cents)}</div></div></div>
+    ${s.pending_cents > 0 && dr && (dr.business.bizum || dr.business.iban) ? driverCard(dr, { payOnly: true }) : ""}
     <div class="sec"><h2>Historial de pagos</h2></div>
     <div class="card flush">${p.items.map((x) => payItem(x, false)).join("") || empty("wallet", "Aún no hay pagos", "Cada pago que registre aparecerá aquí con su fecha.")}</div>`;
+  bindCopy(v);
 }
 async function avisosView(v) {
   const r = await api("/notifications");
@@ -374,7 +465,7 @@ async function avisosView(v) {
 
 // ---------- Admin
 async function adminInicio(v) {
-  const [s, rq] = await Promise.all([api("/admin/summary"), api("/admin/requests")]);
+  const [s, rq, up] = await Promise.all([api("/admin/summary"), api("/admin/requests"), api("/admin/upcoming")]);
   const net = s.month_collected_cents - s.month_expenses_cents;
   v.innerHTML = `<div class="hero"><div class="lbl">${ic("wallet")}Total por cobrar</div><div class="big">${bigEur(s.pending_cents)}</div>
     <div class="sub">${s.top_debtors.length ? plural(s.top_debtors.length, "cliente te debe", "clientes te deben") + " dinero" : "Nadie te debe nada"}</div>
@@ -382,27 +473,29 @@ async function adminInicio(v) {
     <div class="stats"><div class="stat"><div class="k">${ic("fuel")}Gastos del mes</div><div class="v warn">${eur(s.month_expenses_cents)}</div></div>
     <div class="stat"><div class="k">${ic("chart")}Neto del mes</div><div class="v ${net >= 0 ? "ok" : "bad"}">${eur(net)}</div></div></div>
     ${rq.items.length ? `<div class="sec"><h2>Solicitudes nuevas <span class="chip warn">${rq.items.length}</span></h2></div>${rq.items.map((r) => `<div class="card req">
-      <div class="row"><div class="grow"><b>${esc(r.client_name)}</b><div class="mut">${fdateS(r.req_date)}${r.req_time ? " · " + esc(r.req_time) : ""}</div></div>${reqChip(r.status)}</div>
+      <div class="row">${avatar(r.client_name, "", r.client_id, r.client_avatar_v)}<div class="grow"><b>${esc(r.client_name)}</b><div class="mut">${fdateS(r.req_date)}${r.req_time ? " · " + esc(r.req_time) : ""}</div></div>${reqChip(r.status)}</div>
       <div class="route" style="margin-top:10px"><div class="rail"><i></i><s></s><u></u></div><div class="pl"><small>Recogida</small>${esc(r.pickup)}</div><div></div><div class="pl"><small>Destino</small>${esc(r.dropoff)}</div></div>
       ${r.note ? `<div class="mut" style="margin-top:8px">“${esc(r.note)}”</div>` : ""}
       <div class="minimap" data-map="${r.id}"></div>
       <div class="ft" style="margin-top:10px">${navButtons(r)}</div>
       <div class="acts"><button class="danger" data-rej="${r.id}">${ic("x")}Rechazar</button><button class="ok" data-acc="${r.id}">${ic("check")}Aceptar</button></div></div>`).join("")}` : ""}
+    ${up.items.length ? `<div class="sec"><h2>Próximas carreras</h2><span class="mut">Hoy y siguientes</span></div><div class="card">${up.items.map((x) => tripCard(x, { admin: true, client: x.client_name, compact: true })).join("")}</div>` : ""}
     <div class="sec"><h2>Últimos 6 meses</h2></div><div class="card">${barChart(s.series)}</div>
     <div class="sec"><h2>Mayores deudas</h2><a id="vc">Ver clientes</a></div>
-    <div class="card flush">${s.top_debtors.map((d) => `<div class="li" data-c="${d.id}">${avatar(d.name)}<div class="grow"><div class="name">${esc(d.name)}</div>${d.oldest_unpaid ? `<div class="mut">Sin pagar desde ${fdate(d.oldest_unpaid)}</div>` : ""}</div><span class="amt bad">${eur(d.pending_cents)}</span><span class="chev">${ic("chev")}</span></div>`).join("") || empty("check", "Todo cobrado", "Nadie tiene saldo pendiente.")}</div>
+    <div class="card flush">${s.top_debtors.map((d) => `<div class="li" data-c="${d.id}">${avatar(d.name, "", d.id, d.avatar_v)}<div class="grow"><div class="name">${esc(d.name)}</div>${d.oldest_unpaid ? `<div class="mut">Sin pagar desde ${fdate(d.oldest_unpaid)}</div>` : ""}</div><span class="amt bad">${eur(d.pending_cents)}</span><span class="chev">${ic("chev")}</span></div>`).join("") || empty("check", "Todo cobrado", "Nadie tiene saldo pendiente.")}</div>
     <div class="sec"><h2>Informe mensual</h2></div><input type="month" id="mes" value="${S.month || today().slice(0, 7)}"><div id="inf"></div>`;
   v.querySelectorAll("[data-c]").forEach((el) => (el.onclick = () => go("clientes", el.dataset.c)));
   v.querySelector("#vc").onclick = () => go("clientes");
   v.querySelectorAll("[data-acc]").forEach((b) => (b.onclick = () => acceptRequest(rq.items.find((r) => r.id === b.dataset.acc))));
   v.querySelectorAll("[data-rej]").forEach((b) => (b.onclick = () => rejectRequest(b.dataset.rej)));
   v.querySelectorAll(".minimap[data-map]").forEach((el) => routeMap(el, rq.items.find((r) => r.id === el.dataset.map)));
+  bindTripActions(v, up.items);
   const load = guard(async () => {
     S.month = v.querySelector("#mes").value;
     const r = await api("/admin/report?month=" + S.month);
     v.querySelector("#inf").innerHTML = `<div class="card"><div class="stats" style="grid-template-columns:repeat(3,1fr)">
       <div><div class="mut">Carreras</div><b>${r.totals.trips}</b></div><div><div class="mut">Cargado</div><b>${eur(r.totals.charged_cents)}</b></div><div><div class="mut">Cobrado</div><b class="ok">${eur(r.totals.collected_cents)}</b></div></div>
-      ${r.rows.map((x) => `<div class="li" data-c="${x.id}">${avatar(x.name)}<div class="grow"><div class="name">${esc(x.name)}</div><div class="mut">${plural(x.trips, "carrera", "carreras")} · cobrado ${eur(x.collected_cents)}</div></div><div style="text-align:right"><div class="mut">Debe hoy</div><span class="amt ${x.pending_cents > 0 ? "bad" : "ok"}">${eur(x.pending_cents)}</span></div></div>`).join("") || empty("calendar", "Sin movimientos ese mes")}</div>`;
+      ${r.rows.map((x) => `<div class="li" data-c="${x.id}">${avatar(x.name, "", x.id, x.avatar_v)}<div class="grow"><div class="name">${esc(x.name)}</div><div class="mut">${plural(x.trips, "carrera", "carreras")} · cobrado ${eur(x.collected_cents)}</div></div><div style="text-align:right"><div class="mut">Debe hoy</div><span class="amt ${x.pending_cents > 0 ? "bad" : "ok"}">${eur(x.pending_cents)}</span></div></div>`).join("") || empty("calendar", "Sin movimientos ese mes")}</div>`;
     v.querySelectorAll("#inf [data-c]").forEach((el) => (el.onclick = () => go("clientes", el.dataset.c)));
   });
   v.querySelector("#mes").onchange = load;
@@ -426,30 +519,49 @@ function rejectRequest(id) {
     m.querySelector("#f").onsubmit = guard(async (e) => { e.preventDefault(); await api(`/admin/requests/${id}/reject`, "POST", formData(e.target)); m.remove(); toast("Solicitud rechazada"); render(); });
   });
 }
+let cFilter = "all", cSort = "debt";
 async function adminClientes(v) {
   const r = await api("/admin/clients");
   const debt = r.items.reduce((a, c) => a + Math.max(0, c.pending_cents), 0);
   v.innerHTML = `<div class="sec" style="margin-top:8px"><h2>Clientes</h2><span class="mut">${plural(r.items.length, "cliente", "clientes")} · ${eur(debt)} por cobrar</span></div>
     <div class="search">${ic("search")}<input type="search" id="q" placeholder="Buscar por nombre, correo o teléfono"></div>
-    <div class="card flush">${r.items.map((c) => `<div class="li" data-q="${esc((c.name + " " + c.email + " " + (c.phone || "")).toLowerCase())}" data-c="${c.id}">${avatar(c.name)}
+    <div class="filters"><div class="seg" id="cf" style="margin:10px 0 0;flex:1">${[["all", "Todos"], ["debt", "Con deuda"], ["inactive", "Sin activar"]].map(([k, l]) => `<button class="${cFilter === k ? "on" : ""}" data-f="${k}">${l}</button>`).join("")}</div>
+      <select id="cs" aria-label="Ordenar" style="width:auto;margin-top:10px">${[["debt", "Mayor deuda"], ["name", "Nombre A-Z"], ["new", "Más recientes"]].map(([k, l]) => `<option value="${k}" ${cSort === k ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+    <div class="card flush">${r.items.filter((c) => cFilter === "all" || (cFilter === "debt" ? c.pending_cents > 0 : c.active && !c.pass_set)).sort((a, b) => cSort === "name" ? a.name.localeCompare(b.name, "es") : cSort === "new" ? String(b.created_at).localeCompare(String(a.created_at)) : b.pending_cents - a.pending_cents).map((c) => `<div class="li" data-q="${esc((c.name + " " + c.email + " " + (c.phone || "")).toLowerCase())}" data-c="${c.id}">${avatar(c.name, "", c.id, c.avatar_v)}
       <div class="grow"><div class="name">${esc(c.name)}${c.active ? "" : ` <span class="chip n">Inactivo</span>`}${c.active && !c.pass_set ? ` <span class="chip info">Sin activar</span>` : ""}</div><div class="mut">${esc(c.phone || c.email)}</div></div>
       <div style="text-align:right"><span class="amt ${c.pending_cents > 0 ? "bad" : "ok"}">${eur(c.pending_cents)}</span><div class="mut" style="font-size:.74rem">${c.pending_cents > 0 ? "pendiente" : "al día"}</div></div><span class="chev">${ic("chev")}</span></div>`).join("") || empty("users", "Aún no tienes clientes", "Crea el primero con el botón de abajo.")}</div>
     <button class="acc block" id="nc" style="margin-top:6px">${ic("plus")}Nuevo cliente</button>`;
   v.querySelectorAll("[data-c]").forEach((el) => (el.onclick = () => go("clientes", el.dataset.c)));
   v.querySelector("#nc").onclick = clientForm;
+  v.querySelectorAll("#cf [data-f]").forEach((b) => (b.onclick = () => { cFilter = b.dataset.f; render(); }));
+  v.querySelector("#cs").onchange = (e) => { cSort = e.target.value; render(); };
   v.querySelector("#q").oninput = (e) => { const q = e.target.value.trim().toLowerCase(); v.querySelectorAll("[data-q]").forEach((el) => (el.style.display = el.dataset.q.includes(q) ? "" : "none")); };
 }
 let aStatus = "pending";
+const TF = { q: "", client: "", month: "" };
 async function adminCarreras(v) {
   const [t, cl] = await Promise.all([api("/admin/trips?status=" + aStatus), api("/admin/clients")]);
   const names = Object.fromEntries(cl.items.map((c) => [c.id, c.name]));
-  const sum = t.items.reduce((a, x) => a + (aStatus === "pending" ? x.pending_cents : x.amount_cents), 0);
-  v.innerHTML = `<div class="sec" style="margin-top:8px"><h2>Carreras</h2><span class="mut">${plural(t.items.length, "carrera", "carreras")} · ${eur(sum)}</span></div>`;
+  v.innerHTML = `<div class="sec" style="margin-top:8px"><h2>Carreras</h2><span class="mut" id="tsum"></span></div>`;
   v.appendChild(seg(STATUS_OPTS, aStatus, (s) => { aStatus = s; render(); }));
-  const c = document.createElement("div"); c.className = "card";
-  c.innerHTML = t.items.map((x) => tripCard(x, { admin: true, client: names[x.client_id] })).join("") || empty("car", "Sin carreras aquí");
-  v.appendChild(c);
-  bindTripActions(v, t.items);
+  const f = document.createElement("div"); f.className = "filters";
+  f.innerHTML = `<div class="search" style="flex:1 1 100%">${ic("search")}<input type="search" id="tq" placeholder="Buscar lugar o nota" value="${esc(TF.q)}"></div>
+    <select id="tc" aria-label="Cliente"><option value="">Todos los clientes</option>${cl.items.map((c) => `<option value="${c.id}" ${TF.client === c.id ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>
+    <input type="month" id="tm" value="${esc(TF.month)}" aria-label="Mes">`;
+  v.appendChild(f);
+  const c = document.createElement("div"); c.className = "card"; v.appendChild(c);
+  const draw = () => {
+    const q = TF.q.trim().toLowerCase();
+    const items = t.items.filter((x) => (!TF.client || x.client_id === TF.client) && (!TF.month || x.trip_date.startsWith(TF.month)) && (!q || `${x.pickup} ${x.dropoff} ${x.notes || ""} ${names[x.client_id] || ""}`.toLowerCase().includes(q)));
+    const sum = items.reduce((a, x) => a + (aStatus === "pending" ? x.pending_cents : x.amount_cents), 0);
+    v.querySelector("#tsum").textContent = `${plural(items.length, "carrera", "carreras")} · ${eur(sum)}`;
+    c.innerHTML = items.map((x) => tripCard(x, { admin: true, client: names[x.client_id] })).join("") || empty("car", "Sin carreras con estos filtros");
+    bindTripActions(v, items);
+  };
+  f.querySelector("#tq").oninput = (e) => { TF.q = e.target.value; draw(); };
+  f.querySelector("#tc").onchange = (e) => { TF.client = e.target.value; draw(); };
+  f.querySelector("#tm").onchange = (e) => { TF.month = e.target.value; draw(); };
+  draw();
 }
 function bindTripActions(v, trips) {
   v.querySelectorAll("[data-edit]").forEach((b) => (b.onclick = () => tripForm(trips.find((t) => t.id === b.dataset.edit))));
@@ -462,7 +574,7 @@ async function clienteDetalle(v) {
   const c = d.client, p = d.totals.pending_cents;
   const waText = `Hola ${c.name.split(" ")[0]}, te escribo por las carreras. Tu saldo pendiente es de ${eur(p)}. Puedes ver el detalle en tu cuenta: ${location.origin}`;
   v.innerHTML = `<button class="ghost sm" id="back" style="margin:6px 0 2px">${ic("back")}Clientes</button>
-    <div class="hero"><div class="hid">${avatar(c.name, "lg")}<div style="flex:1;min-width:0"><b style="font-size:1.15rem;display:block">${esc(c.name)}</b><span style="opacity:.75;font-size:.82rem">${esc(c.phone || c.email)}</span></div>${c.active ? (c.pass_set ? "" : `<span class="chip info">Sin activar</span>`) : `<span class="chip n">Inactivo</span>`}<button class="glass sm" id="ed" aria-label="Editar cliente">${ic("edit")}</button></div>
+    <div class="hero"><div class="hid">${avatar(c.name, "lg", c.id, c.avatar_v)}<div style="flex:1;min-width:0"><b style="font-size:1.15rem;display:block">${esc(c.name)}</b><span style="opacity:.75;font-size:.82rem">${esc(c.phone || c.email)}</span></div>${c.active ? (c.pass_set ? "" : `<span class="chip info">Sin activar</span>`) : `<span class="chip n">Inactivo</span>`}<button class="glass sm" id="ed" aria-label="Editar cliente">${ic("edit")}</button></div>
       <div class="lbl" style="margin-top:14px">Saldo pendiente</div><div class="big">${bigEur(p)}</div>
       <div class="row"><div><span>Cargado</span><b>${eur(d.totals.charged_cents)}</b></div><div><span>Pagado</span><b>${eur(d.totals.paid_cents)}</b></div><div><span>Carreras</span><b>${d.trips.length}</b></div></div></div>
     <div class="tiles">
@@ -474,6 +586,8 @@ async function clienteDetalle(v) {
       <button class="tile" id="pdf"><span class="ic">${ic("file")}</span>Estado</button>
       <button class="tile" id="csv"><span class="ic">${ic("download")}</span>CSV</button>
       <button class="tile" id="acc"><span class="ic">${ic("key")}</span>Acceso</button></div>
+    ${c.admin_note ? `<div class="card note">${ic("file")}<div><b>Notas internas</b><div>${esc(c.admin_note).replace(/\n/g, "<br>")}</div></div></div>` : ""}
+    <div class="mut" style="margin:4px 2px 0">Cliente desde ${fdate(String(c.created_at).slice(0, 10))}${c.consent_at ? " · aceptó avisos" : ""}</div>
     <div id="segw"></div><div class="card" id="list"></div>`;
   const drawList = () => {
     const L = v.querySelector("#list");
@@ -843,7 +957,9 @@ function clientForm() {
 }
 function clientEdit(c) {
   modal(`<h2>Editar cliente</h2><form id="f"><label class="f">Nombre</label><input name="name" value="${esc(c.name)}" required>
+    <label class="f">Correo (usuario)</label><input name="email" type="email" value="${esc(c.email)}" required>
     <label class="f">Teléfono</label><input name="phone" value="${esc(c.phone)}" inputmode="tel">
+    <label class="f">Notas internas (solo las ves tú)</label><textarea name="admin_note" rows="3" placeholder="Ej.: paga los viernes, prefiere Bizum">${esc(c.admin_note || "")}</textarea>
     <label class="check"><input type="checkbox" name="notify_email" ${c.notify_email ? "checked" : ""}>Avisos por correo</label>
     <label class="check"><input type="checkbox" name="notify_whatsapp" ${c.notify_whatsapp ? "checked" : ""}>Avisos por WhatsApp</label>
     <label class="check"><input type="checkbox" name="active" ${c.active ? "checked" : ""}>Cuenta activa</label>
