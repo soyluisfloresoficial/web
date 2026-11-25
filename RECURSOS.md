@@ -31,6 +31,20 @@ Al pulsar «Copiar» en una petición se envía al `dataLayer` el evento `copiar
 
 | Recurso | Palabra | Origen | Página |
 |---|---|---|---|
+| Tu agente de IA para WhatsApp, paso a paso | WHATSAPP | Reel 01 | `/recursos/guia-agente-whatsapp` |
+| 25 puntos para que tu web venda | WEB | Reel 02 | `/recursos/checklist-web` |
+| Tu CRM conectado a WhatsApp en una semana | CRM | Reel 03 | `/recursos/guia-crm-whatsapp` |
+| Make o n8n: comparativa con precios | MAKE | Reel 04 | `/recursos/comparativa-make-n8n` |
+| Mapa del embudo de ventas en 4 etapas | EMBUDO | Reel 05 | `/recursos/mapa-embudo-4-etapas` |
+| Agente de voz para tu negocio | LLAMADAS | Reel 06 | `/recursos/guia-agente-voz` |
+| Estructura de una landing que convierte | LANDING | Reel 07 | `/recursos/plantilla-landing` |
+| Cobros y facturas automáticas con Stripe | COBROS | Reel 08 | `/recursos/flujo-cobros-stripe` |
+| 12 preguntas para cualificar leads con IA | FILTRO | Reel 09 | `/recursos/preguntas-cualificar-leads` |
+| Dashboard con los 5 números de tu negocio | PANEL | Reel 10 | `/recursos/plantilla-dashboard-5-numeros` |
+| 4 correos después de tu lead magnet | CORREOS | Reel 11 | `/recursos/secuencia-4-correos` |
+| Tablero de ventas en Airtable | VENTAS | Reel 12 | `/recursos/plantilla-tablero-ventas` |
+| 1 idea, 10 piezas de contenido: prompts | CONTENIDO | Reel 13 | `/recursos/prompts-contenido-1-a-10` |
+| Qué automatizar primero | PRIORIDAD | Reel 14 | `/recursos/plantilla-que-automatizar-primero` |
 | Analiza las preguntas de tus clientes con IA | Enlace del perfil | Video · Episodio 04 | `/recursos/plantilla-preguntas-de-clientes` |
 | Diseña tu primera automatización en 5 pasos | FLUJO | Video · Episodio 03 | `/recursos/plantilla-primera-automatizacion` |
 | Organiza tus archivos antes de conectarlos a una IA | DOCUMENTOS | Video · Episodio 01 | `/recursos/checklist-organizar-archivos` |
