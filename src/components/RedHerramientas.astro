@@ -1,0 +1,812 @@
+---
+/**
+ * Red de herramientas «Todo conectado a tu negocio» (23/11/2026, pedido del
+ * titular: un efecto que impresione y que se entienda). Sustituye a la
+ * espiral y a las órbitas.
+ *
+ * Computadora (desde 1024 px): el monograma LF brilla en el centro y las
+ * herramientas lo rodean en una elipse, agrupadas por categoría. Al entrar
+ * en pantalla las líneas se dibujan desde cada herramienta hasta el centro,
+ * las herramientas se encienden una a una y después viajan pulsos de luz
+ * hacia el centro, como datos que fluyen. Al pasar el ratón por una
+ * herramienta, su conexión se ilumina.
+ *
+ * Celular y tableta: una columna de luz baja con el scroll; cada categoría
+ * se enciende al llegar y sus herramientas aparecen una a una.
+ *
+ * Un solo marcado para las dos versiones. Las posiciones se calculan aquí
+ * (en el build), no en el navegador. Solo transform, opacity y trazos SVG.
+ * Movimiento reducido o sin JavaScript: todo visible y quieto. Los pulsos
+ * duran más de 5 s, así que hay botón de pausa (WCAG 2.2.2).
+ */
+import { categoriasHerramientas } from "../data/home";
+import { logos, monograma } from "../data/logos";
+
+// Escena de 1000 × 640 (las mismas unidades para el SVG y las posiciones).
+const W = 1000;
+const H = 640;
+const CX = W / 2;
+const CY = H / 2;
+const RX = 432;
+const RY = 258;
+const HUECO = 1; // huecos entre categorías, en «plazas»
+
+const plazas = categoriasHerramientas.reduce((n, c) => n + c.herramientas.length + HUECO, 0);
+let plaza = 0;
+let orden = 0;
+const r1 = (n: number) => Math.round(n * 10) / 10;
+
+// Reparto por distancia real sobre la elipse (no por ángulo): con ángulos
+// iguales, en los laterales de una elipse ancha las herramientas quedaban
+// apretadas. Se mide el contorno y cada plaza ocupa el mismo tramo.
+const MUESTRAS = 2000;
+const contorno: { a: number; l: number }[] = [];
+{
+  let l = 0;
+  let px = CX + RX * Math.cos(-Math.PI / 2);
+  let py = CY + RY * Math.sin(-Math.PI / 2);
+  for (let m = 0; m <= MUESTRAS; m++) {
+    const a = -Math.PI / 2 + (m / MUESTRAS) * Math.PI * 2;
+    const x = CX + RX * Math.cos(a);
+    const y = CY + RY * Math.sin(a);
+    l += Math.hypot(x - px, y - py);
+    contorno.push({ a, l });
+    px = x;
+    py = y;
+  }
+}
+const largoTotal = contorno[contorno.length - 1].l;
+/** Ángulo del punto que está a la fracción f (0 a 1) del contorno. */
+const anguloEn = (f: number) => {
+  const objetivo = f * largoTotal;
+  let lo = 0;
+  let hi = contorno.length - 1;
+  while (lo < hi) {
+    const m = (lo + hi) >> 1;
+    if (contorno[m].l < objetivo) lo = m + 1;
+    else hi = m;
+  }
+  return contorno[lo].a;
+};
+
+const categorias = categoriasHerramientas.map((c, k) => {
+  const inicio = plaza;
+  const nodos = c.herramientas.map((h) => {
+    const a = anguloEn(plaza / plazas);
+    plaza++;
+    const x = CX + RX * Math.cos(a);
+    const y = CY + RY * Math.sin(a);
+    // Curva suave hacia el centro: el punto de control se aparta un poco
+    // de la recta, siempre hacia el mismo lado, para que la red «gire».
+    const mx = (x + CX) / 2;
+    const my = (y + CY) / 2;
+    const dx = CX - x;
+    const dy = CY - y;
+    const qx = mx - dy * 0.16;
+    const qy = my + dx * 0.16;
+    return {
+      nombre: h,
+      x,
+      y,
+      d: `M${r1(x)} ${r1(y)} Q${r1(qx)} ${r1(qy)} ${CX} ${CY}`,
+      orden: orden++,
+      logo: logos[h],
+    };
+  });
+  // Etiqueta de la categoría: a media altura entre el centro y su arco.
+  const medio = inicio + (c.herramientas.length - 1) / 2;
+  const am = anguloEn(medio / plazas);
+  const etiqueta = { x: CX + RX * 0.56 * Math.cos(am), y: CY + RY * 0.6 * Math.sin(am) };
+  plaza += HUECO;
+  return { ...c, k, nodos, etiqueta };
+});
+const total = orden;
+const pc = (v: number, max: number) => `${r1((v / max) * 100)}%`;
+---
+
+<div class="red reveal" data-red style={`--total: ${total}`}>
+  <div class="red-escena">
+    {/* Líneas y pulsos (solo computadora). Decorativo. */}
+    <svg class="red-lineas" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="red-halo" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#6366f1" stop-opacity="0.55"></stop>
+          <stop offset="0.5" stop-color="#007bff" stop-opacity="0.16"></stop>
+          <stop offset="1" stop-color="#007bff" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+      <ellipse class="red-halo" cx={CX} cy={CY} rx="230" ry="150" fill="url(#red-halo)"></ellipse>
+      <ellipse class="red-orbita" cx={CX} cy={CY} rx={RX} ry={RY}></ellipse>
+      <ellipse class="red-orbita red-orbita-2" cx={CX} cy={CY} rx={RX * 0.56} ry={RY * 0.6}></ellipse>
+      {
+        categorias.map((c) =>
+          c.nodos.map((n) => (
+            <g class="red-conexion" data-nodo={n.orden} style={`--c: ${c.color}; --o: ${n.orden}`}>
+              <path class="red-linea" d={n.d} pathLength="1"></path>
+              <path class="red-pulso" d={n.d} pathLength="1"></path>
+            </g>
+          )),
+        )
+      }
+      <circle class="red-onda" cx={CX} cy={CY} r="58"></circle>
+      <circle class="red-onda red-onda-2" cx={CX} cy={CY} r="58"></circle>
+    </svg>
+
+    {/* Centro: la marca. */}
+    <div class="red-nucleo" aria-hidden="true">
+      <span class="red-nucleo-anillo"></span>
+      <img src="/logo/monograma-80.webp" alt="" width="40" height="43" loading="lazy" />
+      <span class="red-nucleo-texto">Tu negocio</span>
+    </div>
+
+    <div class="red-cats">
+      <span class="red-chispa" aria-hidden="true"></span>
+      {
+        categorias.map((c) => (
+          <div class="red-cat" style={`--c: ${c.color}; --k: ${c.k}`} data-red-cat>
+            <h3
+              class="red-cat-titulo"
+              id={`red-${c.id}`}
+              style={`--ex: ${pc(c.etiqueta.x, W)}; --ey: ${pc(c.etiqueta.y, H)}`}
+            >
+              <span class="red-cat-punto" aria-hidden="true"></span>
+              <span class="red-cat-nombre">{c.nombre}</span>
+              <span class="red-cat-corto" aria-hidden="true">{c.corto}</span>
+              <span class="red-cat-texto">{c.texto}</span>
+            </h3>
+            <ul class="red-nodos" aria-labelledby={`red-${c.id}`}>
+              {c.nodos.map((n, i) => (
+                <li
+                  class="red-nodo"
+                  data-nodo={n.orden}
+                  style={`--x: ${pc(n.x, W)}; --y: ${pc(n.y, H)}; --o: ${n.orden}; --i: ${i};${n.logo?.color ? ` --marca: ${n.logo.color}` : ""}`}
+                >
+                  <span class="red-icono" aria-hidden="true">
+                    {n.logo?.d ? (
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" focusable="false">
+                        <path d={n.logo.d} />
+                      </svg>
+                    ) : (
+                      <span class="red-mono" data-monograma={monograma(n.nombre)} data-largo={monograma(n.nombre).length > 2 ? "" : undefined} />
+                    )}
+                  </span>
+                  <span class="red-nombre">{n.nombre}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <button type="button" class="red-pausa" data-red-pausa aria-pressed="false">
+    <svg class="icono-pausa" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5v14M16 5v14"></path></svg>
+    <svg class="icono-seguir" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 5v14l12-7L7 5Z"></path></svg>
+    <span data-red-pausa-texto>Pausar el movimiento</span>
+  </button>
+</div>
+
+<script>
+  const red = document.querySelector<HTMLElement>("[data-red]");
+  if (red) {
+    // Pausa de los pulsos y las ondas.
+    const boton = red.querySelector<HTMLButtonElement>("[data-red-pausa]");
+    const texto = boton?.querySelector("[data-red-pausa-texto]");
+    boton?.addEventListener("click", () => {
+      const pausa = !red.classList.contains("en-pausa");
+      red.classList.toggle("en-pausa", pausa);
+      boton.setAttribute("aria-pressed", String(pausa));
+      if (texto) texto.textContent = pausa ? "Seguir el movimiento" : "Pausar el movimiento";
+    });
+
+    // Computadora: al pasar por una herramienta se ilumina su conexión.
+    const conexiones = new Map<string, Element>();
+    red.querySelectorAll(".red-conexion").forEach((g) => conexiones.set((g as HTMLElement).dataset.nodo ?? "", g));
+    red.querySelectorAll<HTMLElement>(".red-nodo").forEach((n) => {
+      const g = conexiones.get(n.dataset.nodo ?? "");
+      if (!g) return;
+      n.addEventListener("mouseenter", () => {
+        g.classList.add("activa");
+        red.classList.add("con-foco");
+      });
+      n.addEventListener("mouseleave", () => {
+        g.classList.remove("activa");
+        red.classList.remove("con-foco");
+      });
+    });
+
+    // Celular y tableta: cada categoría se enciende al llegar a ella.
+    const cats = red.querySelectorAll<HTMLElement>("[data-red-cat]");
+    if ("IntersectionObserver" in window) {
+      red.classList.add("con-encendido");
+      const vigia = new IntersectionObserver(
+        (entradas) => {
+          for (const e of entradas) {
+            if (e.isIntersecting) {
+              e.target.classList.add("encendida");
+              vigia.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: "0px 0px -30% 0px" },
+      );
+      cats.forEach((c) => vigia.observe(c));
+    }
+  }
+</script>
+
+<style>
+  /* ================================================================ Base:
+     celular y tableta (columna de luz). */
+  .red {
+    --ancho-col: 2px;
+    position: relative;
+    display: grid;
+    gap: 1.75rem;
+    padding-inline: var(--gutter);
+  }
+  .red-lineas {
+    display: none;
+  }
+  .red-escena {
+    position: relative;
+  }
+
+  /* Centro: el monograma con un anillo de luz que gira. */
+  .red-nucleo {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 6.5rem;
+    height: 6.5rem;
+    margin: 0 auto 2rem;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 50% 35%, rgb(255 255 255 / 0.12), transparent 60%),
+      var(--color-navy);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.08),
+      0 0 60px 6px rgb(99 102 241 / 0.45),
+      0 0 120px 20px rgb(0 123 255 / 0.18);
+  }
+  .red-nucleo img {
+    width: 2.5rem;
+    height: auto;
+    margin-top: -0.6rem;
+  }
+  .red-nucleo-texto {
+    position: absolute;
+    bottom: 1.05rem;
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-soft);
+  }
+  .red-nucleo-anillo {
+    position: absolute;
+    inset: -4px;
+    border-radius: 999px;
+    padding: 2px;
+    background: conic-gradient(from 0deg, #007bff, #8b5cf6, #2dd4bf, #f472b6, #f59e0b, #007bff);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+
+  /* Columna de luz: baja por la izquierda y une las categorías. */
+  .red-cats {
+    position: relative;
+    display: grid;
+    gap: 2rem;
+    padding-left: 2rem;
+  }
+  .red-cats::before,
+  .red-cats::after {
+    content: "";
+    position: absolute;
+    left: 0.45rem;
+    top: -2rem;
+    bottom: 0.5rem;
+    width: var(--ancho-col);
+    border-radius: 2px;
+  }
+  .red-cats::before {
+    background: var(--color-line);
+  }
+  .red-cats::after {
+    background: linear-gradient(180deg, #007bff, #8b5cf6 30%, #2dd4bf 50%, #f472b6 75%, #f59e0b);
+    box-shadow: 0 0 14px rgb(99 102 241 / 0.7);
+    transform-origin: top;
+  }
+  .red-cat {
+    position: relative;
+  }
+  /* Chispa que recorre la columna: los datos bajando hacia cada categoría. */
+  .red-chispa {
+    position: absolute;
+    left: calc(0.45rem - 3px);
+    top: -2rem;
+    width: 8px;
+    height: 3.5rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, transparent, #fff 55%, transparent);
+    box-shadow: 0 0 16px 4px rgb(139 92 246 / 0.65);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .red-cat-titulo {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 0 0 0.85rem;
+  }
+  .red-cat-punto {
+    position: absolute;
+    left: -1.95rem;
+    top: 0.2rem;
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 999px;
+    background: var(--color-navy);
+    border: 2px solid var(--c);
+    box-shadow: 0 0 0 4px var(--color-navy);
+  }
+  .red-cat-nombre {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .red-cat-corto {
+    display: none;
+  }
+  .red-cat-texto {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+  .red-nodos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .red-nodo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.8rem 0.35rem 0.35rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--marca, var(--c)) 40%, var(--color-line));
+    background:
+      radial-gradient(120% 140% at 0% 50%, color-mix(in srgb, var(--marca, var(--c)) 22%, transparent), transparent 70%),
+      var(--color-surface);
+  }
+  .red-icono {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--marca, var(--c)) 16%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--marca, var(--c)) 35%, transparent);
+    color: var(--marca, var(--color-ink));
+  }
+  .red-icono svg {
+    width: 17px;
+    height: 17px;
+  }
+  .red-mono::before {
+    content: attr(data-monograma);
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .red-mono[data-largo]::before {
+    font-size: 0.625rem;
+  }
+  .red-nombre {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  /* Botón de pausa. */
+  .red-pausa {
+    justify-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.03);
+    color: var(--color-soft);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .red-pausa:hover {
+    color: var(--color-ink);
+    border-color: var(--color-electric);
+  }
+  .red-pausa svg {
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .red-pausa[aria-pressed="true"] .icono-pausa,
+  .red-pausa[aria-pressed="false"] .icono-seguir {
+    display: none;
+  }
+
+  /* --------------------------------------- Movimiento en celular y tableta */
+  @media (prefers-reduced-motion: no-preference) {
+    .red-nucleo-anillo {
+      animation: red-girar 6s linear infinite;
+    }
+    /* La columna se llena con el scroll (donde el navegador lo admite). */
+    @supports (animation-timeline: view()) {
+      .red-cats::after {
+        animation-name: red-llenar;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 30% cover 70%;
+      }
+    }
+    .red.en-pausa :is(.red-nucleo-anillo, .red-pulso, .red-onda) {
+      animation-play-state: paused;
+    }
+  }
+  @media (width < 1024px) and (prefers-reduced-motion: no-preference) {
+    /* Cada categoría se enciende al llegar (clase del script). Solo aquí:
+       en computadora las categorías no tienen caja y el vigía no las ve. */
+    :global(.js) .red.con-encendido .red-cat .red-nodo {
+      opacity: 0;
+      translate: -0.75rem 0;
+      scale: 0.92;
+      transition:
+        opacity 0.5s var(--ease),
+        translate 0.5s var(--ease),
+        scale 0.5s var(--ease);
+      transition-delay: calc(var(--i) * 70ms + 120ms);
+    }
+    :global(.js) .red.con-encendido .red-cat.encendida .red-nodo {
+      opacity: 1;
+      translate: 0 0;
+      scale: 1;
+    }
+    .red-cat.encendida .red-cat-punto {
+      background: var(--c);
+      box-shadow:
+        0 0 0 4px var(--color-navy),
+        0 0 18px 3px var(--c);
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+  }
+  @media (width < 1024px) and (prefers-reduced-motion: no-preference) {
+    .red-chispa {
+      animation: red-chispa 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite 1s;
+    }
+    .red.en-pausa .red-chispa {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes red-chispa {
+    0% {
+      top: -2rem;
+      opacity: 0;
+    }
+    10%,
+    85% {
+      opacity: 1;
+    }
+    100% {
+      top: calc(100% - 3.5rem);
+      opacity: 0;
+    }
+  }
+  @keyframes red-girar {
+    to {
+      rotate: 360deg;
+    }
+  }
+  @keyframes red-llenar {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  /* ================================================================
+     Computadora: la red completa. */
+  @media (width >= 1024px) {
+    .red-escena {
+      width: min(100%, 72rem);
+      margin-inline: auto;
+      aspect-ratio: 1000 / 640;
+    }
+    .red-lineas {
+      display: block;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .red-orbita {
+      fill: none;
+      stroke: rgb(255 255 255 / 0.06);
+      stroke-width: 1;
+      stroke-dasharray: 3 7;
+      vector-effect: non-scaling-stroke;
+    }
+    .red-linea {
+      fill: none;
+      stroke: var(--c);
+      stroke-opacity: 0.22;
+      stroke-width: 1.2;
+      vector-effect: non-scaling-stroke;
+      transition: stroke-opacity 0.3s, stroke-width 0.3s;
+    }
+    .red-pulso {
+      fill: none;
+      stroke: var(--c);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-dasharray: 0.07 0.93;
+      stroke-dashoffset: 0.07;
+      opacity: 0;
+      vector-effect: non-scaling-stroke;
+      filter: drop-shadow(0 0 4px var(--c));
+    }
+    .red-onda {
+      fill: none;
+      stroke: #8b5cf6;
+      stroke-width: 1.5;
+      opacity: 0;
+      transform-origin: 500px 320px;
+      vector-effect: non-scaling-stroke;
+    }
+    .red-conexion.activa .red-linea {
+      stroke-opacity: 0.9;
+      stroke-width: 2.2;
+    }
+    .red.con-foco .red-conexion:not(.activa) .red-linea {
+      stroke-opacity: 0.08;
+    }
+
+    .red-nucleo {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 8rem;
+      height: 8rem;
+      margin: 0;
+      translate: -50% -50%;
+    }
+    .red-nucleo img {
+      width: 3rem;
+    }
+    .red-nucleo-texto {
+      font-size: 0.6875rem;
+      bottom: 1.35rem;
+    }
+
+    .red-cats {
+      position: static;
+      display: block;
+      padding: 0;
+    }
+    .red-cats::before,
+    .red-cats::after,
+    .red-chispa {
+      display: none;
+    }
+    .red-cat {
+      position: static;
+      display: contents;
+    }
+    /* La etiqueta de cada categoría, entre el centro y su arco. */
+    .red-cat-titulo {
+      position: absolute;
+      left: var(--ex);
+      top: var(--ey);
+      z-index: 1;
+      translate: -50% -50%;
+      display: block;
+      margin: 0;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+      background: color-mix(in srgb, var(--c) 14%, var(--color-navy));
+      box-shadow: 0 0 24px -6px var(--c);
+      white-space: nowrap;
+    }
+    .red-cat-punto,
+    .red-cat-texto {
+      display: none;
+    }
+    .red-cat-nombre {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    .red-cat-corto {
+      display: inline;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      font-weight: 800;
+      color: var(--color-ink);
+    }
+    .red-nodos {
+      display: contents;
+    }
+    /* Cada herramienta, en su punto de la elipse. */
+    .red-nodo {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      z-index: 2;
+      translate: -50% -50%;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0;
+      border: 0;
+      background: none;
+      border-radius: 0;
+      cursor: default;
+    }
+    .red-icono {
+      width: 3.4rem;
+      height: 3.4rem;
+      border-radius: 1rem;
+      background:
+        radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--marca, var(--c)) 30%, transparent), transparent 70%),
+        var(--color-surface);
+      box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--marca, var(--c)) 45%, transparent),
+        0 12px 28px -12px color-mix(in srgb, var(--marca, var(--c)) 70%, transparent);
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
+    }
+    .red-icono svg {
+      width: 22px;
+      height: 22px;
+    }
+    .red-mono::before {
+      font-size: 1rem;
+    }
+    .red-mono[data-largo]::before {
+      font-size: 0.75rem;
+    }
+    .red-nombre {
+      font-size: 0.6875rem;
+      color: var(--color-soft);
+      text-shadow: 0 1px 6px var(--color-navy);
+    }
+    .red-nodo:hover .red-icono {
+      transform: translateY(-3px) scale(1.08);
+      box-shadow:
+        inset 0 0 0 1px var(--marca, var(--c)),
+        0 0 30px -2px color-mix(in srgb, var(--marca, var(--c)) 80%, transparent);
+    }
+    .red-nodo:hover .red-nombre {
+      color: var(--color-ink);
+    }
+  }
+
+  /* Computadora con movimiento: entrada en cadena y pulsos continuos. */
+  @media (width >= 1024px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .red .red-linea {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition:
+        stroke-dashoffset 1.1s cubic-bezier(0.45, 0, 0.2, 1),
+        stroke-opacity 0.3s,
+        stroke-width 0.3s;
+      transition-delay: calc(var(--o) * 45ms + 300ms);
+    }
+    :global(.js) .red.is-visible .red-linea {
+      stroke-dashoffset: 0;
+    }
+    :global(.js) .red .red-nodo {
+      opacity: 0;
+      scale: 0.5;
+      transition:
+        opacity 0.5s var(--ease),
+        scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition-delay: calc(var(--o) * 45ms + 200ms);
+    }
+    :global(.js) .red.is-visible .red-nodo {
+      opacity: 1;
+      scale: 1;
+    }
+    :global(.js) .red :is(.red-cat-titulo, .red-nucleo) {
+      opacity: 0;
+      transition: opacity 0.8s var(--ease) 1.2s, scale 0.8s var(--ease) 1.2s;
+      scale: 0.85;
+    }
+    :global(.js) .red .red-nucleo {
+      transition-delay: 0s;
+    }
+    :global(.js) .red.is-visible :is(.red-cat-titulo, .red-nucleo) {
+      opacity: 1;
+      scale: 1;
+    }
+    /* Pulsos: datos que viajan de cada herramienta al centro. */
+    .red.is-visible .red-pulso {
+      animation: red-pulso 3.2s cubic-bezier(0.5, 0, 0.6, 1) infinite;
+      animation-delay: calc(2.2s + var(--o) * 0.37s);
+    }
+    .red.is-visible .red-conexion.activa .red-pulso {
+      animation-duration: 1.4s;
+    }
+    /* Ondas que salen del centro al recibir los datos. */
+    .red.is-visible .red-onda {
+      animation: red-onda 3.2s ease-out infinite 2.4s;
+    }
+    .red.is-visible .red-onda-2 {
+      animation-delay: 4s;
+    }
+    .red-halo {
+      animation: red-respirar 5s ease-in-out infinite alternate;
+      transform-origin: 500px 320px;
+    }
+  }
+  @keyframes red-pulso {
+    0% {
+      stroke-dashoffset: 0.07;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      stroke-dashoffset: -0.93;
+      opacity: 0;
+    }
+  }
+  @keyframes red-onda {
+    0% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(3.2);
+    }
+  }
+  @keyframes red-respirar {
+    from {
+      opacity: 0.7;
+      transform: scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+  }
+
+  /* Movimiento reducido: sin pausa que ofrecer. */
+  @media (prefers-reduced-motion: reduce) {
+    .red-pausa {
+      display: none;
+    }
+  }
+</style>

@@ -3,11 +3,8 @@ import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import { servicios, SITIO, AREA_SERVIDA, PILARES, serviciosDe } from "../data/servicios";
-import { fugas, publicos, estandares, proceso, faq, faqPlana, queMido, categoriasHerramientas } from "../data/home";
-// Órbitas de herramientas (computadora): la IA en el centro y las otras
-// cuatro categorías en las esquinas. Radio según cuántas herramientas tiene.
-const POS_ORBITA: [number, number][] = [[0, 0], [-1, -1], [1, -1], [-1, 1], [1, 1]];
-const radioOrbita = (k: number, n: number) => (k === 0 ? 7.5 : n >= 7 ? 7 : n <= 3 ? 4.75 : 6);
+import { fugas, publicos, estandares, proceso, faq, faqPlana, queMido } from "../data/home";
+import RedHerramientas from "../components/RedHerramientas.astro";
 import Showcase from "../components/Showcase.astro";
 import TarjetaArticulo from "../components/TarjetaArticulo.astro";
 import heroImg from "../assets/luis-flores-brazos-cruzados.webp";
@@ -18,7 +15,6 @@ import Cierre from "../components/Cierre.astro";
 import CintasLuz from "../components/CintasLuz.astro";
 import CintaMoebius from "../components/CintaMoebius.astro";
 import PruebaSocial from "../components/PruebaSocial.astro";
-import { logos, monograma } from "../data/logos";
 import { ilustraciones } from "../data/ilustraciones";
 
 // Iconos de cada bloque, en el mismo orden que los datos de home.ts.
@@ -373,62 +369,9 @@ const schema = [
         </p>
       </div>
 
-      {/* Herramientas por categoría (23/11/2026, pedido del titular: la espiral
-          se veía amontonada). Un solo marcado con dos presentaciones:
-          - Computadora: órbitas con la IA en el centro. Cada categoría es un
-            anillo con su color; la leyenda de arriba dice qué es cada anillo.
-          - Celular y tableta: grupos con título, color y para qué sirven.
-          Solo CSS. Se para al pasar el ratón y con el botón; con movimiento
-          reducido todo queda quieto. Los lectores de pantalla leen una lista
-          por categoría. */}
-      <div class="orbitas-zona mt-8" data-herramientas>
-        <div class="orbitas">
-          {categoriasHerramientas.map((c, k) => (
-            <div
-              class="categoria"
-              style={`--cat: ${c.color}; --k: ${k}; --n: ${c.herramientas.length}; --px: ${POS_ORBITA[k][0]}; --py: ${POS_ORBITA[k][1]}; --r: ${radioOrbita(k, c.herramientas.length)}rem`}
-            >
-              <h3 class="categoria-titulo" id={`cat-${c.id}`}>
-                <span class="categoria-punto" aria-hidden="true"></span>
-                <span class="categoria-nombre">{c.nombre}</span>
-                <span class="categoria-texto">{c.texto}</span>
-              </h3>
-              <span class="anillo" aria-hidden="true"></span>
-              <span class:list={["orbita-centro", { "orbita-centro-ia": k === 0 }]} aria-hidden="true">{c.corto}</span>
-              <div class="orbita-plano">
-                <ul class="orbita" aria-labelledby={`cat-${c.id}`}>
-                  {c.herramientas.map((h, i) => (
-                    <li class="orbita-item" style={`--i: ${i};${logos[h]?.color ? ` --marca: ${logos[h].color}` : ""}`}>
-                      <span class="giro">
-                        <span class="ficha">
-                          <span class="herramienta-logo" aria-hidden="true">
-                            {logos[h]?.d ? (
-                              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" focusable="false">
-                                <path d={logos[h].d} />
-                              </svg>
-                            ) : (
-                              <span class="logo-inicial" data-monograma={monograma(h)} data-largo={monograma(h).length > 2 ? "" : undefined} />
-                            )}
-                          </span>
-                          <span class="ficha-nombre" data-largo={h.length > 10 ? "" : undefined}>{h}</span>
-                        </span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button type="button" class="herramientas-pausa" data-herramientas-pausa aria-pressed="false">
-          <svg class="icono-pausa" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"
-            ><path d="M8 5v14M16 5v14" /></svg
-          >
-          <svg class="icono-seguir" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"
-            ><path d="M7 5v14l12-7L7 5Z" /></svg
-          >
-          <span data-herramientas-texto>Pausar el movimiento</span>
-        </button>
+      {/* Red «Todo conectado a tu negocio» (25/11/2026): RedHerramientas.astro. */}
+      <div class="mt-8">
+        <RedHerramientas />
       </div>
     </section>
 
@@ -887,19 +830,6 @@ const schema = [
     <Cierre />
   </main>
 </Base>
-
-<script>
-  // Botón de pausa de las órbitas de herramientas.
-  const filas = document.querySelector<HTMLElement>("[data-herramientas]");
-  const boton = filas?.querySelector<HTMLButtonElement>("[data-herramientas-pausa]");
-  const texto = boton?.querySelector("[data-herramientas-texto]");
-  boton?.addEventListener("click", () => {
-    const pausa = !filas!.classList.contains("en-pausa");
-    filas!.classList.toggle("en-pausa", pausa);
-    boton.setAttribute("aria-pressed", String(pausa));
-    if (texto) texto.textContent = pausa ? "Seguir el movimiento" : "Pausar el movimiento";
-  });
-</script>
 
 <style>
   /* Velocidad (02/11/2026): el navegador no calcula ni pinta las secciones
@@ -2064,7 +1994,7 @@ const schema = [
     overflow: hidden;
   }
   /* Luz azul arriba, violeta abajo a la derecha y una cuadrícula fina.
-     Todo quieto: el movimiento lo pone la espiral. */
+     Todo quieto: el movimiento lo pone la red de herramientas. */
   .herramientas-fondo {
     position: absolute;
     inset: 0;
@@ -2099,341 +2029,6 @@ const schema = [
     text-underline-offset: 3px;
   }
 
-  /* El logo, siempre con el color de su marca, dentro de un círculo teñido. */
-  .herramienta-logo {
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    flex-shrink: 0;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--marca, var(--color-electric)) 16%, transparent);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--marca, var(--color-electric)) 35%, transparent);
-    color: var(--marca, var(--color-ink));
-  }
-  /* Monograma de las marcas sin logo libre (21/11/2026): dibujado con CSS,
-     así no se copia ni se indexa como texto. */
-  .logo-inicial::before {
-    content: attr(data-monograma);
-    font-family: var(--font-display);
-    font-size: 1.0625rem;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-  .logo-inicial[data-largo]::before {
-    font-size: 0.75rem;
-    letter-spacing: -0.01em;
-  }
-  /* Botón de pausa: todo lo que se mueve más de 5 segundos se tiene que
-     poder parar (WCAG 2.2.2). 44 px de alto, el mínimo táctil. */
-  .herramientas-pausa {
-    justify-self: center;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 2.75rem;
-    margin-top: 0.75rem;
-    padding: 0 1.125rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--color-soft);
-    font: inherit;
-    font-size: var(--step--1);
-    cursor: pointer;
-  }
-  .herramientas-pausa:hover {
-    color: var(--color-ink);
-    border-color: rgb(0 123 255 / 0.5);
-  }
-  .herramientas-pausa svg {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.25;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .herramientas-pausa .icono-seguir {
-    fill: currentColor;
-    stroke-width: 1.5;
-  }
-  .herramientas-pausa[aria-pressed="true"] .icono-pausa,
-  .herramientas-pausa[aria-pressed="false"] .icono-seguir {
-    display: none;
-  }
-
-  /* ---------------------------------- Herramientas por categoría (23/11/2026)
-     Celular y tableta: grupos con título. Computadora: órbitas (más abajo). */
-  .orbitas-zona {
-    display: grid;
-    gap: 1.5rem;
-  }
-  .orbitas {
-    display: grid;
-    gap: 1.75rem;
-    padding-inline: var(--gutter);
-  }
-  .anillo {
-    display: none;
-  }
-  .categoria-titulo {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 0.6rem;
-    align-items: center;
-    margin: 0 0 0.85rem;
-  }
-  .categoria-punto {
-    width: 0.625rem;
-    height: 0.625rem;
-    border-radius: 999px;
-    background: var(--cat);
-    box-shadow: 0 0 12px var(--cat);
-  }
-  .categoria-nombre {
-    font-family: var(--font-display);
-    font-size: 1.0625rem;
-    font-weight: 800;
-    color: var(--color-ink);
-  }
-  .categoria-texto {
-    grid-column: 2;
-    font-size: 0.875rem;
-    font-weight: 400;
-    color: var(--color-muted);
-  }
-  .orbita {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .ficha {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.4rem 0.85rem 0.4rem 0.4rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--marca, var(--cat)) 40%, var(--color-line));
-    background:
-      radial-gradient(120% 120% at 0% 50%, color-mix(in srgb, var(--marca, var(--cat)) 20%, transparent), transparent 70%),
-      var(--color-surface);
-    box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--marca, var(--cat)) 60%, transparent);
-  }
-  .ficha .herramienta-logo {
-    width: 2.25rem;
-    height: 2.25rem;
-  }
-  .ficha .herramienta-logo svg {
-    width: 18px;
-    height: 18px;
-  }
-  .ficha-nombre {
-    font-family: var(--font-display);
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: var(--color-ink);
-    white-space: nowrap;
-  }
-  /* Las fichas flotan suave, cada una a su ritmo. */
-  @media (prefers-reduced-motion: no-preference) {
-    .ficha {
-      animation: ficha-flotar 5s ease-in-out infinite alternate;
-      animation-delay: calc(var(--i) * -0.9s + var(--k) * -0.4s);
-    }
-    .orbitas-zona:hover .ficha,
-    .orbitas-zona.en-pausa .ficha {
-      animation-play-state: paused;
-    }
-  }
-  @keyframes ficha-flotar {
-    from {
-      translate: 0 -3px;
-    }
-    to {
-      translate: 0 3px;
-    }
-  }
-
-  /* Computadora: un sistema solar. La IA en el centro y las otras cuatro
-     categorías en las esquinas, cada una con sus herramientas girando
-     alrededor de su nombre. Cada ficha contragira para quedar derecha. Solo
-     transform: no recalcula la maquetación. La leyenda va en una fila arriba. */
-  .orbitas-centro-oculto {
-    display: none;
-  }
-  .orbita-centro {
-    display: none;
-  }
-  @media (width >= 1024px) {
-    .orbitas {
-      --tam: 5rem;
-      --sep-x: 20rem;
-      --sep-y: 9.75rem;
-      position: relative;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      grid-template-rows: auto 40rem;
-      gap: 0 1rem;
-    }
-    .categoria {
-      display: contents;
-    }
-    .categoria-titulo {
-      grid-row: 1;
-      align-self: start;
-      margin: 0;
-      padding: 0.75rem 0.9rem;
-      border-radius: 1rem;
-      border: 1px solid color-mix(in srgb, var(--cat) 30%, var(--color-line));
-      background: color-mix(in srgb, var(--cat) 8%, transparent);
-    }
-    .categoria-nombre {
-      font-size: 0.9375rem;
-    }
-    .categoria-texto {
-      font-size: 0.8125rem;
-      line-height: 1.35;
-    }
-    /* Centro de cada órbita, dentro de la fila 2. */
-    .anillo,
-    .orbita-centro,
-    .orbita-plano {
-      position: absolute;
-      left: calc(50% + var(--px) * var(--sep-x));
-      top: calc(100% - 20rem + var(--py) * var(--sep-y));
-    }
-    .anillo {
-      display: block;
-      width: calc(var(--r) * 2);
-      height: calc(var(--r) * 2);
-      translate: -50% -50%;
-      border-radius: 50%;
-      border: 1px dashed color-mix(in srgb, var(--cat) 50%, transparent);
-      background: radial-gradient(closest-side, color-mix(in srgb, var(--cat) 10%, transparent), transparent);
-      pointer-events: none;
-    }
-    .orbita-centro {
-      display: grid;
-      place-items: center;
-      translate: -50% -50%;
-      max-width: calc(var(--r) * 2 - var(--tam) - 0.5rem);
-      padding: 0.4rem 0.75rem;
-      border-radius: 999px;
-      border: 1px solid color-mix(in srgb, var(--cat) 55%, transparent);
-      background: color-mix(in srgb, var(--cat) 16%, var(--color-navy));
-      color: var(--color-ink);
-      font-family: var(--font-display);
-      font-size: 0.8125rem;
-      font-weight: 800;
-      text-align: center;
-      line-height: 1.15;
-      box-shadow: 0 0 28px -6px var(--cat);
-    }
-    .orbita-centro-ia {
-      width: 4.25rem;
-      height: 4.25rem;
-      padding: 0;
-      border: 0;
-      background: var(--grad-brand);
-      color: #fff;
-      font-size: 1.25rem;
-      box-shadow: 0 0 46px 10px rgb(139 92 246 / 0.45);
-    }
-    .orbita-plano {
-      width: 0;
-      height: 0;
-    }
-    .orbita {
-      display: block;
-      position: relative;
-      width: 0;
-      height: 0;
-    }
-    .orbita-item {
-      position: absolute;
-      left: 0;
-      top: 0;
-      transform: rotate(calc(var(--i) * 360deg / var(--n) - 90deg)) translateX(var(--r))
-        rotate(calc(var(--i) * -360deg / var(--n) + 90deg));
-    }
-    .giro {
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-    .ficha {
-      position: absolute;
-      left: calc(var(--tam) / -2);
-      top: calc(var(--tam) / -2);
-      width: var(--tam);
-      height: var(--tam);
-      flex-direction: column;
-      justify-content: center;
-      gap: 0.3rem;
-      padding: 0.35rem;
-      border-radius: 1.1rem;
-      animation: none;
-    }
-    .ficha-nombre {
-      font-size: 0.6875rem;
-      text-align: center;
-      white-space: normal;
-      line-height: 1.1;
-    }
-    .ficha .herramienta-logo {
-      width: 2.125rem;
-      height: 2.125rem;
-    }
-    /* Nombres largos (ActiveCampaign, GoHighLevel…): letra algo menor para que quepan. */
-    .ficha-nombre[data-largo] {
-      font-size: 0.5625rem;
-      letter-spacing: -0.01em;
-    }
-    .orbita-centro {
-      font-size: 0.75rem;
-    }
-    .orbita-centro.orbita-centro-ia {
-      font-size: 1.25rem;
-    }
-    .ficha:hover {
-      border-color: var(--marca, var(--cat));
-    }
-  }
-  @media (width >= 1024px) and (prefers-reduced-motion: no-preference) {
-    .orbita {
-      animation: orbitar calc(40s + var(--k) * 6s) linear infinite;
-    }
-    .giro {
-      animation: contraorbitar calc(40s + var(--k) * 6s) linear infinite;
-    }
-    /* Las órbitas vecinas giran en sentidos contrarios. */
-    .categoria:nth-child(even of .categoria) :is(.orbita, .giro) {
-      animation-direction: reverse;
-    }
-    .orbitas-zona:hover :is(.orbita, .giro),
-    .orbitas-zona.en-pausa :is(.orbita, .giro) {
-      animation-play-state: paused;
-    }
-  }
-  @keyframes orbitar {
-    to {
-      rotate: 360deg;
-    }
-  }
-  @keyframes contraorbitar {
-    to {
-      rotate: -360deg;
-    }
-  }
-  /* Con movimiento reducido no hay nada que pausar. */
-  @media (prefers-reduced-motion: reduce) {
-    .herramientas-pausa {
-      display: none;
-    }
-  }
 
   /* ------------------------------------------------------------ Servicios */
   .cabecera-columna {
