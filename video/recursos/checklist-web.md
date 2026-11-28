@@ -48,6 +48,33 @@ Abre tu web en el celular, sin haber iniciado sesión, y marca cada punto con ho
 
 Consejo: Si marcaste menos de 18, empieza por el bloque 1 y el 5: son los que más ventas pierden y los más rápidos de arreglar.
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Abre tu web en el celular, con datos móviles, y cronometra cuánto tarda en verse.
+- [ ] Pídele a alguien que no conozca tu negocio que mire la página 5 segundos y te diga qué haces. Si no acierta, cambia el titular.
+- [ ] Cuenta los botones de la primera pantalla: deja uno principal.
+- [ ] Rellena tu propio formulario y comprueba qué pasa después: ¿llega respuesta automática? ¿te llega aviso?
+- [ ] Marca en este checklist cada punto y arregla primero los del bloque 5.
+
+## Prompt listo para copiar
+
+> Actúa como experto en conversión web para pymes. Te paso el texto de la primera pantalla de mi web: [PEGA TITULAR, SUBTÍTULO Y BOTONES].
+> Mi cliente ideal es [QUIÉN] y el resultado que consigue conmigo es [RESULTADO].
+> 1. Dime si en 5 segundos se entiende qué hago y para quién. Sé directo.
+> 2. Propón 3 titulares que digan el resultado del cliente, de menos de 10 palabras.
+> 3. Propón un solo texto de botón principal.
+> 4. Dime qué quitarías de esta pantalla.
+
+## Ejemplo resuelto (ficticio)
+
+Antes: «Soluciones integrales de marketing digital» y 6 botones. Después: «Más reservas para tu restaurante sin depender de apps», un botón «Agenda tu demo» y el formulario con respuesta automática en WhatsApp. La prueba de los 5 segundos pasó de «no sé qué hacen» a «ayudan a restaurantes a tener más reservas».
+
+## Cómo decidir qué arreglar primero
+
+- Si el formulario no avisa ni responde: ese primero, es lo más rápido y lo que más contactos rescata.
+- Si nadie entiende qué haces: el titular, antes que el diseño.
+- Si tarda más de 3 segundos en el celular: imágenes y plugins, antes de cambiar de hosting.
+
 ## Errores que debes evitar
 
 - Cambiar el diseño antes de arreglar el mensaje

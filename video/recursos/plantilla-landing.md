@@ -46,6 +46,30 @@ Las 4-6 objeciones reales y un último botón.
 > PRUEBA: [reseña real o caso con dato verificable]
 > FAQ: [objeción] → [respuesta corta]
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Elige la única acción de tu landing: llamar, agendar o descargar.
+- [ ] Quita el menú de navegación y los enlaces que saquen al visitante de la página.
+- [ ] Reescribe el titular con la plantilla de esta guía.
+- [ ] Deja el formulario en 3 campos.
+- [ ] Configura el evento de conversión (envío del formulario) en Google Tag Manager o en tu herramienta.
+
+## Prompt para tu titular
+
+> Mi cliente ideal es [QUIÉN] y su problema principal es [PROBLEMA]. Lo que consigue conmigo es [RESULTADO] en [TIEMPO, SI ES REAL].
+> Escribe 5 titulares para mi landing de menos de 12 palabras que digan el resultado del cliente, sin promesas garantizadas ni signos de exclamación.
+> Añade a cada uno un subtítulo de una línea que explique cómo.
+
+## Ejemplo resuelto (ficticio)
+
+Academia de inglés. Antes: menú completo, 4 botones y un formulario de 8 campos. Después: «Habla inglés en reuniones de trabajo en 12 semanas», un solo botón «Agenda tu clase de prueba» y formulario con nombre, correo y teléfono. Con el evento de conversión medido, la siguiente prueba es cambiar solo el titular.
+
+## Cómo decidir qué probar primero
+
+- Pocas visitas que se quedan: titular y primera pantalla.
+- Gente que llega al formulario y no lo envía: menos campos.
+- Si no mides conversiones todavía: no cambies nada hasta medir al menos dos semanas.
+
 ## Errores que debes evitar
 
 - Dejar el menú de la web en la landing

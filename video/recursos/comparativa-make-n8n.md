@@ -37,6 +37,29 @@ Valora n8n autoalojado en la UE y revisa el RGPD con un profesional.
 > Créditos/mes ≈ ejecuciones al mes × pasos por ejecución
 > Ej.: 300 formularios × 6 pasos = 1.800 créditos/mes
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Elige la automatización que vas a montar y escribe sus pasos (cada acción es un paso).
+- [ ] Estima cuántas veces al mes se va a ejecutar.
+- [ ] Multiplica pasos × ejecuciones: ese es tu consumo aproximado de créditos en Make.
+- [ ] Compara ese número con los límites de los planes actuales en make.com/pricing y n8n.io/pricing (cambian a menudo: revísalos antes de contratar).
+
+## Ejemplo resuelto (ficticio)
+
+Un formulario que crea el contacto en el CRM, envía un correo de bienvenida, avisa por WhatsApp y guarda una fila en la hoja de control: 5 pasos. Con 400 formularios al mes son unos 2.000 créditos en Make. En n8n son 400 ejecuciones, tenga los pasos que tenga. Con este volumen, Make es más sencillo; si los flujos crecen a decenas de pasos y miles de ejecuciones, n8n suele salir más barato.
+
+## Prompt para decidir con tus números
+
+> Tengo estas automatizaciones: [LISTA: nombre, número de pasos, ejecuciones al mes].
+> Calcula el consumo mensual en Make (créditos = pasos × ejecuciones) y en n8n (ejecuciones).
+> Con los precios que te paso de cada plan [PEGA LOS PRECIOS ACTUALES], dime qué plan necesito en cada herramienta, cuánto pagaría al mes y en qué punto me conviene cambiar.
+
+## Cómo decidir
+
+- Make: empiezas, quieres algo visual y tus flujos son cortos.
+- n8n Cloud: flujos largos o mucho volumen.
+- n8n en tu propio servidor: solo si tú o alguien de tu equipo puede mantener el servidor, sus copias de seguridad y sus actualizaciones.
+
 ## Errores que debes evitar
 
 - Elegir por moda y no por volumen

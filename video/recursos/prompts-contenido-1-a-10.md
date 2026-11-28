@@ -31,6 +31,32 @@ Recurso gratuito de soyluisflores.es · Reel 13 «Una idea, diez piezas». Los p
 
 Consejo: Las otras piezas salen de reutilizar: historias del reel, una cita para post estático, la FAQ para respuestas en comentarios.
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Graba una nota de voz de 3 minutos sobre una pregunta que te hagan tus clientes.
+- [ ] Transcríbela y pásala por el prompt del paso 1.
+- [ ] Saca con los prompts el reel, el carrusel y el post de LinkedIn.
+- [ ] Revisa cada pieza en voz alta, cambia lo que no dirías tú y prográmalas en la semana.
+
+## Calendario de la semana listo para copiar
+
+> Lunes: reel con el gancho principal.
+> Martes: carrusel con los pasos.
+> Miércoles: post de LinkedIn con la lección.
+> Jueves: historias con una encuesta sobre el tema.
+> Viernes: correo a tu lista con el resumen y un enlace.
+> Sábado: reel corto con el error más común.
+> Domingo: historia con la pregunta de un cliente y tu respuesta.
+
+## Ejemplo resuelto (ficticio)
+
+Un asesor fiscal graba 4 minutos sobre «gastos que puedes deducir siendo autónomo». De ahí salen: un reel con el gasto que más se olvida, un carrusel con 6 gastos, un post de LinkedIn sobre el error de guardar tickets sin fecha, 3 historias con encuesta y un correo con el resumen. Una grabación, una semana de contenido.
+
+## Cómo decidir qué idea grabar
+
+- Elige preguntas que te hagan tus clientes de verdad, no temas que te gustan a ti.
+- Si una pieza funciona (guardados, compartidos, mensajes), vuelve a grabar esa idea con otro ángulo en 3 semanas.
+
 ## Errores que debes evitar
 
 - Publicar sin revisar

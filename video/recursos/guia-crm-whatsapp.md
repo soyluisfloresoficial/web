@@ -43,6 +43,32 @@ Consejo: Fuera de la ventana de 24 h, WhatsApp solo permite plantillas aprobadas
 - [ ] Pide consentimiento antes de enviar mensajes comerciales
 - [ ] Ofrece siempre la opción de dejar de recibir mensajes
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Crea en tu CRM (o en una hoja de cálculo, para empezar) tres etiquetas: Interesado, Presupuesto enviado y Cliente.
+- [ ] Revisa tus chats de las últimas 2 semanas y etiqueta a cada persona.
+- [ ] Filtra «Presupuesto enviado» con más de 3 días sin respuesta: esa es tu lista de llamadas de hoy.
+- [ ] Agenda 15 minutos cada mañana para revisar esa lista.
+
+## Mensaje de seguimiento listo para copiar
+
+> Hola [NOMBRE], ¿pudiste ver la propuesta que te envié el [DÍA]? Si te queda alguna duda, la resolvemos en 10 minutos por llamada. ¿Te viene mejor hoy o mañana?
+
+## Prompt para ordenar tus chats
+
+> Te paso una lista de conversaciones de WhatsApp de mi negocio: [PEGA NOMBRE + ÚLTIMO MENSAJE DE CADA UNA].
+> Clasifica cada contacto en una de estas etiquetas: Interesado (preguntó, sin precio), Presupuesto enviado (tiene precio, falta respuesta) o Cliente (ya pagó).
+> Devuélveme una tabla con nombre, etiqueta, días desde el último mensaje y la próxima acción en una frase.
+
+## Ejemplo resuelto (ficticio)
+
+Taller de motos con 47 chats abiertos. Al etiquetarlos salen 9 presupuestos enviados sin respuesta, 4 de ellos con más de una semana. Con el mensaje de seguimiento, el dueño llama primero a esos 4 y deja de depender de su memoria para saber a quién escribir.
+
+## Cómo decidir la herramienta
+
+- Menos de 50 contactos al mes: una hoja de cálculo con las tres etiquetas basta para empezar.
+- Más volumen o varias personas atendiendo: un CRM conectado a WhatsApp Business API, para que cada mensaje cree la ficha solo.
+
 ## Errores que debes evitar
 
 - Mezclar el WhatsApp personal con el del negocio

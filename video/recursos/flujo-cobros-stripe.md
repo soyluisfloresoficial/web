@@ -43,6 +43,27 @@ Stripe avisa (webhook): se marca como cobrada y te llega una notificación.
 
 Consejo: Automatiza los recordatorios aunque emitas la factura a mano: es donde más horas se pierden.
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Crea tu cuenta de Stripe (o revisa que esté verificada) y activa los enlaces de pago.
+- [ ] Crea un enlace de pago para tu servicio más vendido y pruébalo en modo de prueba.
+- [ ] Escribe los dos recordatorios con las plantillas de esta guía.
+- [ ] Decide dónde se marca la factura como cobrada: tu hoja de facturación, tu CRM o tu programa de facturación.
+
+## Segundo recordatorio listo para copiar
+
+> Hola [NOMBRE], te escribo por la factura [NÚMERO] de [IMPORTE], que venció el [FECHA]. Puede que se te haya pasado: aquí tienes el enlace para pagar en un clic: [ENLACE]. Si ya la pagaste, ignora este mensaje y disculpa la molestia.
+
+## Ejemplo resuelto (ficticio)
+
+Diseñadora freelance. Al cerrar el proyecto, su CRM genera la factura con un enlace de pago de Stripe y la envía por correo. Si no se paga en la fecha, sale el primer recordatorio; a los 3 días, el segundo. Cuando el cliente paga, Stripe avisa y la factura pasa a «Cobrada» en su hoja. Ella ya no tiene que revisar el banco para saber quién pagó.
+
+## Cómo decidir
+
+- Cobros puntuales por proyecto: enlace de pago por factura.
+- Cobros que se repiten cada mes: suscripción en Stripe, con recordatorios automáticos.
+- En España, la factura debe cumplir las normas de facturación vigentes: confirma con tu asesor que tu programa las cumple antes de automatizar.
+
 ## Errores que debes evitar
 
 - Recordatorios agresivos o en mayúsculas

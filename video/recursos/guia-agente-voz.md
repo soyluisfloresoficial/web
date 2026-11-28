@@ -43,6 +43,31 @@ Al colgar te llega un resumen por correo o WhatsApp.
 
 Consejo: Los costos de estas plataformas suelen ir por minuto y cambian con frecuencia: revisa la tarifa actual del proveedor antes de calcular.
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Escribe el saludo exacto que dirá el agente, con el nombre de tu negocio y el aviso de que es una IA.
+- [ ] Lista las 10 preguntas que más te hacen por teléfono, con su respuesta.
+- [ ] Define qué hace cuando no sabe algo: tomar nombre, teléfono y motivo, y avisarte.
+- [ ] Pide una demo a dos proveedores de agentes de voz y haz con ambos el guion de prueba de esta guía.
+
+## Guion del agente listo para copiar
+
+> Eres la recepcionista virtual de [NEGOCIO]. Contestas el teléfono cuando el equipo no puede.
+> Empieza siempre con: «Hola, gracias por llamar a [NEGOCIO]. Soy una asistente de inteligencia artificial. ¿En qué te ayudo?».
+> Puedes: dar horarios, dirección y servicios de esta lista [PEGA LA LISTA]; agendar citas solo en los huecos libres del calendario; tomar nombre, teléfono y motivo.
+> No puedes: dar precios que no estén en la lista, diagnosticar ni prometer plazos.
+> Si la persona pide hablar con alguien, se enoja o pregunta algo fuera de la lista, di: «Tomo tus datos y te llaman hoy mismo» y termina con un resumen.
+> Al colgar, envía un resumen de una línea: nombre, motivo, cita o pendiente.
+
+## Ejemplo resuelto (ficticio)
+
+Taller mecánico, sábado a las 11:20. Llama un cliente: «¿Revisan frenos hoy?». El agente responde que hoy no hay huecos, ofrece el lunes a las 9:00 y lo agenda. El dueño recibe por WhatsApp: «Juan P. · revisión de frenos · lunes 9:00 · primera visita».
+
+## Cómo decidir si te conviene
+
+- Sí: pierdes llamadas mientras atiendes, tu negocio depende del teléfono o recibes llamadas fuera de horario.
+- No todavía: si casi todas tus llamadas requieren un diagnóstico o un presupuesto a medida.
+
 ## Errores que debes evitar
 
 - No avisar de que es una IA

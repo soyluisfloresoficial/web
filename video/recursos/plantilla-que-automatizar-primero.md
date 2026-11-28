@@ -39,6 +39,30 @@ Vuelve a la lista.
 
 Consejo: Automatizar un proceso desordenado solo lo desordena más rápido. Ordénalo primero en papel.
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Durante esta semana, apunta cada tarea que repites y cuánto te lleva.
+- [ ] Marca con una X las que siguen siempre los mismos pasos.
+- [ ] Puntúa de 1 a 5 cuánto daño hace un error en cada una.
+- [ ] Ordena por horas a la semana (de más a menos) y quédate con la primera que tenga riesgo 1 o 2.
+
+## Prompt para priorizar tu lista
+
+> Esta es la lista de tareas que repito en mi negocio, con horas a la semana y riesgo de error del 1 al 5: [PEGA LA LISTA].
+> 1. Ordénalas por cuál conviene automatizar primero: más horas y menos riesgo.
+> 2. Para la primera, dime los pasos de la automatización (disparador, acciones y aviso de error) y qué herramienta de mi stack usaría: [TUS HERRAMIENTAS].
+> 3. Dime cómo medir en 2 semanas si funcionó.
+
+## Ejemplo resuelto (ficticio)
+
+Inmobiliaria pequeña. Tareas: pasar los contactos del formulario a la hoja (3 h/semana, riesgo 1), enviar recordatorios de visitas (2 h, riesgo 2), redactar fichas de pisos (4 h, riesgo 4). La primera en automatizar: pasar contactos a la hoja, porque devuelve horas con poco riesgo. Las fichas esperan: un error ahí molesta al cliente.
+
+## Cómo decidir
+
+- Automatiza primero lo aburrido y repetible.
+- Deja para después lo que exige criterio o trato con el cliente.
+- Una automatización a la vez: hasta que la primera funcione sola dos semanas, no empieces la segunda.
+
 ## Errores que debes evitar
 
 - Empezar por lo más vistoso

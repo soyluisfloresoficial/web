@@ -38,6 +38,26 @@ Consejo: Regla de oro: una tarjeta solo avanza cuando pasa algo verificable (reu
 
 Si ya usas GoHighLevel, sus «Opportunities» y «Pipelines» cubren lo mismo, con automatizaciones nativas por etapa.
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Crea la tabla «Oportunidades» con los campos de esta plantilla en Airtable (o en tu CRM).
+- [ ] Mete todas las propuestas abiertas que tengas ahora, con su valor y fecha de envío.
+- [ ] Crea la vista Kanban por etapa: Nuevo, Contactado, Propuesta y Ganado.
+- [ ] Añade un campo que calcule los días sin respuesta y marca en rojo las de más de 3 días.
+
+## Fórmula lista para copiar (Airtable)
+
+> IF(AND({Etapa}="Propuesta", DATETIME_DIFF(TODAY(), {Fecha de envío}, 'days') > 3), "🔴 Llamar hoy", "")
+
+## Ejemplo resuelto (ficticio)
+
+Agencia de eventos. Al meter sus propuestas, ve 9.800 € en la columna Propuesta, de los que 5.200 € llevan más de una semana sin respuesta. El lunes llama primero a la propuesta más grande y más antigua, y mueve cada tarjeta solo cuando pasa algo real: una respuesta, una llamada o un pago.
+
+## Cómo decidir la herramienta
+
+- Trabajas solo y quieres algo flexible: Airtable.
+- Ya usas GoHighLevel o necesitas que WhatsApp, correo y embudos estén en el mismo sitio: el pipeline de GoHighLevel.
+
 ## Errores que debes evitar
 
 - Mover tarjetas por intuición

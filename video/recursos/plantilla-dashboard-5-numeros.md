@@ -24,6 +24,29 @@ Cada lunes: ¿qué número empeoró y qué acción tomo esta semana?
 
 Consejo: No mezcles ventanas de tiempo distintas en el mismo panel (semana vs mes) sin indicarlo.
 
+## Hazlo hoy en 30 minutos
+
+- [ ] Crea una hoja con 5 filas: ventas de la semana, contactos nuevos por canal, presupuestos abiertos, tasa de cierre y cobrado frente a pendiente.
+- [ ] Rellena los números de la semana pasada a mano, aunque tardes: así sabes de dónde sale cada dato.
+- [ ] Apunta al lado de cada número de qué herramienta sale (CRM, Stripe, banco).
+- [ ] Agenda 5 minutos cada lunes a primera hora para revisarlo.
+
+## Prompt para leer tu panel
+
+> Estos son los 5 números de mi negocio de las últimas 4 semanas: [PEGA LA TABLA].
+> 1. Dime qué número empeoró y cuál mejoró, con el porcentaje.
+> 2. Dame una sola acción concreta para esta semana, la que más impacto tendría.
+> 3. Dime qué dato me falta para tomar mejores decisiones.
+
+## Ejemplo resuelto (ficticio)
+
+Estudio de yoga, lunes 8:00. Ventas: 2.150 € (semana anterior 1.900 €). Contactos: 11, 7 de Instagram. Presupuestos abiertos: 4 bonos de empresa por 3.200 €. Cierre: 3 de cada 10. Pendiente de cobro: 450 €. Decisión de la semana: llamar a las 4 empresas y reclamar los 450 €.
+
+## Cómo decidir la herramienta
+
+- Para empezar: una hoja de cálculo que rellenas el lunes.
+- Cuando el lunes te lleve más de 15 minutos: conecta CRM y Stripe a un panel que se actualice solo y te llegue por correo.
+
 ## Errores que debes evitar
 
 - Paneles con 30 métricas que nadie mira
